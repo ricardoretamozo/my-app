@@ -20,6 +20,7 @@ export const RegisterScreen = () => {
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
 
+
   return (
     <>
       <Flex

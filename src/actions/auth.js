@@ -1,5 +1,5 @@
 import { notification, timerNotification } from "../helpers/alert";
-import { fetchWithoutToken, fetchWithToken } from "../helpers/fetch";
+import { fetchWithoutToken, fetchWithToken ,fetchServicioDni } from "../helpers/fetch";
 import { types } from "../types/types";
 
 

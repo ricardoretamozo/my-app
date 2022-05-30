@@ -22,6 +22,21 @@ export const fetchWithoutToken = ( endpoint, data, method='GET' ) => {
 
 }
 
+export const fetchServicioDni = ( endpoint, method='GET' ) => {
+
+    const url = `${ baseURL }/${ endpoint }`;
+
+    if ( method === 'GET' ){
+        return fetch( url );
+    } else {
+        return fetch( url , {
+            method,
+            redirect: 'follow'
+        });
+    }
+
+}
+
 export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
 
     const url = `${ baseURL }/${ endpoint }`;

@@ -1,13 +1,13 @@
 import React from 'react';
 import Sidebar from '../base/Sidebar';
-import { data } from './data';
-export const home = () => {
+import { Tabla } from './tabla';
+export const perfil = () => {
 
     //
     return (
       <>
         <Sidebar
-        componente={data}/>
+        componente={Tabla}/>
       </>
     );
   };

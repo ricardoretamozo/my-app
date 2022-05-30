@@ -9,7 +9,7 @@ import {
   VStack,
   Icon,
   useColorModeValue,
-  Link,
+  Link as LinkB,
   Button,
   Drawer,
   DrawerContent,
@@ -26,7 +26,7 @@ import {
 } from '@chakra-ui/react';
 import {
   FiHome,
-  FiTrendingUp,
+  FiUser,
   FiCompass,
   FiStar,
   FiSettings,
@@ -36,18 +36,19 @@ import {
 } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
+import { Link as LinkA } from 'react-router-dom';
 
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 const LinkItems = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Home', icon: FiHome, ruta: '/dashboard/home' },
+  { name: 'Perfil', icon: FiUser, ruta: '/dashboard/perfil' },
+  { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
+  { name: 'Favourites', icon: FiStar, ruta: '/dashboard/perfil' },
+  { name: 'Settings', icon: FiSettings, ruta: '/dashboard/perfil' },
 ];
 
-export const SidebarWithHeader = ({ componente: Component }) => {
+export default function SidebarWithHeader({ componente: Component }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
@@ -71,7 +72,7 @@ export const SidebarWithHeader = ({ componente: Component }) => {
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p="4">
-        <Component/>
+        <Component />
       </Box>
     </Box>
   );
@@ -96,9 +97,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map(link => (
-        <NavItem key={link.name} icon={link.icon}>
-          {link.name}
-        </NavItem>
+        <LinkA to={link.ruta}>
+          <NavItem key={link.name} icon={link.icon}>
+            {link.name}
+          </NavItem>
+        </LinkA>
       ))}
     </Box>
   );
@@ -106,8 +109,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
 
 const NavItem = ({ icon, children, ...rest }) => {
   return (
-    <Link
-      href="#"
+    <LinkB
+      href=""
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
     >
@@ -136,7 +139,7 @@ const NavItem = ({ icon, children, ...rest }) => {
         )}
         {children}
       </Flex>
-    </Link>
+    </LinkB>
   );
 };
 

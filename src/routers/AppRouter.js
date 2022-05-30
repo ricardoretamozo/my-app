@@ -8,8 +8,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 
 import { LoginScreen } from '../components/auth/LoginScreen';
-import { RegisterScreen } from "../components/auth/RegisterScreen";
-import { DasboardScreen } from "../components/ui/DasboardScreen";
+import { RegisterScreen } from '../components/auth/RegisterScreen';
+import { DasboardScreen } from '../components/ui/DasboardScreen';
+
 
 import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
@@ -35,12 +36,18 @@ export const AppRouter = () => {
             isAuthenticated={!!access_token}
           />
           <Route exact path="/auth/register" component={RegisterScreen} />
-          <PrivateRoute 
-                    exact 
-                    path="/dashboard/home" 
-                    component = { DasboardScreen } 
-                    isAuthenticated = { !!access_token }
-                />
+          <PrivateRoute
+            exact
+            path="/dashboard/home"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/perfil"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
           <Redirect to="/no-found" />
         </Switch>
       </div>

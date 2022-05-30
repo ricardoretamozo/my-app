@@ -24,7 +24,7 @@ export const fetchWithoutToken = ( endpoint, data, method='GET' ) => {
 
 export const fetchServicioDni = ( endpoint, method='GET' ) => {
 
-    const url = `${ baseURL }/${ endpoint }`;
+    const url = `http://localhost:3001/${ endpoint }`;
 
     if ( method === 'GET' ){
         return fetch( url );

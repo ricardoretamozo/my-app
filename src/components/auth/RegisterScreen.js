@@ -14,12 +14,82 @@ import {
 } from '@chakra-ui/react';
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
+import { startDni } from '../../actions/auth';
+
+const useForm = (initialState = {}) => {
+  const [values, setValues] = useState(initialState);
+
+  const reset = () => {
+    setValues(initialState);
+  };
+
+  const handleInputChange = ({ target }) => {
+    setValues({
+      ...values,
+      [target.name]: target.value,
+    });
+  };
+
+  return [values, handleInputChange, reset];
+};
+
+const useUsuario = () => {
+  const [values, setValues] = useState({documentoIdentidad: '',
+  nombres: '',
+  apellidos: '',
+  fechaNacimiento: ''});
+
+  const guardar = (d , n , a , f) => setValues({documentoIdentidad: d,
+  nombres: n,
+  apellidos: a,
+  fechaNacimiento: f});
+
+  const reset = () => {
+    setValues( {documentoIdentidad: '',
+    nombres: '',
+    apellidos: '',
+    fechaNacimiento: ''} );
+}
+
+  return{
+    values,
+    guardar,
+    reset
+  };
+
+}
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'teal.200');
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
 
+  const [formValues, handleInputChange , reset] = useForm({
+    dni: '',
+    ubigeo: '',
+    apellidoMaterno: '',
+  });
+
+  const { dni, ubigeo, apellidoMaterno } = formValues;
+
+  const usuario = useUsuario();
+
+  const handleCreate = e => {
+    e.preventDefault();
+    console.log(dni);
+    const dato = startDni( dni, ubigeo, apellidoMaterno );
+    dato.then( body => {
+      if(!!body[0]){
+        usuario.guardar(body[0].numeroDocumento, body[0].nombres , body[0].apellidos , body[0].fechaNacimiento);
+        console.log(usuario.values)
+        console.log(body[0].numeroDocumento)
+      }else{
+        usuario.reset();
+        reset();
+      }
+      });
+
+  };
 
   return (
     <>
@@ -88,65 +158,77 @@ export const RegisterScreen = () => {
             >
               Validar DNI
             </Text>
-            <FormControl>
-              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                Documento de identificación
-              </FormLabel>
-              <Input
-                fontSize="sm"
-                ms="4px"
-                borderRadius="15px"
-                type="text"
-                placeholder="DNI"
-                mb="24px"
-                size="lg"
-                id="form-dni"
-              />
-              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                Ubigeo
-              </FormLabel>
-              <Input
-                fontSize="sm"
-                ms="4px"
-                borderRadius="15px"
-                type="text"
-                placeholder="Ubigeo"
-                mb="24px"
-                size="lg"
-                id="form-Ubigeo"
-              />
-              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                Apellido Materno
-              </FormLabel>
-              <Input
-                fontSize="sm"
-                ms="4px"
-                borderRadius="15px"
-                type="text"
-                placeholder="Apellido Materno"
-                mb="24px"
-                size="lg"
-                id="form-Apellido-Materno"
-              />
-              <Button
-                type="submit"
-                bg="GREEN"
-                fontSize="10px"
-                color="white"
-                fontWeight="bold"
-                w="100%"
-                h="45"
-                mb="24px"
-                _hover={{
-                  bg: 'black',
-                }}
-                _active={{
-                  bg: 'teal.400',
-                }}
-              >
-                VALIDAR
-              </Button>
-            </FormControl>
+            <form  onSubmit={handleCreate}>
+              <FormControl>
+                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                  Documento de identificación
+                </FormLabel>
+                <Input
+                  fontSize="sm"
+                  ms="4px"
+                  borderRadius="15px"
+                  type="text"
+                  placeholder="DNI"
+                  mb="24px"
+                  size="lg"
+                  id="form-dni"
+                  name="dni"
+                  onChange={handleInputChange}
+                  value={dni}
+                />
+                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                  Ubigeo
+                </FormLabel>
+                <Input
+                  fontSize="sm"
+                  ms="4px"
+                  borderRadius="15px"
+                  type="text"
+                  placeholder="Ubigeo"
+                  mb="24px"
+                  size="lg"
+                  id="form-Ubigeo"
+                  name="ubigeo"
+                  onChange={handleInputChange}
+                  value={ubigeo}
+                />
+                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                  Apellido Materno
+                </FormLabel>
+                <Input
+                  fontSize="sm"
+                  ms="4px"
+                  borderRadius="15px"
+                  type="text"
+                  placeholder="Apellido Materno"
+                  mb="24px"
+                  size="lg"
+                  id="form-Apellido-Materno"
+                  name="apellidoMaterno"
+                  onChange={handleInputChange}
+                  value={apellidoMaterno}
+                />
+                <Button
+                  type="submit"
+                  bg="GREEN"
+                  fontSize="10px"
+                  color="white"
+                  fontWeight="bold"
+                  w="100%"
+                  h="45"
+                  mb="24px"
+                  _hover={{
+                    bg: 'black',
+                  }}
+                  _active={{
+                    bg: 'teal.400',
+                  }}
+                >
+                  VALIDAR
+                </Button>
+              </FormControl>
+            </form>
+
             <Flex
               flexDirection="column"
               justifyContent="center"
@@ -189,6 +271,8 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
+                    name='documentoIdentificacion'
+                    value={usuario.values.documentoIdentidad}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Nombres
@@ -202,6 +286,8 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
+                    name='nombres'
+                    value={usuario.values.nombres}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Apellidos
@@ -215,6 +301,8 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
+                    name='apellidos'
+                    value={usuario.values.apellidos}
                   />
                   <Button
                     type="submit"
@@ -248,6 +336,8 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
+                    name='fechaNacimiento'
+                    value={usuario.values.fechaNacimiento}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Password
@@ -261,6 +351,7 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     id="form-dni"
+                    name='password'
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Repetir Password

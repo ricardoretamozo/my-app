@@ -1,14 +1,14 @@
 {
-    "dni":[
-        {
-            "id":"46027897",
-            "nombre":"HUAMANI MENDOZA ERACLEO JUAN",
-            "numeroDocumento":"46027897",
-            "nombres": "ERACLE JUAN",
-            "apellidos": "HUAMANI MENDOZA",
-            "apellidoMaterno":"MENDOZA",
-            "ubigeo": "040407"
-        }
-    ]
-    
-  }
+  "dni": [
+    {
+      "id": "46027897",
+      "nombre": "HUAMANI MENDOZA ERACLEO JUAN",
+      "numeroDocumento": "46027897",
+      "nombres": "ERACLE JUAN",
+      "apellidos": "HUAMANI MENDOZA",
+      "apellidoMaterno": "MENDOZA",
+      "ubigeo": "040407",
+      "fechaNacimiento": "2012-04-23" 
+    }
+  ]
+}

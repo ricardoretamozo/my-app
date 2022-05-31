@@ -63,3 +63,30 @@ export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
     }
 
 }
+
+export const fetchToken = ( endpoint, data, method = 'GET' ) => {
+
+    const url = `${ baseURL }/${ endpoint }`;
+    const token = localStorage.getItem('access_token') || '';
+
+
+    if ( method === 'GET' ){
+        return fetch( url,{
+            method,
+            headers: {
+                'Authorization': `Bearer ${ token }`
+            }
+        });
+    } else {
+        return fetch( url , {
+            method,
+            headers: {
+                'Content-type': 'application/json',
+                //'token': token
+                'Authorization': `Bearer ${ token }`
+            },
+            body: JSON.stringify( data )
+        });
+    }
+
+}

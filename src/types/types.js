@@ -2,6 +2,8 @@ export const types = {
 
     login: '[Auth] Login',
     logout: '[Auth] Logout',
-    authCheckingFinish: '[Auth] Finish checking login state'
+    authCheckingFinish: '[Auth] Finish checking login state',
+
+    eventLoadedPerfil: '[event] Events loaded Perfil'
     
 }

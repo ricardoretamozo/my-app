@@ -50,6 +50,24 @@ export const AppRouter = () => {
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
+          <PrivateRoute
+            exact
+            path="/dashboard/sedes"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/organos"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/oficinas"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
           <Redirect to="/no-found" />
         </Switch>
       </div>

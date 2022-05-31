@@ -27,6 +27,7 @@ import {
 import {
   FiHome,
   FiUser,
+  FiList,
   FiCompass,
   FiStar,
   FiSettings,
@@ -47,6 +48,9 @@ import { useDispatch } from 'react-redux';
 const LinkItems = [
   { name: 'Home', icon: FiHome, ruta: '/dashboard/home' },
   { name: 'Perfil', icon: FiUser, ruta: '/dashboard/perfil' },
+  { name: 'Sedes', icon: FiList, ruta: '/dashboard/sedes' },
+  { name: 'Organos', icon: FiList, ruta: '/dashboard/organos' },
+  { name: 'Oficinas', icon: FiList, ruta: '/dashboard/oficinas' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
   { name: 'Favourites', icon: FiStar, ruta: '/dashboard/perfil' },
   { name: 'Settings', icon: FiSettings, ruta: '/dashboard/perfil' },

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Text,
   Table,
   Thead,
   Tbody,
@@ -13,9 +14,11 @@ import {
 } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { useTable, useSortBy } from 'react-table';
+import { store } from '../../../store/store';
 
 export const Tabla = () => {
-  const data = React.useMemo(
+  const data = store.getState().perfilPersona.rows;
+  /*const data = React.useMemo(
     () => [
       {
         fromUnit: 'inches',
@@ -34,22 +37,21 @@ export const Tabla = () => {
       },
     ],
     []
-  );
+  );*/
 
   const columns = React.useMemo(
     () => [
       {
-        Header: 'To convert',
-        accessor: 'fromUnit',
+        Header: 'ID',
+        accessor: 'idPerfilPersona',
       },
       {
-        Header: 'nuevos',
-        accessor: 'toUnit',
+        Header: 'Perfil',
+        accessor: 'perfil',
       },
       {
-        Header: 'Multiply by 2',
-        accessor: 'factor',
-        isNumeric: true,
+        Header: 'Activo',
+        accessor: 'activo',
       },
     ],
     []
@@ -82,6 +84,7 @@ export const Tabla = () => {
                     </chakra.span>
                   </Th>
                 ))}
+                <Th><Text>Acciones</Text></Th>
               </Tr>
             ))}
           </Thead>
@@ -98,6 +101,7 @@ export const Tabla = () => {
                       {cell.render('Cell')}
                     </Td>
                   ))}
+                  <Td><Text>.</Text></Td>
                 </Tr>
               );
             })}

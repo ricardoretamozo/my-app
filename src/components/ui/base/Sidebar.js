@@ -40,6 +40,10 @@ import { Link as LinkA } from 'react-router-dom';
 
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
+import { store } from '../../../store/store';
+import { LogOut } from '../../../actions/auth';
+import { useDispatch } from 'react-redux';
+
 const LinkItems = [
   { name: 'Home', icon: FiHome, ruta: '/dashboard/home' },
   { name: 'Perfil', icon: FiUser, ruta: '/dashboard/perfil' },
@@ -144,7 +148,14 @@ const NavItem = ({ icon, children, ...rest }) => {
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
+
   const { colorMode, toggleColorMode } = useColorMode();
+  const usuario = store.getState().auth;
+  const dispatch = useDispatch();
+  const handleLogout = e => {
+    e.preventDefault();
+    dispatch(LogOut());
+  };
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -204,9 +215,9 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">{usuario.name}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {usuario.rol}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
@@ -219,10 +230,8 @@ const MobileNav = ({ onOpen, ...rest }) => {
               borderColor={useColorModeValue('gray.200', 'gray.700')}
             >
               <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
-              <MenuItem>Billing</MenuItem>
               <MenuDivider />
-              <MenuItem>Sign out</MenuItem>
+              <MenuItem onClick={handleLogout}>Cerrar Sesion</MenuItem>
             </MenuList>
           </Menu>
         </Flex>

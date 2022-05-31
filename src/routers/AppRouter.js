@@ -18,10 +18,12 @@ import { PrivateRoute } from './PrivateRoute';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
+
   console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   console.log(!!access_token);
-  useEffect(async () => {
+
+  useEffect( () => {
     dispatch(startChecking());
   }, [dispatch]);
 

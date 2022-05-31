@@ -19,11 +19,15 @@ export const startLogin = (dni, password) => {
       // set user info
       localStorage.setItem('access_token', body.access_token);
       localStorage.setItem('refresh_token', body.refresh_token);
+      localStorage.setItem('name', body.name);
+      localStorage.setItem('rol', body.rol);
 
       dispatch(
         login({
           access_token: body.access_token,
           refresh_token: body.refresh_token,
+          name: body.name,
+          rol: body.rol,
         })
       );
 
@@ -33,6 +37,15 @@ export const startLogin = (dni, password) => {
     }
   };
 };
+
+export const LogOut = () =>{
+  return async dispatch => {
+    localStorage.clear();
+    dispatch(
+      logout()
+    );
+  }
+}
 
 export async function startDni(numeroDocumento, ubigeo ,apellidoMaterno) {
 
@@ -58,6 +71,8 @@ export const startChecking = () => {
       // set user info
       localStorage.setItem('access_token', body.access_token);
       localStorage.setItem('refresh_token', body.refresh_token);
+      localStorage.setItem('name', body.name);
+      localStorage.setItem('rol', body.rol);
 
       dispatch(
         login({
@@ -76,4 +91,8 @@ const checkingFinish = () => ({ type: types.authCheckingFinish });
 const login = user => ({
   type: types.login,
   payload: user,
+});
+
+const logout = () => ({
+  type: types.logout,
 });

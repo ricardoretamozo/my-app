@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
 import { Tabla } from './tabla';
 import { perfilPersona } from '../../../actions/perfilPersona'; 
@@ -8,13 +9,19 @@ import { types } from '../../../types/types';
 export const Perfil = () => {
   const dispatch = useDispatch();
 
+  const fetchData= async ()=> {
+    await perfilPersona().then((res)=>{
+      dispatch(getPerfilPerson(res));
+    });
+    
+  }
   useEffect(() => {
-    async function fetchData() {
-      const PerfilPersona = await perfilPersona();
-      dispatch(getPerfilPersona(PerfilPersona));
+    console.log(store.getState().perfilPersona);
+    if(store.getState().perfilPersona.rows.length <= 0){
+      fetchData();
     }
-    fetchData();
-  }, [dispatch]);
+    //fetchData();
+  }, []);
 
   //
   return (
@@ -24,7 +31,7 @@ export const Perfil = () => {
   );
 };
 
-export const getPerfilPersona = perfil => ({
+export const getPerfilPerson = perfil =>({
   type: types.eventLoadedPerfil,
   payload: perfil,
 });

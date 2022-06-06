@@ -10,6 +10,7 @@ import {
   chakra,
   TableContainer,
   Box,
+  Button,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
@@ -105,7 +106,10 @@ export const Tabla = () => {
                       {cell.render('Cell')}
                     </Td>
                   ))}
-                  <Td><Text>.</Text></Td>
+                  <Td>
+                    <Button>Editar</Button>
+                    <Button>Eliminar</Button>
+                  </Td>
                 </Tr>
               );
             })}

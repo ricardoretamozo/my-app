@@ -1,4 +1,32 @@
 import { fetchToken } from '../helpers/fetch';
+import { types } from '../types/types';
+import { notification } from "../helpers/alert";
+import { getPerfilPerson} from '../components/ui/perfil/perfil';
+
+export const createPerfilPersona = ( data ) => {
+  
+  return async(dispatch) =>{
+    const response = await fetchToken(
+                                `perfil`,
+                                {
+                                  'descripcion': data.descripcion,
+                                  'perfil': data.perfil,
+                                  'activo': data.activo,
+                                }, 
+                                'POST' );
+    
+    const body = await response.json();
+
+    if (response.status === 200 || response.status === 201){
+      dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
+      notification("Perfil registrado correctamente.",body.message,'success');
+    }else{
+
+      notification("No se pudo registrar el Perfil",body.error,'error');
+
+    }
+  }
+}
 
 export const perfilPersona = async () => {
   const response = await fetchToken('perfil');
@@ -16,6 +44,71 @@ export const perfilPersona = async () => {
   });
   PerfilPersona.data = data;
   // set user info
+  return PerfilPersona;
+};
 
+export const deletePerfilPersona = ( id ) => {
+  return async(dispatch) =>{
+      const response = await fetchToken( 
+                                  `perfil/${ id }`, 
+                                  "",
+                                  'DELETE' 
+                              );
+      
+      const body = await response.json();
+
+      if ( response.status === 200 ){
+        dispatch( getPerfilPerson( await loadPerfilPersona() ) );
+          notification("Perfil actualizado correctamente",body.message,'success');
+      }else{
+          notification("No se pudo eliminar el Perfil",body.error,'error');
+      }
+  }
+}
+
+export const updatePerfilPersona = ( data ) => {
+  
+  return async(dispatch) =>{
+    const response = await fetchToken(
+                                `perfil`,
+                                {
+                                  'idPerfilPersona': data.idPerfilPersona,
+                                  'perfil': data.perfil,
+                                  'descripcion': data.descripcion,
+                                  'activo': data.activo,
+                                }, 
+                                'PUT' );
+    
+    const body = await response.json();
+
+    if ( response.status === 200 ){
+        dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
+        notification("Perfil actualizado correctamente",body.message,'success');
+    }else{
+        
+      notification("No se pudo actualizar el Organo",body.error,'error');
+    
+    }
+  }
+}
+
+
+// Refrescar la tabla
+
+export const loadPerfilPersona = async () => {
+  const response = await fetchToken('perfil');
+  const body = await response.json();
+  const PerfilPersona = {};
+  const data = [];
+
+  body.forEach(perfil => {
+    data.push({
+      idPerfilPersona: perfil.idPerfilPersona,
+      perfil: perfil.perfil,
+      descripcion: perfil.descripcion,
+      activo: perfil.activo,
+    });
+  });
+  PerfilPersona.data = data;
   return PerfilPersona;
 };

@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Text,
   Table,
@@ -10,34 +11,65 @@ import {
   chakra,
   TableContainer,
   Box,
+  Button,
+  Switch,
+  AlertDialogBody,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogFooter,
+  AlertDialog,
   useColorModeValue,
 } from '@chakra-ui/react';
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import { useTable, useSortBy } from 'react-table';
 import { store } from '../../../store/store';
+import 'react-data-table-component-extensions/dist/index.css';
+import { deletePerfilPersona } from '../../../actions/perfilPersona'; 
 
 export const Tabla = () => {
   const data = store.getState().perfilPersona.rows;
-  /*const data = React.useMemo(
-    () => [
-      {
-        fromUnit: 'inches',
-        toUnit: 'millimetres (mm)',
-        factor: 25.4,
-      },
-      {
-        fromUnit: 'feet',
-        toUnit: 'centimetres (cm)',
-        factor: 30.48,
-      },
-      {
-        fromUnit: 'yards',
-        toUnit: 'metres (m)',
-        factor: 0.91444,
-      },
-    ],
-    []
-  );*/
+  const [openedit, setOpenEdit] = React.useState(false);
+  const [opendelete, setOpenDelete] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const [indice, setIndice] = useState({
+    idPerfilPersona: null,
+    perfil: '',
+    descripcion: '',
+    activo: "",
+  });
+
+  console.log(data)
+
+  const handleClickOpenEdit = index => {
+    setIndice(index);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+const handleDeletePerfilPersona = ( idPerfilPersona ) =>{
+    dispatch( deletePerfilPersona( idPerfilPersona ) )
+    .then( () => {
+      handleCloseDelete(true);
+      console.log("perfilPersona eliminado");
+    }).catch(e => {
+      console.log(e)
+      handleCloseDelete(true);
+    });
+}
+
+  const handleClickOpenDelete = index => {
+    setIndice(index);
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
 
   const columns = React.useMemo(
     () => [
@@ -53,6 +85,46 @@ export const Tabla = () => {
         Header: 'Activo',
         accessor: 'activo',
       },
+      {
+        Header: 'Accion',
+        accessor: (originalRow) => (
+          <div>
+              {/* <button onClick={() => handleEdit(originalRow)}>Edit</button>
+              <button onClick={() => handleDelete(originalRow)}>Delete</button> */}
+              <Switch
+              colorScheme="red"
+              mr={2}
+              isChecked={originalRow.activo === "S"}
+              onChange={() => handleClickOpenDelete(originalRow.idPerfilPersona)}
+              />
+            <Button
+              onClick={() => handleClickOpenEdit(originalRow.idPerfilPersona)}
+              size={'xs'}
+              colorScheme={'blue'}
+            >
+              Editar
+            </Button>
+          </div>
+       ),
+       id: 'action',
+        // Cell: ({row}) => (
+        //   <div>
+        //     <Switch
+        //     colorScheme="red"
+        //     mr={2}
+        //     isChecked={row.activo === "S"}
+        //     onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
+        //     />
+        //     <Button
+        //       onClick={() => handleClickOpenEdit(row.idPerfilPersona)}
+        //       size={'xs'}
+        //       colorScheme={'blue'}
+        //     >
+        //       Editar
+        //     </Button>
+        //   </div>
+        // )
+      }
     ],
     []
   );
@@ -84,7 +156,6 @@ export const Tabla = () => {
                     </chakra.span>
                   </Th>
                 ))}
-                <Th><Text>Acciones</Text></Th>
               </Tr>
             ))}
           </Thead>
@@ -99,9 +170,66 @@ export const Tabla = () => {
                       isNumeric={cell.column.isNumeric}
                     >
                       {cell.render('Cell')}
+
+                          {/* -------------------- ELIMINAR ------------------- */}
+                          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+                            <AlertDialogOverlay>
+                              <AlertDialogContent>
+                                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                  Anular Perfil
+                                </AlertDialogHeader>
+
+                                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+
+                                <AlertDialogFooter>
+                                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                                  <Button onClick={() => handleDeletePerfilPersona(row.idPerfilPersona)} colorScheme="red" ml={3}>
+                                    Si
+                                  </Button>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialogOverlay>
+                          </AlertDialog>
+{/* 
+                    <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+                      <AlertDialogOverlay>
+                        <AlertDialogContent>
+                          <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                            Anular Perfil
+                          </AlertDialogHeader>
+
+                          <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+
+                          <AlertDialogFooter>
+                            <Button onClick={handleCloseDelete}>Cancelar</Button>
+                            <Button onClick={() => handleDeletePerfilPersona(row.original.idPerfilPersona)} colorScheme="red" ml={3}>
+                              Si
+                            </Button>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialogOverlay>
+                    </AlertDialog> */}
+
                     </Td>
+                    
+
                   ))}
-                  <Td><Text>.</Text></Td>
+                  <Td>
+                  {/* <Switch
+                    colorScheme="red"
+                    mr={2}
+                    isChecked={row.activo === 'S'}
+                    onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
+                  />
+                    <Button
+                      onClick={() => handleClickOpenEdit(row.idPerfilPersona)}
+                      size={'xs'}
+                      colorScheme={'blue'}
+                    >
+                      Editar
+                    </Button> */}
+                    
+                  </Td>
                 </Tr>
               );
             })}

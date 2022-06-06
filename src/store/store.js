@@ -6,6 +6,7 @@ import { oficinaReducer } from "../reducers/oficinaReducer";
 import { organoReducer } from "../reducers/organoReducer";
 import { perfilPersonaReducer } from "../reducers/perfilPersonaReducer";
 import { sedeReducer } from "../reducers/sedeReducer";
+import { personaReducer } from "../reducers/personaReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -14,7 +15,8 @@ const reducers = combineReducers({
     perfilPersona: perfilPersonaReducer,
     sede: sedeReducer,
     organo: organoReducer,
-    oficina: oficinaReducer
+    oficina: oficinaReducer,
+    persona: personaReducer
 });
 
 export const store = createStore( 

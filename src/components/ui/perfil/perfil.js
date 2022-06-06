@@ -2,8 +2,9 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import { Tabla } from './tabla';
-import { perfilPersona } from '../../../actions/perfilPersona'; 
+import Tables from './table';
+import {Tabla} from './tabla';
+import { perfilPersona, deletePerfilPersona } from '../../../actions/perfilPersona'; 
 import { types } from '../../../types/types';
 
 export const Perfil = () => {
@@ -26,7 +27,7 @@ export const Perfil = () => {
   //
   return (
     <>
-      <Sidebar componente={Tabla} />
+      <Sidebar componente={Tables} />
     </>
   );
 };

@@ -13,8 +13,13 @@ import { DasboardScreen } from '../components/ui/DasboardScreen';
 
 
 import { startChecking } from '../actions/auth';
+import { fetchSedes } from '../actions/sede';
+import { fetchOrganos } from '../actions/organo';
+import { getSede } from '../components/ui/sede/sede';
+import { getOrgano } from '../components/ui/organo/organo';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
+import { store } from '../store/store';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
@@ -26,6 +31,34 @@ export const AppRouter = () => {
   useEffect( () => {
     dispatch(startChecking());
   }, [dispatch]);
+
+  const fetchData= async ()=> {
+    await fetchSedes().then((res)=>{
+      dispatch(getSede(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().sede.rows.length <= 0){
+      fetchData();
+    }
+    //fetchData();
+  });
+
+  const fetchDataOrgano = async ()=> {
+    await fetchOrganos().then((res)=>{
+      dispatch(getOrgano(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().organo.rows.length <= 0){
+      fetchDataOrgano();
+    }
+    //fetchData();
+  });
 
   return (
     <Router>
@@ -68,7 +101,19 @@ export const AppRouter = () => {
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
-          <Redirect to="/no-found" />
+          <PrivateRoute
+            exact
+            path="/dashboard/personas"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/cargos"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <Redirect to="/dashboard/home" />
         </Switch>
       </div>
     </Router>

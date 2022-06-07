@@ -47,20 +47,22 @@ export const LogOut = () =>{
   }
 }
 
-export async function startDni(numeroDocumento, ubigeo ,apellidoMaterno) {
-
-    const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&ubigeo=${ ubigeo }&apellidoMaterno=${ apellidoMaterno }`);
+export const startDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) => {
+  return async( dispatch) =>{
+    const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
     const body = await response.json();
-    console.log(!!body[0]);
+    console.log(body[0]);
     if (!!body[0]) {   
-      timerNotification('Validacion correcta');   
-    } else {
+      timerNotification('Validacion correcta');
+      dispatch(validadorUsuario(body[0]));
+      } else {
       notification('ERROR', body.error, 'error');
     }
+  }
+  }
 
-    return body;
 
-};
+
 
 export const startChecking = () => {
   return async dispatch => {
@@ -91,6 +93,11 @@ const checkingFinish = () => ({ type: types.authCheckingFinish });
 const login = user => ({
   type: types.login,
   payload: user,
+});
+
+export const validadorUsuario = usuario => ({
+  type: types.eventLoadedUsuarioValidadorDni,
+  payload: usuario,
 });
 
 const logout = () => ({

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link as LinkA } from 'react-router-dom';
 // Chakra imports
 import {
@@ -14,81 +15,61 @@ import {
 } from '@chakra-ui/react';
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
-import { startDni } from '../../actions/auth';
-
-const useForm = (initialState = {}) => {
-  const [values, setValues] = useState(initialState);
-
-  const reset = () => {
-    setValues(initialState);
-  };
-
-  const handleInputChange = ({ target }) => {
-    setValues({
-      ...values,
-      [target.name]: target.value,
-    });
-  };
-
-  return [values, handleInputChange, reset];
-};
-
-const useUsuario = () => {
-  const [values, setValues] = useState({documentoIdentidad: '',
-  nombres: '',
-  apellidos: '',
-  fechaNacimiento: ''});
-
-  const guardar = (d , n , a , f) => setValues({documentoIdentidad: d,
-  nombres: n,
-  apellidos: a,
-  fechaNacimiento: f});
-
-  const reset = () => {
-    setValues( {documentoIdentidad: '',
-    nombres: '',
-    apellidos: '',
-    fechaNacimiento: ''} );
-}
-
-  return{
-    values,
-    guardar,
-    reset
-  };
-
-}
+import { startDni , validadorUsuario} from '../../actions/auth';
+import { store } from '../../store/store';
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'teal.200');
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
 
-  const [formValues, handleInputChange , reset] = useForm({
+  const [validadorDni, setDni] = useState({
     dni: '',
-    ubigeo: '',
-    apellidoMaterno: '',
+    codigoVerificacion: '',
+    fechaNacimiento: '',
   });
+  
+  const data = store.getState().usuarioDni;
 
-  const { dni, ubigeo, apellidoMaterno } = formValues;
+  const initialUsuario = {
+    nombre: '',
+    apellido: '',
+    dni: '',
+    usuario: '',
+    password1: '',
+    password2: '',
+    fecha: '',
+    sexo: '',
+    activo: '',
+    perfilPersona: {
+      idPerfilPersona: 66,
+    },
+  };
 
-  const usuario = useUsuario();
+  const [dataUsuario, setUsuario] = useState(initialUsuario);
 
-  const handleCreate = e => {
-    e.preventDefault();
-    console.log(dni);
-    const dato = startDni( dni, ubigeo, apellidoMaterno );
-    dato.then( body => {
-      if(!!body[0]){
-        usuario.guardar(body[0].numeroDocumento, body[0].nombres , body[0].apellidos , body[0].fechaNacimiento);
-        console.log(usuario.values)
-        console.log(body[0].numeroDocumento)
-      }else{
-        usuario.reset();
-        reset();
-      }
-      });
+  const dispatch = useDispatch();
 
+  const handleCreateUser = () => {
+
+    console.log(dataUsuario);
+  };
+
+  const HandleValidatorUser = () => {
+    console.log(validadorDni);
+    dispatch(startDni(validadorDni.dni, validadorDni.codigoVerificacion, validadorDni.fechaNacimiento));
+    /*setUsuario({
+      nombre: data.nombres,
+      apellido: data.apellidos,
+      dni: data.numeroDocumento,
+      usuario: data.numeroDocumento,
+      fecha: data.fechaNacimiento,
+      sexo: data.sexo,
+      activo: 'S',
+      perfilPersona: {
+        idPerfilPersona: 66,
+      },
+    })*/
   };
 
   return (
@@ -158,76 +139,91 @@ export const RegisterScreen = () => {
             >
               Validar DNI
             </Text>
-            <form  onSubmit={handleCreate}>
-              <FormControl>
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Documento de identificación
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  ms="4px"
-                  borderRadius="15px"
-                  type="text"
-                  placeholder="DNI"
-                  mb="24px"
-                  size="lg"
-                  id="form-dni"
-                  name="dni"
-                  onChange={handleInputChange}
-                  value={dni}
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Ubigeo
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  ms="4px"
-                  borderRadius="15px"
-                  type="text"
-                  placeholder="Ubigeo"
-                  mb="24px"
-                  size="lg"
-                  id="form-Ubigeo"
-                  name="ubigeo"
-                  onChange={handleInputChange}
-                  value={ubigeo}
-                />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                  Apellido Materno
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  ms="4px"
-                  borderRadius="15px"
-                  type="text"
-                  placeholder="Apellido Materno"
-                  mb="24px"
-                  size="lg"
-                  id="form-Apellido-Materno"
-                  name="apellidoMaterno"
-                  onChange={handleInputChange}
-                  value={apellidoMaterno}
-                />
-                <Button
-                  type="submit"
-                  bg="GREEN"
-                  fontSize="10px"
-                  color="white"
-                  fontWeight="bold"
-                  w="100%"
-                  h="45"
-                  mb="24px"
-                  _hover={{
-                    bg: 'black',
-                  }}
-                  _active={{
-                    bg: 'teal.400',
-                  }}
-                >
-                  VALIDAR
-                </Button>
-              </FormControl>
-            </form>
+            <FormControl>
+              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                Documento de identificación
+              </FormLabel>
+              <Input
+                fontSize="sm"
+                ms="4px"
+                borderRadius="15px"
+                type="text"
+                placeholder="DNI"
+                mb="24px"
+                size="lg"
+                id="form-dni"
+                name="dni"
+                defaultValue={validadorDni ? validadorDni.dni : ''}
+                // onChange={() => handleInputChange()}
+                onChange={e => {
+                  setDni({ ...validadorDni, dni: e.target.value });
+                }}
+                // value={dni}
+              />
+              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                codigo Verificacion
+              </FormLabel>
+              <Input
+                fontSize="sm"
+                ms="4px"
+                borderRadius="15px"
+                type="text"
+                placeholder="codigoVerificacion"
+                mb="24px"
+                size="lg"
+                id="form-codigoVerificacion"
+                name="codigoVerificacion"
+                defaultValue={
+                  validadorDni ? validadorDni.codigoVerificacion : ''
+                }
+                // onChange={handleInputChange}
+                onChange={e => {
+                  setDni({
+                    ...validadorDni,
+                    codigoVerificacion: e.target.value,
+                  });
+                }}
+                // value={codigoVerificacion}
+              />
+              <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
+                Fecha de Nacimiento
+              </FormLabel>
+              <Input
+                fontSize="sm"
+                ms="4px"
+                borderRadius="15px"
+                type="date"
+                placeholder="fechaNacimiento"
+                mb="24px"
+                size="lg"
+                id="form-fechaNacimiento"
+                name="fechaNacimiento"
+                defaultValue={validadorDni ? validadorDni.dni : ''}
+                // onChange={handleInputChange}
+                // value={fechaNacimiento}
+                onChange={e => {
+                  setDni({ ...validadorDni, fechaNacimiento: e.target.value });
+                }}
+              />
+              <Button
+                bg="GREEN"
+                fontSize="10px"
+                color="white"
+                fontWeight="bold"
+                w="100%"
+                h="45"
+                mb="24px"
+                _hover={{
+                  bg: 'black',
+                }}
+                _active={{
+                  bg: 'teal.400',
+                }}
+                onClick={() => HandleValidatorUser  ()}
+              >
+                VALIDAR
+              </Button>
+            </FormControl>
 
             <Flex
               flexDirection="column"
@@ -270,9 +266,12 @@ export const RegisterScreen = () => {
                     placeholder="DNI"
                     mb="24px"
                     size="lg"
-                    isDisabled
-                    name='documentoIdentificacion'
-                    value={usuario.values.documentoIdentidad}
+                    name="documentoIdentificacion"
+                    // value={data.numeroDocumento}
+                    defaultValue={data ? data.numeroDocumento : ''}
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, dni: e.target.value });
+                    }}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Nombres
@@ -286,8 +285,12 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
-                    name='nombres'
-                    value={usuario.values.nombres}
+                    name="nombres"
+                    // value={usuario.values.nombres}
+                    //defaultValue={usuario.values.nombres}
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, nombre: e.target.value });
+                    }}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Apellidos
@@ -301,11 +304,15 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
-                    name='apellidos'
-                    value={usuario.values.apellidos}
+                    name="apellidos"
+                    //value={usuario.values.apellidos}
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, apellido: e.target.value });
+                    }}
                   />
                   <Button
                     type="submit"
+                    onClick={() => handleCreateUser()}
                     bg="#9a1413"
                     fontSize="10px"
                     color="white"
@@ -320,7 +327,7 @@ export const RegisterScreen = () => {
                       bg: 'teal.400',
                     }}
                   >
-                    SIGN UP
+                    REGISTRARSE
                   </Button>
                 </Flex>
                 <Flex w="50%" direction="column" p="20px">
@@ -336,8 +343,12 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     isDisabled
-                    name='fechaNacimiento'
-                    value={usuario.values.fechaNacimiento}
+                    name="fechaNacimiento"
+                    // value={usuario.values.fechaNacimiento}
+                    //defaultValue={dataUsuario ? dataUsuario.fecha: usuario.values.fechaNacimiento}
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, fecha: e.target.value });
+                    }}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Password
@@ -351,7 +362,10 @@ export const RegisterScreen = () => {
                     mb="24px"
                     size="lg"
                     id="form-dni"
-                    name='password'
+                    name="password1"
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, password1: e.target.value });
+                    }}
                   />
                   <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
                     Repetir Password
@@ -362,12 +376,16 @@ export const RegisterScreen = () => {
                     borderRadius="15px"
                     type="password"
                     placeholder="Repetir password"
+                    name="password2"
                     mb="24px"
                     size="lg"
                     id="form-password"
+                    onChange={e => {
+                      setUsuario({ ...dataUsuario, password2: e.target.value });
+                    }}
                   />
                   <Text color={textColor} fontWeight="medium">
-                    Already have an account?
+                    Ya tienes una cuenta creada?
                     <LinkB
                       color={titleColor}
                       as="span"
@@ -375,7 +393,7 @@ export const RegisterScreen = () => {
                       href="#"
                       fontWeight="bold"
                     >
-                      <LinkA to={'/auth/login'}>Sign In</LinkA>
+                      <LinkA to={'/auth/login'}>LOGIN</LinkA>
                     </LinkB>
                   </Text>
                 </Flex>

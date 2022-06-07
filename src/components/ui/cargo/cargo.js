@@ -2,23 +2,22 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import { Tabla } from './tabla';
-import { fetchOrganos } from '../../../actions/organo'; 
+import { fetchCargos } from '../../../actions/cargo'; 
 import { types } from '../../../types/types';
-import TableOrgano from './TableOrgano';
+import TableCargo from './TableCargo';
 
-export const Organo = () => {
+export const Cargo = () => {
   const dispatch = useDispatch();
 
   const fetchData= async ()=> {
-    await fetchOrganos().then((res)=>{
-      dispatch(getOrgano(res));
+    await fetchCargos().then((res)=>{
+      dispatch(getCargo(res));
     });
     
   }
   useEffect(() => {
     
-    if(store.getState().organo.rows.length <= 0){
+    if(store.getState().cargo.rows.length <= 0){
       fetchData();
     }
     //fetchData();
@@ -27,12 +26,12 @@ export const Organo = () => {
   //
   return (
     <>
-      <Sidebar componente={TableOrgano} />
+      <Sidebar componente={TableCargo} />
     </>
   );
 };
 
-export const getOrgano = organo =>({
-  type: types.eventLoadedOrgano,
-  payload: organo
+export const getCargo = cargo =>({
+  type: types.eventLoadedCargo,
+  payload: cargo
 });

@@ -9,5 +9,7 @@ export const types = {
     eventLoadedSede: '[event] Events loaded Sedes',
     eventLoadedOrgano: '[event] Events loaded Organos',
     eventLoadedOficina: '[event] Events loaded Oficinas',
+    eventLoadedCargo: '[event] Events loaded Cargos',
+    eventLoadedUsuarioValidadorDni: '[event] Events loaded UsuarioValidadorDni',
     
 }

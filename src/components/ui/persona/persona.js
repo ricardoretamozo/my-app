@@ -16,8 +16,8 @@ export const Persona = () => {
     
   }
   useEffect(() => {
-    console.log(store.getState().personaList);
-    if(store.getState().personaList.rows.length <= 0){
+    // console.log(store.getState().personaList);
+    if(store.getState().persona.rows.length <= 0){
       fetchData();
     }
     //fetchData();

@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import { Tabla } from './tabla';
 import { fetchSedes } from '../../../actions/sede'; 
 import { types } from '../../../types/types';
+import TableSede from './TableSede';
 
 export const Sede = () => {
   const dispatch = useDispatch();
@@ -21,12 +21,12 @@ export const Sede = () => {
       fetchData();
     }
     //fetchData();
-  }, []);
+  });
 
   //
   return (
     <>
-      <Sidebar componente={Tabla} />
+      <Sidebar componente={TableSede} />
     </>
   );
 };

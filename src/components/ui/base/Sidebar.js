@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {
   IconButton,
   Avatar,
@@ -15,8 +15,6 @@ import {
   DrawerContent,
   Text,
   useDisclosure,
-  BoxProps,
-  FlexProps,
   Menu,
   MenuButton,
   MenuDivider,
@@ -24,19 +22,22 @@ import {
   useColorMode,
   MenuList,
 } from '@chakra-ui/react';
+
 import {
   FiHome,
-  FiUser,
-  FiList,
+  FiUsers,
   FiCompass,
   FiStar,
   FiSettings,
   FiMenu,
   FiBell,
   FiChevronDown,
+  FiServer,
+  FiLayers,
+  FiAirplay,
+  FiTrello,
 } from 'react-icons/fi';
-import { IconType } from 'react-icons';
-import { ReactText } from 'react';
+
 import { Link as LinkA } from 'react-router-dom';
 
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
@@ -46,11 +47,13 @@ import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
 
 const LinkItems = [
-  { name: 'Home', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'Perfil', icon: FiUser, ruta: '/dashboard/perfil' },
-  { name: 'Sedes', icon: FiList, ruta: '/dashboard/sedes' },
-  { name: 'Organos', icon: FiList, ruta: '/dashboard/organos' },
-  { name: 'Oficinas', icon: FiList, ruta: '/dashboard/oficinas' },
+  { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
+  { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
+  { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
+  { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
+  { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
+  // { name: 'Personas', icon: FiUsers, ruta: '/dashboard/personas' },
+  { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
   { name: 'Favourites', icon: FiStar, ruta: '/dashboard/perfil' },
   { name: 'Settings', icon: FiSettings, ruta: '/dashboard/perfil' },

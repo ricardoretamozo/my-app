@@ -14,7 +14,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -24,8 +23,8 @@ import {
   Switch,
   Select,
   Text,
-  Badge,
   HStack,
+  Badge,
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
@@ -34,27 +33,29 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
 import {
-  deletePerfilPersona,
-  updatePerfilPersona,
-} from '../../../actions/perfilPersona';
+  deleteCargo,
+  updateCargo,
+} from '../../../actions/cargo';
 
-import PerfilPersonaAgregar from './PerfilPersonaAgregar';
+import CargoAgregar from './CargoAgregar';
 
-export default function Tables() {
+export default function TableCargo() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
   // const perfil_persona = useSelector(state => state.perfilPersona);
-  const data = store.getState().perfilPersona.rows;
 
   const bgStatus = useColorModeValue("gray.400", "#1a202c");
   const colorStatus = useColorModeValue("white", "gray.400");
 
+  const data = store.getState().cargo.rows;
+
+  console.log(data);
+
   const [indice, setIndice] = useState({
-    idPerfilPersona: null,
-    perfil: '',
-    descripcion: '',
-    activo: '',
+    idCargo: null,
+    cargo: "",
+    activo: "",
   });
 
   const handleClickOpenEdit = index => {
@@ -66,11 +67,11 @@ export default function Tables() {
     setOpenEdit(false);
   };
 
-  const handleDeletePerfilPersona = () => {
-    dispatch(deletePerfilPersona(indice))
+  const handleDeleteCargo = () => {
+    dispatch(deleteCargo(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('perfilPersona eliminado');
+        console.log('Cargo eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -78,12 +79,12 @@ export default function Tables() {
       });
   };
 
-  const actualizarPerfilPersona = e => {
+  const actualizarCargo = e => {
     e.preventDefault();
-    dispatch(updatePerfilPersona(indice))
+    dispatch(updateCargo(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('perfilPersona actualizado');
+        console.log('Sede actualizado');
       })
       .catch(e => {
         console.log(e);
@@ -98,15 +99,11 @@ export default function Tables() {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
   const columns = [
     {
-      name: 'PERFIL',
-      selector: row => row.perfil,
-      sortable: true,
-    },
-    {
-      name: 'DESCRIPCIÓN',
-      selector: row => row.descripcion,
+      name: 'CARGO',
+      selector: row => row.cargo,
       sortable: true,
     },
     {
@@ -139,7 +136,7 @@ export default function Tables() {
             colorScheme={'red'}
             mr={2}
             isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
+            onChange={() => handleClickOpenDelete(row.idCargo)}
           />
           <Button
             onClick={() => handleClickOpenEdit(row)}
@@ -152,7 +149,7 @@ export default function Tables() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Perfil
+                  Anular Cargo
                 </AlertDialogHeader>
 
                 <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
@@ -161,7 +158,7 @@ export default function Tables() {
                   <Button onClick={handleCloseDelete}>Cancelar</Button>
                   <Button
                     onClick={() =>
-                      handleDeletePerfilPersona(row.idPerfilPersona)
+                      handleDeleteCargo(row.idCargo)
                     }
                     colorScheme="red"
                     ml={3}
@@ -179,43 +176,26 @@ export default function Tables() {
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Perfil
+                Editar Cargo
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
                 <FormControl>
                   <Input
-                    value={indice ? indice.idPerfilPersona : ''}
+                    value={indice ? indice.idCargo : ''}
                     disabled={true}
                     type="text"
                     hidden={true}
-                    //defaultValue={indice ? (indice.nombre):("")}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Perfil</FormLabel>
+                  <FormLabel>Cargo</FormLabel>
                   <Input
-                    autoFocus
-                    defaultValue={indice ? indice.perfil : ''}
+                    defaultValue={indice ? indice.cargo : ''}
                     type="text"
-                    //defaultValue={item ? (item.perfil):("")}
-                    //defaultValue={indice ? (indice.nombre):("")}
                     onChange={e =>
-                      setIndice({ ...indice, perfil: e.target.value })
+                      setIndice({ ...indice, cargo: e.target.value })
                     }
-                  />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Descripcion</FormLabel>
-                  <Textarea
-                    autoFocus
-                    defaultValue={indice ? indice.descripcion : ''}
-                    // defaultValue={item ? (item.descripcion):("")}
-                    onChange={e =>
-                      setIndice({ ...indice, descripcion: e.target.value })
-                    }
-                    placeholder="Descripcion"
-                    type="text"
                   />
                 </FormControl>
                 <FormControl mt={4}>
@@ -233,7 +213,7 @@ export default function Tables() {
               </ModalBody>
               <ModalFooter>
                 <Button
-                  onClick={e => actualizarPerfilPersona(e)}
+                  onClick={e => actualizarCargo(e)}
                   colorScheme="green"
                   mr={3}
                 >
@@ -273,25 +253,22 @@ export default function Tables() {
     },
   });
 
-
   return (
     <Box
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
       boxShadow={'md'}
-      // color={useColorModeValue('white', 'gray.900')}
-      // bg={useColorModeValue('#770303', 'gray.900')}
       bg={useColorModeValue('white', 'gray.900')}
     >
     <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
           <Box>
             <Text fontSize='lg' fontWeight='600'>
-              Perfiles Table
+              Cargos Table
             </Text>
           </Box>
           <Box>
-            <PerfilPersonaAgregar/>
+            <CargoAgregar/>
           </Box>
       </HStack>
       <DataTableExtensions {...tableData}>

@@ -12,14 +12,13 @@ import {
     Input,
     Textarea,
     Select,
-    FormHelperText,
   } from "@chakra-ui/react";
 
-import {useDispatch, useSelector} from 'react-redux'
-import React, { useState, useEffect } from "react"
+import {useDispatch} from 'react-redux'
+import React, { useState } from "react"
 import { createPerfilPersona } from "../../../actions/perfilPersona"
 
-const PerfilPersonasAgregar = () => {
+const PerfilPersonaAgregar = () => {
     const [openCreate, setOpenCreate] = React.useState(false);
     const dispatch = useDispatch()
 
@@ -50,11 +49,10 @@ const PerfilPersonasAgregar = () => {
             console.log(err);
             handleCloseModal(true);
         })
-        // props.history.push('/perfiles');
 }
 return (
     <>
-        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'gray'}>Agregar</Button>
 
         <Modal
         isOpen={openCreate}
@@ -91,10 +89,6 @@ return (
                 <option value='S'>Activo</option>
                 <option value='N'>Inactivo</option>
                 </Select>
-                {/* <Input 
-                onChange={(e)=> {setPerfil({ ...userperfil, activo: (e.target.value).toUpperCase() })}}
-                placeholder='S / N'
-                type={'text'} /> */}
             </FormControl>
             </ModalBody>
             <ModalFooter>
@@ -109,4 +103,4 @@ return (
     )
 }
 
-export default PerfilPersonasAgregar;
+export default PerfilPersonaAgregar;

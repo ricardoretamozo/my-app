@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { Sede } from './sede/sede';
 import { Organo } from './organo/organo';
 import { Oficina } from './oficina/oficina';
+import { Persona } from './persona/persona';
+import { Cargo } from './cargo/cargo';
 
 export const DasboardScreen = () => {
   //
@@ -38,6 +40,16 @@ export const DasboardScreen = () => {
         <PrivateRoute
         exact path="/dashboard/oficinas"
         component = { Oficina } 
+        isAuthenticated = { !!access_token }
+        />
+        {/* <PrivateRoute
+        exact path="/dashboard/personas"
+        component = { Persona } 
+        isAuthenticated = { !!access_token }
+        /> */}
+        <PrivateRoute
+        exact path="/dashboard/cargos"
+        component = { Cargo } 
         isAuthenticated = { !!access_token }
         />
       </Switch>

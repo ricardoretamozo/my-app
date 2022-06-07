@@ -8,7 +8,9 @@
       "apellidos": "HUAMANI MENDOZA",
       "apellidoMaterno": "MENDOZA",
       "ubigeo": "040407",
-      "fechaNacimiento": "2012-04-23" 
+      "codigoVerificacion": "8",
+      "fechaNacimiento": "2022-04-23",
+      "sexo": "M"
     }
   ]
 }

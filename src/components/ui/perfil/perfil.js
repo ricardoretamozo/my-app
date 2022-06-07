@@ -3,8 +3,7 @@ import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
 import Tables from './table';
-import {Tabla} from './tabla';
-import { perfilPersona, deletePerfilPersona } from '../../../actions/perfilPersona'; 
+import { perfilPersona } from '../../../actions/perfilPersona'; 
 import { types } from '../../../types/types';
 
 export const Perfil = () => {
@@ -22,7 +21,7 @@ export const Perfil = () => {
       fetchData();
     }
     //fetchData();
-  }, []);
+  });
 
   //
   return (

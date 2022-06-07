@@ -14,7 +14,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -24,8 +23,8 @@ import {
   Switch,
   Select,
   Text,
-  Badge,
   HStack,
+  Badge,
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
@@ -34,27 +33,34 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
 import {
-  deletePerfilPersona,
-  updatePerfilPersona,
-} from '../../../actions/perfilPersona';
+  deleteOrgano,
+  updateOrgano,
+} from '../../../actions/organo';
 
-import PerfilPersonaAgregar from './PerfilPersonaAgregar';
+import OrganoAgregar from './OrganoAgregar';
 
-export default function Tables() {
+export default function TableOrgano() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
+
   // const perfil_persona = useSelector(state => state.perfilPersona);
-  const data = store.getState().perfilPersona.rows;
 
   const bgStatus = useColorModeValue("gray.400", "#1a202c");
   const colorStatus = useColorModeValue("white", "gray.400");
 
+  const data = store.getState().organo.rows;
+  const dataSede = store.getState().sede.rows;
+
   const [indice, setIndice] = useState({
-    idPerfilPersona: null,
-    perfil: '',
-    descripcion: '',
-    activo: '',
+    idOrgano: null,
+    organo: "",
+    sede: "",
+    activo: "",
+  });
+
+  const [organoid, setOrganoid] = useState({
+    idOrgano: null
   });
 
   const handleClickOpenEdit = index => {
@@ -66,11 +72,11 @@ export default function Tables() {
     setOpenEdit(false);
   };
 
-  const handleDeletePerfilPersona = () => {
-    dispatch(deletePerfilPersona(indice))
+  const handleDeleteOrgano = (x) => {
+    dispatch(deleteOrgano(x))
       .then(() => {
         handleCloseDelete(true);
-        console.log('perfilPersona eliminado');
+        console.log('Sede eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -78,12 +84,15 @@ export default function Tables() {
       });
   };
 
-  const actualizarPerfilPersona = e => {
+  // const [userorgano, setOrgano] = useState(initialOrgano);
+
+  const handleUpdateOrgano = e => {
     e.preventDefault();
-    dispatch(updatePerfilPersona(indice))
+    dispatch(updateOrgano(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('perfilPersona actualizado');
+        console.log('Sede actualizado');
+        console.log(indice);
       })
       .catch(e => {
         console.log(e);
@@ -91,22 +100,23 @@ export default function Tables() {
   };
 
   const handleClickOpenDelete = index => {
-    setIndice(index);
+    setOrganoid(index);
     setOpenDelete(true);
   };
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
   const columns = [
     {
-      name: 'PERFIL',
-      selector: row => row.perfil,
+      name: 'ORGANO',
+      selector: row => row.organo,
       sortable: true,
     },
     {
-      name: 'DESCRIPCIÓN',
-      selector: row => row.descripcion,
+      name: 'SEDE',
+      selector: row => row.sede.sede,
       sortable: true,
     },
     {
@@ -133,26 +143,28 @@ export default function Tables() {
     {
       name: 'ACCIONES',
       sortable: false,
-      cell: row => (
+      cell: row => {
+        console.log(row);
+        return (
         <div>
           <Switch
             colorScheme={'red'}
             mr={2}
             isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
+            onChange={() => handleClickOpenDelete(row.idOrgano)}
           />
           <Button
             onClick={() => handleClickOpenEdit(row)}
             size={'xs'}
             colorScheme={'blue'}
           >
-            Editar
+          Editar
           </Button>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Perfil
+                  Anular Organo
                 </AlertDialogHeader>
 
                 <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
@@ -161,7 +173,7 @@ export default function Tables() {
                   <Button onClick={handleCloseDelete}>Cancelar</Button>
                   <Button
                     onClick={() =>
-                      handleDeletePerfilPersona(row.idPerfilPersona)
+                      handleDeleteOrgano(organoid)
                     }
                     colorScheme="red"
                     ml={3}
@@ -179,43 +191,39 @@ export default function Tables() {
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Perfil
+                Editar Organo
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
                 <FormControl>
                   <Input
-                    value={indice ? indice.idPerfilPersona : ''}
+                    value={indice ? indice.idOrgano : ''}
                     disabled={true}
                     type="text"
                     hidden={true}
-                    //defaultValue={indice ? (indice.nombre):("")}
                   />
                 </FormControl>
-                <FormControl>
-                  <FormLabel>Perfil</FormLabel>
-                  <Input
-                    autoFocus
-                    defaultValue={indice ? indice.perfil : ''}
-                    type="text"
-                    //defaultValue={item ? (item.perfil):("")}
-                    //defaultValue={indice ? (indice.nombre):("")}
+                <FormControl >
+                  <FormLabel>Sede</FormLabel>
+                  <Select
+                    defaultValue={indice ? indice.sede.idSede : ''}
                     onChange={e =>
-                      setIndice({ ...indice, perfil: e.target.value })
+                      setIndice({ ...indice, sede: e.target.value })
                     }
-                  />
+                  >
+                      {dataSede.map((item, idx) => (
+                        <option value={item.idSede} key={idx}>{item.sede}</option>
+                      ))}
+                  </Select>
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Descripcion</FormLabel>
-                  <Textarea
-                    autoFocus
-                    defaultValue={indice ? indice.descripcion : ''}
-                    // defaultValue={item ? (item.descripcion):("")}
-                    onChange={e =>
-                      setIndice({ ...indice, descripcion: e.target.value })
-                    }
-                    placeholder="Descripcion"
+                  <FormLabel>Organo</FormLabel>
+                  <Input
+                    defaultValue={indice ? indice.organo : ''}
                     type="text"
+                    onChange={e =>
+                      setIndice({ ...indice, organo: e.target.value })
+                    }
                   />
                 </FormControl>
                 <FormControl mt={4}>
@@ -233,7 +241,7 @@ export default function Tables() {
               </ModalBody>
               <ModalFooter>
                 <Button
-                  onClick={e => actualizarPerfilPersona(e)}
+                  onClick={e => handleUpdateOrgano(e)}
                   colorScheme="green"
                   mr={3}
                 >
@@ -244,7 +252,7 @@ export default function Tables() {
             </ModalContent>
           </Modal>
         </div>
-      ),
+      )},
       center: true,
     },
   ];
@@ -273,25 +281,22 @@ export default function Tables() {
     },
   });
 
-
   return (
     <Box
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
       boxShadow={'md'}
-      // color={useColorModeValue('white', 'gray.900')}
-      // bg={useColorModeValue('#770303', 'gray.900')}
       bg={useColorModeValue('white', 'gray.900')}
     >
     <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
           <Box>
             <Text fontSize='lg' fontWeight='600'>
-              Perfiles Table
+              Organo Table
             </Text>
           </Box>
           <Box>
-            <PerfilPersonaAgregar/>
+            <OrganoAgregar/>
           </Box>
       </HStack>
       <DataTableExtensions {...tableData}>

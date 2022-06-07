@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   Box,
   Button,
@@ -14,7 +14,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -23,25 +22,38 @@ import {
   AlertDialog,
   Switch,
   Select,
+  Text,
+  HStack,
+  Badge,
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
-import DataTable from 'react-data-table-component';
+import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import { deletePerfilPersona } from '../../../actions/perfilPersona'; 
-// import { columns } from './Data';
+
+import {
+  deleteSede,
+  updateSede,
+} from '../../../actions/sede';
+
+import SedeAgregar from './SedeAgregar';
 
 export default function TableSede() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
-  const perfil_persona = useSelector(state => state.perfilPersona);
+  // const perfil_persona = useSelector(state => state.perfilPersona);
+
+  const bgStatus = useColorModeValue("gray.400", "#1a202c");
+  const colorStatus = useColorModeValue("white", "gray.400");
+
+  const data = store.getState().sede.rows;
 
   const [indice, setIndice] = useState({
-    idPerfilPersona: null,
-    perfil: '',
-    descripcion: '',
+    idSede: null,
+    sede: "",
+    direccion: "",
     activo: "",
   });
 
@@ -54,15 +66,29 @@ export default function TableSede() {
     setOpenEdit(false);
   };
 
-const handleDeletePerfilPersona = () =>{
-    dispatch( deletePerfilPersona( id_perfilPersona ) )
-    .then( () => {
-      handleCloseDelete(true);
-      console.log("perfilPersona eliminado");
-    }).catch(e => {
-      console.log(e)
-    });
-}
+  const handleDeleteSede = () => {
+    dispatch(deleteSede(indice))
+      .then(() => {
+        handleCloseDelete(true);
+        console.log('Sede eliminado');
+      })
+      .catch(e => {
+        console.log(e);
+        handleCloseDelete(true);
+      });
+  };
+
+  const actualizarSede = e => {
+    e.preventDefault();
+    dispatch(updateSede(indice))
+      .then(() => {
+        handleCloseEdit(true);
+        console.log('Sede actualizado');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   const handleClickOpenDelete = index => {
     setIndice(index);
@@ -72,158 +98,201 @@ const handleDeletePerfilPersona = () =>{
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
   const columns = [
     {
-      name: 'Perfil',
-      selector: 'perfil',
+      name: 'SEDE',
+      selector: row => row.sede,
       sortable: true,
     },
     {
-      name: 'Descripcion',
-      selector: 'descripcion',
+      name: 'DIRECCIÓN',
+      selector: row => row.direccion,
       sortable: true,
     },
     {
-      name: 'Activo?',
-      selector: 'activo',
+      name: 'ESTADO',
+      selector: row => row.activo,
       sortable: true,
-    },
-    {
-      name: 'Acciones',
-      sortable: false,
-      cell: row => [
-        <Switch
-          colorScheme="red"
-          mr={2}
-          isChecked={row.activo === 'S'}
-          onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
-        />,
-        <Button
-          onClick={() => handleClickOpenEdit(row.idPerfilPersona)}
-          size={'xs'}
-          colorScheme={'blue'}
+      cell: row => (
+        <div>
+          <Badge
+          bg={row.activo === "S" ? "green.400" : bgStatus}
+          color={row.activo === "S" ? "white" : colorStatus}
+          p="3px 10px"
+          w={20}
+          textAlign={'center'}
+          borderRadius={'md'}
+          fontSize={'10px'}
         >
-          Editar
-        </Button>,
-      ],
+          {row.activo === "S" ? "Activo" : "Inactivo"}
+        </Badge>
+        </div>
+      ),
+      center: true,
+    },
+    {
+      name: 'ACCIONES',
+      sortable: false,
+      cell: row => (
+        <div>
+          <Switch
+            colorScheme={'red'}
+            mr={2}
+            isChecked={row.activo === 'S'}
+            onChange={() => handleClickOpenDelete(row.idSede)}
+          />
+          <Button
+            onClick={() => handleClickOpenEdit(row)}
+            size={'xs'}
+            colorScheme={'blue'}
+          >
+            Editar
+          </Button>
+          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  Anular Sede
+                </AlertDialogHeader>
+
+                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+
+                <AlertDialogFooter>
+                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button
+                    onClick={() =>
+                      handleDeleteSede(row.idSede)
+                    }
+                    colorScheme="red"
+                    ml={3}
+                  >
+                    Si
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+
+          {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
+
+          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader display={'flex'} justifyContent={'center'}>
+                Editar Sede
+              </ModalHeader>
+              <ModalCloseButton />
+              <ModalBody pb={6}>
+                <FormControl>
+                  <Input
+                    value={indice ? indice.idSede : ''}
+                    disabled={true}
+                    type="text"
+                    hidden={true}
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Sede</FormLabel>
+                  <Input
+                    defaultValue={indice ? indice.sede : ''}
+                    type="text"
+                    onChange={e =>
+                      setIndice({ ...indice, sede: e.target.value })
+                    }
+                  />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Dirección</FormLabel>
+                  <Input
+                    defaultValue={indice ? indice.direccion : ''}
+                    onChange={e =>
+                      setIndice({ ...indice, direccion: e.target.value })
+                    }
+                    placeholder="Dirección"
+                    type="text"
+                  />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Estado</FormLabel>
+                  <Select
+                    defaultValue={indice ? indice.activo : ''}
+                    onChange={e =>
+                      setIndice({ ...indice, activo: e.target.value })
+                    }
+                  >
+                    <option value="S">Activo</option>
+                    <option value="N">Inactivo</option>
+                  </Select>
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  onClick={e => actualizarSede(e)}
+                  colorScheme="green"
+                  mr={3}
+                >
+                  Actualizar
+                </Button>
+                <Button onClick={handleCloseEdit}>Cancelar</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+        </div>
+      ),
       center: true,
     },
   ];
-
-  const data = store.getState().perfilPersona.rows;
-  const id_perfilPersona = useRef(perfil_persona.idPerfilPersona);
-
-  console.log(data);
 
   const tableData = {
     columns,
     data,
   };
 
+  // CREANDO UN TEMA PARA LA TABLA
+
+  createTheme('solarized', {
+    text: {
+      primary: '#FFF',
+      secondary: '#FFF',
+    },
+    background: {
+      default: '#171923',
+    },
+    context: {
+      background: '#171923',
+      text: '#FFF',
+    },
+    divider: {
+      default: '#FFF opacity 92%' ,
+    },
+  });
+
   return (
     <Box
       borderWidth="1px"
       borderRadius="lg"
       overflow="hidden"
+      boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-      {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
-
-      <Modal isOpen={openedit} onClose={handleCloseEdit}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display={'flex'} justifyContent={'center'}>
-            Editar Perfil
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                value={indice ? indice.idPerfilPersona : ''}
-                disabled={true}
-                type="text"
-                hidden={true}
-                //defaultValue={indice ? (indice.nombre):("")}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>Perfil</FormLabel>
-              <Input
-                autoFocus
-                defaultValue={indice ? indice.perfil : ''}
-                type="text"
-                //defaultValue={item ? (item.perfil):("")}
-                //defaultValue={indice ? (indice.nombre):("")}
-                onChange={e => setIndice({ ...indice, perfil: e.target.value })}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Descripcion</FormLabel>
-              <Textarea
-                autoFocus
-                defaultValue={indice ? indice.descripcion : ''}
-                // defaultValue={item ? (item.descripcion):("")}
-                onChange={e =>
-                  setIndice({ ...indice, descripcion: e.target.value })
-                }
-                placeholder="Descripcion"
-                type="text"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Estado</FormLabel>
-              <Select
-                defaultValue={indice ? indice.activo : ''}
-                onChange={e => setIndice({ ...indice, activo: e.target.value })}
-              >
-                <option value="S">Activo</option>
-                <option value="N">Inactivo</option>
-              </Select>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={e => handleCloseEdit(e)}
-              colorScheme="green"
-              mr={3}
-            >
-              Actualizar
-            </Button>
-            <Button onClick={handleCloseEdit}>Cancelar</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-
-      {/* -------------------- ELIMINAR ------------------- */}
-
-      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Anular Perfil
-            </AlertDialogHeader>
-
-            <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button onClick={handleCloseDelete}>Cancelar</Button>
-              <Button onClick={() => handleDeletePerfilPersona(data.idPerfilPersona)} colorScheme="red" ml={3}>
-                Si
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
-
-      {/* ------------------MOSTRAR LA TABLA-------------------- */}
-
+    <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
+          <Box>
+            <Text fontSize='lg' fontWeight='600'>
+              Sedes Table
+            </Text>
+          </Box>
+          <Box>
+            <SedeAgregar/>
+          </Box>
+      </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
+          columns={columns}
           data={data}
-          noHeader
           defaultSortAsc={false}
+          theme={useColorModeValue('default', 'solarized')}  
           pagination
-          highlightOnHover
           ignoreRowClick={true}
           responsive={true}
         />

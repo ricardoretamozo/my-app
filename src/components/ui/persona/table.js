@@ -1,14 +1,5 @@
 import React from 'react';
 import {
-  Text,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  chakra,
-  TableContainer,
   Box,
   useColorModeValue,
 } from '@chakra-ui/react';

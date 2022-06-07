@@ -1,5 +1,4 @@
 import { fetchToken } from '../helpers/fetch';
-import { types } from '../types/types';
 import { notification } from "../helpers/alert";
 import { getPerfilPerson} from '../components/ui/perfil/perfil';
 
@@ -21,9 +20,7 @@ export const createPerfilPersona = ( data ) => {
       dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
       notification("Perfil registrado correctamente.",body.message,'success');
     }else{
-
       notification("No se pudo registrar el Perfil",body.error,'error');
-
     }
   }
 }
@@ -47,25 +44,6 @@ export const perfilPersona = async () => {
   return PerfilPersona;
 };
 
-export const deletePerfilPersona = ( id ) => {
-  return async(dispatch) =>{
-      const response = await fetchToken( 
-                                  `perfil/${ id }`, 
-                                  "",
-                                  'DELETE' 
-                              );
-      
-      const body = await response.json();
-
-      if ( response.status === 200 ){
-        dispatch( getPerfilPerson( await loadPerfilPersona() ) );
-          notification("Perfil actualizado correctamente",body.message,'success');
-      }else{
-          notification("No se pudo eliminar el Perfil",body.error,'error');
-      }
-  }
-}
-
 export const updatePerfilPersona = ( data ) => {
   
   return async(dispatch) =>{
@@ -86,9 +64,28 @@ export const updatePerfilPersona = ( data ) => {
         notification("Perfil actualizado correctamente",body.message,'success');
     }else{
         
-      notification("No se pudo actualizar el Organo",body.error,'error');
+      notification("No se pudo actualizar el Perfil",body.error,'error');
     
     }
+  }
+}
+
+export const deletePerfilPersona = ( id ) => {
+  return async(dispatch) =>{
+      const response = await fetchToken( 
+                                  `perfil/${ id }`, 
+                                  "",
+                                  'DELETE' 
+                              );
+      
+      const body = await response.json();
+
+      if ( response.status === 200 ){
+        dispatch( getPerfilPerson( await loadPerfilPersona() ) );
+          notification("Perfil actualizado correctamente",body.message,'success');
+      }else{
+          notification("No se pudo eliminar el Perfil",body.error,'error');
+      }
   }
 }
 

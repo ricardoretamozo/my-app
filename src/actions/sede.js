@@ -9,8 +9,8 @@ export const createSede = data => {
     const response = await fetchToken(
       `sedes`,
       {
-        descripcion: data.descripcion,
         sede: data.sede,
+        direccion: data.direccion,
         activo: data.activo,
       },
       'POST'
@@ -19,7 +19,9 @@ export const createSede = data => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
+      
       dispatch(getSede(await loadSede()));
+
       notification('Sede registrado correctamente.', body.message, 'success');
     } else {
       notification('No se pudo registrar la Sede', body.error, 'error');
@@ -58,7 +60,7 @@ export const updateSede = data => {
       {
         idSede: data.idSede,
         sede: data.sede,
-        descripcion: data.descripcion,
+        direccion: data.direccion,
         activo: data.activo,
       },
       'PUT'
@@ -104,7 +106,7 @@ export const loadSede = async () => {
     data.push({
       idSede: sede.idSede,
       sede: sede.sede,
-      descripcion: sede.descripcion,
+      direccion: sede.direccion,
       activo: sede.activo,
     });
   });

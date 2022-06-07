@@ -5,6 +5,7 @@ import Sidebar from '../base/Sidebar';
 import { Tabla } from './tabla';
 import { fetchOficinas } from '../../../actions/oficina'; 
 import { types } from '../../../types/types';
+import TableOficina from './TableOficina';
 
 export const Oficina = () => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ export const Oficina = () => {
   //
   return (
     <>
-      <Sidebar componente={Tabla} />
+      <Sidebar componente={TableOficina} />
     </>
   );
 };

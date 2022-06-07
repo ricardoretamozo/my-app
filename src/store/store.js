@@ -7,6 +7,8 @@ import { organoReducer } from "../reducers/organoReducer";
 import { perfilPersonaReducer } from "../reducers/perfilPersonaReducer";
 import { sedeReducer } from "../reducers/sedeReducer";
 import { personaReducer } from "../reducers/personaReducer";
+import { cargoReducer } from "../reducers/cargoReducer";
+import { validadorUsuarioReducer } from "../reducers/validadorUsuario";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -16,7 +18,9 @@ const reducers = combineReducers({
     sede: sedeReducer,
     organo: organoReducer,
     oficina: oficinaReducer,
-    persona: personaReducer
+    persona: personaReducer,
+    cargo: cargoReducer,
+    usuarioDni: validadorUsuarioReducer,
 });
 
 export const store = createStore( 

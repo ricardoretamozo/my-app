@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link as LinkA } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import signInImage from '../../assets/img/poderjudicial.jpg';
@@ -24,6 +24,8 @@ export const LoginScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'white');
   const textColor = useColorModeValue('black.400', 'white');
 
+  const [openModal, setOpenModal] = useState(false)
+
   const dispatch = useDispatch();
 
   const [formValues, handleInputChange] = useForm({
@@ -31,11 +33,22 @@ export const LoginScreen = () => {
     password: '',
   });
 
+  const handleClickOpenModal = () =>{
+    setOpenModal(true)
+  }
+
   const { username, password } = formValues;
 
   const handleLogin = e => {
     e.preventDefault();
-    dispatch(startLogin(username, password));
+    dispatch(startLogin(username, password))
+    .then(() =>{
+      console.log('Login exitoso');
+    })
+    .catch((err) =>{
+      console.log(err);
+      console.log('Login fallido');
+    })
   };
 
   return (
@@ -52,18 +65,17 @@ export const LoginScreen = () => {
         >
           <Flex
             alignItems="center"
-            justifyContent="start"
+            justifyContent="center"
+            verticalAlign={'middle'}
+            w="100%"
             style={{ userSelect: 'none' }}
-            w={{ base: '100%', md: '50%', lg: '42%' }}
           >
             <Flex
               direction="column"
-              w="100%"
               background="transparent"
               p="48px"
-              mt={{ md: '150px', lg: '80px' }}
             >
-              <Heading color={titleColor} fontSize="65px" mb="15px">
+              <Heading color={titleColor} fontSize="5xl" mb="15px" textAlign={'center'}>
                 Bienvenido
               </Heading>
               <Text
@@ -72,6 +84,7 @@ export const LoginScreen = () => {
                 color={textColor}
                 fontWeight="bold"
                 fontSize="14px"
+                textAlign={'center'}
               >
                 Ingresa tu DNI y tu contraseña.
               </Text>
@@ -81,6 +94,7 @@ export const LoginScreen = () => {
                     DNI
                   </FormLabel>
                   <Input
+                  isRequired
                     borderRadius="15px"
                     mb="24px"
                     fontSize="sm"
@@ -97,6 +111,7 @@ export const LoginScreen = () => {
                     Contraseña
                   </FormLabel>
                   <Input
+                  isRequired
                     borderRadius="15px"
                     mb="36px"
                     fontSize="sm"
@@ -146,7 +161,7 @@ export const LoginScreen = () => {
               </Flex>
             </Flex>
           </Flex>
-          <Box
+          {/* <Box
             display={{ base: 'none', md: 'block' }}
             overflowX="hidden"
             h="100%"
@@ -163,7 +178,7 @@ export const LoginScreen = () => {
               position="absolute"
               borderBottomLeftRadius="20px"
             ></Box>
-          </Box>
+          </Box> */}
         </Flex>
       </Flex>
     </>

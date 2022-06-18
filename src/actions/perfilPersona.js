@@ -17,10 +17,10 @@ export const createPerfilPersona = ( data ) => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201){
+      notification("Perfil registrado correctamente.", body.message,'success');
       dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
-      notification("Perfil registrado correctamente.",body.message,'success');
     }else{
-      notification("No se pudo registrar el Perfil",body.error,'error');
+      notification("No se pudo registrar el Perfil", body.error, 'error');
     }
   }
 }

@@ -4,7 +4,7 @@ import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
 import { personaList } from '../../../actions/persona'; 
 import { types } from '../../../types/types';
-import TablesPersona from './table';
+import TablePersona from './TablePersona';
 
 export const Persona = () => {
   const dispatch = useDispatch();
@@ -21,12 +21,12 @@ export const Persona = () => {
       fetchData();
     }
     //fetchData();
-  }, []);
+  });
 
   //
   return (
     <>
-      <Sidebar componente={TablesPersona} />
+      <Sidebar componente={TablePersona} />
     </>
   );
 };

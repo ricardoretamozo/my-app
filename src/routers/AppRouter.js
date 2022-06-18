@@ -10,13 +10,20 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LoginScreen } from '../components/auth/LoginScreen';
 import { RegisterScreen } from '../components/auth/RegisterScreen';
 import { DasboardScreen } from '../components/ui/DasboardScreen';
+import HistorialUsuario  from '../components/historialUsuario/HistorialUsuario';
 
-
-import { startChecking } from '../actions/auth';
 import { fetchSedes } from '../actions/sede';
 import { fetchOrganos } from '../actions/organo';
 import { getSede } from '../components/ui/sede/sede';
 import { getOrgano } from '../components/ui/organo/organo';
+import { perfilPersona } from '../actions/perfilPersona';
+import { getPerfilPerson } from '../components/ui/perfil/perfil';
+import { fetchOficinas } from '../actions/oficina';
+import { getOficina } from '../components/ui/oficina/oficina';
+import { fetchCargos } from '../actions/cargo';
+import { getCargo } from '../components/ui/cargo/cargo';
+
+import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
 import { store } from '../store/store';
@@ -26,36 +33,77 @@ export const AppRouter = () => {
 
   console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
-  console.log(!!access_token);
+  const { rol } = useSelector(state => state.auth);
+  console.log(rol);
 
-  useEffect( () => {
+  useEffect(() => {
     dispatch(startChecking());
   }, [dispatch]);
 
-  const fetchData= async ()=> {
-    await fetchSedes().then((res)=>{
+  const fetchData = async () => {
+    await fetchSedes().then(res => {
       dispatch(getSede(res));
     });
-    
-  }
+  };
   useEffect(() => {
-    
-    if(store.getState().sede.rows.length <= 0){
+    if (store.getState().sede.rows.length <= 0) {
       fetchData();
     }
     //fetchData();
   });
 
-  const fetchDataOrgano = async ()=> {
-    await fetchOrganos().then((res)=>{
+  const fetchDataOrgano = async () => {
+    await fetchOrganos().then(res => {
       dispatch(getOrgano(res));
+    });
+  };
+  useEffect(() => {
+    if (store.getState().organo.rows.length <= 0) {
+      fetchDataOrgano();
+    }
+    //fetchData();
+  });
+
+  const fetchDataPerfil = async () => {
+    await perfilPersona().then(res => {
+      dispatch(getPerfilPerson(res));
+    });
+  };
+  useEffect(() => {
+    console.log(store.getState().perfilPersona);
+    if (store.getState().perfilPersona.rows.length <= 0) {
+      fetchDataPerfil();
+    }
+    //fetchData();
+  });
+
+  // OFICINAS
+
+  const fetchDataOficina= async ()=> {
+    await fetchOficinas().then((res)=>{
+      dispatch(getOficina(res));
     });
     
   }
   useEffect(() => {
     
-    if(store.getState().organo.rows.length <= 0){
-      fetchDataOrgano();
+    if(store.getState().oficina.rows.length <= 0){
+      fetchDataOficina();
+    }
+    //fetchData();
+  }, []);
+
+  // CARGOS
+  const fetchDataCargos= async ()=> {
+    await fetchCargos().then((res)=>{
+      dispatch(getCargo(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().cargo.rows.length <= 0){
+      fetchDataCargos();
     }
     //fetchData();
   });
@@ -69,12 +117,25 @@ export const AppRouter = () => {
             path="/auth/login"
             component={LoginScreen}
             isAuthenticated={!!access_token}
+            rol={rol}
           />
-          <Route exact path="/auth/register" component={RegisterScreen} />
+          <PublicRoute
+            exact
+            path="/auth/register"
+            component={RegisterScreen}
+            isAuthenticated={!!access_token}
+            rol={rol}
+          />
           <PrivateRoute
             exact
             path="/dashboard/home"
             component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/usuario"
+            component={HistorialUsuario}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute

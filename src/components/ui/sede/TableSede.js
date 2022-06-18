@@ -32,10 +32,7 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import {
-  deleteSede,
-  updateSede,
-} from '../../../actions/sede';
+import { deleteSede, updateSede } from '../../../actions/sede';
 
 import SedeAgregar from './SedeAgregar';
 
@@ -45,16 +42,16 @@ export default function TableSede() {
   const dispatch = useDispatch();
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
+  const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().sede.rows;
 
   const [indice, setIndice] = useState({
     idSede: null,
-    sede: "",
-    direccion: "",
-    activo: "",
+    sede: '',
+    direccion: '',
+    activo: '',
   });
 
   const handleClickOpenEdit = index => {
@@ -104,11 +101,13 @@ export default function TableSede() {
       name: 'SEDE',
       selector: row => row.sede,
       sortable: true,
+      wrap: true,
     },
     {
       name: 'DIRECCIÓN',
       selector: row => row.direccion,
       sortable: true,
+      wrap: true,
     },
     {
       name: 'ESTADO',
@@ -117,19 +116,20 @@ export default function TableSede() {
       cell: row => (
         <div>
           <Badge
-          bg={row.activo === "S" ? "green.400" : bgStatus}
-          color={row.activo === "S" ? "white" : colorStatus}
-          p="3px 10px"
-          w={20}
-          textAlign={'center'}
-          borderRadius={'md'}
-          fontSize={'10px'}
-        >
-          {row.activo === "S" ? "Activo" : "Inactivo"}
-        </Badge>
+            bg={row.activo === 'S' ? 'green.400' : bgStatus}
+            color={row.activo === 'S' ? 'white' : colorStatus}
+            p="3px 10px"
+            w={20}
+            textAlign={'center'}
+            borderRadius={'md'}
+            fontSize={'10px'}
+          >
+            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+          </Badge>
         </div>
       ),
       center: true,
+      wrap: true,
     },
     {
       name: 'ACCIONES',
@@ -153,17 +153,19 @@ export default function TableSede() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Sede
+                  {row.activo === 'S' ? (
+                    <Text>Está seguro de anular?</Text>
+                  ) : (
+                    <Text>Esta seguro de activar?</Text>
+                  )}
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
                 <AlertDialogFooter>
                   <Button onClick={handleCloseDelete}>Cancelar</Button>
                   <Button
-                    onClick={() =>
-                      handleDeleteSede(row.idSede)
-                    }
+                    onClick={() => handleDeleteSede(row.idSede)}
                     colorScheme="red"
                     ml={3}
                   >
@@ -241,6 +243,7 @@ export default function TableSede() {
         </div>
       ),
       center: true,
+      wrap: true,
     },
   ];
 
@@ -264,7 +267,7 @@ export default function TableSede() {
       text: '#FFF',
     },
     divider: {
-      default: '#FFF opacity 92%' ,
+      default: '#FFF opacity 92%',
     },
   });
 
@@ -276,25 +279,33 @@ export default function TableSede() {
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-    <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
-          <Box>
-            <Text fontSize='lg' fontWeight='600'>
-              Sedes Table
-            </Text>
-          </Box>
-          <Box>
-            <SedeAgregar/>
-          </Box>
+      <HStack
+        spacing="24px"
+        width={'100%'}
+        justifyContent={'space-between'}
+        verticalAlign={'center'}
+        p={4}
+      >
+        <Box>
+          <Text fontSize="lg" fontWeight="600">
+            Sedes Table
+          </Text>
+        </Box>
+        <Box>
+          <SedeAgregar />
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
           columns={columns}
           data={data}
           defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}  
+          theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
+          paginationPerPage={8}
+          paginationRowsPerPageOptions={[8, 15, 20, 30]}
         />
       </DataTableExtensions>
     </Box>

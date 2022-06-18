@@ -5,6 +5,8 @@ import {
   fetchServicioDni,
 } from '../helpers/fetch';
 import { types } from '../types/types';
+import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 export const startLogin = (dni, password) => {
   return async dispatch => {
@@ -21,6 +23,7 @@ export const startLogin = (dni, password) => {
       localStorage.setItem('refresh_token', body.refresh_token);
       localStorage.setItem('name', body.name);
       localStorage.setItem('rol', body.rol);
+      localStorage.setItem('identificador', body.identificador);
 
       dispatch(
         login({
@@ -28,12 +31,12 @@ export const startLogin = (dni, password) => {
           refresh_token: body.refresh_token,
           name: body.name,
           rol: body.rol,
+          identificador: body.identificador,
         })
       );
-
       timerNotification('Inicio de Sesion Exitoso!');
     } else {
-      notification('ERROR', body.error, 'error');
+    notification('Este usuario no esta registrado', 'Desea restrarlo?' , 'error');
     }
   };
 };
@@ -48,15 +51,15 @@ export const LogOut = () =>{
 }
 
 export const startDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) => {
-  return async( dispatch) =>{
+  return async( dispatch ) =>{
     const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
     const body = await response.json();
     console.log(body[0]);
     if (!!body[0]) {   
       timerNotification('Validacion correcta');
       dispatch(validadorUsuario(body[0]));
-      } else {
-      notification('ERROR', body.error, 'error');
+    } else {
+      notification('ERROR DE VALIDACIÓN', body.error, 'error');
     }
   }
   }
@@ -75,11 +78,15 @@ export const startChecking = () => {
       localStorage.setItem('refresh_token', body.refresh_token);
       localStorage.setItem('name', body.name);
       localStorage.setItem('rol', body.rol);
+      localStorage.setItem('identificador', body.identificador);
 
       dispatch(
         login({
           access_token: body.access_token,
           refresh_token: body.refresh_token,
+          name: body.name,
+          rol: body.rol,
+          identificador: body.identificador,
         })
       );
     } else {

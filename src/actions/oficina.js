@@ -5,18 +5,16 @@ import { getOficina } from '../components/ui/oficina/oficina';
 // CREATE ORGANO
 
 export const createOficina = data => {
+  // console.log(data);
   var idOrgano = {};
-  if (data.organo.idOrgano != null) {
-    idOrgano = {
-      idOrgano: Number(data.organo.idOrgano),
-    };
-    console.log(data.organo.idOrgano);
-    console.log('ingreso');
-  } else {
+  if (data.organo != null) {
     idOrgano = {
       idOrgano: Number(data.organo),
     };
+    // console.log(data.organo.idOrgano);
+    // console.log('ingreso');
   }
+  
   return async dispatch => {
     const response = await fetchToken(
       `oficinas`,
@@ -32,13 +30,27 @@ export const createOficina = data => {
 
     if (response.status === 200 || response.status === 201) {
       dispatch(getOficina(await loadOficina()));
-
       notification('Oficina registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Oficina', body.error, 'error');
+      notification('No se pudo registrar la Oficina', body.erroresValidacion.oficina, 'error');
     }
   };
 };
+
+export const cargarOficinas = () => {
+  return async dispatch => {
+
+    const response = await fetchToken('oficinas',
+    'GET');
+    const body = await response.json();
+
+    if ( response.status === 200 || response.status === 201 ) {
+      dispatch(getOficina(body));
+    }else{
+      notification('No se pudo cargar las Oficinas', body.message, 'error');
+    }
+  }
+}
 
 export const fetchOficinas = async () => {
   const response = await fetchToken('oficinas');
@@ -55,6 +67,25 @@ export const fetchOficinas = async () => {
     });
   });
   Oficina.data = data;
+  // set user info
+
+  return Oficina;
+};
+
+export const fetchOficina = async (id) => {
+  const response = await fetchToken('oficinas/listall/' + id);
+  const body = await response.json();
+  var Oficina = {};
+  const data = [];
+
+  Oficina = {
+    idOficina: body.idOficina,
+    oficina: body.oficina,
+    organo: body.organo,
+    activo: body.activo,  
+  };
+
+  //Oficina.data = data;
   // set user info
 
   return Oficina;
@@ -98,7 +129,7 @@ export const updateOficina = data => {
       dispatch(getOficina(await loadOficina()));
       notification('Oficina actualizado correctamente', body.message, 'success');
     } else {
-      notification('No se pudo actualizar el Oficina', body.error, 'error');
+      notification('No se pudo actualizar el Oficina', body.detalles, 'error');
     }
   };
 };
@@ -114,7 +145,7 @@ export const deleteOficina = id => {
       dispatch(getOficina(await loadOficina()));
       notification('Oficina actualizado correctamente', body.message, 'success');
     } else {
-      notification('No se pudo eliminar la Oficina', body.error, 'error');
+      notification('No se pudo eliminar la Oficina', body.detalles, 'error');
     }
   };
 };

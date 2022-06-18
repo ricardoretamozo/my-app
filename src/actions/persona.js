@@ -1,29 +1,37 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
 import { getPersona } from '../components/ui/persona/persona';
+import { startLogin } from './auth';
 
 // // CREATE PERSONA
 
 export const createPersona = data => {
+  console.log(data);
   var idPerfilPersona = {};
-  if (data.organo.idPerfilPersona != null) {
+  if (data.perfilPersona.idPerfilPersona != null) {
     idPerfilPersona = {
-      idPerfilPersona: Number(data.organo.idPerfilPersona),
+      idPerfilPersona: Number(data.perfilPersona.idPerfilPersona),
     };
-    console.log(data.organo.idPerfilPersona);
+    console.log(data.perfilPersona.idPerfilPersona);
     console.log('ingreso');
   } else {
     idPerfilPersona = {
-      idPerfilPersona: Number(data.organo),
+      idPerfilPersona: Number(data.perfilPersona),
     };
   }
   return async dispatch => {
     const response = await fetchToken(
-      `oficinas`,
+      `personas`,
       {
-        oficina: data.oficina,
-        organo: {idOrgano: data.organo},
+        nombre: data.nombre,
+        apellido: data.apellido,
+        dni: data.dni,
+        usuario: data.usuario,
+        password: data.password,
+        fecha: data.fecha,
+        sexo: data.sexo,
         activo: data.activo,
+        perfilPersona: {idPerfilPersona: data.perfilPersona}
       },
       'POST'
     );
@@ -32,10 +40,39 @@ export const createPersona = data => {
 
     if (response.status === 200 || response.status === 201) {
       dispatch(getPersona(await loadPersona()));
-
       notification('Oficina registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Oficina', body.error, 'error');
+      notification('No se pudo registrar la Persona', body.detalles, 'error');
+    }
+  };
+};
+
+export const createPersonaRegister = data => {
+  console.log(data);
+  return async dispatch => {
+    const response = await fetchToken(
+      `personas/register`,
+      {
+        nombre: data.nombre,
+        apellido: data.apellido,
+        dni: data.dni,
+        usuario: data.dni,
+        password: data.password,
+        fecha: data.fecha,
+        sexo: data.sexo,
+        activo: data.activo,
+        perfilPersona: {idPerfilPersona: 4}
+      },
+      'POST'
+    );
+
+    const body = await response.json();
+
+    if (response.status === 200 || response.status === 201) {
+      dispatch(startLogin(data.dni, data.password));
+      notification('Oficina registrado correctamente.', body.message, 'success');
+    } else {
+      notification('No se pudo registrar la Persona', body.detalles, 'error');
     }
   };
 };
@@ -54,6 +91,7 @@ export const personaList = async () => {
       apellido: persona.apellido,
       dni: persona.dni,
       usuario: persona.usuario,
+      password: persona.password,
       fecha: persona.fecha,
       sexo: persona.sexo,
       activo: persona.activo,
@@ -71,31 +109,32 @@ export const personaList = async () => {
 export const updatePersona = data => {
 
   var idPerfilPersona = {};
-  if (data.organo.idPerfilPersona != null) {
+  if (data.perfilPersona.idPerfilPersona != null) {
     idPerfilPersona = {
-      idPerfilPersona: Number(data.organo.idPerfilPersona),
+      idPerfilPersona: Number(data.perfilPersona.idPerfilPersona),
     };
-    console.log(data.organo.idPerfilPersona);
+    console.log(data.perfilPersona.idPerfilPersona);
     console.log('ingreso');
   } else {
     idPerfilPersona = {
-      idPerfilPersona: Number(data.organo),
+      idPerfilPersona: Number(data.perfilPersona),
     };
   }
 
   return async dispatch => {
     const response = await fetchToken(
-      `oficinas`,
+      `personas`,
       {
       idpersona: data.idpersona,
       nombre: data.nombre,
       apellido: data.apellido,
       dni: data.dni,
       usuario: data.usuario,
+      password: data.password,
       fecha: data.fecha,
       sexo: data.sexo,
       activo: data.activo,
-      perfilPersona: data.perfilPersona
+      perfilPersona: idPerfilPersona
       },
       'PUT'
     );
@@ -106,7 +145,7 @@ export const updatePersona = data => {
       dispatch(getPersona(await loadPersona()));
       notification('Persona actualizado correctamente', body.message, 'success');
     } else {
-      notification('No se pudo actualizar la Persona', body.error, 'error');
+      notification('No se pudo actualizar la Persona', body.detalles, 'error');
     }
   };
 };
@@ -122,7 +161,7 @@ export const deletePersona = id => {
       dispatch(getPersona(await loadPersona()));
       notification('Persona actualizado correctamente', body.message, 'success');
     } else {
-      notification('No se pudo eliminar la Persona', body.error, 'error');
+      notification('No se pudo eliminar la Persona', body.detalles, 'error');
     }
   };
 };
@@ -142,6 +181,7 @@ export const loadPersona = async () => {
       apellido: persona.apellido,
       dni: persona.dni,
       usuario: persona.usuario,
+      password: persona.password,
       fecha: persona.fecha,
       sexo: persona.sexo,
       activo: persona.activo,

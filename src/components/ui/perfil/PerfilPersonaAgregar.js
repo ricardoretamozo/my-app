@@ -47,19 +47,18 @@ const PerfilPersonaAgregar = () => {
             handleCloseModal(true);
         }).catch(err =>{
             console.log(err);
-            handleCloseModal(true);
         })
 }
 return (
     <>
         <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'gray'}>Agregar</Button>
-
+        
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
-        closeOnOverlayClick={true}
         >
         <ModalOverlay />
+        <form>
         <ModalContent>
             <ModalHeader>Agregar Nuevo Perfil</ModalHeader>
             <ModalCloseButton />
@@ -69,15 +68,13 @@ return (
                 <Input 
                 onChange={(e)=> {setPerfil({ ...userperfil, perfil: (e.target.value).toUpperCase() })}}
                 placeholder='Perfil'
-                isRequired={true}
                 type={'text'} />
             </FormControl>
-            <FormControl mt={4} isRequired>
+            <FormControl mt={4} isRequired={true}>
                 <FormLabel>Descripcion</FormLabel>
                 <Textarea
                 onChange={(e)=> {setPerfil({ ...userperfil, descripcion: (e.target.value) })}} 
                 placeholder='Descripcion'
-                isRequired
                 />
             </FormControl>
             <FormControl mt={4} isRequired>
@@ -92,12 +89,13 @@ return (
             </FormControl>
             </ModalBody>
             <ModalFooter>
-            <Button onClick={()=>savePerfil()} colorScheme={'blue'} autoFocus mr={3}>
+            <Button type={'submit'} onClick={()=>savePerfil()} colorScheme={'blue'} mr={3}>
                 Guardar
             </Button>
             <Button onClick={handleCloseModal}>Cancelar</Button>
             </ModalFooter>
         </ModalContent>
+        </form>
         </Modal>
     </>
     )

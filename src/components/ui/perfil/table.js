@@ -152,10 +152,12 @@ export default function Tables() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Perfil
+
+                  {row.activo == 'S' ?  'Esta seguro de activar?' : 'Está seguro de anular?'}
+
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
                 <AlertDialogFooter>
                   <Button onClick={handleCloseDelete}>Cancelar</Button>

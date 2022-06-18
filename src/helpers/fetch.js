@@ -38,7 +38,7 @@ export const fetchServicioDni = ( endpoint, method='GET' ) => {
 }
 
 export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
-
+    
     const url = `${ baseURL }/${ endpoint }`;
     const token = localStorage.getItem('refresh_token') || '';
 

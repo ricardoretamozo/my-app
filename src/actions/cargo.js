@@ -48,6 +48,23 @@ export const fetchCargos = async () => {
   return Cargo;
 };
 
+export const fetchCargo = async (id) => {
+  const response = await fetchToken('cargos/listall/' + id);
+  const body = await response.json();
+  var Cargo = {};
+  const data = [];
+
+  Cargo = {
+    idCargo: body.idCargo,
+    cargo: body.cargo,
+    activo: body.activo,  
+  };
+
+  //Oficina.data = data;
+  // set user info
+  return Cargo;
+};
+
 //  UPDATE SEDE
 
 export const updateCargo = data => {

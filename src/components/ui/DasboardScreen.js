@@ -42,11 +42,11 @@ export const DasboardScreen = () => {
         component = { Oficina } 
         isAuthenticated = { !!access_token }
         />
-        {/* <PrivateRoute
+        <PrivateRoute
         exact path="/dashboard/personas"
         component = { Persona } 
         isAuthenticated = { !!access_token }
-        /> */}
+        />
         <PrivateRoute
         exact path="/dashboard/cargos"
         component = { Cargo } 

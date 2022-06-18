@@ -10,24 +10,32 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
+  Select as SelectForm,
 } from '@chakra-ui/react';
 
 import { store } from '../../../store/store';
 
+import Select, { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
+
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
-import { createOficina } from '../../../actions/oficina';
+import { createOficina, fetchOficinas } from '../../../actions/oficina';
+
+import { types } from '../../../types/types';
+
+import mockData from './Data';
 
 const OficinaAgregar = () => {
-  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
   const dispatch = useDispatch();
 
-  const oficinaData = store.getState().oficina.rows;
+  // const oficinaData = store.getState().oficina.rows;
   const sedeData = store.getState().sede.rows;
   // console.log(sedeData);
-  var organoData = store.getState().organo.rows;
-  // console.log(organoData.filter(organo => organo.sede.sede === "SELVA ALEGRE"));
+  const organoData = store.getState().organo.rows;
+
+  var organoInfo = organoData;
+  console.log(organoData);
 
   const [indice, setIndice] = useState({
     idOrgano: null,
@@ -35,14 +43,6 @@ const OficinaAgregar = () => {
     sede: '',
     activo: '',
   });
-
-  var DataOrgano;
-
-  const handleClickSelectSede = e => {
-    // organoData = organoData.filter(organo => organo.sede.idSede == Number(e));
-    // console.log(organoData);
-    setIndice(organoData.filter(organo => organo.sede.idSede == Number(e)));
-  };
 
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
@@ -62,10 +62,38 @@ const OficinaAgregar = () => {
   };
 
   const [dataOficina, setOficina] = useState(initialOficina);
+  const [sedeNombre, setsedeNombre] = useState(null);
+  const [organoSelect, setorganoSelect] = useState([
+    { idOrgano: 0, organo: 'Seleccione una Sede' },
+  ]);
+  const [organoNombre, setorganoNombre] = useState(null);
+
+  // console.log(sedeNombre);
 
   const { oficina, organo, activo } = dataOficina;
 
+  const handleChange = value => {
+    // setsedeNombre(e.target.value);
+    console.log(value);
+    if (value == null) {
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+    } else {
+      setorganoSelect(
+        organoInfo.filter(indice => indice.sede.idSede == value.value)
+      );
+    }
+    console.log(organoSelect);
+  };
+
+  //
+  const handleChangeOrgano = value => {
+    console.log(value);
+    setorganoNombre(value.value);
+  };
+
   const saveOficina = () => {
+    console.log(organoNombre);
+    var organo = organoNombre;
     dispatch(createOficina({ oficina, organo, activo }))
       .then(() => {
         // console.log(dataOrgano);
@@ -73,7 +101,6 @@ const OficinaAgregar = () => {
       })
       .catch(err => {
         console.log(err);
-        handleCloseModal(true);
       });
   };
 
@@ -93,7 +120,8 @@ const OficinaAgregar = () => {
           <ModalHeader>Agregar Nueva Oficina</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl isRequired>
+            {/* <OficinaFilter props /> */}
+            <FormControl isRequired={true}>
               <FormLabel>Sede</FormLabel>
               <Select
                 // defaultValue={indice ? indice.sede.idSede : ''}
@@ -101,32 +129,39 @@ const OficinaAgregar = () => {
                 // onClick={handleClickSelectSede("SELVA ALEGRE")}
                 // onChangeCapture={handleClickSelectSede(sedeData.idSede)}
                 // value={DataOrgano ? DataOrgano.sede : ''}
-                onChange={e => handleClickSelectSede(e.target.value)}
-              >
-                {sedeData.map((item, idx) => (
-                  <option value={item.idSede} key={idx}>
-                    {item.sede}
-                  </option>
-                ))}
-              </Select>
+                // value={sedeNombre}
+                required
+                onChange={handleChange}
+                // onChange={(e)=> { console.log(e.target.value); }}
+                isRequired
+                isSearchable
+                isClearable
+                options={sedeData.map(sede => ({
+                  value: sede.idSede,
+                  label: sede.sede,
+                }))}
+              />
             </FormControl>
-            <FormControl isRequired mt={4}>
+            <FormControl mt={4} isRequired={true}>
               <FormLabel>Organo</FormLabel>
               <Select
-              //   value={organoData ? organoData.idOrgano : ''}
-              // defaultValue={indice ? indice.sede.idSede : ''}
-              onChange={(e)=> {setOficina({...dataOficina,organo:(e.target.value) })}}
-              // onClick={(e)=> {organoData}}
-              >
-                {organoData.map((item, idx) => {
-                   
-                    return (
-                    <option value={item.idOrgano} key={idx}>
-                    {item.organo}
-                  </option>
-                  );
-                })}
-              </Select>
+                // isDisabled={indice.sede !== Select ? true : false}
+                //   value={organoData ? organoData.idOrgano : ''}
+                // defaultValue={indice ? indice.sede.idSede : ''}
+                // OnChangeValue={(e)=> {setOficina({...dataOficina,organo:(e.target.value) })}}
+                //OnChangeValue={(e)=> {setOficina({...dataOficina,organo:(e.target.value) })}}
+                // onClick={(e)=> {organoData}}
+                onChange={handleChangeOrgano}
+                defaultValue={organoSelect.map(organo => ({
+                  value: organo.idOrgano,
+                  label: organo.organo,
+                }))}
+                isClearable
+                options={organoSelect.map(organo => ({
+                  value: organo.idOrgano,
+                  label: organo.organo,
+                }))}
+              />
             </FormControl>
             <FormControl mt={4}>
               <FormLabel>Oficina</FormLabel>
@@ -138,25 +173,27 @@ const OficinaAgregar = () => {
                   });
                 }}
                 placeholder="Oficina"
-                isRequired={true}
                 type={'text'}
               />
             </FormControl>
             <FormControl mt={4} isRequired>
               <FormLabel>Estado</FormLabel>
-              <Select
+              <SelectForm
                 defaultValue={(dataOficina.activo = 'S')}
                 onChange={e => {
                   setOficina({ ...dataOficina, activo: e.target.value });
                 }}
+                // options={ estados }
+                autoFocus={true}
               >
                 <option value="S">Activo</option>
                 <option value="N">Inactivo</option>
-              </Select>
+              </SelectForm>
             </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button
+              type={'submit'}
               onClick={() => saveOficina()}
               colorScheme={'blue'}
               autoFocus
@@ -171,5 +208,10 @@ const OficinaAgregar = () => {
     </>
   );
 };
+
+const organoID = organo => ({
+  type: types.eventOrganoId,
+  payload: organo,
+});
 
 export default OficinaAgregar;

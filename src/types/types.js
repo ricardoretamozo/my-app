@@ -11,5 +11,5 @@ export const types = {
     eventLoadedOficina: '[event] Events loaded Oficinas',
     eventLoadedCargo: '[event] Events loaded Cargos',
     eventLoadedUsuarioValidadorDni: '[event] Events loaded UsuarioValidadorDni',
-    
+    eventOrganoId: '[event] OrganoId',
 }

@@ -10,15 +10,16 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Select,
+    Select as ChakraSelect,
   } from "@chakra-ui/react";
+  
+import Select from 'react-select';
 
 import { store } from '../../../store/store';
 
 import {useDispatch} from 'react-redux'
 import React, { useState } from "react"
 import { createOrgano } from "../../../actions/organo"
-
 const OrganoAgregar = () => {
     const [openCreate, setOpenCreate] = React.useState(false);
     const dispatch = useDispatch();
@@ -53,9 +54,14 @@ const OrganoAgregar = () => {
             handleCloseModal(true);
         }).catch(err =>{
             console.log(err);
-            handleCloseModal(true);
         })
     }
+
+    const handleChangeSede= (value) => {
+        setOrgano({
+          ...dataOrgano, sede: { idSede: value.value, sede: value.label }
+        })
+      }
 
 return (
     <>
@@ -71,41 +77,42 @@ return (
             <ModalHeader>Agregar Nuevo Organo</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
-            <FormControl isRequired>
+            <FormControl>
                 <FormLabel>Sede</FormLabel>
                   <Select
                     // defaultValue={indice ? indice.sede.idSede : ''}
-                    onChange={(e)=> {setOrgano({...dataOrgano,sede:(e.target.value) })}}
-                  >
-                      {sedeData.map((item, idx) => (
-                        <option value={item.idSede} key={idx}>{item.sede}</option>
-                      ))}
-                  </Select>
+                    onChange={handleChangeSede}
+                    options={sedeData.map(sede => ({
+                        value: sede.idSede,
+                        label: sede.sede
+                      }))}
+                      isClearable
+                      isSearchable
+                  />
             </FormControl>
-            <FormControl  mt={4}>
+            <FormControl  mt={4} isRequired>
                 <FormLabel>Organo</FormLabel>
                 <Input 
                 onChange={(e)=> {setOrgano({ ...dataOrgano, organo: (e.target.value).toUpperCase() })}}
-                placeholder='Nombre de la sede'
-                isRequired={true}
-                type={'text'} />
+                type={'text'}
+                 />
             </FormControl>
-            <FormControl mt={4} isRequired>
+            <FormControl mt={4}>
                 <FormLabel>Estado</FormLabel>
-                <Select
+                <ChakraSelect
                 defaultValue={dataOrgano.activo = 'S'}
                 onChange={(e)=> {setOrgano({...dataOrgano,activo:(e.target.value) })}}
                 >
                 <option value='S'>Activo</option>
                 <option value='N'>Inactivo</option>
-                </Select>
+                </ChakraSelect>
             </FormControl>
             </ModalBody>
             <ModalFooter>
-            <Button onClick={()=>saveOrgano()} colorScheme={'blue'} autoFocus mr={3}>
+            <Button type={'submit'} onClick={()=>saveOrgano()} colorScheme={'blue'} autoFocus mr={3}>
                 Guardar
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button  onClick={handleCloseModal}>Cancelar</Button>
             </ModalFooter>
         </ModalContent>
         </Modal>

@@ -4,6 +4,7 @@ const initialState = {
     rows: []
 }
 
+
 export const organoReducer = ( state = initialState, action ) => {
 
     switch (action.type) {
@@ -11,6 +12,21 @@ export const organoReducer = ( state = initialState, action ) => {
             return {
                 ...state,                
                 rows: [...action.payload.data],
+            }
+
+        default:
+            return state;
+    }
+
+}
+
+export const organoIdReducer = ( state =  { },action ) => {
+
+    switch (action.type) {
+        case types.eventOrganoId:
+            return {
+                ...state,                
+                 ...action.payload,
             }
 
         default:

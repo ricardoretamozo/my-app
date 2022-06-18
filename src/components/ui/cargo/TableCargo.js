@@ -149,10 +149,10 @@ export default function TableCargo() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Cargo
+                  {row.activo == 'S' ? <Text>Esta seguro de anular?</Text> : <Text>Está seguro de activar?</Text>}
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
                 <AlertDialogFooter>
                   <Button onClick={handleCloseDelete}>Cancelar</Button>

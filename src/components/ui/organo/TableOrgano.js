@@ -32,10 +32,7 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import {
-  deleteOrgano,
-  updateOrgano,
-} from '../../../actions/organo';
+import { deleteOrgano, updateOrgano } from '../../../actions/organo';
 
 import OrganoAgregar from './OrganoAgregar';
 
@@ -46,21 +43,26 @@ export default function TableOrgano() {
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
+  const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().organo.rows;
   const dataSede = store.getState().sede.rows;
+  var sede1 = dataSede[1].sede;
+  var organo1 = data.filter(organo => organo.sede.sede === sede1);
+
+  console.log(sede1, 'sede1');
+  console.log(organo1, 'organo1');
 
   const [indice, setIndice] = useState({
     idOrgano: null,
-    organo: "",
-    sede: "",
-    activo: "",
+    organo: '',
+    sede: '',
+    activo: '',
   });
 
   const [organoid, setOrganoid] = useState({
-    idOrgano: null
+    idOrgano: null,
   });
 
   const handleClickOpenEdit = index => {
@@ -72,7 +74,7 @@ export default function TableOrgano() {
     setOpenEdit(false);
   };
 
-  const handleDeleteOrgano = (x) => {
+  const handleDeleteOrgano = x => {
     dispatch(deleteOrgano(x))
       .then(() => {
         handleCloseDelete(true);
@@ -126,16 +128,16 @@ export default function TableOrgano() {
       cell: row => (
         <div>
           <Badge
-          bg={row.activo === "S" ? "green.400" : bgStatus}
-          color={row.activo === "S" ? "white" : colorStatus}
-          p="3px 10px"
-          w={20}
-          textAlign={'center'}
-          borderRadius={'md'}
-          fontSize={'10px'}
-        >
-          {row.activo === "S" ? "Activo" : "Inactivo"}
-        </Badge>
+            bg={row.activo === 'S' ? 'green.400' : bgStatus}
+            color={row.activo === 'S' ? 'white' : colorStatus}
+            p="3px 10px"
+            w={20}
+            textAlign={'center'}
+            borderRadius={'md'}
+            fontSize={'10px'}
+          >
+            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+          </Badge>
         </div>
       ),
       center: true,
@@ -146,113 +148,118 @@ export default function TableOrgano() {
       cell: row => {
         console.log(row);
         return (
-        <div>
-          <Switch
-            colorScheme={'red'}
-            mr={2}
-            isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idOrgano)}
-          />
-          <Button
-            onClick={() => handleClickOpenEdit(row)}
-            size={'xs'}
-            colorScheme={'blue'}
-          >
-          Editar
-          </Button>
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  Anular Organo
-                </AlertDialogHeader>
+          <div>
+            <Switch
+              colorScheme={'red'}
+              mr={2}
+              isChecked={row.activo === 'S'}
+              onChange={() => handleClickOpenDelete(row.idOrgano)}
+            />
+            <Button
+              onClick={() => handleClickOpenEdit(row)}
+              size={'xs'}
+              colorScheme={'blue'}
+            >
+              Editar
+            </Button>
+            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                    {row.activo === 'S' ? (
+                      <Text>Está seguro de anular?</Text>
+                    ) : (
+                      <Text>Esta seguro de activar?</Text>
+                    )}
+                  </AlertDialogHeader>
 
-                <AlertDialogBody>Está seguro de anular?</AlertDialogBody>
+                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
-                <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
-                  <Button
-                    onClick={() =>
-                      handleDeleteOrgano(organoid)
-                    }
-                    colorScheme="red"
-                    ml={3}
-                  >
-                    Si
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
+                  <AlertDialogFooter>
+                    <Button onClick={handleCloseDelete}>Cancelar</Button>
+                    <Button
+                      onClick={() => handleDeleteOrgano(organoid)}
+                      colorScheme="red"
+                      ml={3}
+                    >
+                      Si
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
 
-          {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
+            {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Organo
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <FormControl>
-                  <Input
-                    value={indice ? indice.idOrgano : ''}
-                    disabled={true}
-                    type="text"
-                    hidden={true}
-                  />
-                </FormControl>
-                <FormControl >
-                  <FormLabel>Sede</FormLabel>
-                  <Select
-                    defaultValue={indice ? indice.sede.idSede : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, sede: e.target.value })
-                    }
-                  >
+            <Modal isOpen={openedit} onClose={handleCloseEdit}>
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader display={'flex'} justifyContent={'center'}>
+                  Editar Organo
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={6}>
+                  <FormControl>
+                    <Input
+                      value={indice ? indice.idOrgano : ''}
+                      disabled={true}
+                      type="text"
+                      hidden={true}
+                    />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Sede</FormLabel>
+                    <Select
+                      defaultValue={indice ? indice.sede.idSede : ''}
+                      onChange={e =>
+                        setIndice({ ...indice, sede: e.target.value })
+                      }
+                    >
                       {dataSede.map((item, idx) => (
-                        <option value={item.idSede} key={idx}>{item.sede}</option>
+                        <option value={item.idSede} key={idx}>
+                          {item.sede}
+                        </option>
                       ))}
-                  </Select>
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Organo</FormLabel>
-                  <Input
-                    defaultValue={indice ? indice.organo : ''}
-                    type="text"
-                    onChange={e =>
-                      setIndice({ ...indice, organo: e.target.value })
-                    }
-                  />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Estado</FormLabel>
-                  <Select
-                    defaultValue={indice ? indice.activo : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, activo: e.target.value })
-                    }
+                    </Select>
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Organo</FormLabel>
+                    <Input
+                      defaultValue={indice ? indice.organo : ''}
+                      type="text"
+                      onChange={e =>
+                        setIndice({ ...indice, organo: e.target.value })
+                      }
+                    />
+                  </FormControl>
+                  <FormControl mt={4}>
+                    <FormLabel>Estado</FormLabel>
+                    <Select
+                      defaultValue={indice ? indice.activo : ''}
+                      onChange={e =>
+                        setIndice({ ...indice, activo: e.target.value })
+                      }
+                    >
+                      <option value="S">Activo</option>
+                      <option value="N">Inactivo</option>
+                    </Select>
+                  </FormControl>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={e => handleUpdateOrgano(e)}
+                    colorScheme="green"
+                    mr={3}
                   >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
-                  </Select>
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onClick={e => handleUpdateOrgano(e)}
-                  colorScheme="green"
-                  mr={3}
-                >
-                  Actualizar
-                </Button>
-                <Button onClick={handleCloseEdit}>Cancelar</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-        </div>
-      )},
+                    Actualizar
+                  </Button>
+                  <Button onClick={handleCloseEdit}>Cancelar</Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </div>
+        );
+      },
       center: true,
     },
   ];
@@ -277,7 +284,7 @@ export default function TableOrgano() {
       text: '#FFF',
     },
     divider: {
-      default: '#FFF opacity 92%' ,
+      default: '#FFF opacity 92%',
     },
   });
 
@@ -289,25 +296,33 @@ export default function TableOrgano() {
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-    <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
-          <Box>
-            <Text fontSize='lg' fontWeight='600'>
-              Organo Table
-            </Text>
-          </Box>
-          <Box>
-            <OrganoAgregar/>
-          </Box>
+      <HStack
+        spacing="24px"
+        width={'100%'}
+        justifyContent={'space-between'}
+        verticalAlign={'center'}
+        p={4}
+      >
+        <Box>
+          <Text fontSize="lg" fontWeight="600">
+            Organo Table
+          </Text>
+        </Box>
+        <Box>
+          <OrganoAgregar />
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
           columns={columns}
           data={data}
           defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}  
+          theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
+          paginationPerPage={8}
+          paginationRowsPerPageOptions={[8, 15, 20, 30]}
         />
       </DataTableExtensions>
     </Box>

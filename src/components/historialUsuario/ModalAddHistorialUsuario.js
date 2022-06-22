@@ -49,7 +49,10 @@ import {
     });
   
     const handleClickOpenCreate = () => {
-      setOpenCreate(true);
+      setTimeout(() => {
+        console.log('you can see me after 2 seconds')
+        setOpenCreate(true);
+      },  8000);
     };
   
     const handleCloseModal = () => {
@@ -135,6 +138,7 @@ import {
           isOpen={props.abrir}
           onClose={props.cerrar}
           closeOnOverlayClick={true}
+          zIndex={500}
         >
           <ModalOverlay />
           <ModalContent>

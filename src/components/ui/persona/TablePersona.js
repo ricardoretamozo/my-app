@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Box,
@@ -21,14 +21,26 @@ import {
   AlertDialogFooter,
   AlertDialog,
   Switch,
-  Select,
+  Select as SelectChakra,
   Text,
   HStack,
   Badge,
   Grid,
   GridItem,
+  Tooltip,
+  IconButton,
+  Divider,
+  Table,
+  Thead,
+  Th,
+  Tr,
+  Tfoot,
+  Td,
+  Tbody,
+  TableContainer,
 } from '@chakra-ui/react';
-import { FaFingerprint } from 'react-icons/fa';
+import { CheckCircleIcon, NotAllowedIcon, EditIcon } from '@chakra-ui/icons';
+import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
 
 import { store } from '../../../store/store';
 
@@ -40,8 +52,15 @@ import { deletePersona, updatePersona } from '../../../actions/persona';
 
 import PersonaAgregar from './PersonaAgregar';
 
+import Select from 'react-select';
+import {
+  createPersonaOrgano,
+  fetchPersonaOrgano,
+} from '../../../actions/personaOrgano';
+
 export default function TablePersona() {
   const [openedit, setOpenEdit] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -53,6 +72,11 @@ export default function TablePersona() {
   const data = store.getState().persona.rows;
   const dataPerfil = store.getState().perfilPersona.rows;
 
+  const sedeData = store.getState().sede.rows;
+  const organoData = store.getState().organo.rows;
+
+  var organoInfo = organoData;
+
   console.log(data);
 
   const [indice, setIndice] = useState({
@@ -61,6 +85,8 @@ export default function TablePersona() {
     dni: '',
     usuario: '',
     password: '',
+    correo: '',
+    celular: '',
     fecha: null,
     sexo: '',
     activo: '',
@@ -69,13 +95,92 @@ export default function TablePersona() {
     },
   });
 
+  const initialPersonaOrgano = {
+    idPersonaOrganica: null,
+    persona: {
+      idpersona: null,
+    },
+    organo: {
+      idOrgano: null,
+    },
+  };
+
+  const [organoSelect, setorganoSelect] = useState([
+    { idOrgano: 0, organo: 'Seleccione una Sede' },
+  ]);
+  const [organoNombre, setorganoNombre] = useState(null);
+
   const [personaid, setPersonaid] = useState({
     idPersona: null,
   });
 
+  const handleChangeSede = value => {
+    // setsedeNombre(e.target.value);
+    console.log(value);
+    if (value == null) {
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+    } else {
+      setorganoSelect(
+        organoInfo.filter(indice => indice.sede.idSede == value.value)
+      );
+    }
+    console.log(organoSelect);
+  };
+
+  const savePersonaOrgano = e => {
+    handleCloseModal(true);
+    console.log(indice);
+    // console.log(e)
+    e.preventDefault();
+    var personaOrgano = {
+      persona: {
+        idpersona: indice.idpersona,
+      },
+      organo: {
+        idOrgano: organoNombre,
+      },
+    };
+    dispatch(createPersonaOrgano(personaOrgano))
+      .then(() => {
+        console.log('creado correctamente');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
+  const handleChangeOrgano = value => {
+    console.log(value);
+    setorganoNombre(value.value);
+  };
+
   const handleClickOpenEdit = index => {
     setIndice(index);
     setOpenEdit(true);
+  };
+
+  const [personaOrganos, setPersonaOrganos] = useState([]);
+
+  const handleClickOpenModal = index => {
+    // hacer el fetch
+    
+    const fetchDataPersonaOrgano = async () => {
+      await fetchPersonaOrgano(index).then(res => {
+        setPersonaOrganos(res);
+      })
+      useEffect(() =>{
+        fetchDataPersonaOrgano()
+      })
+    };
+
+    setIndice(index);
+    setOpenModal(true);
+  };
+
+  console.log(personaOrganos);
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   const handleCloseEdit = () => {
@@ -136,27 +241,169 @@ export default function TablePersona() {
       wrap: true,
     },
     {
-      name: <b>PERFIL PERSONA</b> ,
+      name: <b>PERFIL PERSONA</b>,
       selector: row => row.perfilPersona.perfil,
       sortable: true,
     },
     {
       name: <b>ESTADO</b>,
       selector: row => row.activo,
-      sortable: true,
+      sortable: false,
       cell: row => (
         <div>
-          <Badge
-            bg={row.activo === 'S' ? 'green.400' : bgStatus}
-            color={row.activo === 'S' ? 'white' : colorStatus}
-            p="3px 10px"
-            w={20}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
+          <Tooltip
+            hasArrow
+            label={row.activo === 'S' ? 'activo' : 'inactivo'}
+            bg="gray.300"
+            color="black"
           >
-            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
-          </Badge>
+            <Badge
+              bg={row.activo === 'S' ? 'green.400' : bgStatus}
+              textColor={row.activo === 'S' ? 'white' : colorStatus}
+              p={1}
+              textAlign={'center'}
+              borderRadius={'lg'}
+            >
+              {row.activo === 'S' ? (
+                <CheckCircleIcon boxSize={5} />
+              ) : (
+                <NotAllowedIcon boxSize={5} />
+              )}
+            </Badge>
+          </Tooltip>
+        </div>
+      ),
+      center: true,
+      wrap: true,
+    },
+    {
+      name: <b>PERMISOS</b>,
+      sortable: false,
+      cell: row => (
+        <div>
+          {row.perfilPersona.perfil === 'ASISTENTE INFORMATICO' ? (
+            <IconButton
+              onClick={() => handleClickOpenModal(row)}
+              variant={'ghost'}
+              bgColor={'none'}
+              color="blue.500"
+              icon={<FaUserSecret size={24} />}
+              h={8}
+            />
+          ) : // <TableModal handleCloseModal={handleCloseModal} open={openModal} handleOpen={handleClickOpenModal(row)}  />
+          null}
+          <Modal isOpen={openModal} onClose={handleCloseModal} size={'6xl'}>
+            <ModalOverlay />
+            <form onSubmit={savePersonaOrgano}>
+              <ModalContent>
+                <ModalHeader>
+                  ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES
+                  INFORMATICOS
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody pb={2}>
+                  <FormControl></FormControl>
+                  <HStack spacing={'10px'} mt={'10px'}>
+                    <FormControl>
+                      <FormLabel>Sede</FormLabel>
+                      <Select
+                        //  defaultValue={indice ? indice.activo : ''}
+                        required
+                        onChange={handleChangeSede}
+                        // onChange={(e)=> { console.log(e.target.value); }}
+                        isRequired
+                        isSearchable
+                        isClearable
+                        options={sedeData.map(sede => ({
+                          value: sede.idSede,
+                          label: sede.sede,
+                        }))}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Organo</FormLabel>
+                      <Select
+                        onChange={handleChangeOrgano}
+                        defaultValue={organoSelect.map(organo => ({
+                          value: organo.idOrgano,
+                          label: organo.organo,
+                        }))}
+                        isClearable
+                        options={organoSelect.map(organo => ({
+                          value: organo.idOrgano,
+                          label: organo.organo,
+                        }))}
+                      />
+                    </FormControl>
+                  </HStack>
+                  <FormControl mt={'10px'}>
+                    <Button
+                      type={'submit'}
+                      // onClick={e => handleUpdatePersona(e)}
+                      colorScheme={'blue'}
+                      mr={3}
+                    >
+                      Asignar
+                    </Button>
+                  </FormControl>
+                  <Divider
+                    orientation="horizontal"
+                    borderColor={'blue.500'}
+                    border={2}
+                    mt={'10px'}
+                  />
+
+                  <Text mt={'10px'}>
+                    Organos Juridiccionales asignados a{' '}
+                    <b> {indice.nombre + ' ' + indice.apellido}</b>
+                  </Text>
+
+                  {/* Listado de Organos asignados a ese usuario */}
+
+                  <Table
+                    size="sm"
+                    alignSelf={'start'}
+                    variant="simple"
+                    overflowX={'auto'}
+                    mt={'10px'}
+                  >
+                    <Thead>
+                      <Tr>
+                        <Th>Sede</Th>
+                        <Th>Organo</Th>
+                        <Th>Acciones</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td>inches</Td>
+                        <Td>millimetres (mm)</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>feet</Td>
+                        <Td>centimetres (cm)</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>yards</Td>
+                        <Td>metres (m)</Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </ModalBody>
+                <ModalFooter>
+                  {/* <Button
+                    type={'submit'}
+                    // onClick={e => handleUpdatePersona(e)}
+                    colorScheme={'green'}
+                    mr={3}
+                  >
+                    Actualizar
+                  </Button> */}
+                  <Button onClick={handleCloseModal}>Cancelar</Button>
+                </ModalFooter>
+              </ModalContent>
+            </form>
+          </Modal>
         </div>
       ),
       center: true,
@@ -173,13 +420,15 @@ export default function TablePersona() {
             isChecked={row.activo === 'S'}
             onChange={() => handleClickOpenDelete(row.idpersona)}
           />
-          <Button
-            onClick={() => handleClickOpenEdit(row)}
-            size={'xs'}
-            colorScheme={'blue'}
-          >
-            Editar
-          </Button>
+          <Tooltip hasArrow label={'EDITAR'}>
+            <Button
+              onClick={() => handleClickOpenEdit(row)}
+              size={'xs'}
+              colorScheme={'blue'}
+            >
+              <EditIcon />
+            </Button>
+          </Tooltip>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
@@ -209,9 +458,9 @@ export default function TablePersona() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'4xl'}>
             <ModalOverlay />
-            <form>
+            <form onSubmit={handleUpdatePersona}>
               <ModalContent>
                 <ModalHeader>Editar Persona</ModalHeader>
                 <ModalCloseButton />
@@ -267,7 +516,7 @@ export default function TablePersona() {
                       />
                     </FormControl>
                   </HStack>
-                  <HStack spacing={'10px'} mt={'20px'}>
+                  <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
                       <FormLabel>Usuario</FormLabel>
                       <Input
@@ -275,7 +524,7 @@ export default function TablePersona() {
                         onChange={e =>
                           setIndice({ ...indice, usuario: e.target.value })
                         }
-                        placeholder="USUARIO"
+                        placeholder="Usuario"
                         type={'text'}
                       />
                     </FormControl>
@@ -288,38 +537,51 @@ export default function TablePersona() {
                         }
                         type={'password'}
                         placeholder="minimo 8 caracteres"
+                        isRequired
                       />
                     </FormControl>
                   </HStack>
 
-                  <FormControl mt={4}>
-                    <FormLabel>Fecha de Nacimiento</FormLabel>
-                    <Input
-                      defaultValue={indice ? indice.fecha : ''}
-                      onChange={e =>
-                        setIndice({ ...indice, fecha: e.target.value })
-                      }
-                      type={'date'}
-                    />
-                    {/* onChange={(e)=> {setIndice({ ...persona, fecha: (e.target.value) }); setValidation(false)}}  /> */}
-                  </FormControl>
-
-                  <HStack spacing={'10px'} mt={'20px'}>
+                  <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
-                      <FormLabel>Estado</FormLabel>
-                      <Select
-                        defaultValue={indice ? indice.activo : ''}
+                      <FormLabel>Correo</FormLabel>
+                      <Input
+                        defaultValue={indice ? indice.correo : ''}
                         onChange={e =>
-                          setIndice({ ...indice, activo: e.target.value })
+                          setIndice({ ...indice, correo: e.target.value })
                         }
-                      >
-                        <option value="S">Activo</option>
-                        <option value="N">Inactivo</option>
-                      </Select>
+                        placeholder="Correo"
+                        type={'email'}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Nro Celular</FormLabel>
+                      <Input
+                        defaultValue={indice ? indice.celular : ''}
+                        onChange={e =>
+                          setIndice({ ...indice, celular: e.target.value })
+                        }
+                        type={'text'}
+                        // placeholder="942035891"
+                      />
+                    </FormControl>
+                  </HStack>
+
+                  <HStack spacing={'10px'} mt={'10px'}>
+                    <FormControl>
+                      <FormLabel>Fecha de Nacimiento</FormLabel>
+                      <Input
+                        defaultValue={indice ? indice.fecha : ''}
+                        onChange={e =>
+                          setIndice({ ...indice, fecha: e.target.value })
+                        }
+                        type={'date'}
+                      />
+                      {/* onChange={(e)=> {setIndice({ ...persona, fecha: (e.target.value) }); setValidation(false)}}  /> */}
                     </FormControl>
                     <FormControl>
                       <FormLabel>Sexo</FormLabel>
-                      <Select
+                      <SelectChakra
                         defaultValue={indice ? indice.sexo : ''}
                         onChange={e =>
                           setIndice({ ...indice, sexo: e.target.value })
@@ -327,32 +589,48 @@ export default function TablePersona() {
                       >
                         <option value="M">Masculino</option>
                         <option value="F">Femenino</option>
-                      </Select>
+                      </SelectChakra>
                     </FormControl>
                   </HStack>
-
-                  <FormControl mt={4}>
-                    <FormLabel>Perfil</FormLabel>
-                    <Select
-                      defaultValue={
-                        indice ? indice.perfilPersona.idPerfilPersona : ''
-                      }
-                      onChange={e =>
-                        setIndice({ ...indice, perfilPersona: e.target.value })
-                      }
-                    >
-                      {dataPerfil.map((item, idx) => (
-                        <option value={item.idPerfilPersona} key={idx}>
-                          {item.perfil}
-                        </option>
-                      ))}
-                    </Select>
-                  </FormControl>
+                  <HStack spacing={'10px'} mt={'10px'}>
+                    <FormControl>
+                      <FormLabel>Estado</FormLabel>
+                      <SelectChakra
+                        defaultValue={indice ? indice.activo : ''}
+                        onChange={e =>
+                          setIndice({ ...indice, activo: e.target.value })
+                        }
+                      >
+                        <option value="S">Activo</option>
+                        <option value="N">Inactivo</option>
+                      </SelectChakra>
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel>Perfil</FormLabel>
+                      <SelectChakra
+                        defaultValue={
+                          indice ? indice.perfilPersona.idPerfilPersona : ''
+                        }
+                        onChange={e =>
+                          setIndice({
+                            ...indice,
+                            perfilPersona: e.target.value,
+                          })
+                        }
+                      >
+                        {dataPerfil.map((item, idx) => (
+                          <option value={item.idPerfilPersona} key={idx}>
+                            {item.perfil}
+                          </option>
+                        ))}
+                      </SelectChakra>
+                    </FormControl>
+                  </HStack>
                 </ModalBody>
                 <ModalFooter>
                   <Button
                     type={'submit'}
-                    onClick={e => handleUpdatePersona(e)}
+                    // onClick={e => handleUpdatePersona(e)}
                     colorScheme={'green'}
                     mr={3}
                   >

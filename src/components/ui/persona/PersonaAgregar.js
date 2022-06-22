@@ -54,6 +54,8 @@ const PersonaAgregar = props => {
     usuario: '',
     dni: '',
     password: '',
+    correo: '',
+    celular: '',
     fecha: null,
     sexo: '',
     activo: '',
@@ -64,13 +66,16 @@ const PersonaAgregar = props => {
 
   const [persona, setPersona] = useState(initialPersona);
 
-  const savePersona = () => {
+  const savePersona = e => {
+    e.preventDefault();
     const {
       nombre,
       apellido,
       usuario,
       dni,
       password,
+      correo,
+      celular,
       fecha,
       sexo,
       activo,
@@ -85,6 +90,8 @@ const PersonaAgregar = props => {
         usuario,
         dni,
         password,
+        correo,
+        celular,
         fecha,
         sexo,
         activo,
@@ -101,31 +108,6 @@ const PersonaAgregar = props => {
       });
   };
 
-//Validaciones de formularios
-
-  //Form values
-  // const [values, setValues] = useState({});
-  // //Errors
-  // const [errors, setErrors] = useState({});
-
-  //  //A method to handle form inputs
-  // const handleChange = (event) => {
-  //     //To stop default events    
-  //     event.persist();
-
-  //     let name = event.target.name;
-  //     let val = event.target.value;
-
-  //     validate(event,name,val);
-  //     //Let's set these values in state
-
-  //     setValues({
-  //         ...values,   //spread operator to store old values
-  //         [name]:val,
-  //     })
-
-  // }
-
   return (
     <>
       <Button size="sm" colorScheme={'blue'} onClick={handleClickOpenCreate}>
@@ -136,147 +118,179 @@ const PersonaAgregar = props => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size={'4xl'}
       >
         <ModalOverlay />
-        <form>
-        <ModalContent>
-          <ModalHeader>Agregar Nueva Persona</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={2}>
-            <Grid templateColumns="repeat(5, 1fr)" gap={4}>
-              <GridItem h="10" colSpan={4}>
-                <Input
-                  onChange={(e) =>
-                    setPersona({ ...persona, dni: e.target.value })
-                  }
-                  placeholder="DNI"
-                  type={'text'}
-                  isRequired
-                />
-              </GridItem>
-              <GridItem h="10" colSpan={1}>
-                <Button colorScheme="teal" variant="solid">
-                  {' '}
-                  <FaFingerprint />{' '}
-                </Button>
-              </GridItem>
-            </Grid>
-            <HStack spacing={'10px'} mt={5}>
-              <FormControl>
-                <FormLabel>Nombres</FormLabel>
-                <Input
-                  onChange={(e) =>
-                    setPersona({ ...persona, nombre: e.target.value })
-                  }
-                  placeholder="Nombres"
-                  type={'text'}
-                  isRequired
-                />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Apellidos</FormLabel>
-                <Input
-                  onChange={(e) =>
-                    setPersona({ ...persona, apellido: e.target.value })
-                  }
-                  placeholder="Apellidos"
-                  type={'text'}
-                  isRequired
-                />
-              </FormControl>
-            </HStack>
-            <HStack spacing={'10px'} mt={'20px'}>
-              <FormControl>
-                <FormLabel>Usuario</FormLabel>
-                <Input
-                  defaultValue={persona.usuario = persona.dni}
-                  onValueChange={persona.usuario}
-                  onChange={(e) =>{
-                    setPersona({ ...persona, usuario: e.target.value.usuario })
-                  }}
-                  type={'text'}
-                  placeholder="usuario"
-                />
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Password</FormLabel>
-                <Input
-                  onChange={(e) =>
-                    setPersona({ ...persona, password: e.target.value })
-                  }
-                  type={'password'}
-                  placeholder="minimo 8 caracteres"
-                  isRequired
-                />
-              </FormControl>
-            </HStack>
-
-            <FormControl mt={4}>
-              <FormLabel>Fecha de Nacimiento</FormLabel>
-              <Input
-                type={'date'}
-                onChange={(e) =>
-                  setPersona({ ...persona, fecha: e.target.value })
-                }
-              />
-              {/* onChange={(e)=> {setPersona({ ...persona, fecha: (e.target.value) }); setValidation(false)}}  /> */}
-            </FormControl>
-
-            <HStack spacing={'10px'} mt={'20px'}>
-              <FormControl>
-                <FormLabel>Estado</FormLabel>
-                <Select
-                  defaultValue={(persona.activo = 'S')}
-                  onChange={(e) => {
-                    setPersona({ ...persona, activo: e.target.value });
-                  }}
-                >
-                  <option value="S">Activo</option>
-                  <option value="N">Inactivo</option>
-                </Select>
-              </FormControl>
-
-              <FormControl>
-                <FormLabel>Sexo</FormLabel>
-                <Select
-                  defaultValue={(persona.sexo = 'M')}
-                  onChange={(e) =>{
-                    setPersona({ ...persona, sexo: e.target.value })
-                  }}
-                >
-                  <option value="M">Masculino</option>
-                  <option value="F">Femenino</option>
-                </Select>
-              </FormControl>
-            </HStack>
-
-            <FormControl mt={4}>
-              <FormLabel>Perfil Persona</FormLabel>
-              <Select
-                // defaultValue={
-                //   (persona.perfilPersona = dataPerfil[0].idPerfilPersona)
-                // }
-                isRequired
-                onChange={(e) =>
-                  setPersona({ ...persona, perfilPersona: e.target.value })
-                }
+        <form onSubmit={savePersona}>
+          <ModalContent>
+            <ModalHeader>Agregar Nueva Persona</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody pb={2}>
+              <Grid
+                templateColumns="repeat(5, 1fr)"
+                gap={5}
+                width="100%"
+                alignContent={'space-between'}
               >
-                {dataPerfil.map((item, idx) => (
-                  <option value={item.idPerfilPersona} key={idx}>
-                    {item.perfil}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button type={'submit'} onClick={() => savePersona()} colorScheme={'blue'} mr={3}>
-              Guardar
-            </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
-          </ModalFooter>
-        </ModalContent>
+                <GridItem h="10" colSpan={4}>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, dni: e.target.value })
+                    }
+                    placeholder="DNI"
+                    type={'text'}
+                    isRequired
+                  />
+                </GridItem>
+                <GridItem h="10" colSpan={1} mx={0}>
+                  <Button colorScheme="teal" variant="solid">
+                    {' '}
+                    <FaFingerprint />{' '}
+                  </Button>
+                </GridItem>
+              </Grid>
+              <HStack spacing={'10px'} mt={5}>
+                <FormControl>
+                  <FormLabel>Nombres</FormLabel>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, nombre: e.target.value })
+                    }
+                    placeholder="Nombres"
+                    type={'text'}
+                    isRequired
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Apellidos</FormLabel>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, apellido: e.target.value })
+                    }
+                    placeholder="Apellidos"
+                    type={'text'}
+                    isRequired
+                  />
+                </FormControl>
+              </HStack>
+              <HStack spacing={'10px'} mt={'10px'}>
+                <FormControl>
+                  <FormLabel>Usuario</FormLabel>
+                  <Input
+                    defaultValue={(persona.usuario = persona.dni)}
+                    onValueChange={persona.usuario}
+                    onChange={e => {
+                      setPersona({
+                        ...persona,
+                        usuario: e.target.value.usuario,
+                      });
+                    }}
+                    type={'text'}
+                    placeholder="Usuario"
+                  />
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Password</FormLabel>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, password: e.target.value })
+                    }
+                    type={'password'}
+                    placeholder="minimo 8 caracteres"
+                    isRequired
+                  />
+                </FormControl>
+              </HStack>
+              <HStack spacing={'10px'} mt={'10px'}>
+                <FormControl>
+                  <FormLabel>Correo</FormLabel>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, correo: e.target.value })
+                    }
+                    type={'email'}
+                    placeholder="Correo"
+                    isRequired
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Nro Celular</FormLabel>
+                  <Input
+                    type={'text'}
+                    placeholder="942123567"
+                    onChange={e =>
+                      setPersona({ ...persona, celular: e.target.value })
+                    }
+                  />
+                </FormControl>
+              </HStack>
+
+              <HStack spacing={'10px'} mt={'10px'}>
+                <FormControl>
+                  <FormLabel>Fecha de Nacimiento</FormLabel>
+                  <Input
+                    type={'date'}
+                    onChange={e =>
+                      setPersona({ ...persona, fecha: e.target.value })
+                    }
+                    isRequired
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Sexo</FormLabel>
+                  <Select
+                    defaultValue={(persona.sexo = 'M')}
+                    onChange={e => {
+                      setPersona({ ...persona, sexo: e.target.value });
+                    }}
+                  >
+                    <option value="M">Masculino</option>
+                    <option value="F">Femenino</option>
+                  </Select>
+                </FormControl>
+              </HStack>
+              <HStack spacing={'10px'} mt={'10px'}>
+                <FormControl>
+                  <FormLabel>Estado</FormLabel>
+                  <Select
+                    defaultValue={(persona.activo = 'S')}
+                    onChange={e => {
+                      setPersona({ ...persona, activo: e.target.value });
+                    }}
+                  >
+                    <option value="S">Activo</option>
+                    <option value="N">Inactivo</option>
+                  </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Perfil Persona</FormLabel>
+                  <Select
+                    // defaultValue={
+                    //   (persona.perfilPersona = dataPerfil[0].idPerfilPersona)
+                    // }
+                    // defaultValue={persona.perfilPersona.nombre === 'USUARIO COMUN'}
+                    isRequired
+                    onChange={e =>
+                      setPersona({ ...persona, perfilPersona: e.target.value })
+                    }
+                  >
+                    {dataPerfil.map((item, idx) => (
+                      <option value={item.idPerfilPersona} key={idx}>
+                        {item.perfil}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              </HStack>
+            </ModalBody>
+            <ModalFooter>
+              <Button type={'submit'} colorScheme={'blue'} mr={3}>
+                Guardar
+              </Button>
+              <Button onClick={handleCloseModal}>Cancelar</Button>
+            </ModalFooter>
+          </ModalContent>
         </form>
       </Modal>
     </>

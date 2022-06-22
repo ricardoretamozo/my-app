@@ -50,7 +50,8 @@ export const createHistorialPersona = data => {
       // dispatch(startLogin(data.dni, data.password));
       notification('Historial registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Historial', body.detalles, 'error');
+      notification('No se pudo registrar el Historial', body.message, 'error');
+      // dispatch(fetchHistorialPersona)
     }
   };
 };

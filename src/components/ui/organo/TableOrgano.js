@@ -48,6 +48,7 @@ export default function TableOrgano() {
 
   const data = store.getState().organo.rows;
   const dataSede = store.getState().sede.rows;
+  
   var sede1 = dataSede[1].sede;
   var organo1 = data.filter(organo => organo.sede.sede === sede1);
 

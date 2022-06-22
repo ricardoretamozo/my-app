@@ -82,7 +82,7 @@ export default function SidebarWithHeader({ componente: Component }) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, md: 56 }} p="4">
         <Component />
       </Box>
     </Box>
@@ -96,14 +96,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 'full', md: 60 }}
+      w={{ base: 'full', md: 56 }}
       pos="fixed"
       h="full"
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
+        <Text fontSize="2xl" color={useColorModeValue('red.700', 'white')} fontWeight="bold">
+          Service Desk
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
@@ -129,11 +129,12 @@ const NavItem = ({ icon, children, ...rest }) => {
         align="center"
         p="4"
         mx="4"
-        borderRadius="lg"
+        borderRadius="md"
         role="group"
         cursor="pointer"
+        height={50}
         _hover={{
-          bg: 'cyan.400',
+          bg: 'red.700',
           color: 'white',
         }}
         {...rest}
@@ -165,13 +166,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
   };
   return (
     <Flex
-      ml={{ base: 0, md: 60 }}
+      ml={{ base: 4, md: 60 }}
+      mr={{ base: 4, md: 4 }}
       px={{ base: 4, md: 4 }}
       height="20"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
-      borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue('gray.200', 'gray.700')}
+      borderWidth="1px"
+      borderRadius={'md'}
+      borderColor={useColorModeValue('gray.200', 'gray.700')}
       justifyContent={{ base: 'space-between', md: 'flex-end' }}
       {...rest}
     >
@@ -186,13 +189,12 @@ const MobileNav = ({ onOpen, ...rest }) => {
       <Text
         display={{ base: 'flex', md: 'none' }}
         fontSize="2xl"
-        fontFamily="monospace"
         fontWeight="bold"
       >
-        Logo
+        Service Desk
       </Text>
 
-      <HStack spacing={{ base: '0', md: '6' }}>
+      <HStack spacing={{ base: '4', md: '4' }}>
         <IconButton
           size="lg"
           variant="ghost"

@@ -55,7 +55,7 @@ export const LoginScreen = () => {
     <>
       <Flex position="relative" mb="40px">
         <Flex
-          h={{ sm: 'initial', md: '75vh', lg: '85vh' }}
+          h={{ sm: 'initial', md: '100vh', lg: '100vh' }}
           w="100%"
           maxW="1044px"
           mx="auto"
@@ -95,7 +95,7 @@ export const LoginScreen = () => {
                   </FormLabel>
                   <Input
                   isRequired
-                    borderRadius="15px"
+                    borderRadius="md"
                     mb="24px"
                     fontSize="sm"
                     type="text"
@@ -112,7 +112,7 @@ export const LoginScreen = () => {
                   </FormLabel>
                   <Input
                   isRequired
-                    borderRadius="15px"
+                    borderRadius="md"
                     mb="36px"
                     fontSize="sm"
                     type="password"

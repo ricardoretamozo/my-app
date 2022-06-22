@@ -7,18 +7,10 @@ import {
   Button,
   Icon,
   useColorModeValue,
-  createIcon,
   FormLabel,
   HStack,
   Select,
   FormControl,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,  
 } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 import { fetchOficina, fetchOficinas } from '../../actions/oficina';
@@ -37,16 +29,15 @@ export default function HistorialUsuario() {
   const { name } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
-
   const history = useHistory();
-
-
-  // const modalcreate = props.openCreate;
-
   const [oficina, setOficina] = useState(null);
   const [cargo, setCargo] = useState(null);
   const [historialpersona, setHistorialPersona] = useState(null);
   const [openCreate, setOpenCreate] = useState(false);
+
+  // setTimeout(() => {
+  //   setOpenCreate(true);
+  // },  100);
 
   const fetchDataOficina= async ()=> {
     await fetchOficinas().then((res)=>{
@@ -54,16 +45,26 @@ export default function HistorialUsuario() {
     });
     
   }
+  if (historialpersona === null){
+    setTimeout(() => {
+      setOpenCreate(true);
+    },  1500);
+  }
+
+  // historialpersona === null ? setTimeout(() => {
+  //   setOpenCreate(true)
+  // }, 1500) : setTimeout(() => {
+  //   setOpenCreate(false);
+  // },  0);
+
   useEffect(() => {
-    
     if(store.getState().oficina.rows.length <= 0){
       fetchDataOficina();
     }
     //fetchData();
-  }, []);
+  });
 
   const handleLogout = () => {
-    // e.preventDefault();
     dispatch(LogOut());
   };
 
@@ -87,27 +88,23 @@ export default function HistorialUsuario() {
     })
   }
 
-  const initialValue ={
-    activo: true,
-  }
-
    const [selectCodicional, setSelectCodicional] = useState(historialpersona === false ? "false" : "true" );
 
-   console.log(selectCodicional);
+   //console.log(selectCodicional);
 
   const handleChangeSelect = () => {
-    // setSelectCodicional(historialpersona === false ? "true" : "false" );
     console.log(selectCodicional);
     if ( selectCodicional == "true") {
-      setOpenCreate(true);
+        setOpenCreate(true)
     }else if (selectCodicional == "false") {
       // dispatch(startLogin(dni , 'cocacola'));
-      history.push('/dashboard');
+      history.push('/dashboard/home');
     }
   }
 
   const handleCloseModal = () => {
     setOpenCreate(false);
+   // history.push('/dashboard/home');
   }
 
   useEffect(() => {
@@ -122,8 +119,8 @@ export default function HistorialUsuario() {
     }
   });
 
-  console.log(oficina);
-  console.log(historialpersona);
+  // console.log(oficina);
+  // console.log(historialpersona);
 
   return (
     <Flex
@@ -132,7 +129,6 @@ export default function HistorialUsuario() {
       justifyContent={'center'}
       alignItems={'center'}
       align={'center'}
-      mx={20}
       bg={useColorModeValue('gray.50', 'gray.800')}
     >
       <Stack
@@ -158,34 +154,37 @@ export default function HistorialUsuario() {
           </Text>
         </Stack>
         <Stack spacing={4} direction={'column'} w={'full'}>
-          <FormControl>
-            <FormLabel>Sede</FormLabel>
-            <Input
-              type={'text'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-              bg={useColorModeValue('gray.100', 'gray.600')}
-              defaultValue={oficina ? oficina.organo.sede.sede : ''}
-              isDisabled
-              _focus={{
-                bg: useColorModeValue('gray.200', 'gray.800'),
-                outline: 'none',
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel>Organo</FormLabel>
-            <Input
-              type={'text'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-              bg={useColorModeValue('gray.100', 'gray.600')}
-              defaultValue={oficina ? oficina.organo.organo : ''}
-              isDisabled
-              _focus={{
-                bg: useColorModeValue('gray.200', 'gray.800'),
-                outline: 'none',
-              }}
-            />
-          </FormControl>
+          <HStack spacing={'10px'} mt={5}>
+            <FormControl>
+              <FormLabel>Sede</FormLabel>
+              <Input
+                type={'text'}
+                color={useColorModeValue('gray.800', 'gray.200')}
+                bg={useColorModeValue('gray.100', 'gray.600')}
+                defaultValue={oficina ? oficina.organo.sede.sede : ''}
+                isDisabled
+                _focus={{
+                  bg: useColorModeValue('gray.200', 'gray.800'),
+                  outline: 'none',
+                }}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Organo</FormLabel>
+              <Input
+                type={'text'}
+                color={useColorModeValue('gray.800', 'gray.200')}
+                bg={useColorModeValue('gray.100', 'gray.600')}
+                defaultValue={oficina ? oficina.organo.organo : ''}
+                isDisabled
+                _focus={{
+                  bg: useColorModeValue('gray.200', 'gray.800'),
+                  outline: 'none',
+                }}
+              />
+            </FormControl>
+          </HStack>
+         <HStack spacing={'10px'} mt={5}>
           <FormControl>
             <FormLabel fontSize={'sm'} fontWeight={'normal'}>
               Oficina
@@ -220,8 +219,9 @@ export default function HistorialUsuario() {
               }}
             />
           </FormControl>
+          </HStack>
           <FormControl>
-            <FormLabel>{historialpersona === false ? 'ERES USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO': 'QUIERES MODIFICAR REGISTROS?'}</FormLabel>
+            <FormLabel>{historialpersona === false ? 'ERES USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO': 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}</FormLabel>
             <Select 
             defaultValue={ true }
             isDisabled={ historialpersona === false ? true : false}
@@ -244,25 +244,8 @@ export default function HistorialUsuario() {
 
           </Button>
 
-          {/* <Modal
-            onClose={handleCloseModal}
-            isOpen={openCreate}
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Modal Title</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <Text>Create</Text>
-              </ModalBody>
-              <ModalFooter>
-                <Button onClick={handleCloseModal}>Close</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal> */}
-
           <ModalHistorialUsuario cerrar={handleCloseModal}
-            abrir={openCreate} oficina = {oficina} cargo = {cargo} idPersona= { identificador } />
+            abrir={openCreate} oficina = {oficina} cargo = {cargo} idPersona= { identificador } listarHistorialPersona = { obtenerHistorialPersona } />
 
           <Button
             bg={'red.400'}

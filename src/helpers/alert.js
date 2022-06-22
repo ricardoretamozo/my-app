@@ -6,7 +6,7 @@ export const notification = ( title, message, type ) =>{
        title: title,
        text: message,
        icon: type,
-       confirmButtonText: 'Aceptar' 
+       confirmButtonText: 'Aceptar',
     });
 
 }

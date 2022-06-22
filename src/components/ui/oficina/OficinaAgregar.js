@@ -15,7 +15,7 @@ import {
 
 import { store } from '../../../store/store';
 
-import Select, { ActionMeta, OnChangeValue, StylesConfig } from 'react-select';
+import Select from 'react-select';
 
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
@@ -58,7 +58,7 @@ const OficinaAgregar = () => {
     organo: {
       idOrgano: null,
     },
-    activo: '',
+    activo: null,
   };
 
   const [dataOficina, setOficina] = useState(initialOficina);
@@ -145,12 +145,6 @@ const OficinaAgregar = () => {
             <FormControl mt={4} isRequired={true}>
               <FormLabel>Organo</FormLabel>
               <Select
-                // isDisabled={indice.sede !== Select ? true : false}
-                //   value={organoData ? organoData.idOrgano : ''}
-                // defaultValue={indice ? indice.sede.idSede : ''}
-                // OnChangeValue={(e)=> {setOficina({...dataOficina,organo:(e.target.value) })}}
-                //OnChangeValue={(e)=> {setOficina({...dataOficina,organo:(e.target.value) })}}
-                // onClick={(e)=> {organoData}}
                 onChange={handleChangeOrgano}
                 defaultValue={organoSelect.map(organo => ({
                   value: organo.idOrgano,

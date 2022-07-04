@@ -17,7 +17,7 @@ export const Cargo = () => {
   }
   useEffect(() => {
     
-    if(store.getState().cargo.rows.length <= 0){
+    if(store.getState().cargo.checking){
       fetchData();
     }
     //fetchData();

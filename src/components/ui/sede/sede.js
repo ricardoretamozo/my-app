@@ -17,7 +17,7 @@ export const Sede = () => {
   }
   useEffect(() => {
     
-    if(store.getState().sede.rows.length <= 0){
+    if(store.getState().sede.checking){
       fetchData();
     }
     //fetchData();

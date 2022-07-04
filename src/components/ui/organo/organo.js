@@ -18,7 +18,7 @@ export const Organo = () => {
   }
   useEffect(() => {
     
-    if(store.getState().organo.rows.length <= 0){
+    if(store.getState().organo.checking){
       fetchData();
     }
     //fetchData();

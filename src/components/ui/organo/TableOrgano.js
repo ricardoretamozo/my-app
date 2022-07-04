@@ -49,11 +49,6 @@ export default function TableOrgano() {
   const data = store.getState().organo.rows;
   const dataSede = store.getState().sede.rows;
   
-  var sede1 = dataSede[1].sede;
-  var organo1 = data.filter(organo => organo.sede.sede === sede1);
-
-  console.log(sede1, 'sede1');
-  console.log(organo1, 'organo1');
 
   const [indice, setIndice] = useState({
     idOrgano: null,

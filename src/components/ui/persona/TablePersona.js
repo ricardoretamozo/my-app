@@ -161,18 +161,16 @@ export default function TablePersona() {
 
   const [personaOrganos, setPersonaOrganos] = useState([]);
 
+
   const handleClickOpenModal = index => {
     // hacer el fetch
-    
+    console.log(index);
     const fetchDataPersonaOrgano = async () => {
-      await fetchPersonaOrgano(index).then(res => {
+      await fetchPersonaOrgano(index.idpersona).then(res => {
         setPersonaOrganos(res);
       })
-      useEffect(() =>{
-        fetchDataPersonaOrgano()
-      })
     };
-
+    fetchDataPersonaOrgano();
     setIndice(index);
     setOpenModal(true);
   };
@@ -375,18 +373,12 @@ export default function TablePersona() {
                       </Tr>
                     </Thead>
                     <Tbody>
+                      
                       <Tr>
-                        <Td>inches</Td>
-                        <Td>millimetres (mm)</Td>
+                        <Td></Td>
+                        <Td></Td>
                       </Tr>
-                      <Tr>
-                        <Td>feet</Td>
-                        <Td>centimetres (cm)</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>yards</Td>
-                        <Td>metres (m)</Td>
-                      </Tr>
+  
                     </Tbody>
                   </Table>
                 </ModalBody>

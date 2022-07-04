@@ -46,7 +46,7 @@ export const AppRouter = () => {
     });
   };
   useEffect(() => {
-    if (store.getState().sede.rows.length <= 0) {
+    if (store.getState().sede.checking) {
       fetchData();
     }
     //fetchData();
@@ -58,7 +58,7 @@ export const AppRouter = () => {
     });
   };
   useEffect(() => {
-    if (store.getState().organo.rows.length <= 0) {
+    if (store.getState().organo.checking) {
       fetchDataOrgano();
     }
     //fetchData();
@@ -71,7 +71,7 @@ export const AppRouter = () => {
   };
   useEffect(() => {
     console.log(store.getState().perfilPersona);
-    if (store.getState().perfilPersona.rows.length <= 0) {
+    if (store.getState().perfilPersona.checking) {
       fetchDataPerfil();
     }
     //fetchData();
@@ -87,7 +87,7 @@ export const AppRouter = () => {
   }
   useEffect(() => {
     
-    if(store.getState().oficina.rows.length <= 0){
+    if(store.getState().oficina.checking){
       fetchDataOficina();
     }
     //fetchData();
@@ -102,7 +102,7 @@ export const AppRouter = () => {
   }
   useEffect(() => {
     
-    if(store.getState().cargo.rows.length <= 0){
+    if(store.getState().cargo.checking){
       fetchDataCargos();
     }
     //fetchData();

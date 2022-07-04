@@ -18,7 +18,7 @@ export const Oficina = () => {
   }
   useEffect(() => {
     
-    if(store.getState().oficina.rows.length <= 0){
+    if(store.getState().oficina.checking){
       fetchData();
     }
     //fetchData();

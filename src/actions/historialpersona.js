@@ -9,6 +9,7 @@ export const fetchHistorialPersona = async id => {
     var HistorialPersona = {};
 
     HistorialPersona = {
+
         idHistorialPersona: body.idHistorialPersona,
         persona: body.persona,
         cargo: body.cargo,
@@ -18,6 +19,7 @@ export const fetchHistorialPersona = async id => {
         activo: body.activo,
         fecha: body.fecha,
         ip: body.ip,
+        
       };
 
     return HistorialPersona;

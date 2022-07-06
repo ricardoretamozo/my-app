@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 
 import { home } from './home/home';
+import { Incidencia } from './incidencia/incidencia';
 import { Perfil } from './perfil/perfil';
 import { PrivateRoute } from '../../routers/PrivateRoute'; 
 import { useSelector } from 'react-redux';
@@ -20,6 +21,11 @@ export const DasboardScreen = () => {
         <PrivateRoute
         exact path="/dashboard/home"
         component = { home } 
+        isAuthenticated = { !!access_token }
+        />
+         <PrivateRoute
+        exact path="/dashboard/incidencias"
+        component = { Incidencia } 
         isAuthenticated = { !!access_token }
         />
         <PrivateRoute

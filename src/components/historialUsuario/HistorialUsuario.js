@@ -39,28 +39,28 @@ export default function HistorialUsuario() {
   //   setOpenCreate(true);
   // },  100);
 
-  const fetchDataOficina= async ()=> {
+  const fetchDataOficina = async ()=> {
     await fetchOficinas().then((res)=>{
       dispatch(getOficina(res));
     });
-    
   }
-  if (historialpersona === null){
-    setTimeout(() => {
-      setOpenCreate(true);
-    },  1500);
-  }
-
-  // historialpersona === null ? setTimeout(() => {
-  //   setOpenCreate(true)
-  // }, 1500) : setTimeout(() => {
+  
+  // if (historialpersona === null){
+  //   setTimeout(() => {
+  //     setOpenCreate(true);
+  //   },  1500);
+  // } else {
   //   setOpenCreate(false);
-  // },  0);
+  // }
+
+  // historialpersona == null ? setTimeout(() => {
+  //   setOpenCreate(true)
+  // }, 1500) : setOpenCreate(false);
 
   useEffect(() => {
     if(store.getState().oficina.rows.length <= 0){
       fetchDataOficina();
-    }
+      }
     //fetchData();
   });
 
@@ -98,7 +98,7 @@ export default function HistorialUsuario() {
         setOpenCreate(true)
     }else if (selectCodicional == "false") {
       // dispatch(startLogin(dni , 'cocacola'));
-      history.push('/dashboard/home');
+      history.push('/dashboard/incidencias');
     }
   }
 
@@ -116,6 +116,12 @@ export default function HistorialUsuario() {
     }
     if (historialpersona == null) {
       obtenerHistorialPersona();
+      setTimeout(() => {
+        setOpenCreate(true);
+      },  1500);
+    } 
+    if (historialpersona != null) {
+      setOpenCreate(false);
     }
   });
 
@@ -150,7 +156,7 @@ export default function HistorialUsuario() {
             {name}
           </Heading>
           <Text fontSize={'lg'} color={'gray.800'}>
-            {historialpersona === false ? 'PARA CONTINUAR DEBERÁ AGREGAR NUEVO REGISTRO': 'VALIDAR SI VA A CONTINUAR CON EL REGISTRO O DESEA ACTUALIZARLO'}
+            {historialpersona == null ? 'PARA CONTINUAR DEBERÁ AGREGAR NUEVO REGISTRO': 'VALIDAR SI VA A CONTINUAR CON EL REGISTRO O DESEA ACTUALIZARLO'}
           </Text>
         </Stack>
         <Stack spacing={4} direction={'column'} w={'full'}>
@@ -221,8 +227,9 @@ export default function HistorialUsuario() {
           </FormControl>
           </HStack>
           <FormControl>
-            <FormLabel>{historialpersona === false ? 'ERES USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO': 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}</FormLabel>
+            <FormLabel>{historialpersona === false ? 'USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO': 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}</FormLabel>
             <Select 
+            // defaultValue={ true }
             defaultValue={ true }
             isDisabled={ historialpersona === false ? true : false}
             onChange={(e)=> {setSelectCodicional(e.target.value) }}

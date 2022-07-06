@@ -11,8 +11,6 @@ export const createOficina = data => {
     idOrgano = {
       idOrgano: Number(data.organo),
     };
-    // console.log(data.organo.idOrgano);
-    // console.log('ingreso');
   }
   
   return async dispatch => {

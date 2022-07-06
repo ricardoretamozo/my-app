@@ -174,6 +174,12 @@ export const AppRouter = () => {
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
+          <PrivateRoute
+            exact
+            path="/dashboard/incidencias"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
           <Redirect to="/dashboard/home" />
         </Switch>
       </div>

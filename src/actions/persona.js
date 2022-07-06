@@ -203,5 +203,3 @@ export const loadPersona = async () => {
 
   return Persona;
 };
-
-

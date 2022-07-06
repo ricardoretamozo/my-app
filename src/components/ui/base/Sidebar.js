@@ -48,6 +48,7 @@ import { useDispatch } from 'react-redux';
 
 const LinkItems = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
+  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
   { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },

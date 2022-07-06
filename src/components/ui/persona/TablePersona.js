@@ -39,7 +39,7 @@ import {
   Tbody,
   TableContainer,
 } from '@chakra-ui/react';
-import { CheckCircleIcon, NotAllowedIcon, EditIcon } from '@chakra-ui/icons';
+import { CheckCircleIcon, NotAllowedIcon, EditIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
 
 import { store } from '../../../store/store';
@@ -49,6 +49,7 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
 import { deletePersona, updatePersona } from '../../../actions/persona';
+import { deletePersonaOrgano } from '../../../actions/personaOrgano';
 
 import PersonaAgregar from './PersonaAgregar';
 
@@ -62,6 +63,7 @@ export default function TablePersona() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
+  const [opendeleteOrganoP, setOpenDeleteOrganoP] = React.useState(false);
   const dispatch = useDispatch();
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
@@ -159,15 +161,17 @@ export default function TablePersona() {
     setOpenEdit(true);
   };
 
-  const [personaOrganos, setPersonaOrganos] = useState([]);
+  const [personaOrganos, setPersonaOrganos] = useState({});
+
+  const [personaOrganosSede, setPersonaOrganosSede] = useState([]);
 
 
   const handleClickOpenModal = index => {
     // hacer el fetch
-    console.log(index);
+    // console.log(index);
     const fetchDataPersonaOrgano = async () => {
       await fetchPersonaOrgano(index.idpersona).then(res => {
-        setPersonaOrganos(res);
+        setPersonaOrganos(res.data);
       })
     };
     fetchDataPersonaOrgano();
@@ -175,7 +179,33 @@ export default function TablePersona() {
     setOpenModal(true);
   };
 
-  console.log(personaOrganos);
+  //console.log(personaOrganos);
+
+  const array = Object.keys(personaOrganos);
+
+  const result = array.map((key) => {
+    const value = personaOrganos[key];
+    //console.log(value);
+    // setPersonaOrganosSede(value);
+  
+    // Perform your desired logic here then return a new value
+    return value;
+  });
+
+  //console.log(result);
+
+  const handleDeletePersonaOrgano = (x, y) => {
+    dispatch(deletePersonaOrgano(x, y))
+      .then(() => {
+        handleCloseDeleteOrganoP(true);
+        console.log('Persona eliminado');
+        dispatch(fetchPersonaOrgano());
+      })
+      .catch(e => {
+        console.log(e);
+        handleCloseDeleteOrganoP(true);
+      });
+  };
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -217,6 +247,16 @@ export default function TablePersona() {
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
+  };
+
+  // MOdal para confirmar eliminacion de persona Organos
+
+  const handleClickOpenDeleteOrganoP = index => {
+    setOpenDeleteOrganoP(true);
+  };
+
+  const handleCloseDeleteOrganoP = () => {
+    setOpenDeleteOrganoP(false);
   };
 
   const columns = [
@@ -369,22 +409,52 @@ export default function TablePersona() {
                       <Tr>
                         <Th>Sede</Th>
                         <Th>Organo</Th>
-                        <Th>Acciones</Th>
+                        <Th>Accion</Th>
                       </Tr>
                     </Thead>
                     <Tbody>
-                      
-                      <Tr>
-                        <Td></Td>
-                        <Td></Td>
-                      </Tr>
-  
+                      {
+                        result.map(item => (
+                          <Tr key={item.idPersonaOrgano}>
+                            <Td>{item.organo.sede.sede}</Td>
+                            <Td>{item.organo.organo}</Td>
+                            <Td>
+                              <IconButton onClick={()=> handleClickOpenDeleteOrganoP(item)} color={'red.600'} fontSize='20px' icon={<CloseIcon/>}></IconButton>
+                              {/* Alert dialog para confirmar la eliminacion */}
+                              <AlertDialog isOpen={opendeleteOrganoP} onClose={handleCloseDeleteOrganoP}>
+                                <AlertDialogOverlay>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                        <Text>Está seguro de eliminar?</Text>
+                                    </AlertDialogHeader>
+
+                                    <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+
+                                    <AlertDialogFooter>
+                                      <Button onClick={handleCloseDeleteOrganoP}>Cancelar</Button>
+                                      <Button
+                                        onClick={() => handleDeletePersonaOrgano(item.idPersonaOrgano, item.idPersona)}
+                                        colorScheme="red"
+                                        ml={3}
+                                      >
+                                        Si
+                                      </Button>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialogOverlay>
+                              </AlertDialog>
+                            </Td>
+                          </Tr>
+                        ))
+                      }
                     </Tbody>
+                   
                   </Table>
                 </ModalBody>
                 <ModalFooter>
                   {/* <Button
                     type={'submit'}
+                    onClick={()=> handleDeletePersonaOrgano(item.idPersonaOrgano)}
                     // onClick={e => handleUpdatePersona(e)}
                     colorScheme={'green'}
                     mr={3}

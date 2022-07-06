@@ -21,7 +21,7 @@ import { LogOut, startLogin } from '../../actions/auth';
 import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { FcSynchronize } from 'react-icons/fc';
-import ModalHistorialUsuario from './ModalHistorialUsuario'; 
+import ModalHistorialUsuario from './ModalHistorialUsuario';
 import { store } from '../../store/store';
 import { useHistory } from 'react-router-dom';
 
@@ -33,34 +33,18 @@ export default function HistorialUsuario() {
   const [oficina, setOficina] = useState(null);
   const [cargo, setCargo] = useState(null);
   const [historialpersona, setHistorialPersona] = useState(null);
-  const [openCreate, setOpenCreate] = useState(false);
+  const [openCreate, setOpenCreate] = useState(true);
 
-  // setTimeout(() => {
-  //   setOpenCreate(true);
-  // },  100);
-
-  const fetchDataOficina = async ()=> {
-    await fetchOficinas().then((res)=>{
+  const fetchDataOficina = async () => {
+    await fetchOficinas().then(res => {
       dispatch(getOficina(res));
     });
-  }
-  
-  // if (historialpersona === null){
-  //   setTimeout(() => {
-  //     setOpenCreate(true);
-  //   },  1500);
-  // } else {
-  //   setOpenCreate(false);
-  // }
-
-  // historialpersona == null ? setTimeout(() => {
-  //   setOpenCreate(true)
-  // }, 1500) : setOpenCreate(false);
+  };
 
   useEffect(() => {
-    if(store.getState().oficina.rows.length <= 0){
+    if (store.getState().oficina.rows.length <= 0) {
       fetchDataOficina();
-      }
+    }
     //fetchData();
   });
 
@@ -68,46 +52,61 @@ export default function HistorialUsuario() {
     dispatch(LogOut());
   };
 
-  const obtenerOficina = async() => {
-    await fetchOficina(historialpersona.oficina.idOficina).then(res => {
-      dispatch(setOficina(res));
-    })
-  }
+  const obtenerOficina = async () => {
+    if (historialpersona) {
+      await fetchOficina(historialpersona.oficina.idOficina).then(res => {
+        dispatch(setOficina(res));
+      });
+    }
+  };
 
-  const obtenerCargo = async() => {
-    await fetchCargo(historialpersona.cargo.idCargo).then(res => {
-      dispatch(setCargo(res));
-    })
-  }
+  const obtenerCargo = async () => {
+    if (historialpersona) {
+      await fetchCargo(historialpersona.cargo.idCargo).then(res => {
+        dispatch(setCargo(res));
+      });
+    }
+  };
 
-  const obtenerHistorialPersona = async() => {
+  const [selectCodicional, setSelectCodicional] = useState(null);
+
+  const obtenerHistorialPersona = async () => {
     console.log(identificador);
     await fetchHistorialPersona(identificador).then(res => {
-      dispatch(setHistorialPersona(res));
-      console.log(res);
-    })
-  }
+      if (res != false) {
+        setSelectCodicional(false);
+        setOpenCreate(false);
+        setCargo(res.cargo);
+        setOficina(res.oficina)
+        dispatch(setHistorialPersona(res));
+      } else{
+        setSelectCodicional(true);
+      }
+    });
+  };
 
-   const [selectCodicional, setSelectCodicional] = useState(historialpersona === false ? "false" : "true" );
 
-   //console.log(selectCodicional);
 
   const handleChangeSelect = () => {
     console.log(selectCodicional);
-    if ( selectCodicional == "true") {
-        setOpenCreate(true)
-    }else if (selectCodicional == "false") {
+    if (selectCodicional == true) {
+      setOpenCreate(true);
+    } else if (selectCodicional == false) {
       // dispatch(startLogin(dni , 'cocacola'));
       history.push('/dashboard/incidencias');
     }
-  }
+  };
 
   const handleCloseModal = () => {
     setOpenCreate(false);
-   // history.push('/dashboard/home');
-  }
+    obtenerHistorialPersona();
+    obtenerOficina();    
+    obtenerCargo();
+    // history.push('/dashboard/home');
+  };
 
   useEffect(() => {
+    console.log(selectCodicional);  
     if (oficina == null) {
       obtenerOficina();
     }
@@ -116,17 +115,17 @@ export default function HistorialUsuario() {
     }
     if (historialpersona == null) {
       obtenerHistorialPersona();
-      setTimeout(() => {
-        setOpenCreate(true);
-      },  1500);
-    } 
-    if (historialpersona != null) {
-      setOpenCreate(false);
+      //setSelectCodicional(true);
+      //setOpenCreate(true);
+    } else{
+      //setSelectCodicional(false);
+      //setOpenCreate(false);
     }
+
   });
 
   // console.log(oficina);
-  // console.log(historialpersona);
+  //console.log(historialpersona);
 
   return (
     <Flex
@@ -156,7 +155,9 @@ export default function HistorialUsuario() {
             {name}
           </Heading>
           <Text fontSize={'lg'} color={'gray.800'}>
-            {historialpersona == null ? 'PARA CONTINUAR DEBERÁ AGREGAR NUEVO REGISTRO': 'VALIDAR SI VA A CONTINUAR CON EL REGISTRO O DESEA ACTUALIZARLO'}
+            {historialpersona == null
+              ? 'PARA CONTINUAR DEBERÁ AGREGAR NUEVO REGISTRO'
+              : 'VALIDAR SI VA A CONTINUAR CON EL REGISTRO O DESEA ACTUALIZARLO'}
           </Text>
         </Stack>
         <Stack spacing={4} direction={'column'} w={'full'}>
@@ -190,49 +191,56 @@ export default function HistorialUsuario() {
               />
             </FormControl>
           </HStack>
-         <HStack spacing={'10px'} mt={5}>
-          <FormControl>
-            <FormLabel fontSize={'sm'} fontWeight={'normal'}>
-              Oficina
-            </FormLabel>
-            <Input
-              type={'text'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-              bg={useColorModeValue('gray.100', 'gray.600')}
-              //value = {oficina ? oficina.oficina : ''}
-              defaultValue={oficina ? oficina.oficina : ''}
-              isDisabled
-              _focus={{
-                bg: useColorModeValue('gray.200', 'gray.800'),
-                outline: 'none',
-              }}
-            />
-          </FormControl>
-          <FormControl>
-            <FormLabel fontSize={'sm'} fontWeight={'normal'}>
-              Cargo
-            </FormLabel>
-            <Input
-              type={'text'}
-              color={useColorModeValue('gray.800', 'gray.200')}
-              bg={useColorModeValue('gray.100', 'gray.600')}
-              //value = {oficina ? oficina.oficina : ''}
-              defaultValue={cargo ? cargo.cargo : ''}
-              isDisabled
-              _focus={{
-                bg: useColorModeValue('gray.200', 'gray.800'),
-                outline: 'none',
-              }}
-            />
-          </FormControl>
+          <HStack spacing={'10px'} mt={5}>
+            <FormControl>
+              <FormLabel fontSize={'sm'} fontWeight={'normal'}>
+                Oficina
+              </FormLabel>
+              <Input
+                type={'text'}
+                color={useColorModeValue('gray.800', 'gray.200')}
+                bg={useColorModeValue('gray.100', 'gray.600')}
+                //value = {oficina ? oficina.oficina : ''}
+                defaultValue={oficina ? oficina.oficina : ''}
+                isDisabled
+                _focus={{
+                  bg: useColorModeValue('gray.200', 'gray.800'),
+                  outline: 'none',
+                }}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize={'sm'} fontWeight={'normal'}>
+                Cargo
+              </FormLabel>
+              <Input
+                type={'text'}
+                color={useColorModeValue('gray.800', 'gray.200')}
+                bg={useColorModeValue('gray.100', 'gray.600')}
+                //value = {oficina ? oficina.oficina : ''}
+                defaultValue={cargo ? cargo.cargo : ''}
+                isDisabled
+                _focus={{
+                  bg: useColorModeValue('gray.200', 'gray.800'),
+                  outline: 'none',
+                }}
+              />
+            </FormControl>
           </HStack>
           <FormControl>
-            <FormLabel>{historialpersona === false ? 'USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO': 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}</FormLabel>
-            <Select 
-            // defaultValue={ true }
-            defaultValue={ true }
-            isDisabled={ historialpersona === false ? true : false}
-            onChange={(e)=> {setSelectCodicional(e.target.value) }}
+            <FormLabel>
+              {historialpersona === false
+                ? 'USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO'
+                : 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}
+            </FormLabel>
+            <Select
+              // defaultValue={ true }
+              value={selectCodicional}
+              isDisabled={historialpersona === null ? true : false}
+              onChange={e => {
+                console.log(e.target.value);
+                setSelectCodicional( e.target.value == 'true' ? true : false );
+              }}
             >
               <option value={true}>Si</option>
               <option value={false}>No</option>
@@ -246,13 +254,17 @@ export default function HistorialUsuario() {
             _focus={{ bg: 'blue.500' }}
             onClick={() => handleChangeSelect()}
           >
-
             {historialpersona === false ? 'AGREGAR REGISTRO' : 'CONTINUAR'}
-
           </Button>
 
-          <ModalHistorialUsuario cerrar={handleCloseModal}
-            abrir={openCreate} oficina = {oficina} cargo = {cargo} idPersona= { identificador } listarHistorialPersona = { obtenerHistorialPersona } />
+          <ModalHistorialUsuario
+            cerrar={handleCloseModal}
+            abrir={openCreate}
+            oficina={oficina}
+            cargo={cargo}
+            idPersona={identificador}
+            listarHistorialPersona={obtenerHistorialPersona}
+          />
 
           <Button
             bg={'red.400'}

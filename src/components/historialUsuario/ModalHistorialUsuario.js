@@ -46,7 +46,7 @@ const ModalHistorialUsuario = props => {
     sede: '',
     activo: '',
   });
-
+  console.log(props.cargo);
   const tiempoTranscurrido = Date.now();
   const hoy = new Date(tiempoTranscurrido);
 
@@ -62,7 +62,7 @@ const ModalHistorialUsuario = props => {
       idOficina: null,
     },
     iniciaCargo: hoy.toISOString().split('T')[0],
-    terminaCargo: hoy.toISOString().split('T')[0],
+    terminaCargo: null,
     activo: 'S',
     fecha: hoy.toISOString().split('T')[0],
     ip: '12234533',
@@ -103,9 +103,9 @@ const ModalHistorialUsuario = props => {
   const [optionsOficinaIndex, setOficinaIndex] = useState(0);
 
   const [optionsCargo, setoptionsCargo] = useState(
-    cargoInfo.map(cargo => ({ 
-      value: cargo.idCargo, 
-      label: cargo.cargo 
+    cargoInfo.map(cargo => ({
+      value: cargo.idCargo,
+      label: cargo.cargo,
     }))
   );
 
@@ -156,26 +156,28 @@ const ModalHistorialUsuario = props => {
 
   const handleChangeOficina = value => {
     //console.log(value);
-    setOficinaNombre(value.value);
+    setIndiceHistorial({
+      ...indiceHistorial,
+      oficina: { idOficina: value.value, oficina: value.label },
+    });
   };
 
-  const handleChangeCargo = value =>{
+  const handleChangeCargo = value => {
     console.log(value.value);
     setIndiceHistorial({
-      ...indiceHistorial, cargo: { idCargo: value.value, cargo: value.label }
+      ...indiceHistorial,
+      cargo: { idCargo: value.value, cargo: value.label },
     });
-  }
+  };
 
-  const saveHistorialPersona = (e) => {
+  const saveHistorialPersona = e => {
     e.preventDefault();
     var historialUsuario = {
       persona: {
         idpersona: Number(props.idPersona),
       },
       cargo: indiceHistorial.cargo,
-      oficina: {
-        idOficina: Number(optionsOficina[optionsOficinaIndex].value),
-      },
+      oficina: indiceHistorial.oficina,
       iniciaCargo: indiceHistorial.iniciaCargo,
       terminaCargo: indiceHistorial.terminaCargo,
       activo: indiceHistorial.activo,
@@ -184,115 +186,120 @@ const ModalHistorialUsuario = props => {
     };
     dispatch(createHistorialPersona(historialUsuario))
       .then(() => {
-        dispatch(props.cerrar)
-        dispatch(props.listarHistorialPersona)
-      }).catch(err => {
+        props.cerrar();
+        dispatch(props.listarHistorialPersona());
+      })
+      .catch(err => {
         console.log(err);
-        dispatch(props.cerrar)
+        props.cerrar();
       });
+    props.cerrar();
   };
 
   return (
     <>
-        <Modal
-          isOpen={props.abrir}
-          onClose={props.cerrar}
-          closeOnOverlayClick={true}
-          size={'lg'}
-        >
-          <ModalOverlay />
+      <Modal
+        isOpen={props.abrir}
+        onClose={props.cerrar}
+        closeOnOverlayClick={true}
+        size={'lg'}
+      >
+        <ModalOverlay />
 
-        <form onSubmit={saveHistorialPersona}>
-          <ModalContent>
-            <ModalHeader>Cambiar sede, organo, oficina, cargo</ModalHeader>
-            <ModalCloseButton />
+        <ModalContent>
+          <ModalHeader>Cambiar sede, organo, oficina, cargo</ModalHeader>
+          <ModalCloseButton />
 
-            <ModalBody pb={6}>
-              <FormControl>
-                <Input
-                  value={indice ? indice.idOficina : ''}
-                  disabled={true}
-                  type="text"
-                  hidden={true}
-                />
-              </FormControl>
-              <FormControl isRequired>
-                <FormLabel>Sede</FormLabel>
-                <Select
-                  onChange={handleChangeSede}
-                  //  defaultValue={optionsSede[optionsSedeindex]}
-                  defaultValue={
-                    props.oficina
-                      ? optionsSede.find(
-                          sede => sede.value == props.oficina.organo.sede.idSede
-                        )
-                      : null
-                  }
-                  isRequired
-                  isSearchable
-                  isClearable
-                  options={optionsSede}
-                />
-              </FormControl>
-              <FormControl mt={4} isRequired>
-                <FormLabel>Organo</FormLabel>
-                <Select
-                  onChange={handleChangeOrgano}
-                  // defaultValue= {optionsOrgano[optionsOrganoindex]}
-                  defaultValue={
-                    props.oficina
-                      ? optionsOrgano.find(
-                          organo =>
-                            organo.value == props.oficina.organo.idOrgano
-                        )
-                      : null
-                  }
-                  isClearable
-                  options={optionsOrgano}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Oficina</FormLabel>
-                <Select
-                  onChange={handleChangeOficina}
-                  defaultValue={
-                    props.oficina
-                      ? optionsOficina.find(
-                          oficina => oficina.value == props.oficina.idOficina
-                        )
-                      : null
-                  }
-                  isClearable={true}
-                  options={optionsOficina}
-                  isRequired
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Cargo</FormLabel>
-                <Select
-                  onChange={handleChangeCargo}
-                  defaultValue={
-                    props.cargo
-                      ? optionsCargo.find(
-                          cargo => cargo.value == props.cargo.idCargo
-                        )
-                      : null
-                  }
-                  isClearable={true}
-                  options={optionsCargo}
-                  isRequired
-                />
-              </FormControl>
-            </ModalBody>
-            <ModalFooter>
-              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>
-                Guardar
-              </Button>
-              <Button onClick={props.cerrar}>Cancelar</Button>
-            </ModalFooter>
-          </ModalContent>
-        </form>
-        </Modal>
+          <ModalBody pb={6}>
+            <FormControl>
+              <Input
+                value={indice ? indice.idOficina : ''}
+                disabled={true}
+                type="text"
+                hidden={true}
+              />
+            </FormControl>
+            <FormControl isRequired>
+              <FormLabel>Sede</FormLabel>
+              <Select
+                onChange={handleChangeSede}
+                //  defaultValue={optionsSede[optionsSedeindex]}
+                defaultValue={
+                  props.oficina
+                    ? optionsSede.find(
+                        sede => sede.value == props.oficina.organo.sede.idSede
+                      )
+                    : null
+                }
+                isRequired
+                isSearchable
+                isClearable
+                options={optionsSede}
+              />
+            </FormControl>
+            <FormControl mt={4} isRequired>
+              <FormLabel>Organo</FormLabel>
+              <Select
+                onChange={handleChangeOrgano}
+                // defaultValue= {optionsOrgano[optionsOrganoindex]}
+                defaultValue={
+                  props.oficina
+                    ? optionsOrgano.find(
+                        organo => organo.value == props.oficina.organo.idOrgano
+                      )
+                    : null
+                }
+                isClearable
+                options={optionsOrgano}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Oficina</FormLabel>
+              <Select
+                onChange={handleChangeOficina}
+                defaultValue={
+                  props.oficina
+                    ? optionsOficina.find(
+                        oficina => oficina.value == props.oficina.idOficina
+                      )
+                    : null
+                }
+                isClearable={true}
+                options={optionsOficina}
+                isRequired
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Cargo</FormLabel>
+              <Select
+                onChange={handleChangeCargo}
+                defaultValue={
+                  props.cargo
+                    ? optionsCargo.find(
+                        cargo => cargo.value == props.cargo.idCargo
+                      )
+                    : null
+                }
+                isClearable={true}
+                options={optionsCargo}
+                isRequired
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              type={'submit'}
+              onClick={saveHistorialPersona}
+              colorScheme={'blue'}
+              autoFocus
+              mr={3}
+            >
+              Guardar
+            </Button>
+            <Button onClick={props.cerrar}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 };

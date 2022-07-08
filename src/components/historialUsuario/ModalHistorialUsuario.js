@@ -18,7 +18,7 @@ import { store } from '../../store/store';
 import Select from 'react-select';
 
 import { useDispatch } from 'react-redux';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createOficina, fetchOficinas } from '../../actions/oficina';
 import {
   fetchHistorialPersona,
@@ -69,10 +69,10 @@ const ModalHistorialUsuario = props => {
   });
 
   const [organoSelect, setOrganoSelect] = useState([
-    { idOrgano: 0, organo: 'Seleccione una Sede' },
+    { label: 'Seleccione una Sede' },
   ]);
   const [oficinaSelect, setOficinaSelect] = useState([
-    { idOficina: 0, oficina: 'Seleccione un Organo' },
+    { idOficina: 0, label: 'Seleccione un Organo' },
   ]);
 
   const [organoNombre, setOrganoNombre] = useState(null);
@@ -84,7 +84,7 @@ const ModalHistorialUsuario = props => {
       label: sede.sede,
     }))
   );
-
+  console.log(props.oficina);
   const [optionsOrgano, setoptionsOrgano] = useState(
     organoInfo.map(organo => ({
       value: organo.idOrgano,
@@ -92,13 +92,49 @@ const ModalHistorialUsuario = props => {
     }))
   );
 
+  console.log(optionsOrgano);
   const [optionsOficina, setoptionsOficina] = useState(
     oficinaInfo.map(oficina => ({
       value: oficina.idOficina,
       label: oficina.oficina,
     }))
   );
-
+  const [estado, setEstado] = useState(true);
+  useEffect(() => {
+    if (estado) {
+      console.log('dsd');
+      if (props.oficina != null) {
+        setEstado(false);
+        setoptionsOrgano(
+          organoInfo
+            .filter(
+              indice => indice.sede.idSede == props.oficina.organo.sede.idSede
+            )
+            .map(value => ({ value: value.idOrgano, label: value.organo }))
+        );
+        setoptionsOficina(
+          oficinaInfo
+            .filter(
+              indice => indice.organo.idOrgano == props.oficina.organo.idOrgano
+            )
+            .map(value => ({ value: value.idOficina, label: value.oficina }))
+        );
+        setIndiceHistorial({
+          ...indiceHistorial,
+          oficina: {
+            idOficina: props.oficina.idOficina,
+            oficina: props.oficina.oficina,
+          },
+        });
+        console.log(optionsOrgano);
+        setOrganoSelect(
+          optionsOrgano.find(
+            organo => organo.value == props.oficina.organo.idOrgano
+          )
+        );
+      }
+    }
+  });
   const [optionsCargoIndex, setOptionsCargoIndex] = useState(0);
   const [optionsOficinaIndex, setOficinaIndex] = useState(0);
 
@@ -117,6 +153,7 @@ const ModalHistorialUsuario = props => {
   // Select
   const handleChangeSede = value => {
     // setsedeNombre(e.target.value);
+    console.log(organoSelect);
     console.log(value);
     if (value == null) {
       //setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
@@ -138,11 +175,8 @@ const ModalHistorialUsuario = props => {
 
   //
   const handleChangeOrgano = value => {
-    console.log(value);
-    console.log(
-      oficinaData.filter(indice => indice.organo.idOrgano == value.value)
-    );
-    setOrganoNombre(value.value);
+
+    
     if (value == null) {
       setoptionsOficina([{ idOficina: 0, oficina: 'Seleccione un Organo' }]);
     } else {
@@ -177,7 +211,10 @@ const ModalHistorialUsuario = props => {
         idpersona: Number(props.idPersona),
       },
       cargo: indiceHistorial.cargo,
-      oficina: indiceHistorial.oficina,
+      oficina:
+        indiceHistorial.oficina == null
+          ? props.oficina
+          : indiceHistorial.oficina,
       iniciaCargo: indiceHistorial.iniciaCargo,
       terminaCargo: indiceHistorial.terminaCargo,
       activo: indiceHistorial.activo,
@@ -242,13 +279,8 @@ const ModalHistorialUsuario = props => {
               <Select
                 onChange={handleChangeOrgano}
                 // defaultValue= {optionsOrgano[optionsOrganoindex]}
-                defaultValue={
-                  props.oficina
-                    ? optionsOrgano.find(
-                        organo => organo.value == props.oficina.organo.idOrgano
-                      )
-                    : null
-                }
+                defaultValue={organoSelect}
+                placeholder={'Seleccione un Organo'}
                 isClearable
                 options={optionsOrgano}
               />

@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { LoginScreen } from '../components/auth/LoginScreen';
 import { RegisterScreen } from '../components/auth/RegisterScreen';
+import { RegisterValidateScreen } from '../components/auth/RegisterValidateScreen';
 import { DasboardScreen } from '../components/ui/DasboardScreen';
 import HistorialUsuario  from '../components/historialUsuario/HistorialUsuario';
 
@@ -123,6 +124,13 @@ export const AppRouter = () => {
             exact
             path="/auth/register"
             component={RegisterScreen}
+            isAuthenticated={!!access_token}
+            rol={rol}
+          />
+          <PublicRoute
+            exact
+            path="/auth/register/validate"
+            component={RegisterValidateScreen}
             isAuthenticated={!!access_token}
             rol={rol}
           />

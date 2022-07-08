@@ -39,6 +39,9 @@ import {
   Tbody,
   TableContainer,
 } from '@chakra-ui/react';
+
+import {Modal as ModalB} from 'react-bootstrap';
+
 import { CheckCircleIcon, NotAllowedIcon, EditIcon, CloseIcon } from '@chakra-ui/icons';
 import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
 
@@ -130,8 +133,8 @@ export default function TablePersona() {
   };
 
   const savePersonaOrgano = e => {
-    handleCloseModal(true);
-    console.log(indice);
+    // handleCloseModal(true);
+    // console.log(indice);
     // console.log(e)
     e.preventDefault();
     var personaOrgano = {
@@ -199,7 +202,6 @@ export default function TablePersona() {
       .then(() => {
         handleCloseDeleteOrganoP(true);
         console.log('Persona eliminado');
-        dispatch(fetchPersonaOrgano());
       })
       .catch(e => {
         console.log(e);
@@ -330,142 +332,144 @@ export default function TablePersona() {
             />
           ) : // <TableModal handleCloseModal={handleCloseModal} open={openModal} handleOpen={handleClickOpenModal(row)}  />
           null}
-          <Modal isOpen={openModal} onClose={handleCloseModal} size={'6xl'}>
-            <ModalOverlay />
-            <form onSubmit={savePersonaOrgano}>
-              <ModalContent>
-                <ModalHeader>
-                  ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES
-                  INFORMATICOS
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={2}>
-                  <FormControl></FormControl>
-                  <HStack spacing={'10px'} mt={'10px'}>
-                    <FormControl>
-                      <FormLabel>Sede</FormLabel>
-                      <Select
-                        //  defaultValue={indice ? indice.activo : ''}
-                        required
-                        onChange={handleChangeSede}
-                        // onChange={(e)=> { console.log(e.target.value); }}
-                        isRequired
-                        isSearchable
-                        isClearable
-                        options={sedeData.map(sede => ({
-                          value: sede.idSede,
-                          label: sede.sede,
-                        }))}
-                      />
+
+            <Modal isOpen={openModal} onClose={handleCloseModal} size={'6xl'} style={{'position': 'absolute','z-index': 'auto'}}>
+              <ModalOverlay />
+              <form onSubmit={savePersonaOrgano}>
+                <ModalContent>
+                  <ModalHeader>
+                    ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES
+                    INFORMATICOS
+                  </ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody pb={2}>
+                    <FormControl></FormControl>
+                    <HStack spacing={'10px'} mt={'10px'}>
+                      <FormControl>
+                        <FormLabel>Sede</FormLabel>
+                        <Select
+                          //  defaultValue={indice ? indice.activo : ''}
+                          required
+                          onChange={handleChangeSede}
+                          // onChange={(e)=> { console.log(e.target.value); }}
+                          isRequired
+                          isSearchable
+                          isClearable
+                          options={sedeData.map(sede => ({
+                            value: sede.idSede,
+                            label: sede.sede,
+                          }))}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Organo</FormLabel>
+                        <Select
+                          onChange={handleChangeOrgano}
+                          defaultValue={organoSelect.map(organo => ({
+                            value: organo.idOrgano,
+                            label: organo.organo,
+                          }))}
+                          isClearable
+                          options={organoSelect.map(organo => ({
+                            value: organo.idOrgano,
+                            label: organo.organo,
+                          }))}
+                        />
+                      </FormControl>
+                    </HStack>
+                    <FormControl mt={'10px'}>
+                      <Button
+                        type={'submit'}
+                        // onClick={e => handleUpdatePersona(e)}
+                        colorScheme={'blue'}
+                        mr={3}
+                      >
+                        Asignar
+                      </Button>
                     </FormControl>
-                    <FormControl>
-                      <FormLabel>Organo</FormLabel>
-                      <Select
-                        onChange={handleChangeOrgano}
-                        defaultValue={organoSelect.map(organo => ({
-                          value: organo.idOrgano,
-                          label: organo.organo,
-                        }))}
-                        isClearable
-                        options={organoSelect.map(organo => ({
-                          value: organo.idOrgano,
-                          label: organo.organo,
-                        }))}
-                      />
-                    </FormControl>
-                  </HStack>
-                  <FormControl mt={'10px'}>
-                    <Button
+                    <Divider
+                      orientation="horizontal"
+                      borderColor={'blue.500'}
+                      border={2}
+                      mt={'10px'}
+                    />
+
+                    <Text mt={'10px'}>
+                      Organos Juridiccionales asignados a{' '}
+                      <b> {indice.nombre + ' ' + indice.apellido}</b>
+                    </Text>
+
+                    {/* Listado de Organos asignados a ese usuario */}
+
+                    <Table
+                      size="sm"
+                      alignSelf={'start'}
+                      variant="simple"
+                      overflowX={'auto'}
+                      mt={'10px'}
+                    >
+                      <Thead>
+                        <Tr>
+                          <Th>Sede</Th>
+                          <Th>Organo</Th>
+                          <Th>Accion</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {
+                          result.map(item => (
+                            <Tr key={item.idPersonaOrgano}>
+                              <Td>{item.organo.sede.sede}</Td>
+                              <Td>{item.organo.organo}</Td>
+                              <Td>
+                                <IconButton onClick={()=> handleClickOpenDeleteOrganoP(item)} color={'red.600'} fontSize='20px' icon={<CloseIcon/>}></IconButton>
+                                {/* Alert dialog para confirmar la eliminacion */}
+                                <AlertDialog isOpen={opendeleteOrganoP} onClose={handleCloseDeleteOrganoP}>
+                                  <AlertDialogOverlay>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                                          <Text>Está seguro de eliminar?</Text>
+                                      </AlertDialogHeader>
+
+                                      <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+
+                                      <AlertDialogFooter>
+                                        <Button onClick={handleCloseDeleteOrganoP}>Cancelar</Button>
+                                        <Button
+                                          onClick={() => handleDeletePersonaOrgano(item.idPersonaOrgano, item.idPersona)}
+                                          colorScheme="red"
+                                          ml={3}
+                                        >
+                                          Si
+                                        </Button>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialogOverlay>
+                                </AlertDialog>
+                                
+                              </Td>
+                            </Tr>
+                          ))
+                        }
+                      </Tbody>
+                    
+                    </Table>
+                  </ModalBody>
+                  <ModalFooter>
+                    {/* <Button
                       type={'submit'}
+                      onClick={()=> handleDeletePersonaOrgano(item.idPersonaOrgano)}
                       // onClick={e => handleUpdatePersona(e)}
-                      colorScheme={'blue'}
+                      colorScheme={'green'}
                       mr={3}
                     >
-                      Asignar
-                    </Button>
-                  </FormControl>
-                  <Divider
-                    orientation="horizontal"
-                    borderColor={'blue.500'}
-                    border={2}
-                    mt={'10px'}
-                  />
-
-                  <Text mt={'10px'}>
-                    Organos Juridiccionales asignados a{' '}
-                    <b> {indice.nombre + ' ' + indice.apellido}</b>
-                  </Text>
-
-                  {/* Listado de Organos asignados a ese usuario */}
-
-                  <Table
-                    size="sm"
-                    alignSelf={'start'}
-                    variant="simple"
-                    overflowX={'auto'}
-                    mt={'10px'}
-                  >
-                    <Thead>
-                      <Tr>
-                        <Th>Sede</Th>
-                        <Th>Organo</Th>
-                        <Th>Accion</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {
-                        result.map(item => (
-                          <Tr key={item.idPersonaOrgano}>
-                            <Td>{item.organo.sede.sede}</Td>
-                            <Td>{item.organo.organo}</Td>
-                            <Td>
-                              <IconButton onClick={()=> handleClickOpenDeleteOrganoP(item)} color={'red.600'} fontSize='20px' icon={<CloseIcon/>}></IconButton>
-                              {/* Alert dialog para confirmar la eliminacion */}
-                              <AlertDialog isOpen={opendeleteOrganoP} onClose={handleCloseDeleteOrganoP}>
-                                <AlertDialogOverlay>
-                                  <AlertDialogContent>
-                                    <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                                        <Text>Está seguro de eliminar?</Text>
-                                    </AlertDialogHeader>
-
-                                    <AlertDialogBody>Confirmo la acción</AlertDialogBody>
-
-                                    <AlertDialogFooter>
-                                      <Button onClick={handleCloseDeleteOrganoP}>Cancelar</Button>
-                                      <Button
-                                        onClick={() => handleDeletePersonaOrgano(item.idPersonaOrgano, item.idPersona)}
-                                        colorScheme="red"
-                                        ml={3}
-                                      >
-                                        Si
-                                      </Button>
-                                    </AlertDialogFooter>
-                                  </AlertDialogContent>
-                                </AlertDialogOverlay>
-                              </AlertDialog>
-                            </Td>
-                          </Tr>
-                        ))
-                      }
-                    </Tbody>
-                   
-                  </Table>
-                </ModalBody>
-                <ModalFooter>
-                  {/* <Button
-                    type={'submit'}
-                    onClick={()=> handleDeletePersonaOrgano(item.idPersonaOrgano)}
-                    // onClick={e => handleUpdatePersona(e)}
-                    colorScheme={'green'}
-                    mr={3}
-                  >
-                    Actualizar
-                  </Button> */}
-                  <Button onClick={handleCloseModal}>Cancelar</Button>
-                </ModalFooter>
-              </ModalContent>
-            </form>
-          </Modal>
+                      Actualizar
+                    </Button> */}
+                    <Button onClick={handleCloseModal}>Cancelar</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </form>
+            </Modal>
         </div>
       ),
       center: true,

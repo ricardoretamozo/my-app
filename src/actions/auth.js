@@ -6,7 +6,7 @@ import {
 } from '../helpers/fetch';
 import { types } from '../types/types';
 import Swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 export const startLogin = (dni, password) => {
   return async dispatch => {
@@ -50,7 +50,7 @@ export const LogOut = () =>{
   }
 }
 
-export const startDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) => {
+export const StartDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) => {
   return async( dispatch ) =>{
     const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
     const body = await response.json();
@@ -58,11 +58,12 @@ export const startDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) =
     if (!!body[0]) {   
       timerNotification('Validacion correcta');
       dispatch(validadorUsuario(body[0]));
+      // Sigte();
     } else {
       notification('ERROR DE VALIDACIÓN', body.error, 'error');
     }
   }
-  }
+}
 
 
 
@@ -110,3 +111,8 @@ export const validadorUsuario = usuario => ({
 const logout = () => ({
   type: types.logout,
 });
+
+export const Sigte = () => {
+  const history = useHistory();
+  return history.push('/auth/register/validate');
+}

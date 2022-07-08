@@ -56,7 +56,6 @@ export const fetchIncidencias = async () => {
   });
   Incidencia.data = data;
   // set user info
-
   return Incidencia;
 };
 

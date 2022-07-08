@@ -26,9 +26,10 @@ import { notification } from '../../helpers/alert';
 
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
-import { startDni, startLogin } from '../../actions/auth';
+import { StartDni, startLogin } from '../../actions/auth';
 import { createPersonaRegister } from '../../actions/persona';
 import { store } from '../../store/store';
+import { useHistory } from 'react-router-dom';
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'teal.200');
@@ -37,6 +38,7 @@ export const RegisterScreen = () => {
 
   // const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const [openModal, setOpenModal] = React.useState(false);
 
@@ -47,6 +49,8 @@ export const RegisterScreen = () => {
   });
 
   const data = store.getState().usuarioDni;
+
+  console.log(data);
 
   const initialUsuario = {
     nombre: '',
@@ -97,16 +101,17 @@ export const RegisterScreen = () => {
 
   const HandleValidatorUser = (e)=> {
     e.preventDefault();
-   console.log(validadorDni);
-    dispatch(startDni(
+    dispatch(StartDni(
         validadorDni.dni,
         validadorDni.codigoVerificacion,
         validadorDni.fechaNacimiento
       )
-    ).then(() => {
-    //  setOpenModal(true);
-    }).catch((err) => {
-      //  setOpenModal(true);
+    )
+    .then(() => {
+      history.push('/auth/register/validate');
+    }).catch(e => {
+      history.push('/auth/register');
+      notification('Error', 'El DNI no es valido', e);
     });
   };
 
@@ -259,150 +264,23 @@ export const RegisterScreen = () => {
                 >
                   VALIDAR
                 </Button>
+                <Text color={textColor} fontWeight="medium" mt={4}>
+                  Ya tienes una cuenta creada?
+                  <LinkB
+                    color={titleColor}
+                    as="span"
+                    ms="5px"
+                    href="#"
+                    fontWeight="bold"
+                  >
+                    <LinkA to={'/auth/login'}>Login</LinkA>
+                  </LinkB>
+                </Text>
               </FormControl>
             </form>
-
-            {/* MODAL EDITAR */}
-
-            <Modal
-              isOpen={openModal}
-              onClose={handleCloseModal}
-              size={'xl'}
-            >
-              <ModalOverlay />
-              <form onSubmit={handleCreateUser}>
-                <ModalContent>
-                  <ModalHeader>Confirmar la creacion de la cuenta</ModalHeader>
-                  <ModalCloseButton />
-                  <ModalBody>
-                    <FormControl>
-                      <Flex>
-                        <Flex direction="column" w={'100%'}>
-                          <FormLabel fontSize="sm" fontWeight="normal">
-                            Documento de identificación
-                          </FormLabel>
-                          <Input
-                            fontSize="sm"
-                            type="text"
-                            placeholder="DNI"
-                            mb="24px"
-                            size="lg"
-                            isDisabled
-                            defaultValue={data ? data.numeroDocumento : ''}
-                            onChange={e => {
-                              setUsuario({
-                                ...dataUsuario,
-                                dni: e.target.value,
-                              });
-                            }}
-                          />
-                          <FormLabel fontSize="sm" fontWeight="normal">
-                            Password
-                          </FormLabel>
-                          <Input
-                            fontSize="sm"
-                            type="password"
-                            placeholder="Password"
-                            mb="24px"
-                            size="lg"
-                            id="form-dni"
-                            name="password1"
-                            onChange={e => {
-                              setUsuario({
-                                ...dataUsuario,
-                                password1: e.target.value,
-                              });
-                            }}
-                            isRequired
-                          />
-                          <FormLabel fontSize="sm" fontWeight="normal">
-                            Repetir Password
-                          </FormLabel>
-                          <Input
-                            fontSize="sm"
-                            type="password"
-                            placeholder="Repetir password"
-                            name="password2"
-                            mb="24px"
-                            size="lg"
-                            id="form-password"
-                            onChange={e => {
-                              setUsuario({
-                                ...dataUsuario,
-                                password2: e.target.value,
-                              });
-                            }}
-                            isRequired
-                          />
-                          <Text color={textColor} fontWeight="medium">
-                            Ya tienes una cuenta creada?
-                            <LinkB
-                              color={titleColor}
-                              as="span"
-                              ms="5px"
-                              href="#"
-                              fontWeight="bold"
-                            >
-                              <LinkA to={'/auth/login'}>LOGIN</LinkA>
-                            </LinkB>
-                          </Text>
-                          {/* <Button
-                      type="submit"
-                      // onClick={() => handleCreateUser()}
-                      bg="#9a1413"
-                      fontSize="10px"
-                      color="white"
-                      fontWeight="bold"
-                      w="100%"
-                      h="45"
-                      mb="24px"
-                      _hover={{
-                        bg: 'black',
-                      }}
-                      _active={{
-                        bg: 'teal.400',
-                      }}
-                    >
-                      REGISTRARSE
-                    </Button> */}
-                        </Flex>
-                      </Flex>
-                    </FormControl>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button
-                      colorScheme="red"
-                      mr={3}
-                      type="submit"
-                      // onClick={() => handleCreateUser()}
-                      bg="#9a1413"
-                      fontSize="10px"
-                      color="white"
-                      fontWeight="bold"
-                      _hover={{
-                        bg: 'black',
-                      }}
-                      _active={{
-                        bg: 'teal.400',
-                      }}
-                    >
-                      REGISTRARSE
-                    </Button>
-                    <Button onClick={handleCloseModal}>Cancel</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </form>
-            </Modal>
-
-            <Flex
-              flexDirection="column"
-              justifyContent="center"
-              alignItems="center"
-              mt="0px"
-            ></Flex>
           </Flex>
 
-        <Flex
+        {/* <Flex
             direction="column"
             w="70%"
             background="transparent"
@@ -523,16 +401,7 @@ export const RegisterScreen = () => {
                 </Flex>
               </FormControl>
             </form> 
-            {/* <LinkB
-                color={titleColor}
-                as="span"
-                ms="5px"
-                href="#"
-                fontWeight="bold"
-              >
-                <LinkA to={'/auth/login'}>LOGIN</LinkA>
-              </LinkB> */}
-          </Flex>
+        </Flex> */}
         </Flex>
       </Flex>
     </>

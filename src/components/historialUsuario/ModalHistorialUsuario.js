@@ -13,6 +13,8 @@ import {
   Select as SelectForm,
 } from '@chakra-ui/react';
 
+import { notification } from '../../helpers/alert';
+
 import { store } from '../../store/store';
 
 import Select from 'react-select';
@@ -48,7 +50,7 @@ const ModalHistorialUsuario = props => {
     sede: '',
     activo: '',
   });
-  
+
   const tiempoTranscurrido = Date.now();
   const hoy = new Date(tiempoTranscurrido);
 
@@ -178,8 +180,6 @@ const ModalHistorialUsuario = props => {
 
   //
   const handleChangeOrgano = value => {
-
-    
     if (value == null) {
       setoptionsOficina([{ idOficina: 0, oficina: 'Seleccione un Organo' }]);
     } else {
@@ -214,11 +214,12 @@ const ModalHistorialUsuario = props => {
       persona: {
         idpersona: Number(props.idPersona),
       },
-      cargo: indiceHistorial.cargo.idCargo == null
-        ? props.cargo
-        : indiceHistorial.cargo,
+      cargo:
+        indiceHistorial.cargo.idCargo == null
+          ? props.cargo
+          : indiceHistorial.cargo,
       oficina:
-        indiceHistorial.oficina == null
+        indiceHistorial.oficina.idOficina == null
           ? props.oficina
           : indiceHistorial.oficina,
       iniciaCargo: indiceHistorial.iniciaCargo,
@@ -227,18 +228,21 @@ const ModalHistorialUsuario = props => {
       fecha: indiceHistorial.fecha,
       ip: indiceHistorial.ip,
     };
-    dispatch(createHistorialPersona(historialUsuario))
-      .then(() => {
-        // props.cerrar();
-        dispatch(props.handleClick());
-        dispatch(props.listarHistorialPersona());
-      })
-      .catch(err => {
-        console.log(err);
-        props.cerrar();
-      });
+
+    dispatch(createHistorialPersona(historialUsuario)).then(() => {
+      if (props.cargo == null || props.oficina == null) {
+        if (
+          indiceHistorial.oficina.idOficina != null &&
+          indiceHistorial.cargo.idCargo != null
+        ) {
+          dispatch(props.handleClick());
+        }
+      }
+
+      dispatch(props.listarHistorialPersona());
+    });
+
     props.cerrar();
-    // history.push('/dashboard/incidencias');
   };
 
   return (
@@ -332,7 +336,9 @@ const ModalHistorialUsuario = props => {
                 // }
                 // defaultInputValue = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
                 // value = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
-                defaultValue = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
+                defaultValue={
+                  indiceHistorial ? indiceHistorial.cargo.cargo : ''
+                }
                 isClearable={true}
                 options={optionsCargo}
                 isRequired

@@ -5,7 +5,6 @@ import {
   fetchServicioDni,
 } from '../helpers/fetch';
 import { types } from '../types/types';
-import Swal from 'sweetalert2';
 import { Link, useHistory } from 'react-router-dom';
 
 export const startLogin = (dni, password) => {
@@ -36,7 +35,7 @@ export const startLogin = (dni, password) => {
       );
       timerNotification('Inicio de Sesion Exitoso!');
     } else {
-    notification('Este usuario no esta registrado', 'Desea restrarlo?' , 'error');
+    notification('Este usuario no esta registrado', 'Desea registrarlo?' , 'error');
     }
   };
 };
@@ -50,23 +49,20 @@ export const LogOut = () =>{
   }
 }
 
-export const StartDni = (numeroDocumento, codigoVerificacion ,fechaNacimiento) => {
+export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
   return async( dispatch ) =>{
     const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
     const body = await response.json();
-    console.log(body[0]);
-    if (!!body[0]) {   
+    // console.log(body[0]);
+    if (!!body[0]) {
       timerNotification('Validacion correcta');
       dispatch(validadorUsuario(body[0]));
-      // Sigte();
     } else {
       notification('ERROR DE VALIDACIÓN', body.error, 'error');
+      Error();
     }
   }
 }
-
-
-
 
 export const startChecking = () => {
   return async dispatch => {
@@ -103,16 +99,16 @@ const login = user => ({
   payload: user,
 });
 
-export const validadorUsuario = usuario => ({
-  type: types.eventLoadedUsuarioValidadorDni,
-  payload: usuario,
-});
-
 const logout = () => ({
   type: types.logout,
 });
 
-export const Sigte = () => {
+const Error = () => {
   const history = useHistory();
-  return history.push('/auth/register/validate');
+  return history.push('/auth/register');
 }
+
+export const validadorUsuario = usuario => ({
+  type: types.eventLoadedUsuarioValidadorDni,
+  payload: usuario,
+});

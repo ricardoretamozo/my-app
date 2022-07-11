@@ -23,8 +23,6 @@ import { createOficina, fetchOficinas } from '../../../actions/oficina';
 
 import { types } from '../../../types/types';
 
-import mockData from './Data';
-
 const OficinaAgregar = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const dispatch = useDispatch();

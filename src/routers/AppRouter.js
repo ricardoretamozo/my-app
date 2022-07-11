@@ -35,6 +35,7 @@ export const AppRouter = () => {
   console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
+  
   console.log(rol);
 
   useEffect(() => {

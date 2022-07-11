@@ -1,15 +1,39 @@
 {
   "dni": [
     {
-      "id": "71499916",
-      "nombre": "HUAMANI MENDOZA ERACLEO JUAN",
-      "numeroDocumento": "71499916",
-      "nombres": "ERACLE JUAN",
-      "apellidos": "HUAMANI MENDOZA",
+      "id": "70809010",
+      "nombre": "RENATO",
+      "numeroDocumento": "70809010",
+      "nombres": "RENATO",
+      "apellidos": "MENDOZA GUTIERREZ",
       "apellidoMaterno": "MENDOZA",
       "ubigeo": "040407",
       "codigoVerificacion": "8",
-      "fechaNacimiento": "2022-07-06",
+      "fechaNacimiento": "2022-07-08",
+      "sexo": "M"
+    },
+    {
+      "id": "70809011",
+      "nombre": "JOSE LUIS",
+      "numeroDocumento": "70809011",
+      "nombres": "JOSE LUIS",
+      "apellidos": "GUTIERREZ",
+      "apellidoMaterno": "MENDOZA",
+      "ubigeo": "040407",
+      "codigoVerificacion": "8",
+      "fechaNacimiento": "2022-07-11",
+      "sexo": "M"
+    },
+    {
+      "id": "70809012",
+      "nombre": "LUIS",
+      "numeroDocumento": "70809012",
+      "nombres": "LUIS",
+      "apellidos": "GUTIERREZ",
+      "apellidoMaterno": "MENDOZA",
+      "ubigeo": "040407",
+      "codigoVerificacion": "8",
+      "fechaNacimiento": "2022-07-11",
       "sexo": "M"
     }
   ]

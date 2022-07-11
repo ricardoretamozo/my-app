@@ -22,7 +22,7 @@ export const Oficina = () => {
       fetchData();
     }
     //fetchData();
-  }, []);
+  });
 
   //
   return (

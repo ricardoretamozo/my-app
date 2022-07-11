@@ -19,6 +19,7 @@ import Select from 'react-select';
 
 import { useDispatch } from 'react-redux';
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { createOficina, fetchOficinas } from '../../actions/oficina';
 import {
   fetchHistorialPersona,
@@ -29,6 +30,7 @@ import { types } from '../../types/types';
 
 const ModalHistorialUsuario = props => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const sedeData = store.getState().sede.rows;
   const organoData = store.getState().organo.rows;
@@ -46,7 +48,7 @@ const ModalHistorialUsuario = props => {
     sede: '',
     activo: '',
   });
-  console.log(props.cargo);
+  
   const tiempoTranscurrido = Date.now();
   const hoy = new Date(tiempoTranscurrido);
 
@@ -99,10 +101,11 @@ const ModalHistorialUsuario = props => {
       label: oficina.oficina,
     }))
   );
+
   const [estado, setEstado] = useState(true);
+
   useEffect(() => {
     if (estado) {
-      console.log('dsd');
       if (props.oficina != null) {
         setEstado(false);
         setoptionsOrgano(
@@ -189,7 +192,7 @@ const ModalHistorialUsuario = props => {
   };
 
   const handleChangeOficina = value => {
-    //console.log(value);
+    console.log(indiceHistorial);
     setIndiceHistorial({
       ...indiceHistorial,
       oficina: { idOficina: value.value, oficina: value.label },
@@ -197,12 +200,13 @@ const ModalHistorialUsuario = props => {
   };
 
   const handleChangeCargo = value => {
-    console.log(value.value);
     setIndiceHistorial({
       ...indiceHistorial,
       cargo: { idCargo: value.value, cargo: value.label },
     });
   };
+
+  console.log(props.cargo);
 
   const saveHistorialPersona = e => {
     e.preventDefault();
@@ -210,7 +214,9 @@ const ModalHistorialUsuario = props => {
       persona: {
         idpersona: Number(props.idPersona),
       },
-      cargo: indiceHistorial.cargo,
+      cargo: indiceHistorial.cargo.idCargo == null
+        ? props.cargo
+        : indiceHistorial.cargo,
       oficina:
         indiceHistorial.oficina == null
           ? props.oficina
@@ -223,7 +229,8 @@ const ModalHistorialUsuario = props => {
     };
     dispatch(createHistorialPersona(historialUsuario))
       .then(() => {
-        props.cerrar();
+        // props.cerrar();
+        dispatch(props.handleClick());
         dispatch(props.listarHistorialPersona());
       })
       .catch(err => {
@@ -231,6 +238,7 @@ const ModalHistorialUsuario = props => {
         props.cerrar();
       });
     props.cerrar();
+    // history.push('/dashboard/incidencias');
   };
 
   return (
@@ -244,7 +252,7 @@ const ModalHistorialUsuario = props => {
         <ModalOverlay />
 
         <ModalContent>
-          <ModalHeader>Cambiar sede, organo, oficina, cargo</ModalHeader>
+          <ModalHeader>Actualizar sede, organo, oficina, cargo</ModalHeader>
           <ModalCloseButton />
 
           <ModalBody pb={6}>
@@ -261,13 +269,13 @@ const ModalHistorialUsuario = props => {
               <Select
                 onChange={handleChangeSede}
                 //  defaultValue={optionsSede[optionsSedeindex]}
-                defaultValue={
-                  props.oficina
-                    ? optionsSede.find(
-                        sede => sede.value == props.oficina.organo.sede.idSede
-                      )
-                    : null
-                }
+                // defaultValue={
+                //   props.oficina
+                //     ? optionsSede.find(
+                //         sede => sede.value == props.oficina.organo.sede.idSede
+                //       )
+                //     : null
+                // }
                 isRequired
                 isSearchable
                 isClearable
@@ -278,8 +286,7 @@ const ModalHistorialUsuario = props => {
               <FormLabel>Organo</FormLabel>
               <Select
                 onChange={handleChangeOrgano}
-                // defaultValue= {optionsOrgano[optionsOrganoindex]}
-                defaultValue={organoSelect}
+                // defaultValue={organoSelect}
                 placeholder={'Seleccione un Organo'}
                 isClearable
                 options={optionsOrgano}
@@ -289,13 +296,13 @@ const ModalHistorialUsuario = props => {
               <FormLabel>Oficina</FormLabel>
               <Select
                 onChange={handleChangeOficina}
-                defaultValue={
-                  props.oficina
-                    ? optionsOficina.find(
-                        oficina => oficina.value == props.oficina.idOficina
-                      )
-                    : null
-                }
+                // defaultValue={
+                //   props.oficina
+                //     ? optionsOficina.find(
+                //         oficina => oficina.value == props.oficina.idOficina
+                //       )
+                //     : null
+                // }
                 isClearable={true}
                 options={optionsOficina}
                 isRequired
@@ -303,15 +310,29 @@ const ModalHistorialUsuario = props => {
             </FormControl>
             <FormControl mt={4}>
               <FormLabel>Cargo</FormLabel>
+              {/* <SelectForm
+              defaultValue={props.cargo ? props.cargo.idCargo : ''}
+              onChange ={e => setIndiceHistorial({...indiceHistorial, cargo:  e.target.value })
+              }
+              >
+                {cargoData.map((item, idx) => (
+                  <option value={item.idCargo} key={idx}>
+                    {item.cargo}
+                  </option>
+                ))}
+              </SelectForm> */}
               <Select
                 onChange={handleChangeCargo}
-                defaultValue={
-                  props.cargo
-                    ? optionsCargo.find(
-                        cargo => cargo.value == props.cargo.idCargo
-                      )
-                    : null
-                }
+                // defaultValue={
+                //   props.cargo
+                //     ? optionsCargo.find(
+                //         cargo => cargo.value == props.cargo.idCargo
+                //       )
+                //     : ''
+                // }
+                // defaultInputValue = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
+                // value = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
+                defaultValue = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
                 isClearable={true}
                 options={optionsCargo}
                 isRequired

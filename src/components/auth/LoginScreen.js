@@ -55,27 +55,26 @@ export const LoginScreen = () => {
     <>
       <Flex position="relative" mb="40px">
         <Flex
-          h={{ sm: 'initial', md: '100vh', lg: '100vh' }}
           w="100%"
           maxW="1044px"
           mx="auto"
           justifyContent="space-between"
           mb="30px"
-          pt={{ sm: '100px', md: '0px' }}
+          pt={{ sm: '100px', md: '100px', lg: '100px' }}
         >
           <Flex
-            alignItems="center"
             justifyContent="center"
-            verticalAlign={'middle'}
             w="100%"
             style={{ userSelect: 'none' }}
           >
             <Flex
               direction="column"
               background="transparent"
-              p="48px"
+              p="50px"
+              boxShadow={'md'}
+              borderRadius={'lg'}
             >
-              <Heading color={titleColor} fontSize="5xl" mb="15px" textAlign={'center'}>
+              <Heading color={titleColor} fontSize="4xl" mb="15px" textAlign={'center'}>
                 Bienvenido
               </Heading>
               <Text

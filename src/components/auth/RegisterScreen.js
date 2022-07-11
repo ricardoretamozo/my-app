@@ -20,6 +20,7 @@ import {
   ModalBody,
   ModalFooter,
   ModalCloseButton,
+  Image,
 } from '@chakra-ui/react';
 
 import { notification } from '../../helpers/alert';
@@ -127,18 +128,19 @@ export const RegisterScreen = () => {
           position="absolute"
           minH={{ base: '70vh', md: '60vh' }}
           w={{ md: 'calc(100vw - 50px)' }}
-          borderRadius={{ md: '15px' }}
+          borderRadius={{ md: 'md' }}
           left="0"
           right="0"
           bgRepeat="no-repeat"
           overflow="hidden"
           zIndex="-1"
+          bgImg={BgSignUp}
           top="0"
-          bgImage={BgSignUp}
           bgSize="cover"
           mx={{ md: 'auto' }}
           mt={{ md: '14px' }}
-        ></Box>
+        >
+        </Box>
         <Flex
           direction="column"
           textAlign="center"
@@ -147,28 +149,18 @@ export const RegisterScreen = () => {
           mt="3.5rem"
           mb="30px"
         >
-          <Text fontSize="4xl" color="#9a1413" fontWeight="bold">
-            Sistema de incidencias Poder Judicial-Arequipa
+          <Text mx={5} fontSize={{ base: '1xl', sm: '2xl', md: '3xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
+            Sistema de incidencias Corte Superior de Justicia de Arequipa
           </Text>
-          {/* <Text
-            fontSize="md"
-            color="white"
-            fontWeight="normal"
-            mt="10px"
-            w={{ base: '90%', sm: '80%', lg: '40%', xl: '30%' }}
-          >
-            Registro de usuario, para el sistema de incidencias del Poder
-            Judicial Arequipa.
-          </Text> */}
         </Flex>
-        <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px" ml={10}>
+        <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px">
           <Flex
             direction="column"
             background="transparent"
-            borderRadius="15px"
+            borderRadius="lg"
             w={'100%'}
-            maxW={{ base: '500px', sm: '80%', md: '500px', lg: '500px' }}
-            p="30px"
+            maxW={{ base: '90%', sm: '450px', md: '450px', lg: '450px' }}
+            p="50px"
             bg={bgColor}
             boxShadow={'md'}
           >
@@ -177,14 +169,13 @@ export const RegisterScreen = () => {
               color={textColor}
               fontWeight="bold"
               textAlign="center"
-              mb={'10px'}
+              mb={'20px'}
             >
               Validar DNI
             </Text>
             <form onSubmit={HandleValidatorUser}>
               <FormControl>
                 <FormLabel
-                  ms="4px"
                   fontSize="sm"
                   fontWeight="normal"
                   mt={'10px'}
@@ -193,24 +184,21 @@ export const RegisterScreen = () => {
                 </FormLabel>
                 <Input
                   fontSize="sm"
-                  ms="4px"
                   type="text"
                   placeholder="DNI"
                   size="lg"
                   defaultValue={validadorDni ? validadorDni.dni : ''}
-                  // onChange={() => handleInputChange()}
                   onChange={e => {
                     setDni({ ...validadorDni, dni: e.target.value });
                   }}
                   id="dni"
                   isRequired
                 />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal" mt="10px">
+                <FormLabel fontSize="sm" fontWeight="normal" mt="10px">
                   codigo Verificacion
                 </FormLabel>
                 <Input
                   fontSize="sm"
-                  ms="4px"
                   type="text"
                   placeholder="8"
                   id="codigoVerificacion"
@@ -227,13 +215,12 @@ export const RegisterScreen = () => {
                   }}
                   isRequired
                 />
-                <FormLabel ms="4px" fontSize="sm" fontWeight="normal" mt="10px">
+                <FormLabel fontSize="sm" fontWeight="normal" mt="10px">
                   Fecha de Nacimiento
                 </FormLabel>
                 <Input
                   fontSize="sm"
                   id="fechaNacimiento"
-                  ms="4px"
                   type="date"
                   size="lg"
                   defaultValue={
@@ -264,144 +251,23 @@ export const RegisterScreen = () => {
                 >
                   VALIDAR
                 </Button>
-                <Text color={textColor} fontWeight="medium" mt={4}>
-                  Ya tienes una cuenta creada?
-                  <LinkB
-                    color={titleColor}
-                    as="span"
-                    ms="5px"
-                    href="#"
-                    fontWeight="bold"
-                  >
-                    <LinkA to={'/auth/login'}>Login</LinkA>
-                  </LinkB>
-                </Text>
+                <Flex justifyContent={'center'}>
+                  <Text color={textColor} fontWeight="medium" mt={4}>
+                    Ya tienes una cuenta creada?
+                    <LinkB
+                      color={titleColor}
+                      as="span"
+                      ms="5px"
+                      href="#"
+                      fontWeight="bold"
+                    >
+                      <LinkA to={'/auth/login'}>Login</LinkA>
+                    </LinkB>
+                  </Text>
+                </Flex>
               </FormControl>
             </form>
           </Flex>
-
-        {/* <Flex
-            direction="column"
-            w="70%"
-            background="transparent"
-            borderRadius="15px"
-            p="40px"
-            mx={{ base: '40px' }}
-            bg={bgColor}
-            boxShadow="md"
-          >
-            <Text
-              fontSize="xl"
-              color={textColor}
-              fontWeight="bold"
-              textAlign="center"
-              mb="22px"
-            >
-              Registro de usuario
-            </Text>
-            <form onSubmit={handleCreateUser}>
-              <FormControl>
-                <Flex>
-                  <Flex w="50%" direction="column" p="20px">
-                    <FormLabel fontSize="sm" fontWeight="normal">
-                      Documento de identificación
-                    </FormLabel>
-                    <Input
-                      fontSize="sm"
-                      ms="4px"
-                      borderRadius="15px"
-                      type="text"
-                      placeholder="DNI"
-                      mb="24px"
-                      size="lg"
-                      isDisabled
-                      name="documentoIdentificacion"
-                      // value={data.numeroDocumento}
-                      defaultValue={data ? data.numeroDocumento : ''}
-                      onChange={e => {
-                        setUsuario({ ...dataUsuario, dni: e.target.value });
-                      }}
-                    />
-                    <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                      Password
-                    </FormLabel>
-                    <Input
-                      fontSize="sm"
-                      ms="4px"
-                      borderRadius="15px"
-                      type="password"
-                      placeholder="Password"
-                      mb="24px"
-                      size="lg"
-                      id="form-dni"
-                      name="password1"
-                      onChange={e => {
-                        setUsuario({
-                          ...dataUsuario,
-                          password1: e.target.value,
-                        });
-                      }}
-                      isRequired
-                    />
-                    <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                      Repetir Password
-                    </FormLabel>
-                    <Input
-                      fontSize="sm"
-                      ms="4px"
-                      borderRadius="15px"
-                      type="password"
-                      placeholder="Repetir password"
-                      name="password2"
-                      mb="24px"
-                      size="lg"
-                      id="form-password"
-                      onChange={e => {
-                        setUsuario({
-                          ...dataUsuario,
-                          password2: e.target.value,
-                        });
-                      }}
-                      isRequired
-                    />
-                  </Flex>
-                  <Flex w="50%" direction="column" p="20px">
-                    <Button
-                      type="submit"
-                      // onClick={() => handleCreateUser()}
-                      bg="#9a1413"
-                      fontSize="10px"
-                      color="white"
-                      fontWeight="bold"
-                      w="100%"
-                      h="45"
-                      mb="24px"
-                      _hover={{
-                        bg: 'black',
-                      }}
-                      _active={{
-                        bg: 'teal.400',
-                      }}
-                    >
-                      REGISTRARSE
-                    </Button>
-                    <Text color={textColor} fontWeight="medium">
-                      Ya tienes una cuenta creada?
-                      <LinkB
-                        color={titleColor}
-                        as="span"
-                        ms="5px"
-                        href="#"
-                        fontWeight="bold"
-                      >
-                        <LinkA to={'/auth/login'}>LOGIN</LinkA>
-                      </LinkB>
-                    </Text>
-                  </Flex>
-                </Flex>
-              </FormControl>
-            </form> 
-        </Flex> */}
         </Flex>
       </Flex>
     </>

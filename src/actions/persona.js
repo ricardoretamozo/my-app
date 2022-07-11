@@ -44,7 +44,7 @@ export const createPersona = data => {
       dispatch(getPersona(await loadPersona()));
       notification('Oficina registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Persona', body.detalles, 'error');
+      notification('No se pudo registrar la Persona', body.error, 'error');
     }
   };
 };
@@ -69,14 +69,12 @@ export const createPersonaRegister = data => {
       },
       'POST'
     );
-
     const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
       dispatch(startLogin(data.dni, data.password));
       notification('Oficina registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Persona', body.detalles, 'error');
+      notification('No se pudo registrar la Persona', body.erroresValidacion.password, 'error');
     }
   };
 };

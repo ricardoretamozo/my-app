@@ -1,5 +1,6 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
+import { useHistory } from 'react-router-dom';
 
 export const fetchHistorialPersona = async id => {
   const response = await fetchToken('historialpersonas/persona/' + id);
@@ -29,7 +30,7 @@ export const fetchHistorialPersona = async id => {
 };
 
 export const createHistorialPersona = data => {
-  console.log(data);
+
   return async dispatch => {
     const response = await fetchToken(
       `historialpersonas/save`,
@@ -47,9 +48,8 @@ export const createHistorialPersona = data => {
     );
 
     const body = await response.json();
-
+    
     if (response.status === 200 || response.status === 201) {
-      // dispatch(startLogin(data.dni, data.password));
       notification('Historial registrado correctamente.', body.message, 'success');
     } else {
       notification('No se pudo registrar el Historial', body.message, 'error');
@@ -57,3 +57,15 @@ export const createHistorialPersona = data => {
     }
   };
 };
+
+const NextLin = () => {
+
+  const history = useHistory();
+
+  function Next() {    
+    history.push("/dashboard/incidencias");
+  }
+
+  return Next();
+
+}

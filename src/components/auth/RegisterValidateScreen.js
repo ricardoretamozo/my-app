@@ -61,10 +61,6 @@ export const RegisterValidateScreen = () => {
 
   const [dataUsuario, setUsuario] = useState(initialUsuario);
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
   const handleCreateUser = e => {
     e.preventDefault();
     console.log(dataUsuario);
@@ -121,7 +117,7 @@ export const RegisterValidateScreen = () => {
           position="absolute"
           minH={{ base: '70vh', md: '60vh' }}
           w={{ md: 'calc(100vw - 50px)' }}
-          borderRadius={{ md: '15px' }}
+          borderRadius={{ md: 'md' }}
           left="0"
           right="0"
           bgRepeat="no-repeat"
@@ -132,37 +128,29 @@ export const RegisterValidateScreen = () => {
           bgSize="cover"
           mx={{ md: 'auto' }}
           mt={{ md: '14px' }}
-        ></Box>
+        >
+          
+        </Box>
         <Flex
-          direction="column"
           textAlign="center"
           justifyContent="center"
           align="center"
-          mt="3.5rem"
+          mt="3rem"
           mb="30px"
+          mx={{ base: '30px', sm: '40px', md: '50px' }}
         >
-          <Text fontSize="4xl" color="#9a1413" fontWeight="bold">
-            Sistema de incidencias Poder Judicial-Arequipa
+          <Text fontSize={{ base: '1xl', sm: '2xl', md: '3xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
+          Sistema de incidencias Corte Superior de Justicia de Arequipa
           </Text>
-          {/* <Text
-            fontSize="md"
-            color="white"
-            fontWeight="normal"
-            mt="10px"
-            w={{ base: '90%', sm: '80%', lg: '40%', xl: '30%' }}
-          >
-            Registro de usuario, para el sistema de incidencias del Poder
-            Judicial Arequipa.
-          </Text> */}
         </Flex>
         <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px">
           <Flex
             direction="column"
             w="100%"
             background="transparent"
-            borderRadius="15px"
-            p="30px"
-            maxW={{ base: '500px', sm: '80%', md: '500px', lg: '500px' }}
+            borderRadius="lg"
+            p="50px"
+            maxW={{ base: '95%', sm: '85%', md: '500px', lg: '500px' }}
             bg={bgColor}
             boxShadow="md"
           >
@@ -171,13 +159,13 @@ export const RegisterValidateScreen = () => {
               color={textColor}
               fontWeight="bold"
               textAlign="center"
-              mb="22px"
+              mb="20px"
             >
               Registro de usuario
             </Text>
             <form onSubmit={handleCreateUser}>
               <Stack>
-                <VStack spacing={4} align="stretch">
+                <VStack spacing={2} align="stretch">
                   <HStack>
                     <FormControl>
                       <FormLabel fontSize="sm" fontWeight="normal">
@@ -186,7 +174,6 @@ export const RegisterValidateScreen = () => {
                       <Input
                         fontSize="sm"
                         type="text"
-                        placeholder="DNI"
                         size="lg"
                         isDisabled
                         name="documentoIdentificacion"
@@ -202,16 +189,48 @@ export const RegisterValidateScreen = () => {
                   <HStack>
                     <FormControl>
                       <FormLabel fontSize="sm" fontWeight="normal">
+                        Nombres
+                      </FormLabel>
+                      <Input
+                        fontSize="sm"
+                        type="text"
+                        size="lg"
+                        isDisabled
+                        // value={data.numeroDocumento}
+                        defaultValue={data ? data.nombre : ''}
+                        // onChange={e => {
+                        //   setUsuario({ ...dataUsuario, dni: e.target.value });
+                        // }}
+                      />
+                    </FormControl>
+                    <FormControl>
+                      <FormLabel fontSize="sm" fontWeight="normal">
+                        Apellidos
+                      </FormLabel>
+                      <Input
+                        fontSize="sm"
+                        type="text"
+                        size="lg"
+                        isDisabled
+                        // value={data.numeroDocumento}
+                        defaultValue={data ? data.apellidos : ''}
+                        // onChange={e => {
+                        //   setUsuario({ ...dataUsuario, dni: e.target.value });
+                        // }}
+                      />
+                    </FormControl>
+                  </HStack>
+
+                  <HStack>
+                    <FormControl>
+                      <FormLabel fontSize="sm" fontWeight="normal">
                         Password
                       </FormLabel>
                       <Input
                         fontSize="sm"
                         type="password"
                         placeholder="Password"
-                        mb="24px"
                         size="lg"
-                        id="form-dni"
-                        name="password1"
                         onChange={e => {
                           setUsuario({
                             ...dataUsuario,
@@ -229,10 +248,7 @@ export const RegisterValidateScreen = () => {
                         fontSize="sm"
                         type="password"
                         placeholder="Repetir password"
-                        name="password2"
-                        mb="24px"
                         size="lg"
-                        id="form-password"
                         onChange={e => {
                           setUsuario({
                             ...dataUsuario,
@@ -244,7 +260,7 @@ export const RegisterValidateScreen = () => {
                     </FormControl>
                   </HStack>
                   <HStack>
-                    <FormControl>
+                    <FormControl mt={2}>
                       <Button
                         type="submit"
                         // onClick={() => handleCreateUser()}
@@ -254,7 +270,7 @@ export const RegisterValidateScreen = () => {
                         fontWeight="bold"
                         w="100%"
                         h="45"
-                        mb="24px"
+                        mb={2}
                         _hover={{
                           bg: 'black',
                         }}
@@ -266,18 +282,20 @@ export const RegisterValidateScreen = () => {
                       </Button>
                     </FormControl>
                   </HStack>
-                  <Text color={textColor} fontWeight="medium">
-                    Ya tienes una cuenta creada?
-                    <LinkB
-                      color={titleColor}
-                      as="span"
-                      ms="5px"
-                      href="#"
-                      fontWeight="bold"
-                    >
-                      <LinkA to={'/auth/register'}>REGRESAR</LinkA>
-                    </LinkB>
-                  </Text>
+                  <Flex justifyContent={'center'}>
+                    <Text color={textColor} fontWeight="medium">
+                      Desea validar de nuevo?
+                      <LinkB
+                        color={titleColor}
+                        as="span"
+                        ms="5px"
+                        href="#"
+                        fontWeight="bold"
+                      >
+                        <LinkA to={'/auth/register'}>REGRESAR</LinkA>
+                      </LinkB>
+                    </Text>
+                  </Flex>
                 </VStack>
               </Stack>
             </form>

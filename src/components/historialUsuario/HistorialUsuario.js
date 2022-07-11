@@ -97,6 +97,16 @@ export default function HistorialUsuario() {
     }
   };
 
+  // const Next = () => {
+  //   const history = useHistory();
+  //   // history.push('/dashboard/incidencias');
+  //   return history.push('/dashboard/incidencias');
+  // }
+
+  function Next() {
+    history.push("/dashboard/incidencias");
+  }
+
   const handleCloseModal = () => {
     setOpenCreate(false);
     obtenerHistorialPersona();
@@ -123,9 +133,6 @@ export default function HistorialUsuario() {
     }
 
   });
-
-  // console.log(oficina);
-  //console.log(historialpersona);
 
   return (
     <Flex
@@ -264,6 +271,7 @@ export default function HistorialUsuario() {
             cargo={cargo}
             idPersona={identificador}
             listarHistorialPersona={obtenerHistorialPersona}
+            handleClick = {Next}
           />
 
           <Button

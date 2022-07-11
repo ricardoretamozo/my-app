@@ -1,32 +1,82 @@
+import React from 'react';
 import {
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-    Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  useDisclosure,
+  Button,
 } from '@chakra-ui/react';
 import Swal from 'sweetalert2';
 
-export const alertChackra = (icon, message, open, close) => {
+export const AlertChackra = (icon, title, message) => {
+  const { onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
+  console.log('abriendo alerta chackra')
+  return (
+    <>
+      <AlertDialog
+        motionPreset="slideInBottom"
+        leastDestructiveRef={cancelRef}
+        isOpen={onOpen}
+        onClose={onClose}
+        isCentered
+      >
+        <AlertDialogOverlay />
+        <AlertDialogContent>
+        <Alert
+          status={icon}
+          variant="subtle"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          height="400px"
+        >
+          <AlertIcon boxSize="80px" mr={0} />
+          <AlertTitle mt={4} fontSize="lg">
+            {title}
+          </AlertTitle>
+          <AlertDescription maxWidth="sm" mt={4}>
+            {message}
+          </AlertDescription>
+          <Button colorScheme={'purple'} onClick={onClose} mt={4}>
+            OK
+          </Button>
+        </Alert>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
+  );
+}
 
-    <Alert
-    status='success'
-    variant='subtle'
-    flexDirection='column'
-    alignItems='center'
-    justifyContent='center'
-    textAlign='center'
-    height='200px'
-    >
-    <AlertIcon boxSize='40px' mr={0} />
-    <AlertTitle mt={4} mb={4} fontSize='lg'>
-        Application submitted!
-    </AlertTitle>
-    <AlertDescription maxWidth='sm'>
-        Thanks for submitting your application. Our team will get back to you soon.
-    </AlertDescription>
-    </Alert>
-};
+// export const AlertChackra = (icon, title, message) => {
+//   <AlertDialog motionPreset="slideInBottom" isCentered>
+//     <Alert
+//       status={icon}
+//       variant="subtle"
+//       flexDirection="column"
+//       alignItems="center"
+//       justifyContent="center"
+//       textAlign="center"
+//       height="400px"
+//     >
+//       <AlertIcon boxSize="80px" mr={0} />
+//       <AlertTitle mt={4} fontSize="lg">
+//         {title}
+//       </AlertTitle>
+//       <AlertDescription maxWidth="sm" mt={4}>
+//         {message}
+//       </AlertDescription>
+//       <Button colorScheme={'purple'} mt={4}>
+//         OK
+//       </Button>
+//     </Alert>
+//   </AlertDialog>;
+// };
 
 export const notification = (title, message, type) => {
   Swal.fire({

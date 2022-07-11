@@ -46,7 +46,7 @@ import { store } from '../../../store/store';
 import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
 
-const LinkItems = [
+const LinkItemsAdmin = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
   { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
@@ -60,8 +60,16 @@ const LinkItems = [
   { name: 'Settings', icon: FiSettings, ruta: '/dashboard/perfil' },
 ];
 
+const LinkItemsUser = [
+  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
+];
+
 export default function SidebarWithHeader({ componente: Component }) {
+  
+  
   const { isOpen, onOpen, onClose } = useDisclosure();
+  
+  
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
@@ -91,6 +99,9 @@ export default function SidebarWithHeader({ componente: Component }) {
 }
 
 const SidebarContent = ({ onClose, ...rest }) => {
+
+  const usuario = store.getState().auth;
+
   return (
     <Box
       transition="3s ease"
@@ -108,13 +119,24 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map(link => (
-        <LinkA to={link.ruta}>
-          <NavItem key={link.name} icon={link.icon}>
-            {link.name}
-          </NavItem>
-        </LinkA>
-      ))}
+      {usuario.rol == '[COORDINADOR INFORMATICO]' || usuario.rol == '[SOPORTE TECNICO]' || usuario.rol == '[ASISTENTE INFORMATICO]' ? ( 
+        LinkItemsAdmin.map(link => (
+          <LinkA to={link.ruta}>
+            <NavItem key={link.name} icon={link.icon}>
+              {link.name}
+            </NavItem>
+          </LinkA>
+        ))
+      ) : (
+        LinkItemsUser.map(link => (
+            <LinkA to={link.ruta}>
+              <NavItem key={link.name} icon={link.icon}>
+                {link.name}
+              </NavItem>
+            </LinkA>
+          ))
+        )
+      }
     </Box>
   );
 };

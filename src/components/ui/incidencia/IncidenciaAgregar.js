@@ -218,7 +218,7 @@ const IncidenciaAgregar = props => {
   return (
     <>
       <Button size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
-        Agregar
+        Crear Nueva Incidencia
       </Button>
 
       <Modal

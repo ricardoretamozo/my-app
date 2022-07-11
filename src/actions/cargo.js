@@ -34,7 +34,6 @@ export const fetchCargos = async () => {
   const body = await response.json();
   const Cargo = {};
   const data = [];
-
   body.forEach(cargo => {
     data.push({
       idCargo: cargo.idCargo,
@@ -43,8 +42,6 @@ export const fetchCargos = async () => {
     });
   });
   Cargo.data = data;
-  // set user info
-
   return Cargo;
 };
 
@@ -53,15 +50,12 @@ export const fetchCargo = async (id) => {
   const body = await response.json();
   var Cargo = {};
   const data = [];
-
   Cargo = {
     idCargo: body.idCargo,
     cargo: body.cargo,
     activo: body.activo,  
   };
-
-  //Oficina.data = data;
-  // set user info
+  Cargo.data = data;
   return Cargo;
 };
 

@@ -29,6 +29,7 @@ import {
 } from '../../actions/historialpersona';
 
 import { types } from '../../types/types';
+// import { getIP } from 'external-ip';
 
 const ModalHistorialUsuario = props => {
   const dispatch = useDispatch();
@@ -230,7 +231,14 @@ const ModalHistorialUsuario = props => {
     };
 
     dispatch(createHistorialPersona(historialUsuario)).then(() => {
-      if (props.cargo == null || props.oficina == null) {
+      if (props.editar ){
+        if (
+          indiceHistorial.oficina.idOficina != null ||
+          indiceHistorial.cargo.idCargo != null
+        ) {
+          dispatch(props.handleClick());
+        }
+      } else {
         if (
           indiceHistorial.oficina.idOficina != null &&
           indiceHistorial.cargo.idCargo != null
@@ -238,18 +246,29 @@ const ModalHistorialUsuario = props => {
           dispatch(props.handleClick());
         }
       }
-
       dispatch(props.listarHistorialPersona());
     });
 
     props.cerrar();
   };
 
+  console.log(indiceHistorial);
+
+  const cerrarModal = () => {
+    setIndiceHistorial({
+      ...indiceHistorial,
+      cargo: { idCargo: null },
+      oficina: { idOficina: null },
+    });
+    console.log("cerrando modal");
+    props.cerrar();
+  }
+
   return (
     <>
       <Modal
         isOpen={props.abrir}
-        onClose={props.cerrar}
+        onClose={cerrarModal}
         closeOnOverlayClick={true}
         size={'lg'}
       >
@@ -355,7 +374,7 @@ const ModalHistorialUsuario = props => {
             >
               Guardar
             </Button>
-            <Button onClick={props.cerrar}>Cancelar</Button>
+            <Button onClick={cerrarModal}>Cancelar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

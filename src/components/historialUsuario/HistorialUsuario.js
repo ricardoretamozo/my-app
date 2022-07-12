@@ -267,11 +267,13 @@ export default function HistorialUsuario() {
           <ModalHistorialUsuario
             cerrar={handleCloseModal}
             abrir={openCreate}
-            oficina={oficina}
-            cargo={cargo}
+            //se envia oficina y cargo
+            oficina={null}
+            cargo={null}
             idPersona={identificador}
             listarHistorialPersona={obtenerHistorialPersona}
             handleClick = {Next}
+            editar = {oficina ? true : false }
           />
 
           <Button

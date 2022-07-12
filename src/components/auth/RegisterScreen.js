@@ -9,19 +9,16 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Link,
+  VStack,
   Link as LinkB,
   Text,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  Image,
+  HStack,
 } from '@chakra-ui/react';
+
+import {
+  InputControl,
+} from "formik-chakra-ui";
 
 import { notification } from '../../helpers/alert';
 
@@ -31,6 +28,9 @@ import { StartDni, startLogin } from '../../actions/auth';
 import { createPersonaRegister } from '../../actions/persona';
 import { store } from '../../store/store';
 import { useHistory } from 'react-router-dom';
+
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'teal.200');
@@ -101,7 +101,7 @@ export const RegisterScreen = () => {
   };
 
   const HandleValidatorUser = (e)=> {
-    e.preventDefault();
+    // e.preventDefault();
     dispatch(StartDni(
         validadorDni.dni,
         validadorDni.codigoVerificacion,
@@ -115,6 +115,12 @@ export const RegisterScreen = () => {
       notification('Error', 'El DNI no es valido', e);
     });
   };
+
+  const validationSchema = Yup.object({
+    dni: Yup.string().required('El campo es requerido').length(8, 'El DNI debe tener 8 digitos'),
+    codigoVerificacion: Yup.string().required('El campo es requerido').max(1, 'Este campo debe tener solo un 1 caracter'),
+    fechaNacimiento: Yup.string().required('El campo es requerido')
+  });
 
   return (
     <>
@@ -146,14 +152,14 @@ export const RegisterScreen = () => {
           textAlign="center"
           justifyContent="center"
           align="center"
-          mt="3.5rem"
+          mt="3rem"
           mb="30px"
         >
           <Text mx={5} fontSize={{ base: '1xl', sm: '2xl', md: '3xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
             Sistema de incidencias Corte Superior de Justicia de Arequipa
           </Text>
         </Flex>
-        <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px">
+        <Flex alignItems="center" justifyContent="center" mb="5px" mt="5px">
           <Flex
             direction="column"
             background="transparent"
@@ -169,104 +175,87 @@ export const RegisterScreen = () => {
               color={textColor}
               fontWeight="bold"
               textAlign="center"
-              mb={'20px'}
+              mb={'10px'}
             >
               Validar DNI
             </Text>
-            <form onSubmit={HandleValidatorUser}>
-              <FormControl>
-                <FormLabel
-                  fontSize="sm"
-                  fontWeight="normal"
-                  mt={'10px'}
-                >
-                  Documento de identificación
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  type="text"
-                  placeholder="DNI"
-                  size="lg"
-                  defaultValue={validadorDni ? validadorDni.dni : ''}
-                  onChange={e => {
-                    setDni({ ...validadorDni, dni: e.target.value });
-                  }}
-                  id="dni"
-                  isRequired
-                />
-                <FormLabel fontSize="sm" fontWeight="normal" mt="10px">
-                  codigo Verificacion
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  type="text"
-                  placeholder="8"
-                  id="codigoVerificacion"
-                  size="lg"
-                  name="5"
-                  defaultValue={
-                    validadorDni ? validadorDni.codigoVerificacion : ''
-                  }
-                  onChange={e => {
-                    setDni({
-                      ...validadorDni,
-                      codigoVerificacion: e.target.value,
-                    });
-                  }}
-                  isRequired
-                />
-                <FormLabel fontSize="sm" fontWeight="normal" mt="10px">
-                  Fecha de Nacimiento
-                </FormLabel>
-                <Input
-                  fontSize="sm"
-                  id="fechaNacimiento"
-                  type="date"
-                  size="lg"
-                  defaultValue={
-                    validadorDni ? validadorDni.fechaNacimiento : ''
-                  }
-                  onChange={e => {
-                    setDni({
-                      ...validadorDni,
-                      fechaNacimiento: e.target.value,
-                    });
-                  }}
-                  isRequired
-                />
-                <Button
-                  bg="red.600"
-                  fontSize="10px"
-                  color="white"
-                  fontWeight="bold"
-                  w="100%"
-                  h="45"
-                  mt="24px"
-                  _hover={{
-                    bg: 'red.800',
-                  }}
-                  type="submit"
-                  // onClick={onOpen}
-                  //onClick={() => HandleValidatorUser()}
-                >
-                  VALIDAR
-                </Button>
-                <Flex justifyContent={'center'}>
-                  <Text color={textColor} fontWeight="medium" mt={4}>
-                    Ya tienes una cuenta creada?
-                    <LinkB
-                      color={titleColor}
-                      as="span"
-                      ms="5px"
-                      href="#"
+            <Formik
+              initialValues={validadorDni}
+              validationSchema={validationSchema}
+              onSubmit={HandleValidatorUser}
+            >
+              {({handleSubmit, values, errors}) => (
+              <form onSubmit={handleSubmit}>
+                <VStack spacing={2} align="flex-start">
+                  <InputControl 
+                    name={'dni'} 
+                    inputProps={{ type: "text" }} 
+                    label="Documento de identificación"
+                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
+                    onChange={e => {
+                      setDni({ ...validadorDni, dni: e.target.value });
+                    }}
+                  />
+                  <InputControl 
+                    name={'codigoVerificacion'} 
+                    inputProps={{ type: "text" }} 
+                    label="codigo Verificacion"
+                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
+                    onChange={e => {
+                      setDni({
+                        ...validadorDni,
+                        codigoVerificacion: e.target.value,
+                      });
+                    }}
+                  />
+                  <InputControl
+                    mb={'20px'}
+                    name={'fechaNacimiento'} 
+                    inputProps={{ type: "date" }}
+                    label="Fecha de Nacimiento"
+                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
+                    onChange={e => {
+                      setDni({
+                        ...validadorDni,
+                        fechaNacimiento: e.target.value,
+                      });
+                    }}
+                  />
+                  <HStack w={'100%'}>
+                    <Button
+                      bg="red.600"
+                      fontSize="10px"
+                      color="white"
                       fontWeight="bold"
+                      w="100%"
+                      h="45"
+                      mt={'10px'}
+                      _hover={{
+                        bg: 'red.800',
+                      }}
+                      type="submit"
                     >
-                      <LinkA to={'/auth/login'}>Login</LinkA>
-                    </LinkB>
-                  </Text>
-                </Flex>
-              </FormControl>
-            </form>
+                      VALIDAR
+                    </Button>
+                  </HStack>
+                  <Flex justifyContent={'center'}>
+                    <Text color={textColor} fontWeight="medium">
+                      Ya tienes una cuenta creada?
+                      <LinkB
+                        color={titleColor}
+                        as="span"
+                        ms="5px"
+                        href="#"
+                        fontWeight="bold"
+                      >
+                        <LinkA to={'/auth/login'}>Login</LinkA>
+                      </LinkB>
+                    </Text>
+                  </Flex>
+                </VStack>
+              </form>
+              )}
+            </Formik>    
           </Flex>
         </Flex>
       </Flex>

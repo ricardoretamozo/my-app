@@ -74,7 +74,7 @@ export const createPersonaRegister = data => {
       dispatch(startLogin(data.dni, data.password));
       notification('Oficina registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Persona', body.erroresValidacion.password, 'error');
+      notification('No se pudo registrar la Persona', body.mensaje, 'error');
     }
   };
 };

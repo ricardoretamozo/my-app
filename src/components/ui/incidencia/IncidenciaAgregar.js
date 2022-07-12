@@ -179,7 +179,6 @@ const IncidenciaAgregar = props => {
   };
 
   const handleChangeOficina = value => {
-    //console.log(value);
     setOficinaNombre(value.value);
   };
 

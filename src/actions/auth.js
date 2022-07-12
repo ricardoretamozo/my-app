@@ -35,7 +35,7 @@ export const startLogin = (dni, password) => {
       );
       timerNotification('Inicio de Sesion Exitoso!');
     } else {
-    notification('Este usuario no esta registrado', 'Desea registrarlo?' , 'error');
+    notification( body.mensaje, 'El nombre de usuario o contraseña es incorrecto', 'error');
     }
   };
 };

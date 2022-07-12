@@ -14,9 +14,13 @@ import {
   useColorModeValue,
   Stack,
   HStack,
-  ModalCloseButton,
   VStack,
+  Field,
 } from '@chakra-ui/react';
+
+import {
+  InputControl,
+} from "formik-chakra-ui";
 
 import { notification } from '../../helpers/alert';
 
@@ -25,6 +29,9 @@ import BgSignUp from '../../assets/img/fondo.jpg';
 import { StartDni, startLogin } from '../../actions/auth';
 import { createPersonaRegister } from '../../actions/persona';
 import { store } from '../../store/store';
+
+import { Formik } from 'formik';
+import * as Yup from 'yup';
 
 export const RegisterValidateScreen = () => {
   const titleColor = useColorModeValue('#9a1413', 'teal.200');
@@ -61,9 +68,9 @@ export const RegisterValidateScreen = () => {
 
   const [dataUsuario, setUsuario] = useState(initialUsuario);
 
-  const handleCreateUser = e => {
-    e.preventDefault();
-    console.log(dataUsuario);
+  const onSubmit = (values) => {
+    // values.preventDefault();
+    console.log(values);
     if (
       dataUsuario.password1 != dataUsuario.password2 &&
       dataUsuario.password1 != '' &&
@@ -104,6 +111,15 @@ export const RegisterValidateScreen = () => {
         //  setOpenModal(true);
       });
   };
+
+  const validationSchema = Yup.object({
+    password1: Yup.string().required('El campo es requerido').min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    password2: Yup.string().required("Por favor confirma tu contraseña")
+    .when("password1", {
+      is: val => (val && val.length > 0 ? true : false),
+      then: Yup.string().oneOf([Yup.ref("password1")], "Las contraseñas no coinciden")
+    })
+  });
 
   return (
     <>
@@ -163,10 +179,16 @@ export const RegisterValidateScreen = () => {
             >
               Registro de usuario
             </Text>
-            <form onSubmit={handleCreateUser}>
-              <Stack>
-                <VStack spacing={2} align="stretch">
-                  <HStack>
+            <Formik
+              initialValues={initialUsuario}
+              onSubmit={onSubmit}
+              validationSchema={validationSchema}
+            >
+              {({handleSubmit, values, errors }) => (
+              <form onSubmit={ handleSubmit }>
+                <Stack>
+                  <VStack spacing={2} align="stretch">
+                    <HStack>
                     <FormControl>
                       <FormLabel fontSize="sm" fontWeight="normal">
                         Documento de identificación
@@ -184,130 +206,99 @@ export const RegisterValidateScreen = () => {
                         }}
                       />
                     </FormControl>
-                  </HStack>
+                    </HStack>
 
-                  <HStack>
-                    <FormControl>
-                      <FormLabel fontSize="sm" fontWeight="normal">
-                        Nombres
-                      </FormLabel>
-                      <Input
-                        fontSize="sm"
-                        type="text"
-                        size="lg"
-                        isDisabled
-                        // value={data.numeroDocumento}
-                        defaultValue={data ? data.nombre : ''}
-                        // onChange={e => {
-                        //   setUsuario({ ...dataUsuario, dni: e.target.value });
-                        // }}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel fontSize="sm" fontWeight="normal">
-                        Apellidos
-                      </FormLabel>
-                      <Input
-                        fontSize="sm"
-                        type="text"
-                        size="lg"
-                        isDisabled
-                        // value={data.numeroDocumento}
-                        defaultValue={data ? data.apellidos : ''}
-                        // onChange={e => {
-                        //   setUsuario({ ...dataUsuario, dni: e.target.value });
-                        // }}
-                      />
-                    </FormControl>
-                  </HStack>
+                    <HStack>
+                      <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="normal">
+                          Nombres
+                        </FormLabel>
+                        <Input
+                          fontSize="sm"
+                          type="text"
+                          size="lg"
+                          isDisabled
+                          // value={data.numeroDocumento}
+                          defaultValue={data ? data.nombre : ''}
+                          // onChange={e => {
+                          //   setUsuario({ ...dataUsuario, dni: e.target.value });
+                          // }}
+                        />
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel fontSize="sm" fontWeight="normal">
+                          Apellidos
+                        </FormLabel>
+                        <Input
+                          fontSize="sm"
+                          type="text"
+                          size="lg"
+                          isDisabled
+                          // value={data.numeroDocumento}
+                          defaultValue={data ? data.apellidos : ''}
+                        />
+                      </FormControl>                  
+                    </HStack>
 
-                  <HStack>
-                    <FormControl>
-                      <FormLabel fontSize="sm" fontWeight="normal">
-                        Password
-                      </FormLabel>
-                      <Input
-                        fontSize="sm"
-                        type="password"
-                        placeholder="Password"
-                        size="lg"
-                        onChange={e => {
-                          setUsuario({
-                            ...dataUsuario,
-                            password1: e.target.value,
-                          });
-                        }}
-                        isRequired
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel fontSize="sm" fontWeight="normal">
-                        Repetir Password
-                      </FormLabel>
-                      <Input
-                        fontSize="sm"
-                        type="password"
-                        placeholder="Repetir password"
-                        size="lg"
-                        onChange={e => {
-                          setUsuario({
-                            ...dataUsuario,
-                            password2: e.target.value,
-                          });
-                        }}
-                        isRequired
-                      />
-                    </FormControl>
-                  </HStack>
-                  <HStack>
-                    <FormControl mt={2}>
-                      <Button
-                        type="submit"
-                        // onClick={() => handleCreateUser()}
-                        bg="#9a1413"
-                        fontSize="10px"
-                        color="white"
-                        fontWeight="bold"
-                        w="100%"
-                        h="45"
-                        mb={2}
-                        _hover={{
-                          bg: 'black',
-                        }}
-                        _active={{
-                          bg: 'teal.400',
-                        }}
-                      >
-                        REGISTRARSE
-                      </Button>
-                    </FormControl>
-                  </HStack>
-                  <Flex justifyContent={'center'}>
-                    <Text color={textColor} fontWeight="medium">
-                      Desea validar de nuevo?
-                      <LinkB
-                        color={titleColor}
-                        as="span"
-                        ms="5px"
-                        href="#"
-                        fontWeight="bold"
-                      >
-                        <LinkA to={'/auth/register'}>REGRESAR</LinkA>
-                      </LinkB>
-                    </Text>
-                  </Flex>
-                </VStack>
-              </Stack>
-            </form>
-            {/* <LinkB
-                color={titleColor}
-                as="span"
-                ms="5px"
-                href="#"
-                fontWeight="bold"
-              >
-                <LinkA to={'/auth/login'}>LOGIN</LinkA>
-              </LinkB> */}
+                    <HStack>
+                      <InputControl 
+                      name={'password1'} 
+                      inputProps={{ type: "password" }} 
+                      label="Password"
+                      onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
+                      // onChange={e => { e.target.value = e.target.value; setUsuario({ ...dataUsuario, password1: e.target.value }); }}
+                       />
+                      <InputControl 
+                      name={'password2'} 
+                      inputProps={{ type: 
+                      "password" }} 
+                      label="Password confirmación"
+                      // onChange={e => { e.target.value = e.target.value; setUsuario({ ...dataUsuario, password2: e.target.value }); }}
+                      onChange={e => { setUsuario({...dataUsuario, password2: e.target.value })}}
+                       />
+                    </HStack>
+                    <HStack>
+                      <FormControl mt={2}>
+                        <Button
+                          type="submit"
+                          // onClick={() => handleCreateUser()}
+                          bg="#9a1413"
+                          fontSize="10px"
+                          color="white"
+                          fontWeight="bold"
+                          w="100%"
+                          h="45"
+                          mb={2}
+                          _hover={{
+                            bg: 'black',
+                          }}
+                          _active={{
+                            bg: 'teal.400',
+                          }}
+                        >
+                          REGISTRARSE
+                        </Button>
+                      </FormControl>
+                    </HStack>
+                    <Flex justifyContent={'center'}>
+                      <Text color={textColor} fontWeight="medium">
+                        Desea validar de nuevo?
+                        <LinkB
+                          color={titleColor}
+                          as="span"
+                          ms="5px"
+                          href="#"
+                          fontWeight="bold"
+                        >
+                          <LinkA to={'/auth/register'}>REGRESAR</LinkA>
+                        </LinkB>
+                      </Text>
+                    </Flex>
+                  </VStack>
+                </Stack>
+              </form>
+              )}
+            </Formik>
           </Flex>
         </Flex>
       </Flex>

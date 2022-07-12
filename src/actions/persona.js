@@ -42,9 +42,9 @@ export const createPersona = data => {
 
     if (response.status === 200 || response.status === 201) {
       dispatch(getPersona(await loadPersona()));
-      notification('Oficina registrado correctamente.', body.message, 'success');
+      notification('Usuario registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Persona', body.error, 'error');
+      notification('No se pudo registrar al Usuario', body.error, 'error');
     }
   };
 };
@@ -72,9 +72,9 @@ export const createPersonaRegister = data => {
     const body = await response.json();
     if (response.status === 200 || response.status === 201) {
       dispatch(startLogin(data.dni, data.password));
-      notification('Oficina registrado correctamente.', body.message, 'success');
+      notification('Usuario registrado correctamente.', body.message, 'success');
     } else {
-      notification('No se pudo registrar la Persona', body.mensaje, 'error');
+      notification('No se pudo registrar el Usuario', body.mensaje, 'error');
     }
   };
 };

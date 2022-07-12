@@ -53,7 +53,7 @@ const LinkItemsAdmin = [
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
   { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
   { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
-  { name: 'Personas', icon: FiUsers, ruta: '/dashboard/personas' },
+  { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
   { name: 'Favourites', icon: FiStar, ruta: '/dashboard/perfil' },

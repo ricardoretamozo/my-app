@@ -24,7 +24,7 @@ import { notification } from '../../helpers/alert';
 
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
-import { StartDni, startLogin } from '../../actions/auth';
+import { StartDni, startLogin, validadorUsuarioCreado } from '../../actions/auth';
 import { createPersonaRegister } from '../../actions/persona';
 import { store } from '../../store/store';
 import { useHistory } from 'react-router-dom';
@@ -108,11 +108,34 @@ export const RegisterScreen = () => {
         validadorDni.fechaNacimiento
       )
     )
+    // .then(()=> {
+    //   dispatch(validadorUsuarioCreado(validadorDni.dni).then(result => {
+    //     console.log(result);
+    //     if (!result) {
+    //       history.push('/auth/register');
+    //     }else{
+    //       history.push('/auth/register/validate');
+    //     }
+    //   })).catch(result => {
+    //     console.log(result);
+    //   })
+    // }).catch(e => {
+
+    //   history.push('/auth/register');
+    //   // notification('Error', 'El DNI no es valido', e);
+    // });
     .then(() => {
-      history.push('/auth/register/validate');
+      // console.log(validadorUsuarioCreado(validadorDni.dni));
+      dispatch(validadorUsuarioCreado(validadorDni.dni).then(() => {
+          history.push('/auth/register');
+        })
+        .catch(() => {
+          history.push('/auth/register/validate');
+        }))
+    // });
     }).catch(e => {
       history.push('/auth/register');
-      notification('Error', 'El DNI no es valido', e);
+      // notification('Error', 'El DNI no es valido', e);
     });
   };
 

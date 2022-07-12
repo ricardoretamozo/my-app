@@ -863,7 +863,7 @@ export default function TablePersona() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Personas Table
+            Usuarios Table
           </Text>
         </Box>
         <Box>

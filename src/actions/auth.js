@@ -3,6 +3,7 @@ import {
   fetchWithoutToken,
   fetchWithToken,
   fetchServicioDni,
+  fetchToken,
 } from '../helpers/fetch';
 import { types } from '../types/types';
 import { Link, useHistory } from 'react-router-dom';
@@ -58,10 +59,21 @@ export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) =
       timerNotification('Validacion correcta');
       dispatch(validadorUsuario(body[0]));
     } else {
-      notification('ERROR DE VALIDACIÓN', body.error, 'error');
+      notification('ERROR DE VALIDACIÓN', 'Los datos ingresados nos son validos', 'error');
       Error();
     }
   }
+}
+
+export const validadorUsuarioCreado = async dni => {
+    const response = await fetchToken('personas/dni/'+ dni);
+    const body = await response.json();
+    if (response.status === 404) {
+      return true;
+    }else{
+      notification(body.error, 'El DNI ya esta registrado en nuestra base de datos', 'error');
+      return false;
+    }
 }
 
 export const startChecking = () => {
@@ -106,6 +118,11 @@ const logout = () => ({
 const Error = () => {
   const history = useHistory();
   return history.push('/auth/register');
+}
+
+const Sigte = () => {
+  const history = useHistory();
+  return history.push('/auth/register/validate');
 }
 
 export const validadorUsuario = usuario => ({

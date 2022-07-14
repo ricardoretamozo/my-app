@@ -11,6 +11,7 @@ import { Organo } from './organo/organo';
 import { Oficina } from './oficina/oficina';
 import { Persona } from './persona/persona';
 import { Cargo } from './cargo/cargo';
+import { Motivo } from './motivo/motivo';
 
 export const DasboardScreen = () => {
   //
@@ -23,7 +24,12 @@ export const DasboardScreen = () => {
         component = { home } 
         isAuthenticated = { !!access_token }
         />
-         <PrivateRoute
+        <PrivateRoute
+          exact path="/dashboard/motivos"
+          component = { Motivo } 
+          isAuthenticated = { !!access_token }
+        />
+        <PrivateRoute
         exact path="/dashboard/incidencias"
         component = { Incidencia } 
         isAuthenticated = { !!access_token }

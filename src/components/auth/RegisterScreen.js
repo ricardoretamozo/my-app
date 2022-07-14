@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link as LinkA } from 'react-router-dom';
 // Chakra imports
@@ -6,42 +6,36 @@ import {
   Box,
   Button,
   Flex,
-  FormControl,
-  FormLabel,
-  Input,
   VStack,
   Link as LinkB,
   Text,
   useColorModeValue,
   HStack,
+  Stack,
+  Avatar
 } from '@chakra-ui/react';
 
 import {
   InputControl,
 } from "formik-chakra-ui";
 
-import { notification } from '../../helpers/alert';
+import { FaRegAddressCard } from "react-icons/fa";
 
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
-import { StartDni, startLogin, validadorUsuarioCreado } from '../../actions/auth';
-import { createPersonaRegister } from '../../actions/persona';
-import { store } from '../../store/store';
+import { StartDni, validadorUsuarioCreado } from '../../actions/auth';
 import { useHistory } from 'react-router-dom';
 
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 export const RegisterScreen = () => {
-  const titleColor = useColorModeValue('#9a1413', 'teal.200');
+  const titleColor = useColorModeValue('#c53030', 'teal.200');
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
 
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
   const history = useHistory();
-
-  const [openModal, setOpenModal] = React.useState(false);
 
   const [validadorDni, setDni] = useState({
     dni: '',
@@ -49,95 +43,26 @@ export const RegisterScreen = () => {
     fechaNacimiento: '',
   });
 
-  const data = store.getState().usuarioDni;
-
-  console.log(data);
-
-  const initialUsuario = {
-    nombre: '',
-    apellido: '',
-    dni: '',
-    usuario: '',
-    password1: '',
-    password2: '',
-    fecha: '',
-    sexo: '',
-    activo: '',
-    perfilPersona: {
-      idPerfilPersona: 66,
-    },
-  };
-
-  const [dataUsuario, setUsuario] = useState(initialUsuario);
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
-
-  const handleCreateUser = e => {
-    e.preventDefault();
-    console.log(dataUsuario);
-    if (
-      dataUsuario.password1 != dataUsuario.password2 &&
-      dataUsuario.password1 != '' &&
-      dataUsuario.password2 != ''
-    ) {
-      notification('Error', 'Las contraseñas no coinciden', 'error');
-    } else {
-      console.log(data);
-      var usuario = {
-        nombre: data.nombres,
-        apellido: data.apellidos,
-        dni: data.numeroDocumento,
-        usuario: data.numeroDocumentod,
-        password: dataUsuario.password1,
-        fecha: data.fechaNacimiento,
-        sexo: data.sexo,
-        activo: 'S',
-      };
-      dispatch(createPersonaRegister(usuario));
-      // dispatch(startLogin(usuario.dni, usuario.password));
-    }
-  };
-
   const HandleValidatorUser = (e)=> {
-    // e.preventDefault();
     dispatch(StartDni(
         validadorDni.dni,
         validadorDni.codigoVerificacion,
         validadorDni.fechaNacimiento
       )
     )
-    // .then(()=> {
-    //   dispatch(validadorUsuarioCreado(validadorDni.dni).then(result => {
-    //     console.log(result);
-    //     if (!result) {
-    //       history.push('/auth/register');
-    //     }else{
-    //       history.push('/auth/register/validate');
-    //     }
-    //   })).catch(result => {
-    //     console.log(result);
-    //   })
-    // }).catch(e => {
-
-    //   history.push('/auth/register');
-    //   // notification('Error', 'El DNI no es valido', e);
-    // });
     .then(() => {
-      // console.log(validadorUsuarioCreado(validadorDni.dni));
       dispatch(validadorUsuarioCreado(validadorDni.dni).then(() => {
           history.push('/auth/register');
         })
         .catch(() => {
           history.push('/auth/register/validate');
         }))
-    // });
     }).catch(e => {
       history.push('/auth/register');
-      // notification('Error', 'El DNI no es valido', e);
     });
   };
+
+  // Validacion con formik
 
   const validationSchema = Yup.object({
     dni: Yup.string().required('El campo es requerido').length(8, 'El DNI debe tener 8 digitos'),
@@ -178,108 +103,109 @@ export const RegisterScreen = () => {
           mt="3rem"
           mb="30px"
         >
-          <Text mx={5} fontSize={{ base: '1xl', sm: '2xl', md: '3xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
+          <Text mx={5} fontSize={{ base: 'xl', sm: '1xl', md: '2xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
             Sistema de incidencias Corte Superior de Justicia de Arequipa
           </Text>
         </Flex>
         <Flex alignItems="center" justifyContent="center" mb="5px" mt="5px">
-          <Flex
-            direction="column"
-            background="transparent"
-            borderRadius="lg"
-            w={'100%'}
-            maxW={{ base: '90%', sm: '450px', md: '450px', lg: '450px' }}
-            p="50px"
-            bg={bgColor}
+          <Stack
+            flexDir="column"
+            mb="2"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="white"
             boxShadow={'md'}
+            px={'3rem'}
+            py={'3rem'}
+            borderRadius="lg"
+            rounded="lg"
+            borderTop="6px solid"
+            borderColor={titleColor}
           >
+            <Avatar bg="red.500" icon={<FaRegAddressCard fontSize='1.8rem' color='white' />} />
             <Text
               fontSize="xl"
-              color={textColor}
+              color={titleColor}
               fontWeight="bold"
               textAlign="center"
-              mb={'10px'}
+              mb={'20px'}
             >
               Validar DNI
             </Text>
-            <Formik
-              initialValues={validadorDni}
-              validationSchema={validationSchema}
-              onSubmit={HandleValidatorUser}
-            >
-              {({handleSubmit, values, errors}) => (
-              <form onSubmit={handleSubmit}>
-                <VStack spacing={2} align="flex-start">
-                  <InputControl 
-                    name={'dni'} 
-                    inputProps={{ type: "text" }} 
-                    label="Documento de identificación"
-                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
-                    onChange={e => {
-                      setDni({ ...validadorDni, dni: e.target.value });
-                    }}
-                  />
-                  <InputControl 
-                    name={'codigoVerificacion'} 
-                    inputProps={{ type: "text" }} 
-                    label="codigo Verificacion"
-                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
-                    onChange={e => {
-                      setDni({
-                        ...validadorDni,
-                        codigoVerificacion: e.target.value,
-                      });
-                    }}
-                  />
-                  <InputControl
-                    mb={'20px'}
-                    name={'fechaNacimiento'} 
-                    inputProps={{ type: "date" }}
-                    label="Fecha de Nacimiento"
-                    // onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
-                    onChange={e => {
-                      setDni({
-                        ...validadorDni,
-                        fechaNacimiento: e.target.value,
-                      });
-                    }}
-                  />
-                  <HStack w={'100%'}>
-                    <Button
-                      bg="red.600"
-                      fontSize="10px"
-                      color="white"
-                      fontWeight="bold"
-                      w="100%"
-                      h="45"
-                      mt={'10px'}
-                      _hover={{
-                        bg: 'red.800',
+            <Box minW={{ base: "90%", md: "350px" }}>
+              <Formik
+                initialValues={validadorDni}
+                validationSchema={validationSchema}
+                onSubmit={HandleValidatorUser}
+              >
+                {({handleSubmit}) => (
+                <form onSubmit={handleSubmit}>
+                  <VStack spacing={2} align="flex-start" mt={2}>
+                    <InputControl 
+                      name={'dni'} 
+                      inputProps={{ type: "text", placeholder: "DNI" }} 
+                      onChange={e => {
+                        setDni({ ...validadorDni, dni: e.target.value });
                       }}
-                      type="submit"
-                    >
-                      VALIDAR
-                    </Button>
-                  </HStack>
-                  <Flex justifyContent={'center'}>
-                    <Text color={textColor} fontWeight="medium">
-                      Ya tienes una cuenta creada?
-                      <LinkB
-                        color={titleColor}
-                        as="span"
-                        ms="5px"
-                        href="#"
+                    />
+                    <InputControl 
+                      name={'codigoVerificacion'} 
+                      inputProps={{ type: "text", placeholder: "Código de Verificacion" }} 
+                      onChange={e => {
+                        setDni({
+                          ...validadorDni,
+                          codigoVerificacion: e.target.value,
+                        });
+                      }}
+                    />
+                    <InputControl
+                      mb={'20px'}
+                      name={'fechaNacimiento'} 
+                      inputProps={{ type: "date" }}
+                      label={'Fecha de Nacimiento'}
+                      onChange={e => {
+                        setDni({
+                          ...validadorDni,
+                          fechaNacimiento: e.target.value,
+                        });
+                      }}
+                    />
+                    <HStack w={'100%'}>
+                      <Button
+                        bg="red.500"
+                        fontSize="10px"
+                        color="white"
                         fontWeight="bold"
+                        w="100%"
+                        mt={'10px'}
+                        _hover={{
+                          bg: 'red.600',
+                        }}
+                        type="submit"
                       >
-                        <LinkA to={'/auth/login'}>Login</LinkA>
-                      </LinkB>
-                    </Text>
-                  </Flex>
-                </VStack>
-              </form>
-              )}
-            </Formik>    
-          </Flex>
+                        VALIDAR
+                      </Button>
+                    </HStack>
+                    <Flex justifyContent={'center'} w={'100%'} textAlign={'center'}>
+                      <Text color={textColor} fontWeight="medium">
+                        Ya tienes una cuenta creada?
+                        <LinkB
+                          color={titleColor}
+                          as="span"
+                          ms="5px"
+                          href="#"
+                          fontWeight="bold"
+                        >
+                          <LinkA to={'/auth/login'}>Login</LinkA>
+                        </LinkB>
+                      </Text>
+                    </Flex>
+                  </VStack>
+                </form>
+                )}
+              </Formik>
+            </Box>
+          </Stack>
         </Flex>
       </Flex>
     </>

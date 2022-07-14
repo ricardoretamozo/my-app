@@ -35,6 +35,18 @@
       "codigoVerificacion": "8",
       "fechaNacimiento": "2022-07-11",
       "sexo": "M"
+    },
+    {
+      "id": "70809013",
+      "nombre": "JAVIER",
+      "numeroDocumento": "70809013",
+      "nombres": "JAVIER",
+      "apellidos": "QUISPE",
+      "apellidoMaterno": "CASERES",
+      "ubigeo": "040407",
+      "codigoVerificacion": "8",
+      "fechaNacimiento": "2022-07-13",
+      "sexo": "M"
     }
   ]
 }

@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Link as LinkA } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import signInImage from '../../assets/img/poderjudicial.jpg';
 import { useForm } from '../../hooks/useForm';
 import { startLogin } from '../../actions/auth';
 
@@ -10,32 +8,44 @@ import {
   Flex,
   Button,
   FormControl,
-  FormLabel,
-  Link as LinkB,
   Heading,
+  Stack,
+  chakra,
+  Avatar,
+  Link as LinkChackra,
   Input,
-  //Switch,
-  Text,
+  InputGroup,
+  InputLeftElement,
+  FormHelperText,
+  InputRightElement,
   useColorModeValue,
+  Text,
+  Icon,
 } from '@chakra-ui/react';
+
+import { Link } from 'react-router-dom';
+
+import BgPrimary from '../../assets/img/bg_1.png';
+import { FaUserAlt, FaLock } from "react-icons/fa";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+
+const CFaUserAlt = chakra(FaUserAlt);
+const CFaLock = chakra(FaLock);
 
 export const LoginScreen = () => {
   // Chakra color mode
-  const titleColor = useColorModeValue('#9a1413', 'white');
+  const primaryColor = useColorModeValue('#c53030', 'white');
   const textColor = useColorModeValue('black.400', 'white');
 
-  const [openModal, setOpenModal] = useState(false)
-
   const dispatch = useDispatch();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const handleShowClick = () => setShowPassword(!showPassword);
 
   const [formValues, handleInputChange] = useForm({
     username: '',
     password: '',
   });
-
-  const handleClickOpenModal = () =>{
-    setOpenModal(true)
-  }
 
   const { username, password } = formValues;
 
@@ -52,134 +62,98 @@ export const LoginScreen = () => {
   };
 
   return (
-    <>
-      <Flex position="relative" mb="40px">
-        <Flex
-          w="100%"
-          maxW="1044px"
-          mx="auto"
-          justifyContent="space-between"
-          mb="30px"
-          pt={{ sm: '100px', md: '100px', lg: '100px' }}
-        >
-          <Flex
-            justifyContent="center"
-            w="100%"
-            style={{ userSelect: 'none' }}
-          >
-            <Flex
-              direction="column"
-              background="transparent"
-              p="50px"
-              boxShadow={'md'}
-              borderRadius={'lg'}
-            >
-              <Heading color={titleColor} fontSize="4xl" mb="15px" textAlign={'center'}>
-                Bienvenido
-              </Heading>
-              <Text
-                mb="36px"
-                ms="4px"
-                color={textColor}
-                fontWeight="bold"
-                fontSize="14px"
-                textAlign={'center'}
-              >
-                Ingresa tu DNI y tu contraseña.
-              </Text>
-              <form onSubmit={handleLogin}>
-                <FormControl>
-                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                    DNI
-                  </FormLabel>
-                  <Input
-                  isRequired
-                    borderRadius="md"
-                    mb="24px"
-                    fontSize="sm"
-                    type="text"
-                    placeholder="DNI"
-                    size="lg"
-                    focusBorderColor="#9a1413"
-                    id="field-1"
+    <Flex
+      flexDirection="column"
+      width="100wh"
+      height="100vh"
+      backgroundImage={BgPrimary}
+      backgroundSize={'cover'}
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Stack
+        flexDir="column"
+        mb="2"
+        justifyContent="center"
+        alignItems="center"
+        backgroundColor="whiteAlpha.900"
+        boxShadow={'md'}
+        px={'3rem'}
+        py={'5rem'}
+        borderRadius="lg"
+        rounded="lg"
+        borderTop="6px solid"
+        borderColor={primaryColor}
+      >
+        <Avatar bg="red.500" />
+        <Heading color={primaryColor}>Bienvenido</Heading>
+        <Text ms="4px" color={textColor} fontWeight="bold" fontSize="14px" textAlign={'center'}
+          >Ingresa tu DNI y tu contraseña.
+        </Text>
+        <Box minW={{ base: "90%", md: "340px" }}>
+          <form onSubmit={handleLogin}>
+            <Stack spacing={4}>
+              <FormControl mt={2} isRequired>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    children={<CFaUserAlt color="gray.300" />}
+                  />
+                  <Input 
+                    type="text" 
+                    placeholder="Usuario (DNI)" 
                     name="username"
                     value={username}
                     onChange={handleInputChange}
                   />
-                  <FormLabel ms="4px" fontSize="sm" fontWeight="normal">
-                    Contraseña
-                  </FormLabel>
+                </InputGroup>
+              </FormControl>
+              <FormControl isRequired>
+                <InputGroup>
+                  <InputLeftElement
+                    pointerEvents="none"
+                    color="gray.300"
+                    children={<CFaLock color="gray.300" />}
+                  />
                   <Input
-                  isRequired
-                    borderRadius="md"
-                    mb="36px"
-                    fontSize="sm"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Contraseña"
-                    size="lg"
-                    focusBorderColor="#9a1413"
-                    id="field-2"
                     name="password"
                     value={password}
                     onChange={handleInputChange}
                   />
-                  <Button
-                    fontSize="15px"
-                    type="submit"
-                    bg="#9a1413"
-                    w="100%"
-                    h="45"
-                    mb="20px"
-                    color="white"
-                    mt="20px"
-                    _hover={{
-                      bg: 'black',
-                    }}
-                    _active={{
-                      bg: 'teal.400',
-                    }}
-                  >
-                    Iniciar Sesión
-                  </Button>
-                </FormControl>
-              </form>
-
-              <Flex
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                maxW="100%"
-                mt="0px"
+                  <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                      {showPassword ? <Icon as={ViewIcon} /> : <Icon as={ViewOffIcon} />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+                <FormHelperText textAlign="right" textColor={primaryColor}>
+                  <Link to="/auth/password/reset">¿Olvidó la Contraseña?</Link>
+                </FormHelperText>
+              </FormControl>
+              <Button
+                borderRadius={'md'}
+                type="submit"
+                variant="solid"
+                colorScheme="red"
+                width="full"
+                _hover={{
+                  bg: 'red.600',
+                }}
               >
-                <Text color={textColor} fontWeight="medium">
-                  Usted no esta registrado?
-                  <LinkB color={titleColor} as="span" ms="5px" fontWeight="bold">
-                    <LinkA to="/auth/register">Registrate</LinkA>
-                  </LinkB>
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
-          {/* <Box
-            display={{ base: 'none', md: 'block' }}
-            overflowX="hidden"
-            h="100%"
-            w="40vw"
-            position="absolute"
-            right="0px"
-          >
-            <Box
-              bgImage={signInImage}
-              w="100%"
-              h="100%"
-              bgSize="cover"
-              bgPosition="50%"
-              position="absolute"
-              borderBottomLeftRadius="20px"
-            ></Box>
-          </Box> */}
-        </Flex>
-      </Flex>
-    </>
+                Iniciar Sesión
+              </Button>
+            </Stack>
+          </form>
+        </Box>
+        <Box>
+          ¿No tienes una cuenta?{" "}
+          <LinkChackra color={primaryColor} ms="5px" fontWeight="bold">            
+            <Link to="/auth/register">Crear una cuenta</Link>
+          </LinkChackra>
+        </Box>
+      </Stack>
+    </Flex>
   );
 };

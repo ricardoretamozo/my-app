@@ -15,8 +15,10 @@ import {
   Stack,
   HStack,
   VStack,
-  Field,
+  Avatar
 } from '@chakra-ui/react';
+
+import { ImUserPlus } from "react-icons/im";
 
 import {
   InputControl,
@@ -34,20 +36,10 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 export const RegisterValidateScreen = () => {
-  const titleColor = useColorModeValue('#9a1413', 'teal.200');
+  const titleColor = useColorModeValue('#c53030', 'teal.200');
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
-
-  // const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
-
-  const [openModal, setOpenModal] = React.useState(false);
-
-  const [validadorDni, setDni] = useState({
-    dni: '',
-    codigoVerificacion: '',
-    fechaNacimiento: '',
-  });
 
   const data = store.getState().usuarioDni;
 
@@ -90,26 +82,7 @@ export const RegisterValidateScreen = () => {
         activo: 'S',
       };
       dispatch(createPersonaRegister(usuario));
-      // dispatch(startLogin(usuario.dni, usuario.password));
     }
-  };
-
-  const HandleValidatorUser = e => {
-    e.preventDefault();
-    console.log(validadorDni);
-    dispatch(
-      StartDni(
-        validadorDni.dni,
-        validadorDni.codigoVerificacion,
-        validadorDni.fechaNacimiento
-      )
-    )
-      .then(() => {
-        //  setOpenModal(true);
-      })
-      .catch(err => {
-        //  setOpenModal(true);
-      });
   };
 
   const validationSchema = Yup.object({
@@ -153,153 +126,146 @@ export const RegisterValidateScreen = () => {
           align="center"
           mt="3rem"
           mb="30px"
-          mx={{ base: '30px', sm: '40px', md: '50px' }}
         >
           <Text fontSize={{ base: '1xl', sm: '2xl', md: '3xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
           Sistema de incidencias Corte Superior de Justicia de Arequipa
           </Text>
         </Flex>
         <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px">
-          <Flex
-            direction="column"
-            w="100%"
-            background="transparent"
+          <Stack
+            flexDir="column"
+            mb="2"
+            justifyContent="center"
+            alignItems="center"
+            backgroundColor="white"
+            boxShadow={'md'}
+            px={'3rem'}
+            py={'2rem'}
             borderRadius="lg"
-            p="50px"
-            maxW={{ base: '95%', sm: '85%', md: '500px', lg: '500px' }}
-            bg={bgColor}
-            boxShadow="md"
+            rounded="lg"
+            borderTop="6px solid"
+            borderColor={titleColor}
           >
+            <Avatar bg="red.500" icon={<ImUserPlus fontSize='1.8rem' color='white' />} />
             <Text
               fontSize="xl"
-              color={textColor}
+              color={titleColor}
               fontWeight="bold"
               textAlign="center"
               mb="20px"
             >
               Registro de usuario
             </Text>
-            <Formik
-              initialValues={initialUsuario}
-              onSubmit={onSubmit}
-              validationSchema={validationSchema}
-            >
-              {({handleSubmit, values, errors }) => (
-              <form onSubmit={ handleSubmit }>
-                <Stack>
-                  <VStack spacing={2} align="stretch">
-                    <HStack>
-                    <FormControl>
-                      <FormLabel fontSize="sm" fontWeight="normal">
-                        Documento de identificación
-                      </FormLabel>
-                      <Input
-                        fontSize="sm"
-                        type="text"
-                        size="lg"
-                        isDisabled
-                        name="documentoIdentificacion"
-                        // value={data.numeroDocumento}
-                        defaultValue={data ? data.numeroDocumento : ''}
-                        onChange={e => {
-                          setUsuario({ ...dataUsuario, dni: e.target.value });
-                        }}
-                      />
-                    </FormControl>
-                    </HStack>
-
-                    <HStack>
+            <Box minW={{ base: "90%", md: "340px" }}>
+              <Formik
+                initialValues={initialUsuario}
+                onSubmit={onSubmit}
+                validationSchema={validationSchema}
+              >
+                {({handleSubmit}) => (
+                <form onSubmit={ handleSubmit }>
+                  <Stack>
+                    <VStack spacing={2} align="stretch">
+                      <HStack>
                       <FormControl>
                         <FormLabel fontSize="sm" fontWeight="normal">
-                          Nombres
+                          Documento de identificación
                         </FormLabel>
                         <Input
                           fontSize="sm"
                           type="text"
                           size="lg"
                           isDisabled
-                          // value={data.numeroDocumento}
-                          defaultValue={data ? data.nombre : ''}
-                          // onChange={e => {
-                          //   setUsuario({ ...dataUsuario, dni: e.target.value });
-                          // }}
+                          name="documentoIdentificacion"
+                          defaultValue={data ? data.numeroDocumento : ''}
+                          onChange={e => {
+                            setUsuario({ ...dataUsuario, dni: e.target.value });
+                          }}
                         />
                       </FormControl>
-                      <FormControl>
-                        <FormLabel fontSize="sm" fontWeight="normal">
-                          Apellidos
-                        </FormLabel>
-                        <Input
-                          fontSize="sm"
-                          type="text"
-                          size="lg"
-                          isDisabled
-                          // value={data.numeroDocumento}
-                          defaultValue={data ? data.apellidos : ''}
-                        />
-                      </FormControl>                  
-                    </HStack>
+                      </HStack>
 
-                    <HStack>
-                      <InputControl 
-                      name={'password1'} 
-                      inputProps={{ type: "password" }} 
-                      label="Password"
-                      onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
-                      // onChange={e => { e.target.value = e.target.value; setUsuario({ ...dataUsuario, password1: e.target.value }); }}
-                       />
-                      <InputControl 
-                      name={'password2'} 
-                      inputProps={{ type: 
-                      "password" }} 
-                      label="Password confirmación"
-                      // onChange={e => { e.target.value = e.target.value; setUsuario({ ...dataUsuario, password2: e.target.value }); }}
-                      onChange={e => { setUsuario({...dataUsuario, password2: e.target.value })}}
-                       />
-                    </HStack>
-                    <HStack>
-                      <FormControl mt={2}>
-                        <Button
-                          type="submit"
-                          // onClick={() => handleCreateUser()}
-                          bg="#9a1413"
-                          fontSize="10px"
-                          color="white"
-                          fontWeight="bold"
-                          w="100%"
-                          h="45"
-                          mb={2}
-                          _hover={{
-                            bg: 'black',
-                          }}
-                          _active={{
-                            bg: 'teal.400',
-                          }}
-                        >
-                          REGISTRARSE
-                        </Button>
-                      </FormControl>
-                    </HStack>
-                    <Flex justifyContent={'center'}>
-                      <Text color={textColor} fontWeight="medium">
-                        Desea validar de nuevo?
-                        <LinkB
-                          color={titleColor}
-                          as="span"
-                          ms="5px"
-                          href="#"
-                          fontWeight="bold"
-                        >
-                          <LinkA to={'/auth/register'}>REGRESAR</LinkA>
-                        </LinkB>
-                      </Text>
-                    </Flex>
-                  </VStack>
-                </Stack>
-              </form>
-              )}
-            </Formik>
-          </Flex>
+                      <HStack>
+                        <FormControl>
+                          <FormLabel fontSize="sm" fontWeight="normal">
+                            Nombres
+                          </FormLabel>
+                          <Input
+                            fontSize="sm"
+                            type="text"
+                            size="lg"
+                            isDisabled
+                            defaultValue={data ? data.nombre : ''}
+                          />
+                        </FormControl>
+                        <FormControl>
+                          <FormLabel fontSize="sm" fontWeight="normal">
+                            Apellidos
+                          </FormLabel>
+                          <Input
+                            fontSize="sm"
+                            type="text"
+                            size="lg"
+                            isDisabled
+                            defaultValue={data ? data.apellidos : ''}
+                          />
+                        </FormControl>                  
+                      </HStack>
+
+                      <HStack>
+                        <InputControl 
+                        name={'password1'} 
+                        inputProps={{ type: "password" }} 
+                        label="Password"
+                        onChange={e => { setUsuario({...dataUsuario, password1: e.target.value })}}
+                        />
+                        <InputControl 
+                        name={'password2'} 
+                        inputProps={{ type: 
+                        "password" }} 
+                        label="Password confirmación"
+                        onChange={e => { setUsuario({...dataUsuario, password2: e.target.value })}}
+                        />
+                      </HStack>
+                      <HStack>
+                        <FormControl mt={2}>
+                          <Button
+                            type="submit"
+                            bg="red.500"
+                            fontSize="10px"
+                            color="white"
+                            fontWeight="bold"
+                            w="100%"
+                            mb={2}
+                            _hover={{
+                              bg: 'red.600',
+                            }}
+                          >
+                            REGISTRARSE
+                          </Button>
+                        </FormControl>
+                      </HStack>
+                      <Flex justifyContent={'center'}>
+                        <Text color={textColor} fontWeight="medium">
+                          Desea validar de nuevo?
+                          <LinkB
+                            color={titleColor}
+                            as="span"
+                            ms="5px"
+                            href="#"
+                            fontWeight="bold"
+                          >
+                            <LinkA to={'/auth/register'}>REGRESAR</LinkA>
+                          </LinkB>
+                        </Text>
+                      </Flex>
+                    </VStack>
+                  </Stack>
+                </form>
+                )}
+              </Formik>
+            </Box>
+          </Stack>
         </Flex>
       </Flex>
     </>

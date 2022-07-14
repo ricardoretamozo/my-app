@@ -36,7 +36,7 @@ export const startLogin = (dni, password) => {
       );
       timerNotification('Inicio de Sesion Exitoso!');
     } else {
-    notification( body.mensaje, 'El nombre de usuario o contraseña es incorrecto', 'error');
+    notification( 'Login Error', 'Credenciales inválidas', 'error');
     }
   };
 };
@@ -68,10 +68,10 @@ export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) =
 export const validadorUsuarioCreado = async dni => {
     const response = await fetchToken('personas/dni/'+ dni);
     const body = await response.json();
-    if (response.status === 404) {
+    if (response.status == 404) {
       return true;
     }else{
-      notification(body.error, 'El DNI ya esta registrado en nuestra base de datos', 'error');
+      notification('Error', 'Este usuario ya esta registrado en el sistema', 'error');
       return false;
     }
 }

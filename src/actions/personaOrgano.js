@@ -34,11 +34,13 @@ export const fetchPersonaOrgano = async (id) => {
     const body = await response.json();
     const PersonaOrgano = {};
     const data = [];
-  
+
     body.forEach(x => {
       data.push({
-        organo: x.organo,
-        persona: x.persona,
+        organo: x.organo.organo,
+        idOrgano: x.organo.idOrgano,
+        sede: x.organo.sede.sede,
+        idSede: x.organo.sede.idSede,
         idPersonaOrgano: x.idPersonaOrgano
       });
     });
@@ -47,13 +49,12 @@ export const fetchPersonaOrgano = async (id) => {
     return PersonaOrgano;
   };
 
-  export const deletePersonaOrgano = (id, personaid) => {
+  export const deletePersonaOrgano = (id) => {
     return async dispatch => {
       const response = await fetchToken(`personaorganos/${id}`, '', 'DELETE');
       const body = await response.json();
   
       if (response.status === 200) {
-        dispatch(getPersonaOrgano(await loadPersonaOrgano(personaid)));
         notification('Se ha Eliminado correctamente', body.message, 'success');
       } else {
         notification('No se pudo eliminar', body.detalles, 'error');

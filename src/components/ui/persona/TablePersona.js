@@ -41,7 +41,7 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  AlertDescription,  
+  AlertDescription,
 } from '@chakra-ui/react';
 
 import {
@@ -68,6 +68,7 @@ import {
   createPersonaOrgano,
   fetchPersonaOrgano,
 } from '../../../actions/personaOrgano';
+import ModalOrganoAsignacion from './ModalOrganoAsignacion';
 
 export default function TablePersona() {
   const [openedit, setOpenEdit] = React.useState(false);
@@ -78,6 +79,10 @@ export default function TablePersona() {
   const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
   const dispatch = useDispatch();
 
+  // Close Modal Organo Asignacion
+  const handleCloseModalOrganoAsignacion = () => {
+    setOpenModal(false);
+  };
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const bgStatus = useColorModeValue('gray.400', '#1a202c');
@@ -122,24 +127,13 @@ export default function TablePersona() {
   const [organoSelect, setorganoSelect] = useState([
     { idOrgano: 0, organo: 'Seleccione una Sede' },
   ]);
+
   const [organoNombre, setorganoNombre] = useState(null);
 
   const [personaid, setPersonaid] = useState({
     idPersona: null,
   });
 
-  const handleChangeSede = value => {
-    // setsedeNombre(e.target.value);
-    console.log(value);
-    if (value == null) {
-      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
-    } else {
-      setorganoSelect(
-        organoInfo.filter(indice => indice.sede.idSede == value.value)
-      );
-    }
-    console.log(organoSelect);
-  };
 
   const handleOpenAlert = () => {
     setOpenAlert(true);
@@ -184,7 +178,7 @@ export default function TablePersona() {
     setOpenEdit(true);
   };
 
-  const [personaOrganos, setPersonaOrganos] = useState({});
+  const [personaOrganos, setPersonaOrganos] = useState([]);
 
   const [personaOrganosSede, setPersonaOrganosSede] = useState([]);
 
@@ -352,233 +346,6 @@ export default function TablePersona() {
             />
           ) : // <TableModal handleCloseModal={handleCloseModal} open={openModal} handleOpen={handleClickOpenModal(row)}  />
           null}
-
-          <Modal
-            isOpen={openModal}
-            onClose={handleCloseModal}
-            size={'6xl'}
-          >
-            <ModalOverlay />
-            <form onSubmit={savePersonaOrgano}>
-              <ModalContent>
-                <ModalHeader>
-                  ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES
-                  INFORMATICOS
-                </ModalHeader>
-                <ModalCloseButton />
-                <ModalBody pb={2}>
-                  <FormControl></FormControl>
-                  <HStack spacing={'10px'} mt={'10px'}>
-                    <FormControl>
-                      <FormLabel>Sede</FormLabel>
-                      <Select
-                        //  defaultValue={indice ? indice.activo : ''}
-                        required
-                        onChange={handleChangeSede}
-                        // onChange={(e)=> { console.log(e.target.value); }}
-                        isRequired
-                        isSearchable
-                        isClearable
-                        options={sedeData.map(sede => ({
-                          value: sede.idSede,
-                          label: sede.sede,
-                        }))}
-                      />
-                    </FormControl>
-                    <FormControl>
-                      <FormLabel>Organo</FormLabel>
-                      <Select
-                        onChange={handleChangeOrgano}
-                        defaultValue={organoSelect.map(organo => ({
-                          value: organo.idOrgano,
-                          label: organo.organo,
-                        }))}
-                        isClearable
-                        options={organoSelect.map(organo => ({
-                          value: organo.idOrgano,
-                          label: organo.organo,
-                        }))}
-                      />
-                    </FormControl>
-                  </HStack>
-                  <FormControl mt={'10px'}>
-                    <Button
-                      type={'submit'}
-                      // onClick={e => handleUpdatePersona(e)}
-                      colorScheme={'blue'}
-                      mr={3}
-                    >
-                      Asignar
-                    </Button>
-                  </FormControl>
-                  <Divider
-                    orientation="horizontal"
-                    borderColor={'blue.500'}
-                    border={2}
-                    mt={'10px'}
-                  />
-
-                  <Text mt={'10px'}>
-                    Organos Juridiccionales asignados a{' '}
-                    <b> {indice.nombre + ' ' + indice.apellido}</b>
-                  </Text>
-
-                  {/* Listado de Organos asignados a ese usuario */}
-
-                  <Table
-                    size="sm"
-                    alignSelf={'start'}
-                    variant="simple"
-                    overflowX={'auto'}
-                    mt={'10px'}
-                  >
-                    <Thead>
-                      <Tr>
-                        <Th>Sede</Th>
-                        <Th>Organo</Th>
-                        <Th>Accion</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {result.map(item => (
-                        <Tr key={item.idPersonaOrgano}>
-                          <Td>{item.organo.sede.sede}</Td>
-                          <Td>{item.organo.organo}</Td>
-                          <Td>
-                            <IconButton
-                              onClick={() => handleClickOpenDeleteOrganoP(item)}
-                              color={'red.600'}
-                              fontSize="20px"
-                              icon={<CloseIcon />}
-                            ></IconButton>
-                            {/* Alert dialog para confirmar la eliminacion */}
-                            <AlertDialog
-                              isOpen={opendeleteOrganoP}
-                              onClose={handleCloseDeleteOrganoP}
-                            >
-                              <AlertDialogOverlay>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader
-                                    fontSize="lg"
-                                    fontWeight="bold"
-                                  >
-                                    <Text>Está seguro de eliminar?</Text>
-                                  </AlertDialogHeader>
-
-                                  <AlertDialogBody>
-                                    Confirmo la acción
-                                  </AlertDialogBody>
-
-                                  <AlertDialogFooter>
-                                    <Button onClick={handleCloseDeleteOrganoP}>
-                                      Cancelar
-                                    </Button>
-                                    <Button
-                                      onClick={() =>
-                                        handleDeletePersonaOrgano(
-                                          item.idPersonaOrgano,
-                                          item.idPersona
-                                        )
-                                      }
-                                      colorScheme="red"
-                                      ml={3}
-                                    >
-                                      Si
-                                    </Button>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialogOverlay>
-                            </AlertDialog>
-
-                            {/* Confirmacicón de registro */}
-                            <AlertDialog
-                              isOpen={openAlert}
-                              onClose={handleCloseAlert}
-                              isCentered
-                            >
-                              <AlertDialogOverlay />
-                              <AlertDialogContent>
-                                <Alert
-                                  status={'success'}
-                                  variant="subtle"
-                                  flexDirection="column"
-                                  alignItems="center"
-                                  justifyContent="center"
-                                  textAlign="center"
-                                  height="400px"
-                                >
-                                  <AlertIcon boxSize="80px" mr={0} />
-                                  <AlertTitle mt={4} fontSize="lg">
-                                    BUEN TRABAJO
-                                  </AlertTitle>
-                                  <AlertDescription maxWidth="sm" mt={4}>
-                                    SE REALIZÓ EL CAMBIO CORRECTAMENTE
-                                  </AlertDescription>
-                                  <Button
-                                    onClick={handleCloseAlert}
-                                    mt={4}
-                                  >
-                                    OK
-                                  </Button>
-                                </Alert>
-                              </AlertDialogContent>
-                            </AlertDialog>
-
-                            {/* Confirmacicón de eliminar registro */}
-                            <AlertDialog
-                              isOpen={openAlertDelete}
-                              onClose={handleCloseAlertDelete}
-                              isCentered
-                            >
-                              <AlertDialogOverlay />
-                              <AlertDialogContent>
-                                <Alert
-                                  status={'success'}
-                                  variant="subtle"
-                                  flexDirection="column"
-                                  alignItems="center"
-                                  justifyContent="center"
-                                  textAlign="center"
-                                  height="400px"
-                                >
-                                  <AlertIcon boxSize="80px" mr={0} />
-                                  <AlertTitle mt={4} fontSize="lg">
-                                    BUEN TRABAJO
-                                  </AlertTitle>
-                                  <AlertDescription maxWidth="sm" mt={4}>
-                                    SE ELIMINÓ CORRECTAMENTE EL REGISTRO
-                                  </AlertDescription>
-                                  <Button
-                                    onClick={handleCloseAlertDelete}
-                                    mt={4}
-                                  >
-                                    OK
-                                  </Button>
-                                </Alert>
-                              </AlertDialogContent>
-                            </AlertDialog>
-
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </ModalBody>
-                <ModalFooter>
-                  {/* <Button
-                      type={'submit'}
-                      onClick={()=> handleDeletePersonaOrgano(item.idPersonaOrgano)}
-                      // onClick={e => handleUpdatePersona(e)}
-                      colorScheme={'green'}
-                      mr={3}
-                    >
-                      Actualizar
-                    </Button> */}
-                  <Button onClick={handleCloseModal}>Cancelar</Button>
-                </ModalFooter>
-              </ModalContent>
-            </form>
-          </Modal>
         </div>
       ),
       center: true,
@@ -847,42 +614,52 @@ export default function TablePersona() {
   });
 
   return (
-    <Box
-      borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      boxShadow={'md'}
-      bg={useColorModeValue('white', 'gray.900')}
-    >
-      <HStack
-        spacing="24px"
-        width={'100%'}
-        justifyContent={'space-between'}
-        verticalAlign={'center'}
-        p={4}
+    <>
+      <ModalOrganoAsignacion
+        abrir={openModal}
+        cerrar={handleCloseModalOrganoAsignacion}
+        usuario={indice}
+        abrirSeter={setOpenModal}
+        personaOrgano={personaOrganos}
+        setpersonaOrgano={setPersonaOrganos}
+      />
+      <Box
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        boxShadow={'md'}
+        bg={useColorModeValue('white', 'gray.900')}
       >
-        <Box>
-          <Text fontSize="lg" fontWeight="600">
-            Usuarios Table
-          </Text>
-        </Box>
-        <Box>
-          <PersonaAgregar />
-        </Box>
-      </HStack>
-      <DataTableExtensions {...tableData}>
-        <DataTable
-          columns={columns}
-          data={data}
-          defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}
-          pagination
-          ignoreRowClick={true}
-          responsive={true}
-          paginationPerPage={8}
-          paginationRowsPerPageOptions={[8, 15, 20, 30]}
-        />
-      </DataTableExtensions>
-    </Box>
+        <HStack
+          spacing="24px"
+          width={'100%'}
+          justifyContent={'space-between'}
+          verticalAlign={'center'}
+          p={4}
+        >
+          <Box>
+            <Text fontSize="lg" fontWeight="600">
+              Usuarios Table
+            </Text>
+          </Box>
+          <Box>
+            <PersonaAgregar />
+          </Box>
+        </HStack>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            columns={columns}
+            data={data}
+            defaultSortAsc={false}
+            theme={useColorModeValue('default', 'solarized')}
+            pagination
+            ignoreRowClick={true}
+            responsive={true}
+            paginationPerPage={8}
+            paginationRowsPerPageOptions={[8, 15, 20, 30]}
+          />
+        </DataTableExtensions>
+      </Box>
+    </>
   );
 }

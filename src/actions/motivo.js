@@ -18,7 +18,6 @@ export const createMotivo = data => {
 
     if (response.status === 200 || response.status === 201) {
       dispatch(getMotivo(await loadMotivo()));
-
       notification('Motivo registrado correctamente.', body.message, 'success');
     } else {
       notification('No se pudo registrar el Motivo', body.error, 'error');
@@ -70,17 +69,16 @@ export const updateMotivo = data => {
 
 //  Delete la tabla
 
-export const deleteMotivo = id => {
+export const deleteMotivo = (id) => {
   return async dispatch => {
     const response = await fetchToken(`motivos/${id}`, '', 'DELETE');
 
-    const body = await response.json();
-
     if (response.status === 200) {
       dispatch(getMotivo(await loadMotivo()));
-      notification('Motivo actualizado correctamente', body.message, 'success');
+      notification('Motivo eliminado correctamente', "", 'success');
+
     } else {
-      notification('No se pudo eliminar el Motivo', body.error, 'error');
+      notification('No se pudo eliminar el Motivo', "", 'error');
     }
   };
 };

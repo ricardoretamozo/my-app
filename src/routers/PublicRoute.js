@@ -16,7 +16,7 @@ export const PublicRoute = ({
       component={props =>
         !isAuthenticated ? (
           <Component {...props} />
-        ) : ((rol == '[COORDINADOR INFORMATICO]' || rol == '[SOPORTE TECNICO]') ? (
+        ) : ((rol == '[COORDINADOR INFORMATICO]' || rol == '[SOPORTE TECNICO]' || rol == '[ASISTENTE INFORMATICO]')  ? (
           <Redirect to="/dashboard/home" />
         ) : (
           <Redirect to="/usuario" />

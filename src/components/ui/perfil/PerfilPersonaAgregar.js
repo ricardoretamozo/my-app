@@ -14,6 +14,8 @@ import {
     Select,
   } from "@chakra-ui/react";
 
+  import { AddIcon } from '@chakra-ui/icons';
+
 import {useDispatch} from 'react-redux'
 import React, { useState } from "react"
 import { createPerfilPersona } from "../../../actions/perfilPersona"
@@ -51,7 +53,7 @@ const PerfilPersonaAgregar = () => {
 }
 return (
     <>
-        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'gray'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'gray'}>Agregar</Button>
         
         <Modal
         isOpen={openCreate}

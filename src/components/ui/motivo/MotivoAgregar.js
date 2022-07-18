@@ -10,12 +10,14 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Select,
+    Icon,
   } from "@chakra-ui/react";
+
+import { AddIcon } from '@chakra-ui/icons';
 
 import {useDispatch} from 'react-redux'
 import React, { useState } from "react"
-import { createSede } from "../../../actions/sede"
+import { createMotivo } from "../../../actions/motivo"
 
 const MotivoAgregar = () => {
     const [openCreate, setOpenCreate] = React.useState(false);
@@ -30,18 +32,16 @@ const MotivoAgregar = () => {
     };
 
     const initialSede = {
-        idSede: null,
-        sede: "",
-        direccion: "",
-        activo: "",
+        idMotivo: null,
+        motivo: "",
     }
 
-    const [dataSede, setSede] = useState(initialSede);
+    const [dataMotivo, setMotivo] = useState(initialSede);
 
-    const { sede, direccion, activo } = dataSede;
+    const { motivo } = dataMotivo;
 
-    const saveSede = () => {
-        dispatch(createSede({ sede, direccion, activo }))
+    const saveMotivo = () => {
+        dispatch(createMotivo({ motivo }))
         .then(() =>{
             handleCloseModal(true);
         }).catch(err =>{
@@ -52,47 +52,30 @@ const MotivoAgregar = () => {
 
 return (
     <>
-        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Nuevo</Button>
 
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size={'xl'}
         >
         <ModalOverlay />
         <ModalContent>
-            <ModalHeader>Agregar Nueva Sede</ModalHeader>
+            <ModalHeader>Agregar Nueva Motivo para Incidencia</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
-                <FormLabel>Sede</FormLabel>
+                <FormLabel>Motivo</FormLabel>
                 <Input 
-                onChange={(e)=> {setSede({ ...dataSede, sede: (e.target.value).toUpperCase() })}}
-                placeholder='Nombre de la sede'
+                onChange={(e)=> {setMotivo({ ...dataMotivo, motivo: (e.target.value).toUpperCase() })}}
+                placeholder='Motivo de las incidencias'
                 isRequired={true}
                 type={'text'} />
             </FormControl>
-            <FormControl mt={4} isRequired>
-                <FormLabel>Direccion</FormLabel>
-                <Input
-                onChange={(e)=> {setSede({ ...dataSede, direccion: (e.target.value) })}} 
-                placeholder='Av Arequipa 202'
-                type={'text'}
-                />
-            </FormControl>
-            <FormControl mt={4} isRequired>
-                <FormLabel>Estado</FormLabel>
-                <Select
-                defaultValue={dataSede.activo = 'S'}
-                onChange={(e)=> {setSede({...dataSede,activo:(e.target.value) })}}
-                >
-                <option value='S'>Activo</option>
-                <option value='N'>Inactivo</option>
-                </Select>
-            </FormControl>
             </ModalBody>
             <ModalFooter>
-            <Button onClick={()=>saveSede()} colorScheme={'blue'} autoFocus mr={3}>
+            <Button onClick={()=>saveMotivo()} colorScheme={'blue'} autoFocus mr={3}>
                 Guardar
             </Button>
             <Button onClick={handleCloseModal}>Cancelar</Button>

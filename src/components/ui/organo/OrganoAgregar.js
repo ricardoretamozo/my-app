@@ -12,6 +12,8 @@ import {
     Input,
     Select as ChakraSelect,
   } from "@chakra-ui/react";
+
+import { AddIcon } from '@chakra-ui/icons';
   
 import Select from 'react-select';
 
@@ -65,7 +67,7 @@ const OrganoAgregar = () => {
 
 return (
     <>
-        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
 
         <Modal
         isOpen={openCreate}

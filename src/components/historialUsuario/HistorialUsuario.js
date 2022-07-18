@@ -23,7 +23,7 @@ import { useState, useEffect } from 'react';
 import { FcSynchronize } from 'react-icons/fc';
 import ModalHistorialUsuario from './ModalHistorialUsuario';
 import { store } from '../../store/store';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Redirect, Route } from 'react-router-dom';
 
 export default function HistorialUsuario() {
   const { name } = useSelector(state => state.auth);
@@ -93,7 +93,8 @@ export default function HistorialUsuario() {
       setOpenCreate(true);
     } else if (selectCodicional == false) {
       // dispatch(startLogin(dni , 'cocacola'));
-      history.push('/dashboard/incidencias');
+      // <Route path='/dashboard/incidencias'  />
+      history.push('/dashboard');
     }
   };
 

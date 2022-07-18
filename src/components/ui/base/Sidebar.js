@@ -123,7 +123,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       {usuario.rol == '[COORDINADOR INFORMATICO]' || usuario.rol == '[SOPORTE TECNICO]' || usuario.rol == '[ASISTENTE INFORMATICO]' ? ( 
         LinkItemsAdmin.map(link => (
           <LinkA to={link.ruta}>
-            <NavItem key={link.name} icon={link.icon}>
+            <NavItem icon={link.icon}>
               {link.name}
             </NavItem>
           </LinkA>
@@ -131,7 +131,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       ) : (
         LinkItemsUser.map(link => (
             <LinkA to={link.ruta}>
-              <NavItem key={link.name} icon={link.icon}>
+              <NavItem icon={link.icon}>
                 {link.name}
               </NavItem>
             </LinkA>

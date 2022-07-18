@@ -31,7 +31,7 @@ import {
 import { types } from '../../types/types';
 // import { getIP } from 'external-ip';
 
-const ModalHistorialUsuario = props => {
+const ModalHistorialUsuario = (props) => {
   const dispatch = useDispatch();
   const history = useHistory();
 

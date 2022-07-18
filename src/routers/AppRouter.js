@@ -23,6 +23,10 @@ import { fetchOficinas } from '../actions/oficina';
 import { getOficina } from '../components/ui/oficina/oficina';
 import { fetchCargos } from '../actions/cargo';
 import { getCargo } from '../components/ui/cargo/cargo';
+import { fetchMotivos } from '../actions/motivo';
+import { getMotivo } from '../components/ui/motivo/motivo';
+import { fetchIncidenciasPersonas } from '../actions/incidencia';
+import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
 
 import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
@@ -35,6 +39,7 @@ export const AppRouter = () => {
   console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
+  const { identificador } = useSelector(state => state.auth);
   
   console.log(rol);
 
@@ -106,6 +111,37 @@ export const AppRouter = () => {
     
     if(store.getState().cargo.checking){
       fetchDataCargos();
+    }
+    //fetchData();
+  });
+
+  // MOTIVOS
+  const fetchDataMotivos= async ()=> {
+    await fetchMotivos().then((res)=>{
+      dispatch(getMotivo(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().motivo.checking){
+      fetchDataMotivos();
+    }
+    //fetchData();
+  });
+
+  // INCIDENCIAS POR CADA USUARIO
+
+  const fetchDataId = async ()=> {
+    await fetchIncidenciasPersonas(identificador).then((res)=>{
+      dispatch(getIncidenciaId(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().incidenciaId.checking){
+      fetchDataId();
     }
     //fetchData();
   });

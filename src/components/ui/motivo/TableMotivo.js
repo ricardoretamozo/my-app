@@ -20,19 +20,20 @@ import {
   AlertDialogOverlay,
   AlertDialogFooter,
   AlertDialog,
-  Switch,
-  Select,
   Text,
   HStack,
-  Badge,
+  IconButton,
 } from '@chakra-ui/react';
+
+import { AiTwotoneEdit } from 'react-icons/ai';
+import { RiDeleteBackLine } from 'react-icons/ri';
+
 import { store } from '../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
-import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteSede, updateSede } from '../../../actions/sede';
+import { deleteMotivo, updateMotivo } from '../../../actions/motivo';
 
 import MotivoAgregar from './MotivoAgregar';
 
@@ -49,10 +50,8 @@ export default function TableMotivo() {
   const data = store.getState().motivo.rows;
 
   const [indice, setIndice] = useState({
-    idSede: null,
-    sede: '',
-    direccion: '',
-    activo: '',
+    idMotivo: null,
+    motivo: '',
   });
 
   const handleClickOpenEdit = index => {
@@ -64,11 +63,11 @@ export default function TableMotivo() {
     setOpenEdit(false);
   };
 
-  const handleDeleteSede = () => {
-    dispatch(deleteSede(indice))
+  const handleDeleteMotivo = () => {
+    dispatch(deleteMotivo(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Sede eliminado');
+        console.log('Motivo eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -76,12 +75,12 @@ export default function TableMotivo() {
       });
   };
 
-  const actualizarSede = e => {
+  const handleUpdateMotivo = e => {
     e.preventDefault();
-    dispatch(updateSede(indice))
+    dispatch(updateMotivo(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
+        console.log('Motivo actualizado');
       })
       .catch(e => {
         console.log(e);
@@ -109,28 +108,29 @@ export default function TableMotivo() {
       sortable: false,
       cell: row => (
         <div>
-          <Switch
-            colorScheme={'red'}
-            mr={2}
-            isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idSede)}
-          />
-          <Button
-            onClick={() => handleClickOpenEdit(row)}
-            size={'xs'}
+          <IconButton
+            icon={<AiTwotoneEdit />}
+            variant={'outline'}
             colorScheme={'blue'}
-          >
-            Editar
-          </Button>
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+            onClick={() => handleClickOpenEdit(row)}
+            fontSize={'22px'}
+            size={'sm'}
+          />
+          <IconButton
+            icon={<RiDeleteBackLine />}
+            variant={'solid'}
+            colorScheme={'red'}
+            onClick={() => handleClickOpenDelete(row.idMotivo)}
+            fontSize={'22px'}
+            size={'sm'}
+            ml={2}
+          />
+
+          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'lg'}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {row.activo === 'S' ? (
-                    <Text>Está seguro de anular?</Text>
-                  ) : (
-                    <Text>Esta seguro de activar?</Text>
-                  )}
+                    <Text>¿Está seguro de eliminar?</Text>
                 </AlertDialogHeader>
 
                 <AlertDialogBody>Confirmo la acción</AlertDialogBody>
@@ -138,7 +138,7 @@ export default function TableMotivo() {
                 <AlertDialogFooter>
                   <Button onClick={handleCloseDelete}>Cancelar</Button>
                   <Button
-                    onClick={() => handleDeleteSede(row.idSede)}
+                    onClick={() => handleDeleteMotivo(row.idMotivo)}
                     colorScheme="red"
                     ml={3}
                   >
@@ -151,59 +151,36 @@ export default function TableMotivo() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Sede
+                Editar Motivo de Incidencia
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
                 <FormControl>
                   <Input
-                    value={indice ? indice.idSede : ''}
+                    value={indice ? indice.idMotivo : ''}
                     disabled={true}
                     type="text"
                     hidden={true}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Sede</FormLabel>
+                  <FormLabel>Motivo</FormLabel>
                   <Input
-                    defaultValue={indice ? indice.sede : ''}
+                    defaultValue={indice ? indice.motivo : ''}
                     type="text"
                     onChange={e =>
-                      setIndice({ ...indice, sede: e.target.value })
+                      setIndice({ ...indice, motivo: e.target.value })
                     }
                   />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Dirección</FormLabel>
-                  <Input
-                    defaultValue={indice ? indice.direccion : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, direccion: e.target.value })
-                    }
-                    placeholder="Dirección"
-                    type="text"
-                  />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>Estado</FormLabel>
-                  <Select
-                    defaultValue={indice ? indice.activo : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, activo: e.target.value })
-                    }
-                  >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
-                  </Select>
                 </FormControl>
               </ModalBody>
               <ModalFooter>
                 <Button
-                  onClick={e => actualizarSede(e)}
+                  onClick={e => handleUpdateMotivo(e)}
                   colorScheme="green"
                   mr={3}
                 >
@@ -261,7 +238,7 @@ export default function TableMotivo() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Sedes Table
+            TABLA MOTIVOS
           </Text>
         </Box>
         <Box>

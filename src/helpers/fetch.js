@@ -8,6 +8,7 @@ export const fetchWithoutToken = ( endpoint, data, method='GET' ) => {
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+    myHeaders.append("Accept", "application/json");
 
     if ( method === 'GET' ){
         return fetch( url );
@@ -74,6 +75,7 @@ export const fetchToken = ( endpoint, data, method = 'GET' ) => {
         return fetch( url,{
             method,
             headers: {
+                'Content-type': 'application/json',
                 'Authorization': `Bearer ${ token }`
             }
         });

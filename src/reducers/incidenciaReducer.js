@@ -20,3 +20,19 @@ export const incidenciaReducer = ( state = initialState, action ) => {
     }
 
 }
+
+export const incidenciaIdReducer = ( state =  initialState, action ) => {
+
+    switch (action.type) {
+        case types.eventLoadedIncidenciaId:
+            return {
+                ...state,                
+                 rows: [...action.payload.data],
+                 checking: false,
+            }
+
+        default:
+            return state;
+    }
+
+}

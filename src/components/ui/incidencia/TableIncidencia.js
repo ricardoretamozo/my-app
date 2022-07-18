@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -25,43 +25,40 @@ import {
   Text,
   HStack,
   Badge,
+  SimpleGrid,
+  IconButton,
 } from '@chakra-ui/react';
+import { RiDeleteBackLine } from 'react-icons/ri';
+
 import { store } from '../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteIncidencia } from '../../../actions/incidencia';
+import { deleteIncidencia, fetchIncidencia } from '../../../actions/incidencia';
 
 import IncidenciaAgregar from './IncidenciaAgregar';
+import IncidenciaDetalles from './IncidenciaDetalles';
 
 export default function TableIncidencia() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
+  const { identificador } = useSelector(state => state.auth);
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const bgStatus = useColorModeValue('gray.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
 
-  const data = store.getState().incidencia.rows;
-  const dataSede = store.getState().sede.rows;
-  const dataOrgano = store.getState().organo.rows;
-  const dataOficina = store.getState().oficina.rows;
-  
-
-  const [indice, setIndice] = useState({
-    idOrgano: null,
-    organo: '',
-    sede: '',
-    activo: '',
-  });
+  const data = store.getState().incidenciaId.rows;
 
   const [organoid, setOrganoid] = useState({
     idOrgano: null,
   });
 
+  const [detalleIncidencia, setDetalleIncidencia] = useState([]);
+  
   const handleDeleteOrgano = x => {
     dispatch(deleteIncidencia(x))
       .then(() => {
@@ -84,6 +81,13 @@ export default function TableIncidencia() {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
+  const obtenerIncideciadetalle = async () => {
+    await fetchIncidencia(identificador).then((res)=>{
+      dispatch(setDetalleIncidencia(res));
+    });
+    console.log(detalleIncidencia);
+  }
 
   const columns = [
     {
@@ -113,7 +117,7 @@ export default function TableIncidencia() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'C' ? 'green.400' : bgStatus}
+            bg={row.estado === 'C' ? 'blue.400' : bgStatus}
             color={row.estado === 'C' ? 'white' : colorStatus}
             p="3px 10px"
             w={24}
@@ -131,16 +135,29 @@ export default function TableIncidencia() {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
-        console.log(row);
         return (
           <div>
+          <IncidenciaDetalles 
+            rowId = {row.idIncidencia} 
+            listarIncidenciaDetalle = {obtenerIncideciadetalle}
+            identificador = { identificador }
+          />
+          <IconButton
+            icon={<RiDeleteBackLine />}
+            variant={'solid'}
+            colorScheme={'red'}
+            onClick={() => handleClickOpenDelete(row.idIncidencia)}
+            fontSize={'22px'}
+            size={'sm'}
+            ml={2}
+          />
             {/* <Switch
               colorScheme={'red'}
               mr={2}
               isChecked={row.activo === 'S'}
               onChange={() => handleClickOpenDelete(row.idOrgano)}
-            />
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+            /> */}
+            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -165,7 +182,7 @@ export default function TableIncidencia() {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialogOverlay>
-            </AlertDialog> */}
+            </AlertDialog>
           </div>
         );
       },
@@ -198,6 +215,21 @@ export default function TableIncidencia() {
   });
 
   return (
+    <>
+    <Box borderWidth="1px"
+      borderRadius="lg"
+      overflow="hidden"
+      boxShadow={'md'}
+      mb={4}
+      p={2}
+      bg={useColorModeValue('gray.100', 'gray.900')} >
+      <SimpleGrid columns={4} spacing={5} textColor={'white'}>
+        <Box bg='gray.500' height='30px' borderRadius={'md'} textAlign={'center'}>1</Box>
+        <Box bg='gray.500' height='30px' borderRadius={'md'} textAlign={'center'}>2</Box>
+        <Box bg='gray.500' height='30px' borderRadius={'md'} textAlign={'center'}>3</Box>
+        <Box bg='gray.500' height='30px' borderRadius={'md'} textAlign={'center'}>4</Box>
+      </SimpleGrid>
+    </Box>
     <Box
       borderWidth="1px"
       borderRadius="lg"
@@ -235,5 +267,6 @@ export default function TableIncidencia() {
         />
       </DataTableExtensions>
     </Box>
+    </>
   );
 }

@@ -13,6 +13,7 @@ export const types = {
     eventLoadedUsuarioValidadorDni: '[event] Events loaded UsuarioValidadorDni',
     eventOrganoId: '[event] OrganoId',
     eventLoadedIncidencia: '[event] Events loaded Incidencia',
+    eventLoadedIncidenciaId: '[event] Events loaded IncidenciaId',
     eventLoadedMotivo: '[event] Events loaded Motivo',
     eventLoadedPersonaOrgano: '[event] Events loaded PersonaOrgano',
 }

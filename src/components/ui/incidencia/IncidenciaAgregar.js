@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Modal,
@@ -14,49 +15,23 @@ import {
   Select as SelectForm,
 } from '@chakra-ui/react';
 
+import { AddIcon } from '@chakra-ui/icons';
+
 import { store } from '../../../store/store';
-
-import Select from 'react-select';
-
-import { useDispatch } from 'react-redux';
-import React, { useState } from 'react';
-import { createOficina, fetchOficinas } from '../../../actions/oficina';
-import {
-  fetchHistorialPersona,
-  createHistorialPersona,
-} from '../../../actions/historialpersona';
+import { useDispatch, useSelector } from 'react-redux';
+import { getIncidenciaId } from './incidencia';
 
 import {
-    createIncidencia,
+    createIncidencia, fetchIncidenciasPersonas
   } from '../../../actions/incidencia';
 
-import { types } from '../../../types/types';
-import { useSelector } from 'react-redux';
 
 const IncidenciaAgregar = props => {
   const [openCreate, setOpenCreate] = React.useState(false);
   const dispatch = useDispatch();
 
-  const sedeData = store.getState().sede.rows;
-  const organoData = store.getState().organo.rows;
-  const oficinaData = store.getState().oficina.rows;
-  const cargoData = store.getState().cargo.rows;
-  const data = store.getState().incidencia.rows;
+  const motivoData = store.getState().motivo.rows;
   const { identificador } = useSelector(state => state.auth);
-
-  console.log(data)
-
-  var sedeInfo = sedeData;
-  var organoInfo = organoData;
-  var oficinaInfo = oficinaData;
-  var cargoInfo = cargoData;
-
-  const [indice, setIndice] = useState({
-    idOrgano: null,
-    organo: '',
-    sede: '',
-    activo: '',
-  });
 
   const tiempoTranscurrido = Date.now();
   const hoy = new Date(tiempoTranscurrido);
@@ -81,54 +56,7 @@ const IncidenciaAgregar = props => {
     descripcion: '',
     estado: 'P',
     fecha: hoy.toISOString().split('T')[0],
-    ip: '12234533',
   });
-
-  const [organoSelect, setOrganoSelect] = useState([
-    { idOrgano: 0, organo: 'Seleccione una Sede' },
-  ]);
-  const [oficinaSelect, setOficinaSelect] = useState([
-    { idOficina: 0, oficina: 'Seleccione un Organo' },
-  ]);
-
-  const [organoNombre, setOrganoNombre] = useState(null);
-  const [oficinaNombre, setOficinaNombre] = useState(null);
-
-  const [optionsSede, setoptionsSede] = useState(
-    sedeInfo.map(sede => ({
-      value: sede.idSede,
-      label: sede.sede,
-    }))
-  );
-
-  const [optionsOrgano, setoptionsOrgano] = useState(
-    organoInfo.map(organo => ({
-      value: organo.idOrgano,
-      label: organo.organo,
-    }))
-  );
-
-  const [optionsOficina, setoptionsOficina] = useState(
-    oficinaInfo.map(oficina => ({
-      value: oficina.idOficina,
-      label: oficina.oficina,
-    }))
-  );
-
-  const [optionsCargoIndex, setOptionsCargoIndex] = useState(0);
-  const [optionsOficinaIndex, setOficinaIndex] = useState(0);
-
-  const [optionsMotivo, setoptionsMotivo] = useState(
-    cargoInfo.map(cargo => ({
-      value: cargo.idCargo,
-      label: cargo.cargo,
-    }))
-  );
-
-  const [optionsOrganoindex, setoptionsOrganoindex] = useState(0);
-  const [optionsSedeindex, setoptionsSedeindex] = useState(0);
-
-  // const { oficina, organo } = dataOficina;
 
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
@@ -138,49 +66,19 @@ const IncidenciaAgregar = props => {
     setOpenCreate(false);
   };
 
-  // Select
-  const handleChangeSede = value => {
-    // setsedeNombre(e.target.value);
-    console.log(value);
-    if (value == null) {
-      //setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
-    } else {
-      var organo = organoInfo.filter(
-        indice => indice.sede.idSede == value.value
-      );
-      console.log(organo);
-      setoptionsOrgano(
-        organo.map(organo => ({
-          value: organo.idOrgano,
-          label: organo.organo,
-        }))
-      );
-      setoptionsOrganoindex(0);
+  const fetchDataId = async ()=> {
+    await fetchIncidenciasPersonas(identificador).then((res)=>{
+      dispatch(getIncidenciaId(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().incidenciaId.checking){
+      fetchDataId();
     }
-    console.log(organoSelect);
-  };
-
-  //
-  const handleChangeOrgano = value => {
-    console.log(value);
-    console.log(
-      oficinaData.filter(indice => indice.organo.idOrgano == value.value)
-    );
-    setOrganoNombre(value.value);
-    if (value == null) {
-      setoptionsOficina([{ idOficina: 0, oficina: 'Seleccione un Organo' }]);
-    } else {
-      setoptionsOficina(
-        oficinaData
-          .filter(indice => indice.organo.idOrgano == value.value)
-          .map(value => ({ value: value.idOficina, label: value.oficina }))
-      );
-    }
-  };
-
-  const handleChangeOficina = value => {
-    setOficinaNombre(value.value);
-  };
+    //fetchData();
+  }, []);
 
   const saveHistorialPersona = e => {
     e.preventDefault();
@@ -194,20 +92,17 @@ const IncidenciaAgregar = props => {
       persona_asignado: {
         idpersona: Number(identificador),
       },
-      oficina: {
-        idOficina: Number(optionsOficina[optionsOficinaIndex].value),
-      },
       motivo: {
-        idMotivo: Number(95),
+        idMotivo: indiceIncidencia.motivo,
       },
       descripcion: indiceIncidencia.descripcion,
       estado: indiceIncidencia.estado,
       fecha: indiceIncidencia.fecha,
-      ip: indiceIncidencia.ip,
-    };
+    }
     dispatch(createIncidencia(incidencia))
       .then(() => {
         handleCloseModal(true);
+        fetchDataId();
       })
       .catch(err => {
         console.log(err);
@@ -216,96 +111,39 @@ const IncidenciaAgregar = props => {
 
   return (
     <>
-      <Button size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
-        Crear Nueva Incidencia
+      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
+        Nueva Incidencia
       </Button>
 
       <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'xl'}
+        size={'3xl'}
       >
         <ModalOverlay />
 
         <form onSubmit={saveHistorialPersona}>
           <ModalContent>
-            <ModalHeader>Nueva Incidencia</ModalHeader>
+            <ModalHeader>Crear Nueva Incidencia</ModalHeader>
             <ModalCloseButton />
 
             <ModalBody pb={6}>
-            <FormControl>
-            <FormLabel>ID</FormLabel>
-                <Input
-                    value={indiceIncidencia ? indiceIncidencia.idpersona : identificador}
-                    disabled={true}
-                    type="text"
-                    defaultValue={ identificador }
-                />
-            </FormControl>
-              <FormControl>
-                <Input
-                  value={indice ? indice.idOficina : ''}
-                  disabled={true}
-                  type="text"
-                  hidden={true}
-                />
-              </FormControl>
-              <FormControl isRequired mt={4}>
-                <FormLabel>Sede</FormLabel>
-                <Select
-                  onChange={handleChangeSede}
-                  //  defaultValue={optionsSede[optionsSedeindex]}
-                  defaultValue={
-                    props.oficina
-                      ? optionsSede.find(
-                          sede => sede.value == props.oficina.organo.sede.idSede
-                        )
-                      : null
-                  }
-                  isRequired
-                  isSearchable
-                  isClearable
-                  options={optionsSede}
-                />
+              <FormControl mt={4} isRequired>
+                <FormLabel>Motivo</FormLabel>
+                  <SelectForm placeholder='-----Selecciona un Motivo-----'
+                    onChange ={e => setIndiceIncidencia({...indiceIncidencia, motivo:  e.target.value })}
+                  >
+                    {motivoData.map((item, idx) => (
+                      <option value={item.idMotivo} key={idx}>
+                        {item.motivo}
+                      </option>
+                    ))}
+                  </SelectForm>
               </FormControl>
               <FormControl mt={4} isRequired>
-                <FormLabel>Organo</FormLabel>
-                <Select
-                  onChange={handleChangeOrgano}
-                  // defaultValue= {optionsOrgano[optionsOrganoindex]}
-                  defaultValue={
-                    props.oficina
-                      ? optionsOrgano.find(
-                          organo =>
-                            organo.value == props.oficina.organo.idOrgano
-                        )
-                      : null
-                  }
-                  isClearable
-                  options={optionsOrgano}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Oficina</FormLabel>
-                <Select
-                  onChange={handleChangeOficina}
-                  defaultValue={
-                    props.oficina
-                      ? optionsOficina.find(
-                          oficina => oficina.value == props.oficina.idOficina
-                        )
-                      : null
-                  }
-                  isClearable={true}
-                  options={optionsOficina}
-                  isRequired
-                />
-              </FormControl>
-              <FormControl mt={4}>
               <FormLabel>Descripcion</FormLabel>
               <Textarea
-                nput
                 onChange={e => {
                   setIndiceIncidencia({
                     ...indiceIncidencia,
@@ -316,6 +154,19 @@ const IncidenciaAgregar = props => {
                 size='sm'
             />
             </FormControl>
+              {/* <FormControl mt={4}>
+                <FormLabel>Usuario Asignado</FormLabel>
+                  <SelectForm
+                  onChange ={e => setIndiceIncidencia({...indiceIncidencia, persona_asignado:  e.target.value })
+                  }
+                  >
+                    {personaData.map((item, idx) => (
+                      <option value={item.idpersona} key={idx}>
+                        {item.nombre}
+                      </option>
+                    ))}
+                  </SelectForm>
+              </FormControl> */}
             </ModalBody>
             <ModalFooter>
               <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>
@@ -329,10 +180,5 @@ const IncidenciaAgregar = props => {
     </>
   );
 };
-
-const organoID = organo => ({
-  type: types.eventOrganoId,
-  payload: organo,
-});
 
 export default IncidenciaAgregar;

@@ -8,17 +8,12 @@ import {
   AlertDialogOverlay,
   Button,
 } from '@chakra-ui/react';
-import { deletePersonaOrgano } from '../actions/personaOrgano';
-import { useDispatch } from 'react-redux';
+
 
 export default function AlertaDialogo(props) {
   const cancelRef = React.useRef();
   console.log(props);
-  const dispatch = useDispatch();
-  const deletePersonaOrganoId = () => {
-    dispatch(deletePersonaOrgano(props.id));
-    props.onClose();
-  }
+
   return (
     <>
       <AlertDialog
@@ -29,7 +24,7 @@ export default function AlertaDialogo(props) {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Estas seguro de eliminar el registro?
+              {props.title}
             </AlertDialogHeader>
 
             <AlertDialogBody>Confirmo la acción</AlertDialogBody>
@@ -38,8 +33,8 @@ export default function AlertaDialogo(props) {
               <Button ref={cancelRef} onClick={props.onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={deletePersonaOrganoId} ml={3}>
-                Delete
+              <Button colorScheme="red" onClick={props.metodo} ml={3}>
+                Confirmación
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

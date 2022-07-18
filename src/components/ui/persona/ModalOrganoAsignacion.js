@@ -20,19 +20,18 @@ import {
   Td,
   Thead,
   Tbody,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
 import { store } from '../../../store/store';
 import { useDispatch } from 'react-redux';
-import { fetchPersonaOrgano } from '../../../actions/personaOrgano';
 import AlertaDialogo from '../../../helpers/AlertaDialogo';
+import {
+  deletePersonaOrgano,
+  createPersonaOrgano,
+  fetchPersonaOrgano,
+} from '../../../actions/personaOrgano';
+
 export default function ModalOrganoAsignacion(props) {
   console.log(props);
 
@@ -50,7 +49,13 @@ export default function ModalOrganoAsignacion(props) {
   ]);
   const [organoNombre, setorganoNombre] = useState(null);
   const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
 
+  const fetchDataPersonaOrgano = async idpersona => {
+    await fetchPersonaOrgano(idpersona).then(res => {
+      props.setpersonaOrgano(res.data);
+    });
+  };
   //Cambiar opciones select organo
   const handleChangeSede = value => {
     if (value != null) {
@@ -66,28 +71,65 @@ export default function ModalOrganoAsignacion(props) {
 
   //defaul input
   const closeModal = () => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     props.cerrar();
-  };
 
+  };
   const closeModalDelete = () => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
     setOpenModalDelete(false);
   };
-  const [idDeleteOrgano , setIdDeleteOrgano] = useState(null);
-  const handleClickOpenDeleteOrganoP = (id) => {
+
+  const deletePersonaOrganoId = () => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
+    dispatch(deletePersonaOrgano(idDeleteOrgano));
+    closeModalDelete();
+  };
+
+  const closeModalCreate = () => {
+    setorganoNombre(null);
+    setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+    //resetear persona organo
+    fetchDataPersonaOrgano(props.usuario.idpersona);
+    console.log('cerrar');
+    setOpenModalCreate(false);
+  };
+
+  const [idDeleteOrgano, setIdDeleteOrgano] = useState(null);
+  const handleClickOpenDeleteOrganoP = id => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
     setIdDeleteOrgano(id);
     setOpenModalDelete(true);
   };
 
-  const createPersonaOrgano = () => {
-    
-  }
+  const createPersonaOrganoModal = () => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
+    setOpenModalCreate(true);
+  };
+
+  const createPersonaOrganoDModal = () => {
+    fetchDataPersonaOrgano(props.usuario.idpersona);
+    dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre));
+    setorganoNombre(null);
+    setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+    closeModalCreate();
+  };
+
   console.log(organoNombre);
+  console.log(organoSelect);
   console.log(props.personaOrgano);
   return (
     <>
+      <AlertaDialogo
+        isOpen={openModalDelete}
+        onClose={closeModalDelete}
+        title={'Estas seguro de eliminar el registro?'}
+        metodo={deletePersonaOrganoId}
+      />
       <Modal
+        id="modalOrganoAsignacion"
         initialFocusRef={initialRef}
         finalFocusRef={finalRef}
         isOpen={props.abrir}
@@ -120,10 +162,6 @@ export default function ModalOrganoAsignacion(props) {
                 <FormLabel>Organo</FormLabel>
                 <Select
                   onChange={handleChangeOrgano}
-                  defaultValue={organoSelect.map(organo => ({
-                    value: organo.idOrgano,
-                    label: organo.organo,
-                  }))}
                   isClearable
                   options={organoSelect.map(organo => ({
                     value: organo.idOrgano,
@@ -134,8 +172,9 @@ export default function ModalOrganoAsignacion(props) {
             </HStack>
             <FormControl mt={'10px'}>
               <Button
+                disabled={organoNombre == null ? true : false}
                 type={'submit'}
-                //onClick={e => handleUpdatePersona(e)}
+                onClick={createPersonaOrganoModal}
                 colorScheme={'blue'}
                 mr={3}
               >
@@ -177,7 +216,9 @@ export default function ModalOrganoAsignacion(props) {
                     <Td>{x.organo}</Td>
                     <Td>
                       <IconButton
-                        onClick={() => handleClickOpenDeleteOrganoP(x.idPersonaOrgano)}
+                        onClick={() =>
+                          handleClickOpenDeleteOrganoP(x.idPersonaOrgano)
+                        }
                         color={'red.600'}
                         fontSize="20px"
                         icon={<CloseIcon />}
@@ -196,7 +237,12 @@ export default function ModalOrganoAsignacion(props) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <AlertaDialogo isOpen={openModalDelete} onClose={closeModalDelete} id = {idDeleteOrgano} />
+      <AlertaDialogo
+        isOpen={openModalCreate}
+        onClose={closeModalCreate}
+        title={'Estas seguro de agregar el registro'}
+        metodo={createPersonaOrganoDModal}
+      />
     </>
   );
 }

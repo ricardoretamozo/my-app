@@ -84,6 +84,7 @@ export const notification = (title, message, type) => {
     text: message,
     icon: type,
     confirmButtonText: 'Aceptar',
+    target: document.getElementById('chakra-modal-modalOrganoAsignacion')
   });
 };
 

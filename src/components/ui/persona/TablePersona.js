@@ -134,7 +134,6 @@ export default function TablePersona() {
     idPersona: null,
   });
 
-
   const handleOpenAlert = () => {
     setOpenAlert(true);
   };
@@ -180,17 +179,14 @@ export default function TablePersona() {
 
   const [personaOrganos, setPersonaOrganos] = useState([]);
 
-  const [personaOrganosSede, setPersonaOrganosSede] = useState([]);
+  const fetchDataPersonaOrgano = async idpersona => {
+    await fetchPersonaOrgano(idpersona).then(res => {
+      setPersonaOrganos(res.data);
+    });
+  };
 
   const handleClickOpenModal = index => {
-    // hacer el fetch
-    // console.log(index);
-    const fetchDataPersonaOrgano = async () => {
-      await fetchPersonaOrgano(index.idpersona).then(res => {
-        setPersonaOrganos(res.data);
-      });
-    };
-    fetchDataPersonaOrgano();
+    fetchDataPersonaOrgano(index.idpersona);
     setIndice(index);
     setOpenModal(true);
   };

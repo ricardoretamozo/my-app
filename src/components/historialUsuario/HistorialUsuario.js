@@ -94,10 +94,9 @@ export default function HistorialUsuario() {
     } else if (selectCodicional == false) {
       // dispatch(startLogin(dni , 'cocacola'));
       // <Route path='/dashboard/incidencias'  />
-      history.push('/dashboard');
+      history.push('/dashboard/usuario/incidencias');
     }
   };
-
   // const Next = () => {
   //   const history = useHistory();
   //   // history.push('/dashboard/incidencias');
@@ -105,7 +104,7 @@ export default function HistorialUsuario() {
   // }
 
   function Next() {
-    history.push("/dashboard/incidencias");
+    history.push("/dashboard/usuario/incidencias");
   }
 
   const handleCloseModal = () => {

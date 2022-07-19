@@ -89,9 +89,6 @@ const IncidenciaAgregar = props => {
       persona_registro: {
         idpersona: Number(identificador),
       },
-      persona_asignado: {
-        idpersona: Number(identificador),
-      },
       motivo: {
         idMotivo: indiceIncidencia.motivo,
       },

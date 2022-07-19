@@ -12,6 +12,7 @@ import {
     Input,
     Select,
   } from "@chakra-ui/react";
+  import { AddIcon } from "@chakra-ui/icons";
 
 import {useDispatch} from 'react-redux'
 import React, { useState } from "react"
@@ -51,7 +52,7 @@ const CargoAgregar = () => {
 
 return (
     <>
-        <Button size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
 
         <Modal
         isOpen={openCreate}

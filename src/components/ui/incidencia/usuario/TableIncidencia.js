@@ -1,98 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+// import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
-  Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  AlertDialogBody,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogFooter,
-  AlertDialog,
-  Switch,
-  Select,
   Text,
   HStack,
   Badge,
-  SimpleGrid,
   chakra,
   Flex,
-  IconButton,
+  SimpleGrid,
 } from '@chakra-ui/react';
-import { RiDeleteBackLine } from 'react-icons/ri';
-
-import { store } from '../../../store/store';
+import { store } from '../../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteIncidencia, fetchIncidencia } from '../../../actions/incidencia';
+// import { deleteIncidencia, fetchIncidencia } from '../../../../actions/incidencia';
 
-import IncidenciaAgregar from './IncidenciaAgregar';
-import IncidenciaDetalles from './IncidenciaDetalles';
+import IncidenciaAgregar from '../IncidenciaAgregar';
 
 export default function TableIncidencia() {
-  const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
-  const { identificador } = useSelector(state => state.auth);
+  // const [opendelete, setOpenDelete] = React.useState(false);
+  // const dispatch = useDispatch();
+  // const { identificador } = useSelector(state => state.auth);
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const bgStatus = useColorModeValue('gray.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
 
-  const data = store.getState().incidencia.rows;
+  var data = store.getState().incidenciaId.rows;
+
+  // var data.usuario_asignado
+
   const incidenciasPendientes = data.filter(row => row.estado === 'P');
   const incidenciasAsignadas = data.filter(row => row.estado === 'A');
   const incidenciasSolucionadas = data.filter(row => row.estado === 'S');
 
-  const [organoid, setOrganoid] = useState({
-    idOrgano: null,
-  });
-
-  const [detalleIncidencia, setDetalleIncidencia] = useState([]);
+  // const [detalleIncidencia, setDetalleIncidencia] = useState([]);
   
-  const handleDeleteOrgano = x => {
-    dispatch(deleteIncidencia(x))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Sede eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
+  // const handleDeleteOrgano = x => {
+  //   dispatch(deleteIncidencia(x))
+  //     .then(() => {
+  //       handleCloseDelete(true);
+  //       console.log('Sede eliminado');
+  //     })
+  //     .catch(e => {
+  //       console.log(e);
+  //       handleCloseDelete(true);
+  //     });
+  // };
 
   // const [userorgano, setOrgano] = useState(initialOrgano);
 
-  const handleClickOpenDelete = index => {
-    setOrganoid(index);
-    setOpenDelete(true);
-  };
+  // const handleClickOpenDelete = index => {
+  //   setOrganoid(index);
+  //   setOpenDelete(true);
+  // };
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
+  // const handleCloseDelete = () => {
+  //   setOpenDelete(false);
+  // };
 
-  const obtenerIncideciadetalle = async () => {
-    await fetchIncidencia(identificador).then((res)=>{
-      dispatch(setDetalleIncidencia(res));
-    });
-    console.log(detalleIncidencia);
-  }
+  // const obtenerIncideciadetalle = async () => {
+  //   await fetchIncidencia(identificador).then((res)=>{
+  //     dispatch(setDetalleIncidencia(res));
+  //   });
+  //   console.log(detalleIncidencia);
+  // }
 
   const columns = [
     {
@@ -136,63 +112,63 @@ export default function TableIncidencia() {
       ),
       center: true,
     },
-    {
-      name: 'ACCIONES',
-      sortable: false,
-      cell: row => {
-        return (
-          <div>
-          <IncidenciaDetalles 
-            rowId = {row.idIncidencia} 
-            listarIncidenciaDetalle = {obtenerIncideciadetalle}
-            identificador = { identificador }
-          />
-          {/* <IconButton
-            icon={<RiDeleteBackLine />}
-            variant={'solid'}
-            colorScheme={'red'}
-            onClick={() => handleClickOpenDelete(row.idIncidencia)}
-            fontSize={'22px'}
-            size={'sm'}
-            ml={2}
-          /> */}
-            {/* <Switch
-              colorScheme={'red'}
-              mr={2}
-              isChecked={row.activo === 'S'}
-              onChange={() => handleClickOpenDelete(row.idOrgano)}
-            /> */}
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
-                    ) : (
-                      <Text>Esta seguro de activar?</Text>
-                    )}
-                  </AlertDialogHeader>
+    // {
+    //   name: 'ACCIONES',
+    //   sortable: false,
+    //   cell: row => {
+    //     return (
+    //       <div>
+    //       <IncidenciaDetalles 
+    //         rowId = {row.idIncidencia} 
+    //         listarIncidenciaDetalle = {obtenerIncideciadetalle}
+    //         identificador = { identificador }
+    //       />
+    //       <IconButton
+    //         icon={<RiDeleteBackLine />}
+    //         variant={'solid'}
+    //         colorScheme={'red'}
+    //         onClick={() => handleClickOpenDelete(row.idIncidencia)}
+    //         fontSize={'22px'}
+    //         size={'sm'}
+    //         ml={2}
+    //       />
+    //         {/* <Switch
+    //           colorScheme={'red'}
+    //           mr={2}
+    //           isChecked={row.activo === 'S'}
+    //           onChange={() => handleClickOpenDelete(row.idOrgano)}
+    //         /> */}
+    //         <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+    //           <AlertDialogOverlay>
+    //             <AlertDialogContent>
+    //               <AlertDialogHeader fontSize="lg" fontWeight="bold">
+    //                 {row.activo === 'S' ? (
+    //                   <Text>Está seguro de anular?</Text>
+    //                 ) : (
+    //                   <Text>Esta seguro de activar?</Text>
+    //                 )}
+    //               </AlertDialogHeader>
 
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+    //               <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
-                  <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
-                    <Button
-                      onClick={() => handleDeleteOrgano(organoid)}
-                      colorScheme="red"
-                      ml={3}
-                    >
-                      Si
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
-          </div>
-        );
-      },
-      center: true,
-    },
+    //               <AlertDialogFooter>
+    //                 <Button onClick={handleCloseDelete}>Cancelar</Button>
+    //                 <Button
+    //                   onClick={() => handleDeleteOrgano(organoid)}
+    //                   colorScheme="red"
+    //                   ml={3}
+    //                 >
+    //                   Si
+    //                 </Button>
+    //               </AlertDialogFooter>
+    //             </AlertDialogContent>
+    //           </AlertDialogOverlay>
+    //         </AlertDialog>
+    //       </div>
+    //     );
+    //   },
+    //   center: true,
+    // },
   ];
 
   const tableData = {
@@ -392,12 +368,12 @@ export default function TableIncidencia() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Lista de Incidencias
+            Mis Incidencias Creadas
           </Text>
         </Box>
-        {/* <Box>
+        <Box>
           <IncidenciaAgregar />
-        </Box> */}
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
@@ -407,7 +383,6 @@ export default function TableIncidencia() {
           theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
-          responsive={true}
           paginationPerPage={6}
           paginationRowsPerPageOptions={[6, 15, 20, 30]}
         />

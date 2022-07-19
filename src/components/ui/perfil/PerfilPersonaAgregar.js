@@ -53,7 +53,7 @@ const PerfilPersonaAgregar = () => {
 }
 return (
     <>
-        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'gray'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
         
         <Modal
         isOpen={openCreate}

@@ -14,6 +14,10 @@ export const types = {
     eventOrganoId: '[event] OrganoId',
     eventLoadedIncidencia: '[event] Events loaded Incidencia',
     eventLoadedIncidenciaId: '[event] Events loaded IncidenciaId',
+    eventLoadedIncidenciasAsignadas: '[event] Events loaded Incidencias Asignadas',
+    eventLoadedIncidenciasNoAsignadas: '[event] Events loaded Incidencias No Asignadas',
+    eventLoadedIncidenciasAsignadasSoporte: '[event] Events loaded Incidencias Asignadas a Soporte',
+    eventLoadedTecnicoDisponible: '[event] Events loaded Tecnicos Disponibles',
     eventLoadedMotivo: '[event] Events loaded Motivo',
     eventLoadedPersonaOrgano: '[event] Events loaded PersonaOrgano',
 }

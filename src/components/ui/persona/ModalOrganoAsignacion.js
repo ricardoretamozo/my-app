@@ -84,7 +84,12 @@ export default function ModalOrganoAsignacion(props) {
 
   const deletePersonaOrganoId = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
-    dispatch(deletePersonaOrgano(idDeleteOrgano));
+    dispatch(deletePersonaOrgano(idDeleteOrgano))
+    .then(() => {
+      fetchDataPersonaOrgano(props.usuario.idpersona);
+    }).catch(err => {
+      console.log(err.message);
+    });
     closeModalDelete();
   };
 
@@ -111,7 +116,13 @@ export default function ModalOrganoAsignacion(props) {
 
   const createPersonaOrganoDModal = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
-    dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre));
+    dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre))
+    .then(() => {
+      fetchDataPersonaOrgano(props.usuario.idpersona);
+    })
+    .catch(err => {
+      console.log(err.message);
+    });
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     closeModalCreate();

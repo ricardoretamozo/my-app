@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
   Redirect,
 } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +26,7 @@ import { fetchMotivos } from '../actions/motivo';
 import { getMotivo } from '../components/ui/motivo/motivo';
 import { fetchIncidenciasPersonas } from '../actions/incidencia';
 import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
+import { fetchTecnicosDisponibles } from '../actions/incidencia';
 
 import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
@@ -41,8 +41,6 @@ export const AppRouter = () => {
   const { rol } = useSelector(state => state.auth);
   const { identificador } = useSelector(state => state.auth);
   
-  console.log(rol);
-
   useEffect(() => {
     dispatch(startChecking());
   }, [dispatch]);
@@ -98,7 +96,7 @@ export const AppRouter = () => {
       fetchDataOficina();
     }
     //fetchData();
-  }, []);
+  });
 
   // CARGOS
   const fetchDataCargos= async ()=> {
@@ -142,6 +140,22 @@ export const AppRouter = () => {
     
     if(store.getState().incidenciaId.checking){
       fetchDataId();
+    }
+    //fetchData();
+  });
+
+  // INCIDENCIAS POR CADA USUARIO
+
+  const fetchDataTecnicoDisponible = async ()=> {
+    await fetchTecnicosDisponibles().then((res)=>{
+      //dispatch(getIncidenciaId(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().tecnicoDisponible.checking){
+      // fetchDataTecnicoDisponible();
     }
     //fetchData();
   });
@@ -222,6 +236,30 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/incidencias"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/usuario/incidencias"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/asistente/incidencias_asignadas"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/asistente/incidencias_no_asignadas"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/soporte/incidencias"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

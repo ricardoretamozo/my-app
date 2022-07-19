@@ -1,6 +1,5 @@
 import { createStore,combineReducers, applyMiddleware, compose } from "redux";
 import thunk from 'redux-thunk';
-import { types } from "../types/types";
 
 import { authReducer } from "../reducers/authReducer";
 import { oficinaReducer } from "../reducers/oficinaReducer";
@@ -10,9 +9,10 @@ import { sedeReducer } from "../reducers/sedeReducer";
 import { personaReducer } from "../reducers/personaReducer";
 import { cargoReducer } from "../reducers/cargoReducer";
 import { validadorUsuarioReducer } from "../reducers/validadorUsuario";
-import { incidenciaReducer, incidenciaIdReducer } from "../reducers/incidenciaReducer";
+import { incidenciaReducer, incidenciaIdReducer, incidenciasAsignadasReducer, incidenciasNoAsignadasReducer, incidenciasAsignadasSoporteReducer } from "../reducers/incidenciaReducer";
 import { motivoReducer } from "../reducers/motivoReducer";
 import { personaOrganoReducer } from "../reducers/personaOrganoReducer";
+import { tecnicoDisponibleReducer } from "../reducers/tecnicoReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -28,20 +28,13 @@ const reducers = combineReducers({
     organoId: organoIdReducer,
     incidencia: incidenciaReducer,
     incidenciaId: incidenciaIdReducer,
+    incidenciasAsignadas: incidenciasAsignadasReducer,
+    incidenciasNoAsignadas: incidenciasNoAsignadasReducer,
+    incidenciasAsignadasSoporte: incidenciasAsignadasSoporteReducer,
+    tecnicoDisponible: tecnicoDisponibleReducer,
     personaOrgano: personaOrganoReducer,
     motivo: motivoReducer,
 });
-
-const rootReducer = (state, action) => {
-    // when a logout action is dispatched it will reset redux state
-    if (action.type === types.logout) {
-        state = undefined;
-    }
-
-    return reducers(state, action);
-};
-
-export default rootReducer;
 
 export const store = createStore( 
     reducers, 

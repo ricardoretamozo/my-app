@@ -59,8 +59,12 @@ const IncidenciaDetalles = props => {
       setIncidenciaSede(incidencia.oficina.organo.sede); //
       setIncidenciaPersona(incidencia.persona); //
       setIncidenciaPerfilPersona(incidencia.persona.perfilPersona); //
-      setIncidenciaPersonaAsignado(incidencia.persona_asignado); //
-      setIncidenciaPerfilPersonaAsignado(incidencia.persona_asignado.perfilPersona); //
+      if (incidencia.persona_asignado === null){
+        setIncidenciaPersonaAsignado("USUARIO NO ASIGNADO");
+      }else{
+        setIncidenciaPersonaAsignado(incidencia.persona_asignado);
+        setIncidenciaPerfilPersonaAsignado(incidencia.persona_asignado.perfilPersona);
+      }
     });
   };
 
@@ -104,18 +108,18 @@ const IncidenciaDetalles = props => {
               <HStack spacing={20} mt={4} w={'100%'}>
                 <FormControl>
                   <FormLabel fontWeight={'semibold'}>MOTIVO</FormLabel>
-                  <Input size={'sm'} value={incidenciaMotivo.motivo} readOnly />
+                  <Input size={'sm'} value={incidenciaMotivo.motivo} state={''} onChange={null} readOnly />
                 </FormControl>
                 <FormControl>
                   <FormLabel fontWeight={'bold'}>ESTADO</FormLabel>
-                  <Badge borderRadius={'sm'} fontSize='1rem' colorScheme={detalleIncidencia.estado === 'P' ? 'green' : 'blue'}>
+                  <Badge size={'lg'} borderRadius={'sm'} fontSize='1rem' colorScheme={detalleIncidencia.estado === 'P' ? 'gray' : 'green'}>
                   {detalleIncidencia.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
                   </Badge>
                 </FormControl>
               </HStack>
               <FormControl>
                 <FormLabel fontWeight={'bold'}>DESCRIPCIÓN DE LA INCIDENCIA</FormLabel>
-                <Textarea size={'sm'} value={detalleIncidencia.descripcion} readOnly />
+                <Textarea size={'sm'} value={detalleIncidencia.descripcion} state={''} onChange={null} readOnly />
               </FormControl>
             </VStack>
             {/* Acordion items */}

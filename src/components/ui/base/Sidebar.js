@@ -27,8 +27,6 @@ import {
   FiHome,
   FiUsers,
   FiCompass,
-  FiStar,
-  FiSettings,
   FiMenu,
   FiBell,
   FiChevronDown,
@@ -46,9 +44,8 @@ import { store } from '../../../store/store';
 import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
 
-const LinkItemsAdmin = [
+const LinkItemsCoordinadorInformatico = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
   { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
@@ -57,12 +54,30 @@ const LinkItemsAdmin = [
   { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
-  { name: 'Favourites', icon: FiStar, ruta: '/dashboard/perfil' },
-  { name: 'Settings', icon: FiSettings, ruta: '/dashboard/perfil' },
 ];
 
-const LinkItemsUser = [
-  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
+const LinkItemsAsistenteInformatico = [
+  { name: 'Incidencias Asig.', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_asignadas' },
+  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_no_asignadas' },
+  { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
+  { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
+  { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
+  { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
+  { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
+  { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
+  { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
+];
+
+const LinkItemsSoporteTecnico = [
+  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
+  { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
+  { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
+  { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
+  { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
+];
+
+const LinkItemsUsuarioComun = [
+  { name: 'Mis Incidencias', icon: FiCompass, ruta: '/dashboard/usuario/incidencias'},
 ];
 
 export default function SidebarWithHeader({ componente: Component }) {
@@ -120,23 +135,37 @@ const SidebarContent = ({ onClose, ...rest }) => {
         </Text>
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
-      {usuario.rol == '[COORDINADOR INFORMATICO]' || usuario.rol == '[SOPORTE TECNICO]' || usuario.rol == '[ASISTENTE INFORMATICO]' ? ( 
-        LinkItemsAdmin.map(link => (
+      {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 
+        LinkItemsCoordinadorInformatico.map(link => (
           <LinkA to={link.ruta}>
             <NavItem icon={link.icon}>
               {link.name}
             </NavItem>
           </LinkA>
         ))
-      ) : (
-        LinkItemsUser.map(link => (
+      ) : usuario.rol === '[ASISTENTE INFORMATICO]' ?  (
+        LinkItemsAsistenteInformatico.map(link => (
             <LinkA to={link.ruta}>
               <NavItem icon={link.icon}>
                 {link.name}
               </NavItem>
             </LinkA>
           ))
-        )
+        ) : usuario.rol === '[SOPORTE TECNICO]' ?  (
+          LinkItemsSoporteTecnico.map(link => (
+              <LinkA to={link.ruta}>
+                <NavItem icon={link.icon}>
+                  {link.name}
+                </NavItem>
+              </LinkA>
+            )) 
+        ) : LinkItemsUsuarioComun.map(link => (
+          <LinkA to={link.ruta}>
+            <NavItem icon={link.icon}>
+              {link.name}
+            </NavItem>
+          </LinkA>
+        )) 
       }
     </Box>
   );
@@ -151,17 +180,18 @@ const NavItem = ({ icon, children, ...rest }) => {
     >
       <Flex
         align="center"
-        p="4"
+        p="2"
         mx="4"
         borderRadius="md"
         role="group"
         cursor="pointer"
         height={50}
         _hover={{
-          bg: 'red.700',
+          bg: 'red.600',
           color: 'white',
         }}
         {...rest}
+        fontSize={'sm'}
       >
         {icon && (
           <Icon

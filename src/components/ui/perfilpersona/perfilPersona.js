@@ -6,12 +6,12 @@ import Tables from './table';
 import { perfilPersona } from '../../../actions/perfilPersona'; 
 import { types } from '../../../types/types';
 
-export const Perfil = () => {
+export const PerfilPersona = () => {
   const dispatch = useDispatch();
 
   const fetchData= async ()=> {
     await perfilPersona().then((res)=>{
-      dispatch(getPerfilPerson(res));
+      dispatch(getPerfilPersona(res));
     });
     
   }
@@ -31,7 +31,7 @@ export const Perfil = () => {
   );
 };
 
-export const getPerfilPerson = perfil =>({
+export const getPerfilPersona = perfil =>({
   type: types.eventLoadedPerfil,
   payload: perfil,
 });

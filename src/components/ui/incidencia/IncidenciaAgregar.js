@@ -10,7 +10,6 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Input,
   Textarea,
   Select as SelectForm,
 } from '@chakra-ui/react';
@@ -25,8 +24,7 @@ import {
     createIncidencia, fetchIncidenciasPersonas
   } from '../../../actions/incidencia';
 
-
-const IncidenciaAgregar = props => {
+const IncidenciaAgregar = () => {
   const [openCreate, setOpenCreate] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -77,8 +75,7 @@ const IncidenciaAgregar = props => {
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
-    //fetchData();
-  }, []);
+  });
 
   const saveHistorialPersona = e => {
     e.preventDefault();
@@ -151,19 +148,6 @@ const IncidenciaAgregar = props => {
                 size='sm'
             />
             </FormControl>
-              {/* <FormControl mt={4}>
-                <FormLabel>Usuario Asignado</FormLabel>
-                  <SelectForm
-                  onChange ={e => setIndiceIncidencia({...indiceIncidencia, persona_asignado:  e.target.value })
-                  }
-                  >
-                    {personaData.map((item, idx) => (
-                      <option value={item.idpersona} key={idx}>
-                        {item.nombre}
-                      </option>
-                    ))}
-                  </SelectForm>
-              </FormControl> */}
             </ModalBody>
             <ModalFooter>
               <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>

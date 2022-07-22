@@ -1,7 +1,8 @@
 import { types } from "../types/types";
 
 const initialState = {
-    rows: []
+    rows: [],
+    checking: true
 }
 
 export const personaReducer = ( state = initialState, action ) => {
@@ -11,6 +12,7 @@ export const personaReducer = ( state = initialState, action ) => {
             return {
                 ...state,                
                 rows: [...action.payload.data],
+                checking: false,
             }
 
         default:

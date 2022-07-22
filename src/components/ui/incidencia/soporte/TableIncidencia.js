@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -13,10 +13,9 @@ import {
   Text,
   HStack,
   Badge,
-  SimpleGrid,
   IconButton,
 } from '@chakra-ui/react';
-import { CheckIcon } from '@chakra-ui/icons';
+import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
 
@@ -24,49 +23,23 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteIncidencia, fetchIncidencia } from '../../../../actions/incidencia';
-
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
 
 export default function TableIncidenciaSoporte() {
   const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  const bgStatus = useColorModeValue('blue.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().incidenciasAsignadasSoporte.rows;
 
-  console.log(data);
-
-  // const dataA = data.filter(incidencia => incidencia.persona_asignado === identificador);
-
-  const [organoid, setOrganoid] = useState({
-    idOrgano: null,
-  });
-
-  const [detalleIncidencia, setDetalleIncidencia] = useState([]);
-  
-  const handleDeleteOrgano = x => {
-    dispatch(deleteIncidencia(x))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Sede eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
   // const [userorgano, setOrgano] = useState(initialOrgano);
 
   const handleClickOpenDelete = index => {
-    setOrganoid(index);
     setOpenDelete(true);
   };
 
@@ -74,32 +47,20 @@ export default function TableIncidenciaSoporte() {
     setOpenDelete(false);
   };
 
-  const obtenerIncideciadetalle = async () => {
-    await fetchIncidencia(identificador).then((res)=>{
-      dispatch(setDetalleIncidencia(res));
-    });
-    console.log(detalleIncidencia);
-  }
-
   const columns = [
+    {
+      name: 'USUARIO',
+      selector: row => row.persona.nombre,
+      sortable: true,
+    },
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
     },
     {
-      name: 'DESCRIPCION',
-      selector: row => row.descripcion,
-      sortable: true,
-    },
-    {
         name: 'FECHA',
         selector: row => row.fecha,
-        sortable: true,
-    },
-    {
-        name: 'USUARIO ASIGNADO',
-        selector: row => row.persona_asignado == null ? "NO ASIGNADO" : row.persona_asignado.nombre,
         sortable: true,
     },
     {
@@ -130,31 +91,37 @@ export default function TableIncidenciaSoporte() {
         return (
           <div>
           <IncidenciaDetalles 
-            rowId = {row.idIncidencia} 
-            listarIncidenciaDetalle = {obtenerIncideciadetalle}
+            rowId = {row.idIncidencia}
             identificador = { identificador }
           />
-          <IconButton
-            icon={<CheckIcon />}
-            variant={'solid'}
-            colorScheme={'green'}
-            onClick={() => handleClickOpenDelete(row.idIncidencia)}
-            fontSize={'22px'}
-            size={'sm'}
-            ml={2}
-          />
-            {/* <Switch
+          {row.estado === 'P' ?(
+            <IconButton
+              icon={<CheckIcon />}
+              variant={'solid'}
+              colorScheme={'green'}
+              onClick={() => handleClickOpenDelete(row.idIncidencia)}
+              fontSize={'22px'}
+              size={'sm'}
+              ml={2}
+            />
+          ) : (
+            <IconButton
+              icon={<DeleteIcon />}
+              variant={'solid'}
               colorScheme={'red'}
-              mr={2}
-              isChecked={row.activo === 'S'}
-              onChange={() => handleClickOpenDelete(row.idOrgano)}
-            /> */}
+              onClick={() => handleClickOpenDelete(row.idIncidencia)}
+              fontSize={'22px'}
+              size={'sm'}
+              ml={2}
+            />
+          )
+          }
             <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
+                    {row.estado === 'P' ? (
+                      <Text>Detalles de la Solución</Text>
                     ) : (
                       <Text>Esta seguro de activar?</Text>
                     )}
@@ -165,7 +132,6 @@ export default function TableIncidenciaSoporte() {
                   <AlertDialogFooter>
                     <Button onClick={handleCloseDelete}>Cancelar</Button>
                     <Button
-                      onClick={() => handleDeleteOrgano(organoid)}
                       colorScheme="red"
                       ml={3}
                     >
@@ -181,13 +147,6 @@ export default function TableIncidenciaSoporte() {
       center: true,
     },
   ];
-
-  const tableData = {
-    columns,
-    data,
-    print: false,
-    export: false,
-  };
 
   // CREANDO UN TEMA PARA LA TABLA
 
@@ -235,7 +194,6 @@ export default function TableIncidenciaSoporte() {
         </HStack>
         <DataTableExtensions columns={columns} data={data}>
           <DataTable
-            columns={columns}
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
@@ -243,6 +201,7 @@ export default function TableIncidenciaSoporte() {
             responsive={true}
             paginationPerPage={8}
             paginationRowsPerPageOptions={[8, 15, 20, 30]}
+            
           />
         </DataTableExtensions>
       </Box>

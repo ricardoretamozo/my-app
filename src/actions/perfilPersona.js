@@ -1,6 +1,6 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from "../helpers/alert";
-import { getPerfilPerson} from '../components/ui/perfil/perfil';
+import { getPerfilPersona } from '../components/ui/perfilpersona/perfilPersona';
 
 export const createPerfilPersona = ( data ) => {
   
@@ -18,7 +18,7 @@ export const createPerfilPersona = ( data ) => {
 
     if (response.status === 200 || response.status === 201){
       notification("Perfil registrado correctamente.", body.message,'success');
-      dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
+      dispatch( getPerfilPersona( await loadPerfilPersona() ) ); 
     }else{
       notification("No se pudo registrar el Perfil", body.error, 'error');
     }
@@ -60,7 +60,7 @@ export const updatePerfilPersona = ( data ) => {
     const body = await response.json();
 
     if ( response.status === 200 ){
-        dispatch( getPerfilPerson( await loadPerfilPersona() ) ); 
+        dispatch( getPerfilPersona( await loadPerfilPersona() ) ); 
         notification("Perfil actualizado correctamente",body.message,'success');
     }else{
         
@@ -81,7 +81,7 @@ export const deletePerfilPersona = ( id ) => {
       const body = await response.json();
 
       if ( response.status === 200 ){
-        dispatch( getPerfilPerson( await loadPerfilPersona() ) );
+        dispatch( getPerfilPersona( await loadPerfilPersona() ) );
           notification("Perfil actualizado correctamente",body.message,'success');
       }else{
           notification("No se pudo eliminar el Perfil",body.error,'error');

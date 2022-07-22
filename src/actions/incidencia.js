@@ -1,8 +1,8 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
 import { getIncidencia } from '../components/ui/incidencia/incidencia';
-import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
-import { useSelector, useDispatch } from 'react-redux';
+import { getIncidenciaNoAsignadas, getIncidenciaAsignadas } from '../components/ui/incidencia/asistente/incidencia';
+
 // CREATE PERSONA
 
 export const createIncidencia = (data) => {
@@ -42,8 +42,11 @@ export const asignarIncidencia = (id, data) => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
-      notification('Incidencia asignado correctamente.', body.message, 'success');
-    } else {
+      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
+      dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
+      notification('Incidencia asignada correctamente.', body.message, 'success');
+    }
+    else {
       notification('No se pudo asignar la Incidencia', body.message, 'error');
     }
   };
@@ -201,7 +204,7 @@ export const fetchIncidenciaSoporte = async (id) => {
 };
 
 
-// DELETE / DISABLED ORGANO
+// DELETE 
 
 export const deleteIncidencia = id => {
   return async dispatch => {
@@ -210,7 +213,7 @@ export const deleteIncidencia = id => {
 
     if (response.status === 200) {
         dispatch(getIncidencia(await loadIncidencias()));
-        notification('Incidencia actualizado correctamente', body.message, 'success');
+        notification('Incidencia eliminado correctamente', body.message, 'success');
     } else {
         notification('No se pudo eliminar la incidencia', body.detalles, 'error');
     }

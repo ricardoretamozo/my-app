@@ -88,6 +88,16 @@ export const notification = (title, message, type) => {
   });
 };
 
+export const notify = (title, message, type) => {
+  Swal.fire({
+    title: title,
+    text: message,
+    icon: type,
+    confirmButtonText: 'Aceptar',
+    target: document.getElementById('chakra-modal-modalHistorialUsuario')
+  });
+};
+
 export const timerNotification = title => {
   let timerInterval;
 

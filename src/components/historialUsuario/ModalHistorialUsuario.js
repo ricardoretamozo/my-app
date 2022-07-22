@@ -158,16 +158,12 @@ const ModalHistorialUsuario = (props) => {
 
   // Select
   const handleChangeSede = value => {
-    // setsedeNombre(e.target.value);
-    console.log(organoSelect);
-    console.log(value);
     if (value == null) {
       //setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     } else {
       var organo = organoInfo.filter(
         indice => indice.sede.idSede == value.value
       );
-      console.log(organo);
       setoptionsOrgano(
         organo.map(organo => ({
           value: organo.idOrgano,
@@ -176,7 +172,6 @@ const ModalHistorialUsuario = (props) => {
       );
       setoptionsOrganoindex(0);
     }
-    console.log(organoSelect);
   };
 
   //
@@ -193,7 +188,6 @@ const ModalHistorialUsuario = (props) => {
   };
 
   const handleChangeOficina = value => {
-    console.log(indiceHistorial);
     setIndiceHistorial({
       ...indiceHistorial,
       oficina: { idOficina: value.value, oficina: value.label },
@@ -207,10 +201,7 @@ const ModalHistorialUsuario = (props) => {
     });
   };
 
-  console.log(props.cargo);
-
-  const saveHistorialPersona = e => {
-    e.preventDefault();
+  const saveHistorialPersona = () => {
     var historialUsuario = {
       persona: {
         idpersona: Number(props.idPersona),
@@ -231,7 +222,7 @@ const ModalHistorialUsuario = (props) => {
     };
 
     dispatch(createHistorialPersona(historialUsuario)).then(() => {
-      if (props.editar ){
+      if ( props.editar ){
         if (
           indiceHistorial.oficina.idOficina != null ||
           indiceHistorial.cargo.idCargo != null
@@ -248,11 +239,8 @@ const ModalHistorialUsuario = (props) => {
       }
       dispatch(props.listarHistorialPersona());
     });
-
     props.cerrar();
   };
-
-  console.log(indiceHistorial);
 
   const cerrarModal = () => {
     setIndiceHistorial({
@@ -267,6 +255,7 @@ const ModalHistorialUsuario = (props) => {
   return (
     <>
       <Modal
+        // id="modalOrganoAsignacion"
         isOpen={props.abrir}
         onClose={cerrarModal}
         closeOnOverlayClick={true}
@@ -366,7 +355,6 @@ const ModalHistorialUsuario = (props) => {
           </ModalBody>
           <ModalFooter>
             <Button
-              type={'submit'}
               onClick={saveHistorialPersona}
               colorScheme={'blue'}
               autoFocus

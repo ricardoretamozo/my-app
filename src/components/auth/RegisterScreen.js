@@ -30,9 +30,10 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 export const RegisterScreen = () => {
-  const titleColor = useColorModeValue('#c53030', 'teal.200');
+  const titleColor = useColorModeValue('#c53030', 'red.700');
   const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.700');
+  const bgCard = useColorModeValue("white", "gray.800");
 
   const dispatch = useDispatch();
   const history = useHistory();
@@ -113,7 +114,7 @@ export const RegisterScreen = () => {
             mb="2"
             justifyContent="center"
             alignItems="center"
-            backgroundColor="white"
+            backgroundColor={bgCard}
             boxShadow={'md'}
             px={'3rem'}
             py={'3rem'}

@@ -38,58 +38,33 @@ export default function TableIncidencia() {
   const incidenciasAsignadas = data.filter(row => row.estado === 'A');
   const incidenciasSolucionadas = data.filter(row => row.estado === 'S');
 
-  // const [detalleIncidencia, setDetalleIncidencia] = useState([]);
-  
-  // const handleDeleteOrgano = x => {
-  //   dispatch(deleteIncidencia(x))
-  //     .then(() => {
-  //       handleCloseDelete(true);
-  //       console.log('Sede eliminado');
-  //     })
-  //     .catch(e => {
-  //       console.log(e);
-  //       handleCloseDelete(true);
-  //     });
-  // };
-
-  // const [userorgano, setOrgano] = useState(initialOrgano);
-
-  // const handleClickOpenDelete = index => {
-  //   setOrganoid(index);
-  //   setOpenDelete(true);
-  // };
-
-  // const handleCloseDelete = () => {
-  //   setOpenDelete(false);
-  // };
-
-  // const obtenerIncideciadetalle = async () => {
-  //   await fetchIncidencia(identificador).then((res)=>{
-  //     dispatch(setDetalleIncidencia(res));
-  //   });
-  //   console.log(detalleIncidencia);
-  // }
-
   const columns = [
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
+      reorder: true,
     },
     {
       name: 'DESCRIPCION',
       selector: row => row.descripcion,
       sortable: true,
+      reorder: true,
+      hide: 'md',
+      maxWidth: '20rem',
     },
     {
         name: 'FECHA',
         selector: row => row.fecha,
         sortable: true,
+        reorder: true,
     },
     {
         name: 'USUARIO ASIGNADO',
         selector: row => row.persona_asignado == null ? "NO ASIGNADO" : row.persona_asignado.nombre,
         sortable: true,
+        reorder: true,
+        wrap: true,
     },
     {
       name: 'ESTADO',
@@ -111,6 +86,7 @@ export default function TableIncidencia() {
         </div>
       ),
       center: true,
+      reorder: true,
     },
     // {
     //   name: 'ACCIONES',
@@ -223,7 +199,7 @@ export default function TableIncidencia() {
             color="gray.800"
             _dark={{ color: "white" }}
           >
-            Total Incidencias
+            Total de Incidencias
           </chakra.h3>
           <Flex
             alignItems="center"
@@ -377,8 +353,6 @@ export default function TableIncidencia() {
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
-          columns={columns}
-          data={data}
           defaultSortAsc={false}
           theme={useColorModeValue('default', 'solarized')}
           pagination

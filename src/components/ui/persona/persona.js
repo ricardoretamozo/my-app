@@ -17,7 +17,7 @@ export const Persona = () => {
     
   }
 
-  const fetchDataPersonaOrgano = async ()=> {
+  const fetchDataPersonaOrgano = async () => {
     await fetchPersonaOrgano().then((res)=>{
       dispatch(getPersonaOrgano(res));
     });
@@ -26,7 +26,7 @@ export const Persona = () => {
 
   useEffect(() => {
     // console.log(store.getState().personaList);
-    if(store.getState().persona.rows.length <= 0){
+    if(store.getState().persona.checking){
       fetchData();
     }
     if(store.getState().personaOrgano.rows.length <= 0){

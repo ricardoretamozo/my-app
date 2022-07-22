@@ -30,6 +30,8 @@
     "reactjs-alert": "^2.2.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
+    "slate": "^0.81.1",
+    "slate-react": "^0.81.0",
     "styled-components": "^5.3.5",
     "sweetalert2": "^11.4.17",
     "web-vitals": "^0.2.4",
@@ -58,6 +60,7 @@
     ]
   },
   "devDependencies": {
+    "@faker-js/faker": "^7.3.0",
     "json-server": "^0.17.0"
   }
 }

@@ -13,18 +13,12 @@ export const createPersonaOrgano = (idpersona, idOrgano) => {
       },
       'POST'
     );
-    //const body = await response.json();
     if (response.status === 200 || response.status === 201) {
-      // AlertChackra('success', 'Correcto', 'Persona Organo creado correctamente');
-      //dispatch(fetchPersonaOrgano(idpersona));
       notification('Organo asiganado correctamente.', '', 'success');
     } else if (response.status === 422) {
-      // AlertChackra('error', 'Error', 'No se logró asignar a este usuario');
       notification('No se puede asignar este organo', '', 'error');
-      // dispatch(fetchHistorialPersona)
     } else {
       notification('No se pudo asignar este organo', '', 'error');
-      // AlertChackra('error', 'Error', 'No se logró asignar a este usuario');
     }
   };
 };

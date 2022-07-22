@@ -151,11 +151,11 @@ export default function TableMotivo() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Motivo de Incidencia
+              <ModalHeader>
+                EDITAR EL MOTIVO DE LA INCIDENCIA
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
@@ -171,6 +171,7 @@ export default function TableMotivo() {
                   <FormLabel>Motivo</FormLabel>
                   <Input
                     defaultValue={indice ? indice.motivo : ''}
+                    style={{'text-transform':'uppercase'}}
                     type="text"
                     onChange={e =>
                       setIndice({ ...indice, motivo: e.target.value })

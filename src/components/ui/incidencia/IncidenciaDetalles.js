@@ -60,7 +60,7 @@ const IncidenciaDetalles = props => {
       setIncidenciaPersona(incidencia.persona); //
       setIncidenciaPerfilPersona(incidencia.persona.perfilPersona); //
       if (incidencia.persona_asignado === null){
-        setIncidenciaPersonaAsignado("USUARIO NO ASIGNADO");
+        setIncidenciaPersonaAsignado('');
       }else{
         setIncidenciaPersonaAsignado(incidencia.persona_asignado);
         setIncidenciaPerfilPersonaAsignado(incidencia.persona_asignado.perfilPersona);

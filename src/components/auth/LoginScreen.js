@@ -25,7 +25,8 @@ import {
 
 import { Link } from 'react-router-dom';
 
-import BgPrimary from '../../assets/img/bg_1.png';
+import BgLight from '../../assets/img/bg_1.png';
+import BgBlack from '../../assets/img/bg_black.png';
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
@@ -34,8 +35,11 @@ const CFaLock = chakra(FaLock);
 
 export const LoginScreen = () => {
   // Chakra color mode
-  const primaryColor = useColorModeValue('#c53030', 'white');
+  const primaryColor = useColorModeValue('#c53030', 'red.800');
   const textColor = useColorModeValue('black.400', 'white');
+  const bg = useColorModeValue(BgLight, BgBlack);
+  const bgCard = useColorModeValue("white", "gray.800");
+  const buttonColor = useColorModeValue("red", "red");
 
   const dispatch = useDispatch();
 
@@ -66,7 +70,7 @@ export const LoginScreen = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundImage={BgPrimary}
+      backgroundImage={bg}
       backgroundSize={'cover'}
       justifyContent="center"
       alignItems="center"
@@ -84,6 +88,7 @@ export const LoginScreen = () => {
         rounded="lg"
         borderTop="6px solid"
         borderColor={primaryColor}
+        bg={bgCard}
       >
         <Avatar bg="red.500" />
         <Heading color={primaryColor}>Bienvenido</Heading>
@@ -136,7 +141,7 @@ export const LoginScreen = () => {
                 borderRadius={'md'}
                 type="submit"
                 variant="solid"
-                colorScheme="red"
+                colorScheme={buttonColor}
                 width="full"
                 _hover={{
                   bg: 'red.600',

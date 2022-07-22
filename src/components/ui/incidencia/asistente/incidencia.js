@@ -2,21 +2,21 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { store } from '../../../../store/store';
 import Sidebar from '../../base/Sidebar';
-import { fetchIncidencias, fetchIncidenciasPersonas, fetchIncidenciasAsignadas, fetchIncidenciasNoAsignadas, fetchTecnicosDisponibles } from '../../../../actions/incidencia'; 
+import { fetchIncidenciasPersonas, fetchIncidenciasAsignadas, fetchIncidenciasNoAsignadas, fetchTecnicosDisponibles } from '../../../../actions/incidencia'; 
 import { types } from '../../../../types/types';
 import TableIncidenciaAsignados from './TableIncidencia';
-import TableIncidenciaNoAsignados from './TableIncidenciaNo';
+import TableIncidenciaNoAsignados from './TableIncidenciaNoAsignado';
 
 export const IncidenciaAsistenteAsignados = () => {
+
   const dispatch = useDispatch();
 
   const { identificador } = useSelector(state => state.auth);
 
   const fetchIncidenciasAsignadasData = async ()=> {
     await fetchIncidenciasAsignadas().then((res)=>{
-      dispatch(getIncidencia(res));
+      dispatch(getIncidenciaAsignadas(res));
     });
-    
   }
   useEffect(() => {
     
@@ -58,7 +58,6 @@ export const IncidenciaAsistenteNoAsignados = () => {
     await fetchIncidenciasNoAsignadas().then((res)=>{
       dispatch(getIncidenciaNoAsignadas(res));
     });
-    
   }
   useEffect(() => {
     if(store.getState().incidenciasNoAsignadas.checking){
@@ -70,7 +69,6 @@ export const IncidenciaAsistenteNoAsignados = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     });
-    
   }
 
   useEffect(() => {
@@ -105,7 +103,7 @@ export const IncidenciaAsistenteNoAsignados = () => {
 };
 
 
-export const getIncidencia = incidenciasAsignadas => ({
+export const getIncidenciaAsignadas = incidenciasAsignadas => ({
   type: types.eventLoadedIncidenciasAsignadas,
   payload: incidenciasAsignadas
 });

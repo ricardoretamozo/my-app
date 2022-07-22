@@ -36,9 +36,9 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 
 export const RegisterValidateScreen = () => {
-  const titleColor = useColorModeValue('#c53030', 'teal.200');
+  const titleColor = useColorModeValue('#c53030', 'red.700');
   const textColor = useColorModeValue('gray.700', 'white');
-  const bgColor = useColorModeValue('white', 'gray.700');
+  const bgColor = useColorModeValue('white', 'gray.800');
   const dispatch = useDispatch();
 
   const data = store.getState().usuarioDni;
@@ -137,7 +137,7 @@ export const RegisterValidateScreen = () => {
             mb="2"
             justifyContent="center"
             alignItems="center"
-            backgroundColor="white"
+            backgroundColor={bgColor}
             boxShadow={'md'}
             px={'3rem'}
             py={'2rem'}

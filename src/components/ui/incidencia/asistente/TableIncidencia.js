@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -13,10 +13,7 @@ import {
   Text,
   HStack,
   Badge,
-  SimpleGrid,
-  IconButton,
 } from '@chakra-ui/react';
-import { RiDeleteBackLine } from 'react-icons/ri';
 
 import { store } from '../../../../store/store';
 
@@ -24,14 +21,11 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteIncidencia, fetchIncidencia } from '../../../../actions/incidencia';
-
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
 
 export default function TableIncidenciaAsignados() {
   const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
@@ -41,58 +35,25 @@ export default function TableIncidenciaAsignados() {
 
   const data = store.getState().incidenciasAsignadas.rows;
 
-  // const dataA = data.filter(incidencia => incidencia.estado === 'A')
-
-  const [organoid, setOrganoid] = useState({
-    idOrgano: null,
-  });
-
-  const [detalleIncidencia, setDetalleIncidencia] = useState([]);
-  
-  const handleDeleteOrgano = x => {
-    dispatch(deleteIncidencia(x))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Sede eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
-  // const [userorgano, setOrgano] = useState(initialOrgano);
-
-  const handleClickOpenDelete = index => {
-    setOrganoid(index);
-    setOpenDelete(true);
-  };
-
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
 
-  const obtenerIncideciadetalle = async () => {
-    await fetchIncidencia(identificador).then((res)=>{
-      dispatch(setDetalleIncidencia(res));
-    });
-  }
-
   const columns = [
     {
-      name: 'MOTIVO',
-      selector: row => row.motivo.motivo,
-      sortable: true,
-    },
-    {
-      name: 'DESCRIPCION',
-      selector: row => row.descripcion,
+      name: 'USUARIO',
+      selector: row => row.persona.nombre,
       sortable: true,
     },
     {
         name: 'FECHA',
         selector: row => row.fecha,
         sortable: true,
+    },
+    {
+      name: 'MOTIVO',
+      selector: row => row.motivo.motivo,
+      sortable: true,
     },
     {
         name: 'USUARIO ASIGNADO',
@@ -127,8 +88,7 @@ export default function TableIncidenciaAsignados() {
         return (
           <div>
           <IncidenciaDetalles 
-            rowId = {row.idIncidencia} 
-            listarIncidenciaDetalle = {obtenerIncideciadetalle}
+            rowId = {row.idIncidencia}
             identificador = { identificador }
           />
           {/* <IconButton
@@ -162,7 +122,6 @@ export default function TableIncidenciaAsignados() {
                   <AlertDialogFooter>
                     <Button onClick={handleCloseDelete}>Cancelar</Button>
                     <Button
-                      onClick={() => handleDeleteOrgano(organoid)}
                       colorScheme="red"
                       ml={3}
                     >
@@ -178,12 +137,6 @@ export default function TableIncidenciaAsignados() {
       center: true,
     },
   ];
-
-  const tableData = {
-    columns,
-    print: false,
-    export: false,
-  };
 
   // CREANDO UN TEMA PARA LA TABLA
 
@@ -212,6 +165,7 @@ export default function TableIncidenciaAsignados() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
+        paddingBottom={8}
       >
         <HStack
           spacing="24px"
@@ -231,13 +185,13 @@ export default function TableIncidenciaAsignados() {
         </HStack>
         <DataTableExtensions columns={columns} data={data}>
           <DataTable
-            columns={columns}
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
             responsive={true}
             paginationPerPage={8}
+            noDataComponent="No hay datos para mostrar refresca la página"
             paginationRowsPerPageOptions={[8, 15, 20, 30]}
           />
         </DataTableExtensions>

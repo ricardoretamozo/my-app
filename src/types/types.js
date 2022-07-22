@@ -20,4 +20,6 @@ export const types = {
     eventLoadedTecnicoDisponible: '[event] Events loaded Tecnicos Disponibles',
     eventLoadedMotivo: '[event] Events loaded Motivo',
     eventLoadedPersonaOrgano: '[event] Events loaded PersonaOrgano',
+    eventLoadedCorreoRecibido: '[event] Events loaded Correo Recibido',
+    eventLoadedCorreoEnviado: '[event] Events loaded Correo Enviado',
 }

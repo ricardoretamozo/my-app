@@ -4,16 +4,9 @@ import {
   Box,
   Button,
   useColorModeValue,
-  AlertDialogBody,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogFooter,
-  AlertDialog,
   Text,
   HStack,
   Badge,
-  SimpleGrid,
   IconButton,
   Modal,
   ModalOverlay,
@@ -24,10 +17,8 @@ import {
   ModalBody,
   FormControl,
   FormLabel,
-  Input,
   Select,
 } from '@chakra-ui/react';
-import { RiDeleteBackLine } from 'react-icons/ri';
 import { AddIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
@@ -36,17 +27,12 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import {
-  deleteIncidencia,
-  fetchIncidencia,
-  asignarIncidencia,
-} from '../../../../actions/incidencia';
+import { asignarIncidencia } from '../../../../actions/incidencia';
 
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
 
 export default function TableIncidenciaNoAsignados() {
-  const [opendelete, setOpenDelete] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
@@ -58,22 +44,6 @@ export default function TableIncidenciaNoAsignados() {
 
   const data = store.getState().incidenciasNoAsignadas.rows;
   const tecnicosDisponibles = store.getState().tecnicoDisponible.rows;
-
-  const handleDeleteOrgano = x => {
-    dispatch(deleteIncidencia(x))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Sede eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
-  const handleClickOpenDelete = index => {
-    setOpenDelete(true);
-  };
 
   const handleClickOpenModal = index => {
     setOpenModal(true);
@@ -88,35 +58,22 @@ export default function TableIncidenciaNoAsignados() {
   })
 
   const actualizarAsignacion = (id) => {
-  
     dispatch(asignarIncidencia(id, indice.persona))
     .then(() => {
-      setOpenModal(false);
-      
+      setOpenModal(false);      
     }).catch((error) => {
       console.log(error);
     })
   }
 
-  console.log(indice);
-
   const handleCloseModal = () => {
     setOpenModal(false);
   }
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
-
   const columns = [
     {
-      name: 'MOTIVO',
-      selector: row => row.motivo.motivo,
-      sortable: true,
-    },
-    {
-      name: 'DESCRIPCION',
-      selector: row => row.descripcion,
+      name: 'USUARIO',
+      selector: row => row.persona.nombre,
       sortable: true,
     },
     {
@@ -125,11 +82,8 @@ export default function TableIncidenciaNoAsignados() {
       sortable: true,
     },
     {
-      name: 'USUARIO ASIGNADO',
-      selector: row =>
-        row.persona_asignado == null
-          ? 'NO ASIGNADO'
-          : row.persona_asignado.nombre,
+      name: 'MOTIVO',
+      selector: row => row.motivo.motivo,
       sortable: true,
     },
     {
@@ -257,7 +211,6 @@ export default function TableIncidenciaNoAsignados() {
         </HStack>
         <DataTableExtensions columns={columns} data={data}>
           <DataTable
-            columns={columns}
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination

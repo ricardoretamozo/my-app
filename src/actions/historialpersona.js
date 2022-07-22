@@ -1,6 +1,5 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
-import { useHistory } from 'react-router-dom';
 
 export const fetchHistorialPersona = async id => {
   const response = await fetchToken('historialpersonas/persona/' + id);
@@ -54,7 +53,7 @@ export const createHistorialPersona = data => {
         'success'
       );
     } else {
-      notification('No se pudo registrar el Historial', body.message, 'error');
+      notification('No se pudo registrar el Historial', '', 'error');
       // dispatch(fetchHistorialPersona)
     }
   };

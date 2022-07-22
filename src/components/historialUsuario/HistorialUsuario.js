@@ -45,7 +45,6 @@ export default function HistorialUsuario() {
     if (store.getState().oficina.rows.length <= 0) {
       fetchDataOficina();
     }
-    //fetchData();
   });
 
   const handleLogout = () => {
@@ -71,7 +70,6 @@ export default function HistorialUsuario() {
   const [selectCodicional, setSelectCodicional] = useState(null);
 
   const obtenerHistorialPersona = async () => {
-    console.log(identificador);
     await fetchHistorialPersona(identificador).then(res => {
       if (res != false) {
         setSelectCodicional(false);
@@ -88,7 +86,6 @@ export default function HistorialUsuario() {
 
 
   const handleChangeSelect = () => {
-    console.log(selectCodicional);
     if (selectCodicional == true) {
       setOpenCreate(true);
     } else if (selectCodicional == false) {
@@ -125,11 +122,8 @@ export default function HistorialUsuario() {
     }
     if (historialpersona == null) {
       obtenerHistorialPersona();
-      //setSelectCodicional(true);
-      //setOpenCreate(true);
     } else{
-      //setSelectCodicional(false);
-      //setOpenCreate(false);
+      console.log('no');
     }
 
   });
@@ -267,7 +261,6 @@ export default function HistorialUsuario() {
           <ModalHistorialUsuario
             cerrar={handleCloseModal}
             abrir={openCreate}
-            //se envia oficina y cargo
             oficina={null}
             cargo={null}
             idPersona={identificador}

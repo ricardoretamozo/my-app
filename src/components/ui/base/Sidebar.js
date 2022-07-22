@@ -29,6 +29,7 @@ import {
   FiCompass,
   FiMenu,
   FiBell,
+  FiMail,
   FiChevronDown,
   FiServer,
   FiLayers,
@@ -57,7 +58,7 @@ const LinkItemsCoordinadorInformatico = [
 ];
 
 const LinkItemsAsistenteInformatico = [
-  { name: 'Incidencias Asig.', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_asignadas' },
+  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_asignadas' },
   { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_no_asignadas' },
   { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
@@ -70,8 +71,6 @@ const LinkItemsAsistenteInformatico = [
 
 const LinkItemsSoporteTecnico = [
   { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
-  { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
-  { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];
@@ -172,6 +171,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
 };
 
 const NavItem = ({ icon, children, ...rest }) => {
+  
   return (
     <LinkB
       href=""
@@ -248,7 +248,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
         Service Desk
       </Text>
 
-      <HStack spacing={{ base: '4', md: '4' }}>
+      <HStack spacing={{ base: '2', md: '2' }}>        
+        <LinkA to="/dashboard/correos">
+          <IconButton
+            size="lg"
+            variant="ghost"
+            aria-label="open menu"
+            icon={<FiMail />}
+          />
+        </LinkA>
         <IconButton
           size="lg"
           variant="ghost"

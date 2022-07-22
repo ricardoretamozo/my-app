@@ -1,36 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Box,
   Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogFooter,
   AlertDialog,
-  Switch,
-  Select,
   Text,
   HStack,
   Badge,
   SimpleGrid,
   chakra,
   Flex,
-  IconButton,
 } from '@chakra-ui/react';
-import { RiDeleteBackLine } from 'react-icons/ri';
 
 import { store } from '../../../store/store';
 
@@ -38,14 +24,10 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteIncidencia, fetchIncidencia } from '../../../actions/incidencia';
-
-import IncidenciaAgregar from './IncidenciaAgregar';
 import IncidenciaDetalles from './IncidenciaDetalles';
 
 export default function TableIncidencia() {
   const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
@@ -58,61 +40,26 @@ export default function TableIncidencia() {
   const incidenciasAsignadas = data.filter(row => row.estado === 'A');
   const incidenciasSolucionadas = data.filter(row => row.estado === 'S');
 
-  const [organoid, setOrganoid] = useState({
-    idOrgano: null,
-  });
-
-  const [detalleIncidencia, setDetalleIncidencia] = useState([]);
-  
-  const handleDeleteOrgano = x => {
-    dispatch(deleteIncidencia(x))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Sede eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
   // const [userorgano, setOrgano] = useState(initialOrgano);
-
-  const handleClickOpenDelete = index => {
-    setOrganoid(index);
-    setOpenDelete(true);
-  };
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
 
-  const obtenerIncideciadetalle = async () => {
-    await fetchIncidencia(identificador).then((res)=>{
-      dispatch(setDetalleIncidencia(res));
-    });
-    console.log(detalleIncidencia);
-  }
-
   const columns = [
+    {
+      name: 'USUARIO',
+      selector: row => row.persona.nombre,
+      sortable: true,
+    },
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
     },
     {
-      name: 'DESCRIPCION',
-      selector: row => row.descripcion,
-      sortable: true,
-    },
-    {
         name: 'FECHA',
         selector: row => row.fecha,
-        sortable: true,
-    },
-    {
-        name: 'USUARIO ASIGNADO',
-        selector: row => row.persona_asignado == null ? "NO ASIGNADO" : row.persona_asignado.nombre,
         sortable: true,
     },
     {
@@ -143,8 +90,7 @@ export default function TableIncidencia() {
         return (
           <div>
           <IncidenciaDetalles 
-            rowId = {row.idIncidencia} 
-            listarIncidenciaDetalle = {obtenerIncideciadetalle}
+            rowId = {row.idIncidencia}
             identificador = { identificador }
           />
           {/* <IconButton
@@ -178,7 +124,6 @@ export default function TableIncidencia() {
                   <AlertDialogFooter>
                     <Button onClick={handleCloseDelete}>Cancelar</Button>
                     <Button
-                      onClick={() => handleDeleteOrgano(organoid)}
                       colorScheme="red"
                       ml={3}
                     >
@@ -401,8 +346,6 @@ export default function TableIncidencia() {
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
-          columns={columns}
-          data={data}
           defaultSortAsc={false}
           theme={useColorModeValue('default', 'solarized')}
           pagination

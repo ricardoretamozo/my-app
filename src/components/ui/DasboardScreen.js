@@ -5,7 +5,7 @@ import { home } from './home/home';
 import { Incidencia } from './incidencia/incidencia';
 import { IncidenciaUsuario } from './incidencia/usuario/incidencia';
 import { IncidenciaAsistenteNoAsignados, IncidenciaAsistenteAsignados } from './incidencia/asistente/incidencia';
-import { Perfil } from './perfil/perfil';
+import { PerfilPersona } from './perfilpersona/perfilPersona';
 import { PrivateRoute } from '../../routers/PrivateRoute'; 
 import { useSelector } from 'react-redux';
 import { Sede } from './sede/sede';
@@ -13,6 +13,7 @@ import { Organo } from './organo/organo';
 import { Oficina } from './oficina/oficina';
 import { Persona } from './persona/persona';
 import { Cargo } from './cargo/cargo';
+import { Correo } from './correo/index';
 import { Motivo } from './motivo/motivo';
 import { IncidenciaSoporte } from './incidencia/soporte/incidencia'
 
@@ -59,7 +60,7 @@ export const DasboardScreen = () => {
         />
         <PrivateRoute
         exact path="/dashboard/perfil"
-        component = { Perfil } 
+        component = { PerfilPersona } 
         isAuthenticated = { !!access_token }
         />
         <PrivateRoute
@@ -85,6 +86,11 @@ export const DasboardScreen = () => {
         <PrivateRoute
         exact path="/dashboard/cargos"
         component = { Cargo } 
+        isAuthenticated = { !!access_token }
+        />
+        <PrivateRoute
+        exact path="/dashboard/correos"
+        component = { Correo }
         isAuthenticated = { !!access_token }
         />
       </Switch>

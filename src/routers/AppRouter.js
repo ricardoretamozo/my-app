@@ -17,7 +17,7 @@ import { fetchOrganos } from '../actions/organo';
 import { getSede } from '../components/ui/sede/sede';
 import { getOrgano } from '../components/ui/organo/organo';
 import { perfilPersona } from '../actions/perfilPersona';
-import { getPerfilPerson } from '../components/ui/perfil/perfil';
+import { getPerfilPersona } from '../components/ui/perfilpersona/perfilPersona';
 import { fetchOficinas } from '../actions/oficina';
 import { getOficina } from '../components/ui/oficina/oficina';
 import { fetchCargos } from '../actions/cargo';
@@ -26,7 +26,8 @@ import { fetchMotivos } from '../actions/motivo';
 import { getMotivo } from '../components/ui/motivo/motivo';
 import { fetchIncidenciasPersonas } from '../actions/incidencia';
 import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
-import { fetchTecnicosDisponibles } from '../actions/incidencia';
+import { personaList } from '../actions/persona';
+import { getPersona } from '../components/ui/persona/persona';
 
 import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
@@ -71,7 +72,7 @@ export const AppRouter = () => {
 
   const fetchDataPerfil = async () => {
     await perfilPersona().then(res => {
-      dispatch(getPerfilPerson(res));
+      dispatch(getPerfilPersona(res));
     });
   };
   useEffect(() => {
@@ -144,18 +145,19 @@ export const AppRouter = () => {
     //fetchData();
   });
 
-  // INCIDENCIAS POR CADA USUARIO
+  //PERSONAS
 
-  const fetchDataTecnicoDisponible = async ()=> {
-    await fetchTecnicosDisponibles().then((res)=>{
-      //dispatch(getIncidenciaId(res));
+  const fetchDataPersona = async ()=> {
+    await personaList().then((res)=>{
+      dispatch(getPersona(res));
     });
     
   }
+
   useEffect(() => {
-    
-    if(store.getState().tecnicoDisponible.checking){
-      // fetchDataTecnicoDisponible();
+    // console.log(store.getState().personaList);
+    if(store.getState().persona.checking){
+      fetchDataPersona();
     }
     //fetchData();
   });
@@ -266,6 +268,12 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/motivos"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/correos"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

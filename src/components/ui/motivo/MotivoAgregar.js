@@ -55,21 +55,22 @@ return (
         <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Nuevo</Button>
 
         <Modal
-        isOpen={openCreate}
-        onClose={handleCloseModal}
-        closeOnOverlayClick={true}
-        size={'xl'}
-        >
+            isOpen={openCreate}
+            onClose={handleCloseModal}
+            closeOnOverlayClick={true}
+            size={'2xl'}
+            >
         <ModalOverlay />
         <ModalContent>
-            <ModalHeader>Agregar Nueva Motivo para Incidencia</ModalHeader>
+            <ModalHeader>AGREGAR NUEVO MOTIVO PARA LA INCIDENCIA</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
                 <FormLabel>Motivo</FormLabel>
                 <Input 
+                style={{'text-transform':'uppercase'}}
                 onChange={(e)=> {setMotivo({ ...dataMotivo, motivo: (e.target.value).toUpperCase() })}}
-                placeholder='Motivo de las incidencias'
+                placeholder='Motivo de incidencias'
                 isRequired={true}
                 type={'text'} />
             </FormControl>

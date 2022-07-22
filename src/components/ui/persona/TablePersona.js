@@ -331,7 +331,7 @@ export default function TablePersona() {
       sortable: false,
       cell: row => (
         <div>
-          {row.perfilPersona.perfil === 'SOPORTE TECNICO' ? (
+          {row.perfilPersona.perfil === 'SOPORTE TECNICO' && row.activo === 'S' ? (
             <IconButton
               onClick={() => handleClickOpenModal(row)}
               variant={'ghost'}

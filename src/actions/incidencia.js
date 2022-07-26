@@ -11,11 +11,11 @@ export const createIncidencia = (data) => {
       `incidencias/usuariocomun`,
       {
         descripcion: data.descripcion,
-        fecha: data.fecha,
         estado: data.estado,
         persona: { idpersona: data.persona.idpersona},
         persona_registro: { idpersona: data.persona_registro.idpersona},
         motivo: data.motivo,
+        origen: data.origen,
       },
       'POST'
     );
@@ -71,6 +71,7 @@ export const fetchIncidencias = async () => {
         persona_asignado: incidencia.persona_asignado,
         oficina: incidencia.oficina,
         motivo: incidencia.motivo,
+        origen: incidencia.origen,
     });
   });
   Incidencia.data = data;
@@ -95,6 +96,7 @@ export const fetchIncidenciasPersonas = async (id) => {
         persona_asignado: incidencia.persona_asignado,
         oficina: incidencia.oficina,
         motivo: incidencia.motivo,
+        origen: incidencia.origen,
     });
   });
   Incidencia.data = data;
@@ -117,6 +119,7 @@ export const fetchIncidencia = async (id) => {
         persona_asignado: body.persona_asignado,
         oficina: body.oficina,
         motivo: body.motivo,
+        origen: body.origen
       };
     // Incidencia.data = data;
     // set user info
@@ -142,6 +145,7 @@ export const fetchIncidenciasAsignadas = async () => {
         persona_asignado: incidencia.persona_asignado,
         oficina: incidencia.oficina,
         motivo: incidencia.motivo,
+        origen: incidencia.origen,
     });
   });
   IncidenciaAsignados.data = data;
@@ -168,6 +172,7 @@ export const fetchIncidenciasNoAsignadas = async () => {
         persona_asignado: incidencia.persona_asignado,
         oficina: incidencia.oficina,
         motivo: incidencia.motivo,
+        origen: incidencia.origen,
     });
   });
   IncidenciaNoAsignados.data = data;
@@ -196,6 +201,7 @@ export const fetchIncidenciaSoporte = async (id) => {
         persona_asignado: incidencia.persona_asignado,
         oficina: incidencia.oficina,
         motivo: incidencia.motivo,
+        origen: incidencia.origen,
     });
   });
   Incidencia.data = data;
@@ -240,6 +246,7 @@ export const loadIncidencias = async (id) => {
           persona_asignado: incidencia.persona_asignado,
           oficina: incidencia.oficina,
           motivo: incidencia.motivo,
+          origen: incidencia.origen,
       });
     });
     Incidencia.data = data;
@@ -267,3 +274,19 @@ export const fetchTecnicosDisponibles = async () => {
   // set user info
   return TecnicosDisponibles;
 };
+
+// BUSCAR POR DNI
+
+  export const buscarUsuarioDni = async (dni) => {
+    const response = await fetchToken(`personas/dni/${dni}`);
+    const body = await response.json();
+    const PersonasDni = {
+      idpersona: body.idpersona,
+      nombre: body.nombre,
+      apellido: body.apellido,
+      dni: body.dni,
+    };
+    // PersonasDni.data = data;
+    // set user info
+    return PersonasDni;
+  }

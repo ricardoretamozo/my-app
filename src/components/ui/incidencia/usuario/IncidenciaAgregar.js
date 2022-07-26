@@ -11,27 +11,32 @@ import {
   FormControl,
   FormLabel,
   Textarea,
-  Input,
-  Select as SelectForm,
+  Text,
+  Collapse,
   HStack,
+  Input,
   InputGroup,
   InputRightElement,
-  IconButton,
+  IconButton,  
+  useDisclosure,
+  Select as SelectForm,
+  Spacer,
+  Flex,
 } from '@chakra-ui/react';
 
-import { AddIcon, SearchIcon } from '@chakra-ui/icons';
+import { AddIcon, CheckIcon, CloseIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 
-import { store } from '../../../store/store';
+import { store } from '../../../../store/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { getIncidenciaId } from './incidencia';
-import { buscarUsuarioDni } from '../../../actions/incidencia';
 
 import {
-    createIncidencia, fetchIncidenciasPersonas
-  } from '../../../actions/incidencia';
+    createIncidencia, fetchIncidenciasPersonas, buscarUsuarioDni
+  } from '../../../../actions/incidencia';
 
 const IncidenciaAgregar = () => {
   const [openCreate, setOpenCreate] = React.useState(false);
+  const { isOpen, onToggle } = useDisclosure()
   const dispatch = useDispatch();
 
   const motivoData = store.getState().motivo.rows;
@@ -57,10 +62,9 @@ const IncidenciaAgregar = () => {
     motivo: {
         idMotivo: null,
       },
-    origen: '',
     descripcion: '',
-    estado: 'P',
-    fecha: hoy.toISOString().split('T')[0],
+    origen: 'SISTEMA',
+    estado: 'P'
   });
 
   const [usuarioDNI, setUsuarioDNI] = useState(null);
@@ -93,18 +97,17 @@ const IncidenciaAgregar = () => {
     e.preventDefault();
     var incidencia = {
       persona: {
-        idpersona: usuarioData.idpersona,
+        idpersona: usuarioDNI === null ? Number(identificador) : usuarioData.idpersona,
       },
       persona_registro: {
         idpersona: Number(identificador),
       },
       motivo: {
-        idMotivo: Number(indiceIncidencia.motivo),
+        idMotivo: indiceIncidencia.motivo,
       },
-      origen: indiceIncidencia.origen,
       descripcion: indiceIncidencia.descripcion,
       estado: indiceIncidencia.estado,
-      fecha: indiceIncidencia.fecha,
+      origen: indiceIncidencia.origen,
     }
     dispatch(createIncidencia(incidencia))
       .then(() => {
@@ -126,11 +129,9 @@ const IncidenciaAgregar = () => {
     fetchDataUsuario();
   }
 
-  const ORIGENES = ['SISTEMA','LLAMADA', 'SMS', 'WHATSAPP', 'CORREO', 'OTRO'];
-
   return (
     <>
-      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
+      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'} _focus={{ boxShadow: "none" }}>
         NUEVA INCIDENCIA
       </Button>
 
@@ -145,17 +146,19 @@ const IncidenciaAgregar = () => {
         <form onSubmit={saveHistorialPersona}>
           <ModalContent>
             <ModalHeader>CREAR NUEVA INCIDENCIA</ModalHeader>
-            <ModalCloseButton />
+            <ModalCloseButton _focus={{ boxShadow: "none" }}/>
+
             <ModalBody pb={6}>
-              <FormControl isRequired>
+              <FormControl mt={4} isRequired>
                 <FormLabel>MOTIVO</FormLabel>
                   <SelectForm placeholder='--------- SELECCIONE UN MOTIVO -----------'
                     onChange ={e => setIndiceIncidencia({...indiceIncidencia, motivo:  e.target.value })}
-                  >{motivoData.map((item, idx) => (
-                    <option value={item.idMotivo} key={idx}>
-                      {item.motivo}
-                    </option>
-                  ))}
+                  >
+                    {motivoData.map((item, idx) => (
+                      <option value={item.idMotivo} key={idx}>
+                        {item.motivo}
+                      </option>
+                    ))}
                   </SelectForm>
               </FormControl>
               <FormControl mt={4} isRequired>
@@ -168,61 +171,57 @@ const IncidenciaAgregar = () => {
                   });
                 }}
                 placeholder='Aqui describe la incidencia'
-                textTransform='uppercase'
+                style={{'text-transform':'uppercase'}}
                 size='sm'
             />
             </FormControl>
-            <FormControl mt={4} isRequired>
-                <FormLabel>ORIGEN</FormLabel>
-                  <SelectForm placeholder='--------- SELECCIONE EL ORIGEN -----------'
-                    onChange ={e => setIndiceIncidencia({...indiceIncidencia, origen:  e.target.value })}
-                  >
-                     {ORIGENES.map((item, idx) => (
-                      <option value={item} key={idx}>
-                        {item}
-                      </option>
-                    ))}
-                  </SelectForm>
-            </FormControl>
-            <HStack spacing={2} mt={4}>
-            <FormControl isRequired>
-                <FormLabel>VALIDACIÓN DE USUARIO POR DNI</FormLabel>
-                <InputGroup>
-                  <InputRightElement
-                    children={
-                      <IconButton
-                        colorScheme='blue'
-                        onClick={handleSearchDNI}
-                        icon={<SearchIcon />}
+            <Flex mt={4}>
+              <Text>¿REGISTRAR INCIDENCIA, PARA OTRO USUARIO?</Text>
+              <Spacer/>
+              <HStack direction='row'>
+                <Button
+                  colorScheme='red'
+                  size='sm'
+                  rightIcon={<CheckIcon />}
+                  onClick={onToggle}
+                  _focus={{ boxShadow: "none" }}
+                >SI</Button>
+              </HStack>
+            </Flex>
+            
+            <Collapse in={isOpen} animateOpacity>
+              <HStack spacing={2} mt={4}>
+                <FormControl>
+                    <FormLabel>VALIDACIÓN DE USUARIO POR DNI</FormLabel>
+                    <InputGroup>
+                      <InputRightElement
+                        children={
+                          <IconButton
+                            colorScheme='blue'
+                            onClick={handleSearchDNI}
+                            icon={<SearchIcon />}
+                          />
+                        }
                       />
-                    }
-                  />
-                  <Input placeholder="DIGITE EL DNI" required
-                    onChange={e => {
-                      setUsuarioDNI(e.target.value)
-                    }}
-                  />
-                </InputGroup>
-            </FormControl>
-            <FormControl isRequired>
-                <FormLabel>NOMBRE DEL USUARIO</FormLabel>
-                <Input 
-                  value={usuarioData.nombre}
-                  onChange={e => {
-                    setIndiceIncidencia({
-                      ...indiceIncidencia,
-                      persona: e.target.value,
-                    });
-                  }}
-                readOnly/>
-            </FormControl>
-            </HStack>
+                      <Input placeholder="DIGITE EL DNI"
+                        onChange={e => {
+                          setUsuarioDNI(e.target.value)
+                        }}
+                      />
+                    </InputGroup>
+                </FormControl>
+                <FormControl>
+                    <FormLabel>NOMBRE DEL USUARIO</FormLabel>
+                    <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} readOnly disabled/>
+                </FormControl>
+              </HStack>
+            </Collapse>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>
+              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

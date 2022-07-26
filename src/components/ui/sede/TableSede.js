@@ -147,29 +147,29 @@ export default function TableSede() {
             size={'xs'}
             colorScheme={'blue'}
           >
-            Editar
+            EDITAR
           </Button>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   {row.activo === 'S' ? (
-                    <Text>Está seguro de anular?</Text>
+                    <Text>ESTA SEGURO DE ANULAR?</Text>
                   ) : (
-                    <Text>Esta seguro de activar?</Text>
+                    <Text>ESTA SEGURO DE ACTIVAR?</Text>
                   )}
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
                     onClick={() => handleDeleteSede(row.idSede)}
                     colorScheme="red"
                     ml={3}
                   >
-                    Si
+                    SI
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -178,11 +178,11 @@ export default function TableSede() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Sede
+                EDITAR SEDE
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
@@ -195,7 +195,7 @@ export default function TableSede() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Sede</FormLabel>
+                  <FormLabel>SEDE</FormLabel>
                   <Input
                     defaultValue={indice ? indice.sede : ''}
                     type="text"
@@ -205,7 +205,7 @@ export default function TableSede() {
                   />
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Dirección</FormLabel>
+                  <FormLabel>DIRECCIÓN</FormLabel>
                   <Input
                     defaultValue={indice ? indice.direccion : ''}
                     onChange={e =>
@@ -216,15 +216,15 @@ export default function TableSede() {
                   />
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel>ESTADO</FormLabel>
                   <Select
                     defaultValue={indice ? indice.activo : ''}
                     onChange={e =>
                       setIndice({ ...indice, activo: e.target.value })
                     }
                   >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
+                    <option value="S">ACTIVO</option>
+                    <option value="N">INACTIVO</option>
                   </Select>
                 </FormControl>
               </ModalBody>
@@ -234,9 +234,9 @@ export default function TableSede() {
                   colorScheme="green"
                   mr={3}
                 >
-                  Actualizar
+                  ACTUALIZAR
                 </Button>
-                <Button onClick={handleCloseEdit}>Cancelar</Button>
+                <Button onClick={handleCloseEdit}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
@@ -288,7 +288,7 @@ export default function TableSede() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Sedes Table
+            TABLA DE SEDES
           </Text>
         </Box>
         <Box>

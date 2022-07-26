@@ -126,23 +126,23 @@ export default function TableMotivo() {
             ml={2}
           />
 
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'lg'}>
+          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    <Text>¿Está seguro de eliminar?</Text>
+                    <Text>¿ESTÁ SEGURO DE ELIMINAR?</Text>
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
                     onClick={() => handleDeleteMotivo(row.idMotivo)}
                     colorScheme="red"
                     ml={3}
                   >
-                    Si
+                    SI
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -168,7 +168,7 @@ export default function TableMotivo() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Motivo</FormLabel>
+                  <FormLabel>MOTIVO</FormLabel>
                   <Input
                     defaultValue={indice ? indice.motivo : ''}
                     style={{'text-transform':'uppercase'}}
@@ -185,9 +185,9 @@ export default function TableMotivo() {
                   colorScheme="green"
                   mr={3}
                 >
-                  Actualizar
+                  ACTUALIZAR
                 </Button>
-                <Button onClick={handleCloseEdit}>Cancelar</Button>
+                <Button onClick={handleCloseEdit}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>

@@ -44,12 +44,12 @@ export const DasboardScreen = () => {
         isAuthenticated = { !!access_token }
         />
         <PrivateRoute
-        exact path="/dashboard/asistente/incidencias_asignadas"
+        exact path="/dashboard/incidencias_asignadas"
         component = { IncidenciaAsistenteAsignados } 
         isAuthenticated = { !!access_token }
         />
         <PrivateRoute
-        exact path="/dashboard/asistente/incidencias_no_asignadas"
+        exact path="/dashboard/incidencias_no_asignadas"
         component = { IncidenciaAsistenteNoAsignados } 
         isAuthenticated = { !!access_token }
         />

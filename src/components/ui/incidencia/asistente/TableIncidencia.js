@@ -20,6 +20,7 @@ import { store } from '../../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
+import { format } from "date-fns";
 
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
@@ -42,12 +43,17 @@ export default function TableIncidenciaAsignados() {
   const columns = [
     {
       name: 'USUARIO',
-      selector: row => row.persona.nombre,
+      selector: row => row.persona.nombre + ' ' + row.persona.apellido,
       sortable: true,
     },
     {
-        name: 'FECHA',
-        selector: row => row.fecha,
+      name: 'IP',
+      selector: row => row.ip,
+      sortable: true,
+    },
+    {
+        name: 'FECHA Y HORA',
+        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -57,7 +63,7 @@ export default function TableIncidenciaAsignados() {
     },
     {
         name: 'USUARIO ASIGNADO',
-        selector: row => row.persona_asignado == null ? "NO ASIGNADO" : row.persona_asignado.nombre,
+        selector: row => row.persona_asignado.nombre + ' ' + row.persona_asignado.apellido,
         sortable: true,
     },
     {
@@ -67,15 +73,15 @@ export default function TableIncidenciaAsignados() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'A' ? 'green.400' : bgStatus}
-            color={row.estado === 'A' ? 'white' : colorStatus}
+            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+            color={'white'}
             p="3px 10px"
             w={24}
             textAlign={'center'}
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
+            {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
         </div>
       ),
@@ -91,46 +97,31 @@ export default function TableIncidenciaAsignados() {
             rowId = {row.idIncidencia}
             identificador = { identificador }
           />
-          {/* <IconButton
-            icon={<RiDeleteBackLine />}
-            variant={'solid'}
-            colorScheme={'red'}
-            onClick={() => handleClickOpenDelete(row.idIncidencia)}
-            fontSize={'22px'}
-            size={'sm'}
-            ml={2}
-          /> */}
-            {/* <Switch
-              colorScheme={'red'}
-              mr={2}
-              isChecked={row.activo === 'S'}
-              onChange={() => handleClickOpenDelete(row.idOrgano)}
-            /> */}
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
-                    ) : (
-                      <Text>Esta seguro de activar?</Text>
-                    )}
-                  </AlertDialogHeader>
+          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                  {row.activo === 'S' ? (
+                    <Text>Está seguro de anular?</Text>
+                  ) : (
+                    <Text>Esta seguro de activar?</Text>
+                  )}
+                </AlertDialogHeader>
 
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
 
-                  <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
-                    <Button
-                      colorScheme="red"
-                      ml={3}
-                    >
-                      Si
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
+                <AlertDialogFooter>
+                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button
+                    colorScheme="red"
+                    ml={3}
+                  >
+                    Si
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
           </div>
         );
       },
@@ -176,7 +167,7 @@ export default function TableIncidenciaAsignados() {
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">
-              Incidencias Asignadas
+            TABLA DE INCIDENCIAS ASIGNADAS
             </Text>
           </Box>
           <Box>

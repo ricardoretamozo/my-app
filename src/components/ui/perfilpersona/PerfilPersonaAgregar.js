@@ -53,48 +53,51 @@ const PerfilPersonaAgregar = () => {
 }
 return (
     <>
-        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>AGREGAR</Button>
         
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
+        size={'xl'}
         >
         <ModalOverlay />
         <form>
         <ModalContent>
-            <ModalHeader>Agregar Nuevo Perfil</ModalHeader>
+            <ModalHeader>AGREGAR NUEVO PERFIL</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
-                <FormLabel>Perfil</FormLabel>
+                <FormLabel>PERFIL</FormLabel>
                 <Input 
                 onChange={(e)=> {setPerfil({ ...userperfil, perfil: (e.target.value).toUpperCase() })}}
                 placeholder='Perfil'
-                type={'text'} />
+                type={'text'}
+                style={{'text-transform':'uppercase'}} />
             </FormControl>
             <FormControl mt={4} isRequired={true}>
-                <FormLabel>Descripcion</FormLabel>
+                <FormLabel>DESCRIPCIÓN</FormLabel>
                 <Textarea
                 onChange={(e)=> {setPerfil({ ...userperfil, descripcion: (e.target.value) })}} 
                 placeholder='Descripcion'
+                style={{'text-transform':'uppercase'}}
                 />
             </FormControl>
             <FormControl mt={4} isRequired>
-                <FormLabel>Estado</FormLabel>
+                <FormLabel>ESTADO</FormLabel>
                 <Select
                 defaultValue={userperfil.activo = 'S'}
                 onChange={(e)=> {setPerfil({...userperfil,activo:(e.target.value) })}}
                 >
-                <option value='S'>Activo</option>
-                <option value='N'>Inactivo</option>
+                <option value='S'>ACTIVO</option>
+                <option value='N'>INACTIVO</option>
                 </Select>
             </FormControl>
             </ModalBody>
             <ModalFooter>
             <Button type={'submit'} onClick={()=>savePerfil()} colorScheme={'blue'} mr={3}>
-                Guardar
+                GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
         </ModalContent>
         </form>

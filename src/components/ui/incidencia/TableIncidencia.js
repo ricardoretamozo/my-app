@@ -23,8 +23,10 @@ import { store } from '../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
+import { format } from "date-fns";
 
 import IncidenciaDetalles from './IncidenciaDetalles';
+import IncidenciaAgregar from './IncidenciaAgregar';
 
 export default function TableIncidencia() {
   const [opendelete, setOpenDelete] = React.useState(false);
@@ -49,7 +51,12 @@ export default function TableIncidencia() {
   const columns = [
     {
       name: 'USUARIO',
-      selector: row => row.persona.nombre,
+      selector: row => row.persona.nombre + ' ' + row.persona.apellido,
+      sortable: true,
+    },
+    {
+      name: 'IP',
+      selector: row => row.ip,
       sortable: true,
     },
     {
@@ -58,8 +65,8 @@ export default function TableIncidencia() {
       sortable: true,
     },
     {
-        name: 'FECHA',
-        selector: row => row.fecha,
+        name: 'FECHA Y HORA',
+        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -69,15 +76,15 @@ export default function TableIncidencia() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'A' ? 'green.400' : bgStatus}
-            color={row.estado === 'A' ? 'white' : colorStatus}
+            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+            color={'white'}
             p="3px 10px"
             w={24}
             textAlign={'center'}
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
+            {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
         </div>
       ),
@@ -102,12 +109,6 @@ export default function TableIncidencia() {
             size={'sm'}
             ml={2}
           /> */}
-            {/* <Switch
-              colorScheme={'red'}
-              mr={2}
-              isChecked={row.activo === 'S'}
-              onChange={() => handleClickOpenDelete(row.idOrgano)}
-            /> */}
             <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
@@ -173,7 +174,7 @@ export default function TableIncidencia() {
       mb={4}
       p={2}
       fontSize={'xs'}
-      bg={useColorModeValue('gray.100', 'gray.900')} >
+      bg={useColorModeValue('gray.100', 'gray.900')}>
       <SimpleGrid columns={4} spacing={5} textColor={'white'}>
         <Box
           w={'100%'}
@@ -264,14 +265,14 @@ export default function TableIncidencia() {
             color="gray.800"
             _dark={{ color: "white" }}
           >
-            Incidencias Asignadas
+            Incidencias en Tramite
           </chakra.h3>
           <Flex
             alignItems="center"
             justify={'center'}
             py={2}
             px={3}
-            bg="green.400"
+            bg="yellow.500"
             _dark={{ bg: "gray.700" }}
           >
             <chakra.span
@@ -300,7 +301,7 @@ export default function TableIncidencia() {
             color="gray.800"
             _dark={{ color: "white" }}
           >
-            Incidencias Solucionadas
+            Incidencias atentidas
           </chakra.h3>
           <Flex
             alignItems="center"
@@ -327,6 +328,7 @@ export default function TableIncidencia() {
       overflow="hidden"
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
+      paddingBottom={8}
     >
       <HStack
         spacing="24px"
@@ -337,12 +339,12 @@ export default function TableIncidencia() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Lista de Incidencias
+            TABLA DE INCIDENCIAS
           </Text>
         </Box>
-        {/* <Box>
+        <Box>
           <IncidenciaAgregar />
-        </Box> */}
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
@@ -352,6 +354,7 @@ export default function TableIncidencia() {
           ignoreRowClick={true}
           responsive={true}
           paginationPerPage={6}
+          noDataComponent="No hay datos para mostrar refresca la página"
           paginationRowsPerPageOptions={[6, 15, 20, 30]}
         />
       </DataTableExtensions>

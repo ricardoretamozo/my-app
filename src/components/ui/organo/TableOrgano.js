@@ -41,8 +41,6 @@ export default function TableOrgano() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
   const bgStatus = useColorModeValue('gray.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
 
@@ -81,8 +79,6 @@ export default function TableOrgano() {
         handleCloseDelete(true);
       });
   };
-
-  // const [userorgano, setOrgano] = useState(initialOrgano);
 
   const handleUpdateOrgano = e => {
     e.preventDefault();
@@ -132,7 +128,7 @@ export default function TableOrgano() {
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+            {row.activo === 'S' ? 'ACTIVO' : 'INACTIVO'}
           </Badge>
         </div>
       ),
@@ -156,20 +152,20 @@ export default function TableOrgano() {
               size={'xs'}
               colorScheme={'blue'}
             >
-              Editar
+              EDITAR
             </Button>
             <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="lg" fontWeight="bold">
                     {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
+                      <Text>ESTÁ SEGURO DE ANULAR?</Text>
                     ) : (
-                      <Text>Esta seguro de activar?</Text>
+                      <Text>ESTÁ SEGURO DE ACTIVAR?</Text>
                     )}
                   </AlertDialogHeader>
 
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                  <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                   <AlertDialogFooter>
                     <Button onClick={handleCloseDelete}>Cancelar</Button>
@@ -178,7 +174,7 @@ export default function TableOrgano() {
                       colorScheme="red"
                       ml={3}
                     >
-                      Si
+                      SI
                     </Button>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -187,11 +183,11 @@ export default function TableOrgano() {
 
             {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-            <Modal isOpen={openedit} onClose={handleCloseEdit}>
+            <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader display={'flex'} justifyContent={'center'}>
-                  Editar Organo
+                  EDITAR ORGANO
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
@@ -204,7 +200,7 @@ export default function TableOrgano() {
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Sede</FormLabel>
+                    <FormLabel>SEDE</FormLabel>
                     <Select
                       defaultValue={indice ? indice.sede.idSede : ''}
                       onChange={e =>
@@ -219,7 +215,7 @@ export default function TableOrgano() {
                     </Select>
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Organo</FormLabel>
+                    <FormLabel>ORGANO</FormLabel>
                     <Input
                       defaultValue={indice ? indice.organo : ''}
                       type="text"
@@ -229,15 +225,15 @@ export default function TableOrgano() {
                     />
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel>ESTADO</FormLabel>
                     <Select
                       defaultValue={indice ? indice.activo : ''}
                       onChange={e =>
                         setIndice({ ...indice, activo: e.target.value })
                       }
                     >
-                      <option value="S">Activo</option>
-                      <option value="N">Inactivo</option>
+                      <option value="S">ACTIVO</option>
+                      <option value="N">INACTIVO</option>
                     </Select>
                   </FormControl>
                 </ModalBody>
@@ -247,9 +243,9 @@ export default function TableOrgano() {
                     colorScheme="green"
                     mr={3}
                   >
-                    Actualizar
+                    ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>Cancelar</Button>
+                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
@@ -301,7 +297,7 @@ export default function TableOrgano() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Organo Table
+            TABLA ORGANOS JURIDICCIONALES
           </Text>
         </Box>
         <Box>

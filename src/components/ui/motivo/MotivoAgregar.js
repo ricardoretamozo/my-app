@@ -52,7 +52,7 @@ const MotivoAgregar = () => {
 
 return (
     <>
-        <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Nuevo</Button>
+        <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>NUEVO</Button>
 
         <Modal
             isOpen={openCreate}
@@ -77,9 +77,9 @@ return (
             </ModalBody>
             <ModalFooter>
             <Button onClick={()=>saveMotivo()} colorScheme={'blue'} autoFocus mr={3}>
-                Guardar
+                GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
         </ModalContent>
         </Modal>

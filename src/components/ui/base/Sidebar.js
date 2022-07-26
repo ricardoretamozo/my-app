@@ -47,7 +47,9 @@ import { useDispatch } from 'react-redux';
 
 const LinkItemsCoordinadorInformatico = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
+  { name: 'Toda las Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
+  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
+  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
   { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
@@ -58,8 +60,8 @@ const LinkItemsCoordinadorInformatico = [
 ];
 
 const LinkItemsAsistenteInformatico = [
-  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_asignadas' },
-  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/asistente/incidencias_no_asignadas' },
+  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
+  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
@@ -70,7 +72,9 @@ const LinkItemsAsistenteInformatico = [
 ];
 
 const LinkItemsSoporteTecnico = [
-  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
+  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
+  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
+  { name: 'Mis Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];

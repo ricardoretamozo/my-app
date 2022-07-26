@@ -11,7 +11,6 @@ import {
   Heading,
   Stack,
   chakra,
-  Avatar,
   Link as LinkChackra,
   Input,
   InputGroup,
@@ -21,12 +20,11 @@ import {
   useColorModeValue,
   Text,
   Icon,
+  Image,
 } from '@chakra-ui/react';
 
 import { Link } from 'react-router-dom';
-
-import BgLight from '../../assets/img/bg_1.png';
-import BgBlack from '../../assets/img/bg_black.png';
+import logoPJ from '../../assets/img/logo_pj.png';
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
@@ -37,7 +35,7 @@ export const LoginScreen = () => {
   // Chakra color mode
   const primaryColor = useColorModeValue('#c53030', 'red.800');
   const textColor = useColorModeValue('black.400', 'white');
-  const bg = useColorModeValue(BgLight, BgBlack);
+  const bg = useColorModeValue('white', 'gray.900');
   const bgCard = useColorModeValue("white", "gray.800");
   const buttonColor = useColorModeValue("red", "red");
 
@@ -70,11 +68,12 @@ export const LoginScreen = () => {
       flexDirection="column"
       width="100wh"
       height="100vh"
-      backgroundImage={bg}
+      bg={bg}
       backgroundSize={'cover'}
       justifyContent="center"
       alignItems="center"
     >
+      <Heading color={primaryColor} size={'xl'} mb={4}>SERVICE DESK</Heading>
       <Stack
         flexDir="column"
         mb="2"
@@ -90,7 +89,7 @@ export const LoginScreen = () => {
         borderColor={primaryColor}
         bg={bgCard}
       >
-        <Avatar bg="red.500" />
+        <Image boxSize='50px' objectFit='cover' src={logoPJ} />
         <Heading color={primaryColor}>Bienvenido</Heading>
         <Text ms="4px" color={textColor} fontWeight="bold" fontSize="14px" textAlign={'center'}
           >Ingresa tu DNI y tu contraseña.
@@ -146,6 +145,7 @@ export const LoginScreen = () => {
                 _hover={{
                   bg: 'red.600',
                 }}
+                _focus={{ boxShadow: "none" }}
               >
                 Iniciar Sesión
               </Button>

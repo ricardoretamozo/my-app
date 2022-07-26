@@ -249,13 +249,13 @@ export const AppRouter = () => {
           />
           <PrivateRoute
             exact
-            path="/dashboard/asistente/incidencias_asignadas"
+            path="/dashboard/incidencias_asignadas"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
             exact
-            path="/dashboard/asistente/incidencias_no_asignadas"
+            path="/dashboard/incidencias_no_asignadas"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

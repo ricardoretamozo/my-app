@@ -14,8 +14,10 @@ import {
   HStack,
   Badge,
   IconButton,
+  Heading,
+  AlertDialogCloseButton,
 } from '@chakra-ui/react';
-import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
+import { CheckIcon, CalendarIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
 
@@ -25,12 +27,12 @@ import 'react-data-table-component-extensions/dist/index.css';
 
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
+import IncidenciaAtender from './IncidenciaAtender';
+import { format } from "date-fns";
 
 export default function TableIncidenciaSoporte() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const { identificador } = useSelector(state => state.auth);
-
-  // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const bgStatus = useColorModeValue('blue.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
@@ -54,13 +56,18 @@ export default function TableIncidenciaSoporte() {
       sortable: true,
     },
     {
+      name: 'IP',
+      selector: row => row.ip,
+      sortable: true,
+    },
+    {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
     },
     {
-        name: 'FECHA',
-        selector: row => row.fecha,
+        name: 'FECHA Y HORA',
+        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -70,15 +77,15 @@ export default function TableIncidenciaSoporte() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'A' ? 'green.400' : bgStatus}
-            color={row.estado === 'A' ? 'white' : colorStatus}
+            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+            color={'white'}
             p="3px 10px"
             w={24}
             textAlign={'center'}
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
+            {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
         </div>
       ),
@@ -94,48 +101,42 @@ export default function TableIncidenciaSoporte() {
             rowId = {row.idIncidencia}
             identificador = { identificador }
           />
-          {row.estado === 'P' ?(
-            <IconButton
-              icon={<CheckIcon />}
-              variant={'solid'}
-              colorScheme={'green'}
-              onClick={() => handleClickOpenDelete(row.idIncidencia)}
-              fontSize={'22px'}
-              size={'sm'}
-              ml={2}
-            />
-          ) : (
-            <IconButton
-              icon={<DeleteIcon />}
-              variant={'solid'}
-              colorScheme={'red'}
-              onClick={() => handleClickOpenDelete(row.idIncidencia)}
-              fontSize={'22px'}
-              size={'sm'}
-              ml={2}
-            />
-          )
-          }
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+          <IconButton
+            icon={<CalendarIcon />}
+            variant={'outline'}
+            colorScheme={'yellow'}
+            onClick={() => handleClickOpenDelete(row.idIncidencia)}
+            fontSize='20px'
+            size={'sm'}
+            ml={1}
+            _focus={{ boxShadow: "none" }}
+          />
+          <IncidenciaAtender 
+            rowId = {row.idIncidencia}
+          />
+            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'3xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    {row.estado === 'P' ? (
-                      <Text>Detalles de la Solución</Text>
-                    ) : (
-                      <Text>Esta seguro de activar?</Text>
-                    )}
+                  <AlertDialogHeader fontSize="xl" fontWeight="bold" textAlign={'center'}>
+                    ¿DERIVAR, EN TRÁMITE, EL ESTADO DE LA INCIDENCIA?
                   </AlertDialogHeader>
-
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
-
+                  <AlertDialogCloseButton _focus={{ boxShadow: "none" }}/>
+                  <AlertDialogBody>
+                  <Box textAlign="center" px={2}>
+                    <CalendarIcon boxSize={'80px'} color={'yellow.500'} />
+                    <Heading as="h4" size="md" mt={6}>
+                      ¿CONFIRMAR LA ACCIÓN?
+                    </Heading>
+                  </Box>
+                  </AlertDialogBody>
                   <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
+                    <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>NO</Button>
                     <Button
                       colorScheme="red"
                       ml={3}
+                      _focus={{ boxShadow: "none" }}
                     >
-                      Si
+                      SI
                     </Button>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -145,6 +146,7 @@ export default function TableIncidenciaSoporte() {
         );
       },
       center: true,
+      width: '140px',
     },
   ];
 
@@ -175,6 +177,7 @@ export default function TableIncidenciaSoporte() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
+        paddingBottom={8}
       >
         <HStack
           spacing="24px"
@@ -200,6 +203,7 @@ export default function TableIncidenciaSoporte() {
             ignoreRowClick={true}
             responsive={true}
             paginationPerPage={8}
+            noDataComponent="No hay datos para mostrar refresca la página"
             paginationRowsPerPageOptions={[8, 15, 20, 30]}
             
           />

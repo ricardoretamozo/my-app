@@ -372,22 +372,22 @@ export default function TablePersona() {
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
                   {row.activo === 'S' ? (
-                    <Text>Está seguro de anular?</Text>
+                    <Text>ESTÁ SEGURO DE ANULAR?</Text>
                   ) : (
-                    <Text>Esta seguro de activar?</Text>
+                    <Text>ESTÁ SEGURO DE ACTIVAR?</Text>
                   )}
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
                     onClick={() => handleDeletePersona(personaid)}
                     colorScheme="red"
                     ml={3}
                   >
-                    Si
+                    SI
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -400,7 +400,7 @@ export default function TablePersona() {
             <ModalOverlay />
             <form onSubmit={handleUpdatePersona}>
               <ModalContent>
-                <ModalHeader>Editar Persona</ModalHeader>
+                <ModalHeader>EDITAR PERSONA</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={2}>
                   <FormControl>
@@ -409,7 +409,6 @@ export default function TablePersona() {
                       disabled={true}
                       type="text"
                       hidden={true}
-                      //defaultValue={indice ? (indice.nombre):("")}
                     />
                   </FormControl>
                   <Grid templateColumns="repeat(5, 1fr)" gap={4} mt={3}>
@@ -432,7 +431,7 @@ export default function TablePersona() {
                   </Grid>
                   <HStack spacing={'10px'} mt={3}>
                     <FormControl>
-                      <FormLabel>Nombre</FormLabel>
+                      <FormLabel>NOMBRE</FormLabel>
                       <Input
                         defaultValue={indice ? indice.nombre : ''}
                         onChange={e =>
@@ -443,7 +442,7 @@ export default function TablePersona() {
                       />
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Apellidos</FormLabel>
+                      <FormLabel>APELLIDOS</FormLabel>
                       <Input
                         defaultValue={indice ? indice.apellido : ''}
                         onChange={e =>
@@ -456,7 +455,7 @@ export default function TablePersona() {
                   </HStack>
                   <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
-                      <FormLabel>Usuario</FormLabel>
+                      <FormLabel>USUARIO</FormLabel>
                       <Input
                         defaultValue={indice ? indice.usuario : ''}
                         onChange={e =>
@@ -467,7 +466,7 @@ export default function TablePersona() {
                       />
                     </FormControl>
                     <FormControl isRequired={true}>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel>PASSWORD</FormLabel>
                       <Input
                         defaultValue={''}
                         onChange={e =>
@@ -482,7 +481,7 @@ export default function TablePersona() {
 
                   <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
-                      <FormLabel>Correo</FormLabel>
+                      <FormLabel>CORREO</FormLabel>
                       <Input
                         defaultValue={indice ? indice.correo : ''}
                         onChange={e =>
@@ -493,21 +492,20 @@ export default function TablePersona() {
                       />
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Nro Celular</FormLabel>
+                      <FormLabel>NRO CELULAR</FormLabel>
                       <Input
                         defaultValue={indice ? indice.celular : ''}
                         onChange={e =>
                           setIndice({ ...indice, celular: e.target.value })
                         }
                         type={'text'}
-                        // placeholder="942035891"
                       />
                     </FormControl>
                   </HStack>
 
                   <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
-                      <FormLabel>Fecha de Nacimiento</FormLabel>
+                      <FormLabel>FECHA DE NACIMIENTO</FormLabel>
                       <Input
                         defaultValue={indice ? indice.fecha : ''}
                         onChange={e =>
@@ -515,36 +513,35 @@ export default function TablePersona() {
                         }
                         type={'date'}
                       />
-                      {/* onChange={(e)=> {setIndice({ ...persona, fecha: (e.target.value) }); setValidation(false)}}  /> */}
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Sexo</FormLabel>
+                      <FormLabel>SEXO</FormLabel>
                       <SelectChakra
                         defaultValue={indice ? indice.sexo : ''}
                         onChange={e =>
                           setIndice({ ...indice, sexo: e.target.value })
                         }
                       >
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
+                        <option value="M">MASCULINO</option>
+                        <option value="F">FEMENINO</option>
                       </SelectChakra>
                     </FormControl>
                   </HStack>
                   <HStack spacing={'10px'} mt={'10px'}>
                     <FormControl>
-                      <FormLabel>Estado</FormLabel>
+                      <FormLabel>ESTADO</FormLabel>
                       <SelectChakra
                         defaultValue={indice ? indice.activo : ''}
                         onChange={e =>
                           setIndice({ ...indice, activo: e.target.value })
                         }
                       >
-                        <option value="S">Activo</option>
-                        <option value="N">Inactivo</option>
+                        <option value="S">ACTIVO</option>
+                        <option value="N">INACTIVO</option>
                       </SelectChakra>
                     </FormControl>
                     <FormControl>
-                      <FormLabel>Perfil</FormLabel>
+                      <FormLabel>PERFIL</FormLabel>
                       <SelectChakra
                         defaultValue={
                           indice ? indice.perfilPersona.idPerfilPersona : ''
@@ -572,9 +569,9 @@ export default function TablePersona() {
                     colorScheme={'green'}
                     mr={3}
                   >
-                    Actualizar
+                    ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>Cancelar</Button>
+                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </form>
@@ -635,7 +632,7 @@ export default function TablePersona() {
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">
-              Usuarios Table
+              TABLA DE USUARIOS
             </Text>
           </Box>
           <Box>

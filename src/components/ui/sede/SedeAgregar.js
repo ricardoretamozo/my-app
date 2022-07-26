@@ -54,50 +54,53 @@ const SedeAgregar = () => {
 
 return (
     <>
-        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>AGREGAR</Button>
 
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size={'xl'}
         >
         <ModalOverlay />
         <ModalContent>
-            <ModalHeader>Agregar Nueva Sede</ModalHeader>
+            <ModalHeader>AGREGAR NUEVA SEDE</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
-                <FormLabel>Sede</FormLabel>
+                <FormLabel>SEDE</FormLabel>
                 <Input 
                 onChange={(e)=> {setSede({ ...dataSede, sede: (e.target.value).toUpperCase() })}}
                 placeholder='Nombre de la sede'
+                style={{'text-transform':'uppercase'}}
                 isRequired={true}
                 type={'text'} />
             </FormControl>
             <FormControl mt={4} isRequired>
-                <FormLabel>Direccion</FormLabel>
+                <FormLabel>DIRECCIÓN</FormLabel>
                 <Input
                 onChange={(e)=> {setSede({ ...dataSede, direccion: (e.target.value) })}} 
                 placeholder='Av Arequipa 202'
+                style={{'text-transform':'uppercase'}}
                 type={'text'}
                 />
             </FormControl>
             <FormControl mt={4} isRequired>
-                <FormLabel>Estado</FormLabel>
+                <FormLabel>ESTADO</FormLabel>
                 <Select
                 defaultValue={dataSede.activo = 'S'}
                 onChange={(e)=> {setSede({...dataSede,activo:(e.target.value) })}}
                 >
-                <option value='S'>Activo</option>
-                <option value='N'>Inactivo</option>
+                <option value='S'>ACTIVO</option>
+                <option value='N'>INACTIVO</option>
                 </Select>
             </FormControl>
             </ModalBody>
             <ModalFooter>
             <Button onClick={()=>saveSede()} colorScheme={'blue'} autoFocus mr={3}>
-                Guardar
+                GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
         </ModalContent>
         </Modal>

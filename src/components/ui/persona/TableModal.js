@@ -11,8 +11,6 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Grid,
-    GridItem,
     Select,
     HStack,
     IconButton,
@@ -22,7 +20,7 @@ import {
   // import actions
   import { createPersona } from '../../../actions/persona';
   
-  import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
+  import { FaUserSecret } from 'react-icons/fa';
   
   import { useDispatch } from 'react-redux';
   import React, { useState } from 'react';
@@ -34,7 +32,6 @@ import {
     const dispatch = useDispatch();
   
     const dataPerfil = store.getState().perfilPersona.rows;
-    // const dataPersona = store.getState().persona.rows;
   
     const handleClickOpenCreate = () => {
       setOpenCreate(true);
@@ -43,12 +40,6 @@ import {
     const handleCloseModal = () => {
       setOpenCreate(false);
     };
-  
-    // const initialPerfil = {
-    //   idPerfilPersona: null,
-    // }
-  
-    // const [perfiles, setPerfiles] = useState(initialPerfil);
   
     const initialPersona = {
       nombre: '',
@@ -83,7 +74,6 @@ import {
         activo,
         perfilPersona,
       } = persona;
-      // const {idPerfilPersona} = perfiles
   
       dispatch(
         createPersona({
@@ -112,9 +102,6 @@ import {
   
     return (
       <>
-        {/* <Button size="sm" colorScheme={'blue'} onClick={handleClickOpenCreate}>
-          Agregar
-        </Button> */}
         <IconButton
             onClick={props.handleOpen}
             variant={'ghost'}
@@ -132,12 +119,12 @@ import {
           <ModalOverlay />
           <form onSubmit={savePersona}>
             <ModalContent>
-              <ModalHeader>Asignacion de Organos Juridiccionales a Asistentes</ModalHeader>
+              <ModalHeader>ASIGNACIÓN DE ORGANOS JURIDICCIONALES A ASISTENTES</ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={2}>
                 <HStack spacing={'10px'} mt={5}>
                   <FormControl>
-                    <FormLabel>Nombres</FormLabel>
+                    <FormLabel>NOMBRES</FormLabel>
                     <Input
                       onChange={e =>
                         setPersona({ ...persona, nombre: e.target.value })
@@ -148,7 +135,7 @@ import {
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Apellidos</FormLabel>
+                    <FormLabel>APELLIDOS</FormLabel>
                     <Input
                       onChange={e =>
                         setPersona({ ...persona, apellido: e.target.value })
@@ -161,7 +148,7 @@ import {
                 </HStack>
                 <HStack spacing={'10px'} mt={'10px'}>
                   <FormControl>
-                    <FormLabel>Usuario</FormLabel>
+                    <FormLabel>USUARIO</FormLabel>
                     <Input
                       defaultValue={(persona.usuario = persona.dni)}
                       onValueChange={persona.usuario}
@@ -177,7 +164,7 @@ import {
                   </FormControl>
   
                   <FormControl>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>PASSWORD</FormLabel>
                     <Input
                       onChange={e =>
                         setPersona({ ...persona, password: e.target.value })
@@ -190,7 +177,7 @@ import {
                 </HStack>
                 <HStack spacing={'10px'} mt={'10px'}>
                   <FormControl>
-                    <FormLabel>Correo</FormLabel>
+                    <FormLabel>CORREO</FormLabel>
                     <Input
                       onChange={e =>
                         setPersona({ ...persona, correo: e.target.value })
@@ -201,7 +188,7 @@ import {
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Nro Celular</FormLabel>
+                    <FormLabel>NRO CELULAR</FormLabel>
                     <Input
                       type={'text'}
                       placeholder="942123567"
@@ -214,7 +201,7 @@ import {
   
                 <HStack spacing={'10px'} mt={'10px'}>
                   <FormControl>
-                    <FormLabel>Fecha de Nacimiento</FormLabel>
+                    <FormLabel>FECHA DE NACIMIENTO</FormLabel>
                     <Input
                       type={'date'}
                       onChange={e =>
@@ -224,38 +211,34 @@ import {
                     />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Sexo</FormLabel>
+                    <FormLabel>SEXO</FormLabel>
                     <Select
                       defaultValue={(persona.sexo = 'M')}
                       onChange={e => {
                         setPersona({ ...persona, sexo: e.target.value });
                       }}
                     >
-                      <option value="M">Masculino</option>
-                      <option value="F">Femenino</option>
+                      <option value="M">MASCULINO</option>
+                      <option value="F">FEMENINO</option>
                     </Select>
                   </FormControl>
                 </HStack>
                 <HStack spacing={'10px'} mt={'10px'}>
                   <FormControl>
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel>ESTADO</FormLabel>
                     <Select
                       defaultValue={(persona.activo = 'S')}
                       onChange={e => {
                         setPersona({ ...persona, activo: e.target.value });
                       }}
                     >
-                      <option value="S">Activo</option>
-                      <option value="N">Inactivo</option>
+                      <option value="S">ACTIVO</option>
+                      <option value="N">INACTIVO</option>
                     </Select>
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Perfil Persona</FormLabel>
+                    <FormLabel>PERFIL PERSONA</FormLabel>
                     <Select
-                      // defaultValue={
-                      //   (persona.perfilPersona = dataPerfil[0].idPerfilPersona)
-                      // }
-                      // defaultValue={persona.perfilPersona.nombre === 'USUARIO COMUN'}
                       isRequired
                       onChange={e =>
                         setPersona({ ...persona, perfilPersona: e.target.value })
@@ -272,9 +255,9 @@ import {
               </ModalBody>
               <ModalFooter>
                 <Button type={'submit'} colorScheme={'blue'} mr={3}>
-                  Guardar
+                  GUARDAR
                 </Button>
-                <Button onClick={props.handleCloseModal}>Cancelar</Button>
+                <Button onClick={props.handleCloseModal}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </form>

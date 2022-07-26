@@ -156,7 +156,7 @@ export default function ModalOrganoAsignacion(props) {
           <ModalBody pb={6}>
             <HStack spacing={'10px'} mt={'10px'}>
               <FormControl>
-                <FormLabel>Sede</FormLabel>
+                <FormLabel>SEDE</FormLabel>
                 <Select
                   required
                   onChange={handleChangeSede}
@@ -170,7 +170,7 @@ export default function ModalOrganoAsignacion(props) {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Organo</FormLabel>
+                <FormLabel>ORGANO</FormLabel>
                 <Select
                   onChange={handleChangeOrgano}
                   isClearable
@@ -189,7 +189,7 @@ export default function ModalOrganoAsignacion(props) {
                 colorScheme={'blue'}
                 mr={3}
               >
-                Asignar
+                ASIGNAR
               </Button>
             </FormControl>
             <Divider
@@ -200,7 +200,7 @@ export default function ModalOrganoAsignacion(props) {
             />
 
             <Text mt={'10px'}>
-              Organos Juridiccionales asignados a{' '}
+              ORGANOS JURIDICCIONALES ASIGNADAS A{' '}
               <b> {props.usuario.nombre + ' ' + props.usuario.apellido}</b>
             </Text>
 
@@ -215,9 +215,9 @@ export default function ModalOrganoAsignacion(props) {
             >
               <Thead>
                 <Tr>
-                  <Th>Sede</Th>
-                  <Th>Organo</Th>
-                  <Th>Accion</Th>
+                  <Th>SEDE</Th>
+                  <Th>ORGANO</Th>
+                  <Th>ACCIÓN</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -243,7 +243,7 @@ export default function ModalOrganoAsignacion(props) {
 
           <ModalFooter>
             <Button onClick={closeModal} colorScheme="red">
-              Cancel
+              CANCELAR
             </Button>
           </ModalFooter>
         </ModalContent>

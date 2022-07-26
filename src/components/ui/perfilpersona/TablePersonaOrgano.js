@@ -146,21 +146,21 @@ export default function Tables() {
             size={'xs'}
             colorScheme={'blue'}
           >
-            Editar
+            EDITAR
           </Button>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
 
-                  {row.activo == 'S' ?  'Esta seguro de activar?' : 'Está seguro de anular?'}
+                  {row.activo == 'S' ?  '¿ESTÁ SEGURO DE ACTIVAR?' : 'ESTÁ SEGURO DE ANULAR?'}
 
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
                     onClick={() =>
                       handleDeletePerfilPersona(row.idPerfilPersona)
@@ -168,7 +168,7 @@ export default function Tables() {
                     colorScheme="red"
                     ml={3}
                   >
-                    Si
+                    SI
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -177,11 +177,11 @@ export default function Tables() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Perfil
+                EDITAR PERFIL
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
@@ -191,24 +191,21 @@ export default function Tables() {
                     disabled={true}
                     type="text"
                     hidden={true}
-                    //defaultValue={indice ? (indice.nombre):("")}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Perfil</FormLabel>
+                  <FormLabel>PERFIL</FormLabel>
                   <Input
                     autoFocus
                     defaultValue={indice ? indice.perfil : ''}
                     type="text"
-                    //defaultValue={item ? (item.perfil):("")}
-                    //defaultValue={indice ? (indice.nombre):("")}
                     onChange={e =>
                       setIndice({ ...indice, perfil: e.target.value })
                     }
                   />
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Descripcion</FormLabel>
+                  <FormLabel>DESCRIPCIÓN</FormLabel>
                   <Textarea
                     autoFocus
                     defaultValue={indice ? indice.descripcion : ''}
@@ -221,15 +218,15 @@ export default function Tables() {
                   />
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel>ESTADO</FormLabel>
                   <Select
                     defaultValue={indice ? indice.activo : ''}
                     onChange={e =>
                       setIndice({ ...indice, activo: e.target.value })
                     }
                   >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
+                    <option value="S">ACTIVO</option>
+                    <option value="N">INACTIVO</option>
                   </Select>
                 </FormControl>
               </ModalBody>
@@ -239,7 +236,7 @@ export default function Tables() {
                   colorScheme="green"
                   mr={3}
                 >
-                  Actualizar
+                  ACTUALIZAR
                 </Button>
                 <Button onClick={handleCloseEdit}>Cancelar</Button>
               </ModalFooter>
@@ -282,14 +279,12 @@ export default function Tables() {
       borderRadius="lg"
       overflow="hidden"
       boxShadow={'md'}
-      // color={useColorModeValue('white', 'gray.900')}
-      // bg={useColorModeValue('#770303', 'gray.900')}
       bg={useColorModeValue('white', 'gray.900')}
     >
     <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
           <Box>
             <Text fontSize='lg' fontWeight='600'>
-              Perfiles Table
+              TABLA DE PERFILES DEL USUARIO
             </Text>
           </Box>
           <Box>

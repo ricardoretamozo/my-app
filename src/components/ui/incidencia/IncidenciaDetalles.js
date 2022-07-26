@@ -11,21 +11,17 @@ import {
   FormControl,
   FormLabel,
   IconButton,
-  Input,
   Textarea,
-  HStack,
   Accordion,
   AccordionItem,
   AccordionButton,
   Box,
   AccordionIcon,
   AccordionPanel,
-  Flex,
-  Spacer,
   Text,
   SimpleGrid,
   Badge,
-  VStack,
+  useColorModeValue,
 } from '@chakra-ui/react';
 
 import { ViewIcon } from '@chakra-ui/icons';
@@ -33,6 +29,9 @@ import { ViewIcon } from '@chakra-ui/icons';
 import { fetchIncidencia } from '../../../actions/incidencia';
 
 const IncidenciaDetalles = props => {
+  const colorStatus = useColorModeValue('gray.700', 'white');
+  const bgAcordion = useColorModeValue('gray.100', 'gray.600');
+
   const [openCreate, setOpenCreate] = React.useState(false);
 
   const [detalleIncidencia, setDetalleIncidencia] = useState([]);
@@ -79,8 +78,9 @@ const IncidenciaDetalles = props => {
         variant={'outline'}
         colorScheme={'blue'}
         onClick={obtenerIncideciadetalle}
-        fontSize={'22px'}
+        fontSize={'20px'}
         size={'sm'}
+        _focus={{ boxShadow: "none" }}
       />
 
       <Drawer
@@ -92,49 +92,49 @@ const IncidenciaDetalles = props => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerHeader>
-            <HStack>
-              <Text>DETALLES DE LA INCIDENCIA</Text>
-              <Text fontWeight={'normal'}>{detalleIncidencia.idIncidencia}</Text>
-            </HStack>
+            <Box flex="1" textAlign="center" fontSize={'20px'}>
+              <Text as='u'>DETALLES DE LA INCIDENCIA</Text>              
+            </Box>
           </DrawerHeader>
-          <DrawerCloseButton />
-          <DrawerBody pb={6}>
-            <Flex> 
-              <Text fontWeight={'bold'}>FECHA DE CREACIÓN DE LA INCIDENCIA</Text>
-              <Spacer />
-              <Text>{detalleIncidencia.fecha}</Text>
-            </Flex>
-            <VStack spacing={'10px'}>
-              <HStack spacing={20} mt={4} w={'100%'}>
-                <FormControl>
-                  <FormLabel fontWeight={'semibold'}>MOTIVO</FormLabel>
-                  <Input size={'sm'} value={incidenciaMotivo.motivo} state={''} onChange={null} readOnly />
-                </FormControl>
-                <FormControl>
-                  <FormLabel fontWeight={'bold'}>ESTADO</FormLabel>
-                  <Badge size={'lg'} borderRadius={'sm'} fontSize='1rem' colorScheme={detalleIncidencia.estado === 'P' ? 'gray' : 'green'}>
-                  {detalleIncidencia.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
-                  </Badge>
-                </FormControl>
-              </HStack>
-              <FormControl>
-                <FormLabel fontWeight={'bold'}>DESCRIPCIÓN DE LA INCIDENCIA</FormLabel>
-                <Textarea size={'sm'} value={detalleIncidencia.descripcion} state={''} onChange={null} readOnly />
-              </FormControl>
-            </VStack>
-            {/* Acordion items */}
-            <Accordion defaultIndex={[0]} mt={4} allowToggle>
+          <DrawerCloseButton _focus={{ boxShadow: "none" }} />
+          <DrawerBody pb={2}>            
+            <Box flex="1" textAlign="center">
+                <SimpleGrid columns={2} spacing={1}>
+                  <Box>
+                      <Text fontSize={'14px'} fontWeight={'bold'}>FECHA Y HORA</Text>
+                      <Text fontSize={'13px'}>{detalleIncidencia.fecha}</Text>
+                  </Box>
+                  <Box>
+                      <Text fontSize={'14px'} fontWeight={'bold'}>ORIGEN</Text>
+                      <Text fontSize={'13px'}>{detalleIncidencia.origen}</Text>
+                  </Box>
+                </SimpleGrid>
+              </Box>
+            <Box flex="1" textAlign="center">
+                <SimpleGrid columns={2} spacing={1}>
+                  <Box>
+                      <Text fontSize={'14px'} fontWeight={'bold'}>MOTIVO</Text>
+                      <Text fontSize={'13px'}>{incidenciaMotivo.motivo}</Text>
+                  </Box>
+                  <Box>
+                      <Text fontSize={'14px'} fontWeight={'bold'} mb={-1}>ESTADO</Text>
+                      <Badge variant={'solid'} fontSize={'11px'} colorScheme={detalleIncidencia.estado === 'P' ? 'red' : detalleIncidencia.estado === 'T' ? 'yellow' : 'green'}>
+                        {detalleIncidencia.estado === 'P' ? 'PENDIENTE' : detalleIncidencia.estado === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
+                      </Badge>
+                  </Box>
+                </SimpleGrid>
+              </Box>
+              <Accordion defaultIndex={[0,1,2]} mt={1} allowMultiple mb={1}>
               <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" ml={0}  textAlign="left" fontWeight={'bold'}>
+                  <AccordionButton _focus={{ boxShadow: "none" }} _expanded={{ bg:bgAcordion, color: colorStatus }}>
+                    <Box flex="1" fontSize={'14px'} textAlign="center" fontWeight={'bold'}>
                       DETALLES DEL USUARIO
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                    <SimpleGrid columns={2} spacing={5}>
+                <AccordionPanel pb={2}>
+                  <Box flex="1" textAlign="center" fontSize={'13px'}>
+                    <SimpleGrid columns={2} spacing={1}>
                       <Box>
                           <Text fontWeight={'bold'}>NOMBRES</Text>
                           <Text>{incidenciaPersona.nombre}</Text>
@@ -152,20 +152,26 @@ const IncidenciaDetalles = props => {
                           <Text>{incidenciaPerfilPersona.perfil}</Text>
                       </Box>
                     </SimpleGrid>
+                  </Box>
                 </AccordionPanel>
               </AccordionItem>
-
-              <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" ml={0}  textAlign="left" fontWeight={'bold'}>
+              </Accordion>
+              <FormControl>
+                <FormLabel fontSize={'14px'} textAlign="center" fontWeight={'bold'}>DESCRIPCIÓN DE LA INCIDENCIA</FormLabel>
+                <Textarea fontSize={'13px'} textColor={'blue.500'} textAlign="center" size={'sm'} rows={2} value={detalleIncidencia.descripcion} state={''} onChange={null} readOnly />
+              </FormControl>
+            {/* Acordion items selector: row => format(new Date(row.fecha), "MM/dd/yyyy - HH:mm:ss"), */}
+            <Accordion defaultIndex={[0,1,2]} mt={1} allowMultiple>
+              <AccordionItem justifyContent={'center'} alignItems={'center'}>
+                  <AccordionButton _focus={{ boxShadow: "none" }} _expanded={{ bg:bgAcordion, color: colorStatus }}>
+                    <Box flex="1" textAlign="center" fontWeight={'bold'} fontSize={'14px'}>
                       DETALLES DE SEDE, ORGANO, OFICINA
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                    <SimpleGrid columns={2} spacing={4}>
+                <AccordionPanel pb={2}>
+                  <Box flex="1" textAlign="center" fontSize={'13px'}>
+                    <SimpleGrid columns={2} spacing={1}>
                       <Box>
                           <Text fontWeight={'bold'}>SEDE</Text>
                           <Text>{incidenciaSede.sede}</Text>
@@ -174,25 +180,25 @@ const IncidenciaDetalles = props => {
                           <Text fontWeight={'bold'}>ORGANO</Text>
                           <Text>{incidenciaOrgano.organo}</Text>
                       </Box>
+                      <Box>
+                          <Text fontWeight={'bold'}>OFICINA</Text>
+                          <Text>{incidenciaOficina.oficina}</Text>
+                      </Box>
                     </SimpleGrid>
-                    <Box mt={4}>
-                        <Text fontWeight={'bold'}>OFICINA</Text>
-                        <Text>{incidenciaOficina.oficina}</Text>
-                    </Box>
+                  </Box>
                 </AccordionPanel>
               </AccordionItem>
 
               <AccordionItem>
-                <h2>
-                  <AccordionButton>
-                    <Box flex="1" ml={0}  textAlign="left" fontWeight={'bold'}>
+                  <AccordionButton _focus={{ boxShadow: "none" }} _expanded={{ bg:bgAcordion, color: colorStatus }}>
+                    <Box flex="1" textAlign="center" fontWeight={'bold'} fontSize={'14px'}>
                       DETALLES DEL USUARIO ASIGNADO
                     </Box>
                     <AccordionIcon />
                   </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                    <SimpleGrid columns={2} spacing={5}>
+                <AccordionPanel pb={2}>
+                  <Box flex="1" textAlign="center" fontSize={'13px'}>
+                    <SimpleGrid columns={2} spacing={1}>
                       <Box>
                           <Text fontWeight={'bold'}>NOMBRES</Text>
                           <Text>{incidenciaPersonaAsignado.nombre}</Text>
@@ -210,15 +216,13 @@ const IncidenciaDetalles = props => {
                           <Text>{incidenciaPerfilPersonaAsignado.perfil}</Text>
                       </Box>
                     </SimpleGrid>
+                  </Box>
                 </AccordionPanel>
               </AccordionItem>
              
             </Accordion>
           </DrawerBody>
           <DrawerFooter>
-            {/* <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>
-              Guardar
-            </Button> */}
             <Button colorScheme={'blue'} onClick={handleCloseModal}>OK</Button>
           </DrawerFooter>
         </DrawerContent>

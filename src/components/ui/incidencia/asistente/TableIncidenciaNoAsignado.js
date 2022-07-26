@@ -26,6 +26,7 @@ import { store } from '../../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
+import { format } from "date-fns";
 
 import { asignarIncidencia } from '../../../../actions/incidencia';
 
@@ -73,12 +74,17 @@ export default function TableIncidenciaNoAsignados() {
   const columns = [
     {
       name: 'USUARIO',
-      selector: row => row.persona.nombre,
+      selector: row => row.persona.nombre + ' ' + row.persona.apellido,
       sortable: true,
     },
     {
-      name: 'FECHA',
-      selector: row => row.fecha,
+      name: 'IP',
+      selector: row => row.ip,
+      sortable: true,
+    },
+    {
+      name: 'FECHA Y HORA',
+      selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
       sortable: true,
     },
     {
@@ -93,15 +99,15 @@ export default function TableIncidenciaNoAsignados() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'A' ? 'green.400' : bgStatus}
-            color={row.estado === 'A' ? 'white' : colorStatus}
-            p="3px 10px"
-            w={24}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.estado === 'P' ? 'PENDIENTE' : 'SOLUCIONADO'}
+              bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+              color={'white'}
+              p="3px 10px"
+              w={24}
+              textAlign={'center'}
+              borderRadius={'md'}
+              fontSize={'10px'}
+            >
+              {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
         </div>
       ),
@@ -122,10 +128,11 @@ export default function TableIncidenciaNoAsignados() {
               variant={'solid'}
               colorScheme={'green'}
               onClick={() => handleClickOpenModal(row.idIncidencia)}
-              fontSize={'22px'}
+              fontSize='20px'
               size={'sm'}
-              ml={2}
-            />
+              ml={1}
+              _focus={{ boxShadow: "none" }}
+            />            
             <Modal
               isOpen={openModal}
               onClose={handleCloseModal}
@@ -134,7 +141,7 @@ export default function TableIncidenciaNoAsignados() {
               <ModalOverlay />
                 <ModalContent>
                   <ModalHeader>ASIGNAR A UN SOPORTE TÉCNICO</ModalHeader>
-                  <ModalCloseButton />
+                  <ModalCloseButton _focus={{ boxShadow: "none" }} />
                   <ModalBody pb={6}>
                     <FormControl>
                       <FormLabel>SOPORTES TÉCNICOS(DISPONIBLES)</FormLabel>
@@ -144,17 +151,17 @@ export default function TableIncidenciaNoAsignados() {
                       >
                         {tecnicosDisponibles.map((item, idx) => (
                           <option value={item.persona.idpersona} key={idx}>
-                            {item.persona.nombre}
+                            {item.persona.nombre + ' ' + item.persona.apellido}
                           </option>
                         ))}
                       </Select>
                     </FormControl>
                   </ModalBody>
                   <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={() => actualizarAsignacion(row.idIncidencia)}>
+                    <Button colorScheme="blue" _focus={{ boxShadow: "none" }} mr={3} onClick={() => actualizarAsignacion(row.idIncidencia)}>
                       ASIGNAR
                     </Button>
-                    <Button onClick={handleCloseModal}>CANCELAR</Button>
+                    <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                   </ModalFooter>
                 </ModalContent>
             </Modal>
@@ -162,6 +169,7 @@ export default function TableIncidenciaNoAsignados() {
         );
       },
       center: true,
+      width: '150px',
     },
   ];
 
@@ -192,6 +200,7 @@ export default function TableIncidenciaNoAsignados() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
+        paddingBottom={8}
       >
         <HStack
           spacing="24px"
@@ -202,7 +211,7 @@ export default function TableIncidenciaNoAsignados() {
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">
-              Incidencias No Asignadas
+              TABLA DE INCIDENCIAS NO ASIGNADAS
             </Text>
           </Box>
           <Box>
@@ -217,6 +226,7 @@ export default function TableIncidenciaNoAsignados() {
             ignoreRowClick={true}
             responsive={true}
             paginationPerPage={8}
+            noDataComponent="No hay datos para mostrar refresca la página"
             paginationRowsPerPageOptions={[8, 15, 20, 30]}
           />
         </DataTableExtensions>

@@ -67,20 +67,21 @@ const OrganoAgregar = () => {
 
 return (
     <>
-        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>AGREGAR</Button>
 
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size={'xl'}
         >
         <ModalOverlay />
         <ModalContent>
-            <ModalHeader>Agregar Nuevo Organo</ModalHeader>
+            <ModalHeader>AGREGAR NUEVO ORGANO</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
-                <FormLabel>Sede</FormLabel>
+                <FormLabel>SEDE</FormLabel>
                   <Select
                     // defaultValue={indice ? indice.sede.idSede : ''}
                     onChange={handleChangeSede}
@@ -93,28 +94,29 @@ return (
                   />
             </FormControl>
             <FormControl  mt={4} isRequired>
-                <FormLabel>Organo</FormLabel>
+                <FormLabel>ORGANO</FormLabel>
                 <Input 
                 onChange={(e)=> {setOrgano({ ...dataOrgano, organo: (e.target.value).toUpperCase() })}}
                 type={'text'}
+                style={{'text-transform':'uppercase'}}
                  />
             </FormControl>
             <FormControl mt={4}>
-                <FormLabel>Estado</FormLabel>
+                <FormLabel>ESTADO</FormLabel>
                 <ChakraSelect
                 defaultValue={dataOrgano.activo = 'S'}
                 onChange={(e)=> {setOrgano({...dataOrgano,activo:(e.target.value) })}}
                 >
-                <option value='S'>Activo</option>
-                <option value='N'>Inactivo</option>
+                <option value='S'>ACTIVO</option>
+                <option value='N'>INACTIVO</option>
                 </ChakraSelect>
             </FormControl>
             </ModalBody>
             <ModalFooter>
             <Button type={'submit'} onClick={()=>saveOrgano()} colorScheme={'blue'} autoFocus mr={3}>
-                Guardar
+                GUARDAR
             </Button>
-            <Button  onClick={handleCloseModal}>Cancelar</Button>
+            <Button  onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
         </ModalContent>
         </Modal>

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import Tables from './table';
+import Tables from './TablePersonaOrgano';
 import { perfilPersona } from '../../../actions/perfilPersona'; 
 import { types } from '../../../types/types';
 

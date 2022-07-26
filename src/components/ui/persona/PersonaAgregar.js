@@ -113,7 +113,7 @@ const PersonaAgregar = props => {
   return (
     <>
       <Button leftIcon={<AddIcon/>} size="sm" colorScheme={'blue'} onClick={handleClickOpenCreate}>
-        Agregar
+        AGREGAR
       </Button>
 
       <Modal
@@ -125,7 +125,7 @@ const PersonaAgregar = props => {
         <ModalOverlay />
         <form onSubmit={savePersona}>
           <ModalContent>
-            <ModalHeader>Agregar Nueva Persona</ModalHeader>
+            <ModalHeader>AGREGAR NUEVA PERSONA</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={2}>
               <Grid
@@ -153,23 +153,25 @@ const PersonaAgregar = props => {
               </Grid>
               <HStack spacing={'10px'} mt={5}>
                 <FormControl>
-                  <FormLabel>Nombres</FormLabel>
+                  <FormLabel>NOMBRES</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, nombre: e.target.value })
                     }
                     placeholder="Nombres"
+                    style={{'text-transform':'uppercase'}}
                     type={'text'}
                     isRequired
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Apellidos</FormLabel>
+                  <FormLabel>APELLIDOS</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, apellido: e.target.value })
                     }
                     placeholder="Apellidos"
+                    style={{'text-transform':'uppercase'}}
                     type={'text'}
                     isRequired
                   />
@@ -177,7 +179,7 @@ const PersonaAgregar = props => {
               </HStack>
               <HStack spacing={'10px'} mt={'10px'}>
                 <FormControl>
-                  <FormLabel>Usuario</FormLabel>
+                  <FormLabel>USUARIO</FormLabel>
                   <Input
                     defaultValue={(persona.usuario = persona.dni)}
                     onValueChange={persona.usuario}
@@ -189,11 +191,12 @@ const PersonaAgregar = props => {
                     }}
                     type={'text'}
                     placeholder="Usuario"
+                    style={{'text-transform':'uppercase'}}
                   />
                 </FormControl>
 
                 <FormControl>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>PASSWORD</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, password: e.target.value })
@@ -206,18 +209,19 @@ const PersonaAgregar = props => {
               </HStack>
               <HStack spacing={'10px'} mt={'10px'}>
                 <FormControl>
-                  <FormLabel>Correo</FormLabel>
+                  <FormLabel>CORREO</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, correo: e.target.value })
                     }
                     type={'email'}
                     placeholder="Correo"
+                    style={{'text-transform':'uppercase'}}
                     isRequired
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Nro Celular</FormLabel>
+                  <FormLabel>NRO CELULAR</FormLabel>
                   <Input
                     type={'text'}
                     placeholder="942123567"
@@ -230,7 +234,7 @@ const PersonaAgregar = props => {
 
               <HStack spacing={'10px'} mt={'10px'}>
                 <FormControl>
-                  <FormLabel>Fecha de Nacimiento</FormLabel>
+                  <FormLabel>FECHA DE NACIMIENTO</FormLabel>
                   <Input
                     type={'date'}
                     onChange={e =>
@@ -240,33 +244,33 @@ const PersonaAgregar = props => {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Sexo</FormLabel>
+                  <FormLabel>SEXO</FormLabel>
                   <Select
                     defaultValue={(persona.sexo = 'M')}
                     onChange={e => {
                       setPersona({ ...persona, sexo: e.target.value });
                     }}
                   >
-                    <option value="M">Masculino</option>
-                    <option value="F">Femenino</option>
+                    <option value="M">MASCULINO</option>
+                    <option value="F">FEMENINO</option>
                   </Select>
                 </FormControl>
               </HStack>
               <HStack spacing={'10px'} mt={'10px'}>
                 <FormControl>
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel>ESTADO</FormLabel>
                   <Select
                     defaultValue={(persona.activo = 'S')}
                     onChange={e => {
                       setPersona({ ...persona, activo: e.target.value });
                     }}
                   >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
+                    <option value="S">ACTIVO</option>
+                    <option value="N">INACTIVO</option>
                   </Select>
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Perfil Persona</FormLabel>
+                  <FormLabel>PERFIL PERSONA</FormLabel>
                   <Select
                     // defaultValue={
                     //   (persona.perfilPersona = dataPerfil[0].idPerfilPersona)
@@ -288,9 +292,9 @@ const PersonaAgregar = props => {
             </ModalBody>
             <ModalFooter>
               <Button type={'submit'} colorScheme={'blue'} mr={3}>
-                Guardar
+                GUARDAR
               </Button>
-              <Button onClick={handleCloseModal}>Cancelar</Button>
+              <Button onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

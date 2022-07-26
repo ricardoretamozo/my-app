@@ -43,9 +43,6 @@ export default function TableOficina() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
-  // const [dataOficina, setOficina] = useState(initialOficina);
   const [sedeNombre, setsedeNombre] = useState(null);
   const [organoSelect, setorganoSelect] = useState([
     { idOrgano: 0, organo: 'Seleccione una Sede' },
@@ -57,10 +54,8 @@ export default function TableOficina() {
 
   const data = store.getState().oficina.rows;
   const sedeData = store.getState().sede.rows;
-  console.log(sedeData);
   const dataOrgano = store.getState().organo.rows;
   var sedeInfo = sedeData;
-  // console.log(sedeInfo);
   var organoInfo = dataOrgano;
 
   const [indice, setIndice] = useState({
@@ -143,7 +138,6 @@ export default function TableOficina() {
     dispatch(deleteOficina(x))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Oficina eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -156,8 +150,6 @@ export default function TableOficina() {
     dispatch(updateOficina(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
-        console.log(indice);
       })
       .catch(e => {
         console.log(e);
@@ -169,7 +161,6 @@ export default function TableOficina() {
     // setsedeNombre(e.target.value);
     console.log(value);
     if (value == null) {
-      //setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     } else {
       var organo = organoInfo.filter(indice => indice.sede.idSede == value.value);
       console.log(organo);
@@ -267,29 +258,29 @@ export default function TableOficina() {
               size={'xs'}
               colorScheme={'blue'}
             >
-              Editar
+              EDITAR
             </Button>
             <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="lg" fontWeight="bold">
                     {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
+                      <Text>¿ESTÁ SEGURO DE ANULAR?</Text>
                     ) : (
-                      <Text>Esta seguro de activar?</Text>
+                      <Text>¿ESTÁ SEGURO DE ACTIVAR?</Text>
                     )}
                   </AlertDialogHeader>
 
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                  <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                   <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
+                    <Button onClick={handleCloseDelete}>CANCELAR</Button>
                     <Button
                       onClick={() => handleDeleteOficina(oficinaid)}
                       colorScheme="red"
                       ml={3}
                     >
-                      Si
+                      SI
                     </Button>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -298,11 +289,11 @@ export default function TableOficina() {
 
             {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-            <Modal isOpen={openedit} onClose={handleCloseEdit}>
+            <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader display={'flex'} justifyContent={'center'}>
-                  Editar Oficina
+                  EDITAR LA OFICINA
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody pb={6}>
@@ -315,11 +306,10 @@ export default function TableOficina() {
                     />
                   </FormControl>
                   <FormControl isRequired={true}>
-                    <FormLabel>Sede</FormLabel>
+                    <FormLabel>SEDE</FormLabel>
                     <Select
                       required
                       onChange={handleChange}
-                      // defaultValue={indice ? sedeNombre : ''}
                       defaultValue={optionsSede[optionsSedeindex]}
                       isRequired
                       isSearchable
@@ -328,22 +318,16 @@ export default function TableOficina() {
                     />
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Organo</FormLabel>
+                    <FormLabel>ORGANO</FormLabel>
                     <Select
-                      //defaultInputValue={indice ? indice.organo.organo : ''}
-                      //  getOptionLabel={option => option.label}
                       onChange={handleChangeOrgano}
-                      // defaultValue={organoSelect.map(organo => ({
-                      //   value: organo.idOrgano dddd,
-                      //   label: organo.organo
-                     // defaultValue={optionsOrganoindex ? optionsOrgano[optionsOrganoindex] : {value:0 , label:"Selecione una sede"}}
-                     defaultValue= {optionsOrgano[optionsOrganoindex]}
+                      defaultValue= {optionsOrgano[optionsOrganoindex]}
                       isClearable
                       options={optionsOrgano}
                     />
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Oficina</FormLabel>
+                    <FormLabel>OFICINA</FormLabel>
                     <Input
                       defaultValue={indice ? indice.oficina : ''}
                       type="text"
@@ -353,15 +337,15 @@ export default function TableOficina() {
                     />
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Estado</FormLabel>
+                    <FormLabel>ESTADO</FormLabel>
                     <SelectForm
                       defaultValue={indice ? indice.activo : ''}
                       onChange={e =>
                         setIndice({ ...indice, activo: e.target.value })
                       }
                     >
-                      <option value="S">Activo</option>
-                      <option value="N">Inactivo</option>
+                      <option value="S">ACTIVO</option>
+                      <option value="N">INACTIVO</option>
                     </SelectForm>
                   </FormControl>
                 </ModalBody>
@@ -371,9 +355,9 @@ export default function TableOficina() {
                     colorScheme="green"
                     mr={3}
                   >
-                    Actualizar
+                    ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>Cancelar</Button>
+                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>
@@ -425,7 +409,7 @@ export default function TableOficina() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            Oficinas Table
+            TABLA DE OFICINAS
           </Text>
         </Box>
         <Box>

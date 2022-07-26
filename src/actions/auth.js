@@ -35,6 +35,8 @@ export const startLogin = (dni, password) => {
         })
       );
       timerNotification('Inicio de Sesion Exitoso!');
+    } else if(response.status === 401){
+      notification('Login Error','El usuario no tiene permisos para usar esta cuenta, comuníquese con el administrador.','info');
     } else {
     notification( 'Login Error', 'Credenciales inválidas', 'error');
     }

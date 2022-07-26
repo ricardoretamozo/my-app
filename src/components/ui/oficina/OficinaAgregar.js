@@ -35,7 +35,6 @@ const OficinaAgregar = () => {
   const organoData = store.getState().organo.rows;
 
   var organoInfo = organoData;
-  console.log(organoData);
 
   const [indice, setIndice] = useState({
     idOrgano: null,
@@ -73,8 +72,6 @@ const OficinaAgregar = () => {
   const { oficina, organo, activo } = dataOficina;
 
   const handleChange = value => {
-    // setsedeNombre(e.target.value);
-    console.log(value);
     if (value == null) {
       setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     } else {
@@ -82,21 +79,17 @@ const OficinaAgregar = () => {
         organoInfo.filter(indice => indice.sede.idSede == value.value)
       );
     }
-    console.log(organoSelect);
   };
 
   //
   const handleChangeOrgano = value => {
-    console.log(value);
     setorganoNombre(value.value);
   };
 
   const saveOficina = () => {
-    console.log(organoNombre);
     var organo = organoNombre;
     dispatch(createOficina({ oficina, organo, activo }))
       .then(() => {
-        // console.log(dataOrgano);
         handleCloseModal(true);
       })
       .catch(err => {
@@ -107,7 +100,7 @@ const OficinaAgregar = () => {
   return (
     <>
       <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
-        Agregar
+        AGREGAR
       </Button>
 
       <Modal
@@ -117,22 +110,14 @@ const OficinaAgregar = () => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Agregar Nueva Oficina</ModalHeader>
+          <ModalHeader>AGREGAR NUEVA OFICINA</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            {/* <OficinaFilter props /> */}
             <FormControl isRequired={true}>
-              <FormLabel>Sede</FormLabel>
+              <FormLabel>SEDE</FormLabel>
               <Select
-                // defaultValue={indice ? indice.sede.idSede : ''}
-                // onChange={handleClickSelectSede(sedeData.idSede)}
-                // onClick={handleClickSelectSede("SELVA ALEGRE")}
-                // onChangeCapture={handleClickSelectSede(sedeData.idSede)}
-                // value={DataOrgano ? DataOrgano.sede : ''}
-                // value={sedeNombre}
                 required
                 onChange={handleChange}
-                // onChange={(e)=> { console.log(e.target.value); }}
                 isRequired
                 isSearchable
                 isClearable
@@ -143,7 +128,7 @@ const OficinaAgregar = () => {
               />
             </FormControl>
             <FormControl mt={4} isRequired={true}>
-              <FormLabel>Organo</FormLabel>
+              <FormLabel>ORGANO</FormLabel>
               <Select
                 onChange={handleChangeOrgano}
                 defaultValue={organoSelect.map(organo => ({
@@ -158,7 +143,7 @@ const OficinaAgregar = () => {
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Oficina</FormLabel>
+              <FormLabel>OFICINA</FormLabel>
               <Input
                 onChange={e => {
                   setOficina({
@@ -167,11 +152,12 @@ const OficinaAgregar = () => {
                   });
                 }}
                 placeholder="Oficina"
+                style={{'text-transform':'uppercase'}}
                 type={'text'}
               />
             </FormControl>
             <FormControl mt={4} isRequired>
-              <FormLabel>Estado</FormLabel>
+              <FormLabel>ESTADO</FormLabel>
               <SelectForm
                 defaultValue={(dataOficina.activo = 'S')}
                 onChange={e => {
@@ -180,8 +166,8 @@ const OficinaAgregar = () => {
                 // options={ estados }
                 autoFocus={true}
               >
-                <option value="S">Activo</option>
-                <option value="N">Inactivo</option>
+                <option value="S">ACTIVO</option>
+                <option value="N">INACTIVO</option>
               </SelectForm>
             </FormControl>
           </ModalBody>
@@ -193,9 +179,9 @@ const OficinaAgregar = () => {
               autoFocus
               mr={3}
             >
-              Guardar
+              GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

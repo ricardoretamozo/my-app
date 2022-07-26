@@ -105,14 +105,14 @@ export default function CorreoCrear() {
     <>
       <Box bg={bg} w={'100%'} borderWidth="1px" borderRadius={'lg'} p={6}>
         <Heading as="h3" pb={4} size="sm">
-          Nuevo Mensaje
+          NUEVO MENSAJE
         </Heading>
         <Divider />
         <form onSubmit={guadarCorreo}>
           <Box bg={bg} color={textColor} mt={4}>
             <VStack spacing={4}>
               <FormControl>
-                <FormLabel>Selecciona el Destinatario</FormLabel>
+                <FormLabel>SELECCIONE EL DESTINATARIO</FormLabel>
                 <Select
                   onChange={handleChangeDestinatario}
                   options={personaData.map(persona => ({
@@ -133,6 +133,7 @@ export default function CorreoCrear() {
                   }
                   variant="flushed"
                   placeholder="Asunto"
+                  style={{'text-transform':'uppercase'}}
                 />
               </FormControl>
               <FormControl isRequired>
@@ -144,6 +145,7 @@ export default function CorreoCrear() {
                     })
                   }
                   placeholder="Escribe el Mensaje..."
+                  style={{'text-transform':'uppercase'}}
                   variant={'flushed'}
                   rows={7}
                   isRequired
@@ -159,7 +161,7 @@ export default function CorreoCrear() {
                   float={'right'}
                   type="submit"
                 >
-                  Enviar
+                  ENVIAR
                 </Button>
               </FormControl>
             </VStack>

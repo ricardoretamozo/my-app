@@ -61,19 +61,20 @@ return (
         >
         <ModalOverlay />
         <ModalContent>
-            <ModalHeader>Agregar Nuevo Cargo</ModalHeader>
+            <ModalHeader>AGREGAR NUEVO CARGO</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
             <FormControl>
-                <FormLabel>Cargo</FormLabel>
+                <FormLabel>CARGO</FormLabel>
                 <Input 
                 onChange={(e)=> {setCargo({ ...dataCargo, cargo: (e.target.value).toUpperCase() })}}
+                style={{'text-transform':'uppercase'}}
                 placeholder='Cargo'
                 isRequired={true}
                 type={'text'} />
             </FormControl>
             <FormControl mt={4} isRequired>
-                <FormLabel>Estado</FormLabel>
+                <FormLabel>ESTADO</FormLabel>
                 <Select
                 defaultValue={dataCargo.activo = 'S'}
                 onChange={(e)=> {setCargo({...dataCargo,activo:(e.target.value) })}}
@@ -85,9 +86,9 @@ return (
             </ModalBody>
             <ModalFooter>
             <Button onClick={()=>saveCargo()} colorScheme={'blue'} autoFocus mr={3}>
-                Guardar
+                GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button onClick={handleCloseModal}>CANCELAR</Button>
             </ModalFooter>
         </ModalContent>
         </Modal>

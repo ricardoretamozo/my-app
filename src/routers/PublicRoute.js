@@ -8,16 +8,19 @@ export const PublicRoute = ({
   component: Component,
   ...rest
 }) => {
-  console.log(isAuthenticated);
-
   return (
     <Route
       {...rest}
       component={props =>
         !isAuthenticated ? (
           <Component {...props} />
-        ) : ((rol == '[COORDINADOR INFORMATICO]' || rol == '[SOPORTE TECNICO]' || rol == '[ASISTENTE INFORMATICO]')  ? (
-          <Redirect to="/dashboard/home" />
+        ) : (
+        (rol == '[COORDINADOR INFORMATICO]') ? (
+          <Redirect to="/dashboard/incidencias"/>
+        ) : (rol == '[ASISTENTE INFORMATICO]') ? (
+          <Redirect to="/dashboard/incidencias_asignadas"/>
+        ) : (rol == '[SOPORTE TECNICO]') ? (
+          <Redirect to="/dashboard/soporte/incidencias" />
         ) : (
           <Redirect to="/usuario" />
         ))

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import {
   Box,
   Button,
@@ -17,7 +17,7 @@ import {
   Heading,
   AlertDialogCloseButton,
 } from '@chakra-ui/react';
-import { CheckIcon, CalendarIcon } from '@chakra-ui/icons';
+import { CalendarIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
 
@@ -28,25 +28,40 @@ import 'react-data-table-component-extensions/dist/index.css';
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
 import IncidenciaAtender from './IncidenciaAtender';
-import { format } from "date-fns";
+import { incidenciaEnTramite, fetchIncidenciaSoporte } from '../../../../actions/incidencia';
+import { getIncidenciasAsignadasId } from './incidencia';
+import Moment from 'moment';
 
 export default function TableIncidenciaSoporte() {
-  const [opendelete, setOpenDelete] = React.useState(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
   const { identificador } = useSelector(state => state.auth);
-
-  const bgStatus = useColorModeValue('blue.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
+  const dispatch = useDispatch();
+  const [idIncidencia, setIndiceIncidencia] = React.useState(null);
 
   const data = store.getState().incidenciasAsignadasSoporte.rows;
+  const fetchDataIncidencias = async () => {
+    await fetchIncidenciaSoporte(identificador).then((res)=>{
+      dispatch(getIncidenciasAsignadasId(res));
+    });
+  }
 
-  // const [userorgano, setOrgano] = useState(initialOrgano);
+  const UpdateStatusIncidencia = (id) => {
+    dispatch(incidenciaEnTramite(id))
+    .then(() => {
+      setOpenAlert(false);
+      fetchDataIncidencias();
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
 
-  const handleClickOpenDelete = index => {
-    setOpenDelete(true);
+  const handleClickOpenAlert = index => {
+    setIndiceIncidencia(index);
+    setOpenAlert(true);
   };
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
   };
 
   const columns = [
@@ -67,7 +82,7 @@ export default function TableIncidenciaSoporte() {
     },
     {
         name: 'FECHA Y HORA',
-        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
+        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -79,7 +94,7 @@ export default function TableIncidenciaSoporte() {
           <Badge
             bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
             color={'white'}
-            p="3px 10px"
+            p="4px 10px"
             w={24}
             textAlign={'center'}
             borderRadius={'md'}
@@ -101,20 +116,24 @@ export default function TableIncidenciaSoporte() {
             rowId = {row.idIncidencia}
             identificador = { identificador }
           />
-          <IconButton
-            icon={<CalendarIcon />}
-            variant={'outline'}
-            colorScheme={'yellow'}
-            onClick={() => handleClickOpenDelete(row.idIncidencia)}
-            fontSize='20px'
-            size={'sm'}
-            ml={1}
-            _focus={{ boxShadow: "none" }}
-          />
+          {row.estado !== 'T' ? (
+            <IconButton
+              icon={<CalendarIcon />}
+              variant={'outline'}
+              colorScheme={'yellow'}
+              onClick={() => handleClickOpenAlert(row.idIncidencia)}
+              fontSize='20px'
+              size={'sm'}
+              ml={1}
+              _focus={{ boxShadow: "none" }}
+            />
+            ):( null )
+          }
+          
           <IncidenciaAtender 
             rowId = {row.idIncidencia}
           />
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'3xl'}>
+            <AlertDialog isOpen={openAlert} onClose={handleCloseAlert} size={'3xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="xl" fontWeight="bold" textAlign={'center'}>
@@ -130,11 +149,12 @@ export default function TableIncidenciaSoporte() {
                   </Box>
                   </AlertDialogBody>
                   <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>NO</Button>
+                    <Button onClick={handleCloseAlert} _focus={{ boxShadow: "none" }}>NO</Button>
                     <Button
                       colorScheme="red"
                       ml={3}
                       _focus={{ boxShadow: "none" }}
+                      onClick={() => UpdateStatusIncidencia(idIncidencia)}
                     >
                       SI
                     </Button>

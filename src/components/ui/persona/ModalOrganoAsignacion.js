@@ -33,7 +33,6 @@ import {
 } from '../../../actions/personaOrgano';
 
 export default function ModalOrganoAsignacion(props) {
-  console.log(props);
 
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
@@ -96,9 +95,7 @@ export default function ModalOrganoAsignacion(props) {
   const closeModalCreate = () => {
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
-    //resetear persona organo
     fetchDataPersonaOrgano(props.usuario.idpersona);
-    console.log('cerrar');
     setOpenModalCreate(false);
   };
 
@@ -128,9 +125,6 @@ export default function ModalOrganoAsignacion(props) {
     closeModalCreate();
   };
 
-  console.log(organoNombre);
-  console.log(organoSelect);
-  console.log(props.personaOrgano);
   return (
     <>
       <AlertaDialogo

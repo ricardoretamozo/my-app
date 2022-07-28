@@ -23,7 +23,7 @@ import { store } from '../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import { format } from "date-fns";
+import Moment from 'moment';
 
 import IncidenciaDetalles from './IncidenciaDetalles';
 import IncidenciaAgregar from './IncidenciaAgregar';
@@ -32,17 +32,10 @@ export default function TableIncidencia() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const { identificador } = useSelector(state => state.auth);
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
-
   const data = store.getState().incidencia.rows;
   const incidenciasPendientes = data.filter(row => row.estado === 'P');
-  const incidenciasAsignadas = data.filter(row => row.estado === 'A');
-  const incidenciasSolucionadas = data.filter(row => row.estado === 'S');
-
-  // const [userorgano, setOrgano] = useState(initialOrgano);
+  const incidenciasEnTramite = data.filter(row => row.estado === 'T');
+  const incidenciasAtendidas = data.filter(row => row.estado === 'A');
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
@@ -66,7 +59,7 @@ export default function TableIncidencia() {
     },
     {
         name: 'FECHA Y HORA',
-        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
+        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -200,7 +193,7 @@ export default function TableIncidencia() {
             justify={'center'}
             py={2}
             px={3}
-            bg="red.600"
+            bg="gray.400"
             _dark={{ bg: "gray.700" }}
           >
             <chakra.span
@@ -236,7 +229,7 @@ export default function TableIncidencia() {
             justify={'center'}
             py={2}
             px={3}
-            bg="gray.400"
+            bg="red.600"
             _dark={{ bg: "gray.700" }}
           >
             <chakra.span
@@ -280,7 +273,7 @@ export default function TableIncidencia() {
               color="gray.200"
               _dark={{ color: "gray.200" }}
             >
-              {incidenciasAsignadas.length}
+              {incidenciasEnTramite.length}
             </chakra.span>
           </Flex>
         </Box>
@@ -308,7 +301,7 @@ export default function TableIncidencia() {
             justify={'center'}
             py={2}
             px={3}
-            bg="blue.400"
+            bg="blue.500"
             _dark={{ bg: "gray.700" }}
           >
             <chakra.span
@@ -316,7 +309,7 @@ export default function TableIncidencia() {
               color="white"
               _dark={{ color: "gray.200" }}
             >
-              {incidenciasSolucionadas.length}
+              {incidenciasAtendidas.length}
             </chakra.span>
           </Flex>
         </Box>
@@ -353,9 +346,9 @@ export default function TableIncidencia() {
           pagination
           ignoreRowClick={true}
           responsive={true}
-          paginationPerPage={6}
+          paginationPerPage={5}
           noDataComponent="No hay datos para mostrar refresca la página"
-          paginationRowsPerPageOptions={[6, 15, 20, 30]}
+          paginationRowsPerPageOptions={[5, 15, 20, 30]}
         />
       </DataTableExtensions>
     </Box>

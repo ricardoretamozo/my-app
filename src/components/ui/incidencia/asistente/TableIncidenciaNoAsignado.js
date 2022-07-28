@@ -26,7 +26,7 @@ import { store } from '../../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import { format } from "date-fns";
+import Moment from 'moment';
 
 import { asignarIncidencia } from '../../../../actions/incidencia';
 
@@ -37,11 +37,12 @@ export default function TableIncidenciaNoAsignados() {
   const [openModal, setOpenModal] = React.useState(false);
   const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
+  const usuario = store.getState().auth;
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
+  // const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  // const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().incidenciasNoAsignadas.rows;
   const tecnicosDisponibles = store.getState().tecnicoDisponible.rows;
@@ -84,7 +85,7 @@ export default function TableIncidenciaNoAsignados() {
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
     },
     {
@@ -123,6 +124,7 @@ export default function TableIncidenciaNoAsignados() {
               rowId={row.idIncidencia}
               identificador={identificador}
             />
+            {usuario.rol === '[SOPORTE TECNICO]' ? (null) : (
             <IconButton
               icon={<AddIcon />}
               variant={'solid'}
@@ -132,7 +134,8 @@ export default function TableIncidenciaNoAsignados() {
               size={'sm'}
               ml={1}
               _focus={{ boxShadow: "none" }}
-            />            
+            />       
+            )}
             <Modal
               isOpen={openModal}
               onClose={handleCloseModal}

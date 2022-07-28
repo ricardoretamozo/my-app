@@ -72,14 +72,15 @@ return (
                 onChange={(e)=> {setPerfil({ ...userperfil, perfil: (e.target.value).toUpperCase() })}}
                 placeholder='Perfil'
                 type={'text'}
-                style={{'text-transform':'uppercase'}} />
+                textTransform='uppercase'
+                />
             </FormControl>
             <FormControl mt={4} isRequired={true}>
                 <FormLabel>DESCRIPCIÓN</FormLabel>
                 <Textarea
                 onChange={(e)=> {setPerfil({ ...userperfil, descripcion: (e.target.value) })}} 
                 placeholder='Descripcion'
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 />
             </FormControl>
             <FormControl mt={4} isRequired>

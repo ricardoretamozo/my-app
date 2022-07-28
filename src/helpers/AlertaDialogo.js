@@ -12,7 +12,6 @@ import {
 
 export default function AlertaDialogo(props) {
   const cancelRef = React.useRef();
-  console.log(props);
 
   return (
     <>

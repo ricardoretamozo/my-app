@@ -52,6 +52,22 @@ export const asignarIncidencia = (id, data) => {
   };
 };
 
+// ACTUALIZAR EL ESTADO DE LA INCIDENCIA EN TRÁMITE
+export const incidenciaEnTramite = (id) => {
+  return async dispatch => {
+    const response = await fetchToken(`incidencias/tramite/${id}`,'', 'PUT');
+    const body = await response.json();
+    if (response.status === 200 || response.status === 201) {
+      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
+      dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
+      notification('Incidencia actualizada correctamente.', body.message, 'success');
+    }
+    else {
+      notification('No se pudo actualizar el estado de la Incidencia', body.message, 'error');
+    }
+  };
+};
+
 
 export const fetchIncidencias = async () => {
   const response = await fetchToken('incidencias');
@@ -285,6 +301,7 @@ export const fetchTecnicosDisponibles = async () => {
       nombre: body.nombre,
       apellido: body.apellido,
       dni: body.dni,
+      oficina: body.oficina
     };
     // PersonasDni.data = data;
     // set user info

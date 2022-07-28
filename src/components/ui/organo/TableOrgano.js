@@ -138,7 +138,6 @@ export default function TableOrgano() {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
-        console.log(row);
         return (
           <div>
             <Switch
@@ -219,6 +218,7 @@ export default function TableOrgano() {
                     <Input
                       defaultValue={indice ? indice.organo : ''}
                       type="text"
+                      textTransform='uppercase'
                       onChange={e =>
                         setIndice({ ...indice, organo: e.target.value })
                       }

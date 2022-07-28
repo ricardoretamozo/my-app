@@ -20,7 +20,7 @@ import { store } from '../../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-import { format } from "date-fns";
+import Moment from 'moment';
 
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
@@ -31,8 +31,8 @@ export default function TableIncidenciaAsignados() {
 
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
+  // const bgStatus = useColorModeValue('gray.400', '#1a202c');
+  // const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().incidenciasAsignadas.rows;
 
@@ -53,7 +53,7 @@ export default function TableIncidenciaAsignados() {
     },
     {
         name: 'FECHA Y HORA',
-        selector: row => format(new Date(row.fecha), "dd/MM/yyyy - HH:mm:ss"),
+        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
         sortable: true,
     },
     {

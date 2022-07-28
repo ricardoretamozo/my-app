@@ -80,14 +80,7 @@ const IncidenciaAgregar = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     });
-    
   }
-  useEffect(() => {
-    
-    if(store.getState().incidenciaId.checking){
-      fetchDataId();
-    }
-  });
 
   const saveHistorialPersona = e => {
     e.preventDefault();
@@ -130,7 +123,7 @@ const IncidenciaAgregar = () => {
 
   return (
     <>
-      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
+      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'} _focus={{ boxShadow: "none" }}>
         NUEVA INCIDENCIA
       </Button>
 
@@ -145,7 +138,7 @@ const IncidenciaAgregar = () => {
         <form onSubmit={saveHistorialPersona}>
           <ModalContent>
             <ModalHeader>CREAR NUEVA INCIDENCIA</ModalHeader>
-            <ModalCloseButton />
+            <ModalCloseButton _focus={{ boxShadow: "none" }} />
             <ModalBody pb={6}>
               <FormControl isRequired>
                 <FormLabel>MOTIVO</FormLabel>
@@ -197,32 +190,20 @@ const IncidenciaAgregar = () => {
                       />
                     }
                   />
-                  <Input placeholder="DIGITE EL DNI" required
-                    onChange={e => {
-                      setUsuarioDNI(e.target.value)
-                    }}
-                  />
+                  <Input placeholder="DIGITE EL DNI" onChange={e => {setUsuarioDNI(e.target.value)}} isRequired/>
                 </InputGroup>
             </FormControl>
             <FormControl isRequired>
                 <FormLabel>NOMBRE DEL USUARIO</FormLabel>
-                <Input 
-                  value={usuarioData.nombre}
-                  onChange={e => {
-                    setIndiceIncidencia({
-                      ...indiceIncidencia,
-                      persona: e.target.value,
-                    });
-                  }}
-                readOnly/>
+                <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} readOnly isDisabled/>
             </FormControl>
             </HStack>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3}>
+              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

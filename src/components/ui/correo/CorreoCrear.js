@@ -133,7 +133,7 @@ export default function CorreoCrear() {
                   }
                   variant="flushed"
                   placeholder="Asunto"
-                  style={{'text-transform':'uppercase'}}
+                  textTransform='uppercase'
                 />
               </FormControl>
               <FormControl isRequired>
@@ -145,7 +145,7 @@ export default function CorreoCrear() {
                     })
                   }
                   placeholder="Escribe el Mensaje..."
-                  style={{'text-transform':'uppercase'}}
+                  textTransform='uppercase'
                   variant={'flushed'}
                   rows={7}
                   isRequired

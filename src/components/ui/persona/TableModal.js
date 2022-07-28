@@ -91,7 +91,6 @@ import {
         })
       )
         .then(() => {
-          console.log(persona);
           handleCloseModal(true);
         })
         .catch(error => {
@@ -131,6 +130,7 @@ import {
                       }
                       placeholder="Nombres"
                       type={'text'}
+                      textTransform='uppercase'
                       isRequired
                     />
                   </FormControl>
@@ -142,6 +142,7 @@ import {
                       }
                       placeholder="Apellidos"
                       type={'text'}
+                      textTransform='uppercase'
                       isRequired
                     />
                   </FormControl>
@@ -160,6 +161,7 @@ import {
                       }}
                       type={'text'}
                       placeholder="Usuario"
+                      textTransform='uppercase'
                     />
                   </FormControl>
   

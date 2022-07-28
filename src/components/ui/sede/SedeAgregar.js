@@ -72,7 +72,7 @@ return (
                 <Input 
                 onChange={(e)=> {setSede({ ...dataSede, sede: (e.target.value).toUpperCase() })}}
                 placeholder='Nombre de la sede'
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 isRequired={true}
                 type={'text'} />
             </FormControl>
@@ -81,7 +81,7 @@ return (
                 <Input
                 onChange={(e)=> {setSede({ ...dataSede, direccion: (e.target.value) })}} 
                 placeholder='Av Arequipa 202'
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 type={'text'}
                 />
             </FormControl>

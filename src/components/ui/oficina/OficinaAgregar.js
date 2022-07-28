@@ -107,6 +107,7 @@ const OficinaAgregar = () => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size={'xl'}
       >
         <ModalOverlay />
         <ModalContent>
@@ -152,7 +153,7 @@ const OficinaAgregar = () => {
                   });
                 }}
                 placeholder="Oficina"
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 type={'text'}
               />
             </FormControl>

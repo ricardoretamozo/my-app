@@ -199,6 +199,7 @@ export default function TableSede() {
                   <Input
                     defaultValue={indice ? indice.sede : ''}
                     type="text"
+                    textTransform='uppercase'
                     onChange={e =>
                       setIndice({ ...indice, sede: e.target.value })
                     }
@@ -213,6 +214,7 @@ export default function TableSede() {
                     }
                     placeholder="Dirección"
                     type="text"
+                    textTransform='uppercase'
                   />
                 </FormControl>
                 <FormControl mt={4}>

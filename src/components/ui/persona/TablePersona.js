@@ -91,13 +91,6 @@ export default function TablePersona() {
   const data = store.getState().persona.rows;
   const dataPerfil = store.getState().perfilPersona.rows;
 
-  const sedeData = store.getState().sede.rows;
-  const organoData = store.getState().organo.rows;
-
-  var organoInfo = organoData;
-
-  console.log(data);
-
   const [indice, setIndice] = useState({
     nombre: '',
     apellido: '',
@@ -358,15 +351,13 @@ export default function TablePersona() {
             isChecked={row.activo === 'S'}
             onChange={() => handleClickOpenDelete(row.idpersona)}
           />
-          <Tooltip hasArrow label={'EDITAR'}>
-            <Button
-              onClick={() => handleClickOpenEdit(row)}
-              size={'xs'}
-              colorScheme={'blue'}
-            >
-              <EditIcon />
-            </Button>
-          </Tooltip>
+          <Button
+            onClick={() => handleClickOpenEdit(row)}
+            size={'xs'}
+            colorScheme={'blue'}
+          >
+            <EditIcon />
+          </Button>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
@@ -419,7 +410,7 @@ export default function TablePersona() {
                           setIndice({ ...indice, dni: e.target.value })
                         }
                         placeholder="ingrese su DNI"
-                        type={'text'}
+                        type={'text'}                        
                       />
                     </GridItem>
                     <GridItem h="10" colSpan={1}>
@@ -435,10 +426,11 @@ export default function TablePersona() {
                       <Input
                         defaultValue={indice ? indice.nombre : ''}
                         onChange={e =>
-                          setIndice({ ...indice, nombre: e.target.value })
+                          setIndice({ ...indice, nombre: (e.target.value).toUpperCase() })
                         }
                         placeholder="Nombres"
                         type={'text'}
+                        textTransform='uppercase'
                       />
                     </FormControl>
                     <FormControl>
@@ -446,10 +438,11 @@ export default function TablePersona() {
                       <Input
                         defaultValue={indice ? indice.apellido : ''}
                         onChange={e =>
-                          setIndice({ ...indice, apellido: e.target.value })
+                          setIndice({ ...indice, apellido: (e.target.value).toUpperCase() })
                         }
                         placeholder="Apellidos"
                         type={'text'}
+                        textTransform='uppercase'
                       />
                     </FormControl>
                   </HStack>
@@ -463,6 +456,7 @@ export default function TablePersona() {
                         }
                         placeholder="Usuario"
                         type={'text'}
+                        textTransform='uppercase'
                       />
                     </FormControl>
                     <FormControl isRequired={true}>

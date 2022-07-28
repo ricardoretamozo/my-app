@@ -50,8 +50,6 @@ export default function TableCargo() {
 
   const data = store.getState().cargo.rows;
 
-  console.log(data);
-
   const [indice, setIndice] = useState({
     idCargo: null,
     cargo: "",
@@ -143,19 +141,19 @@ export default function TableCargo() {
             size={'xs'}
             colorScheme={'blue'}
           >
-            Editar
+            EDITAR
           </Button>
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {row.activo == 'S' ? <Text>Esta seguro de anular?</Text> : <Text>Está seguro de activar?</Text>}
+                  {row.activo === 'S' ? <Text>ESTA SEGURO DE ANULAR?</Text> : <Text>ESTÁ SEGURO DE ACTIVAR?</Text>}
                 </AlertDialogHeader>
 
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
+                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
                     onClick={() =>
                       handleDeleteCargo(row.idCargo)
@@ -163,7 +161,7 @@ export default function TableCargo() {
                     colorScheme="red"
                     ml={3}
                   >
-                    Si
+                    SI
                   </Button>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -172,11 +170,11 @@ export default function TableCargo() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'lg'}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
-                Editar Cargo
+                EDITAR CARGO
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
@@ -189,25 +187,26 @@ export default function TableCargo() {
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>Cargo</FormLabel>
+                  <FormLabel>CARGO</FormLabel>
                   <Input
                     defaultValue={indice ? indice.cargo : ''}
                     type="text"
+                    textTransform='uppercase'
                     onChange={e =>
                       setIndice({ ...indice, cargo: e.target.value })
                     }
                   />
                 </FormControl>
                 <FormControl mt={4}>
-                  <FormLabel>Estado</FormLabel>
+                  <FormLabel>ESTADO</FormLabel>
                   <Select
                     defaultValue={indice ? indice.activo : ''}
                     onChange={e =>
                       setIndice({ ...indice, activo: e.target.value })
                     }
                   >
-                    <option value="S">Activo</option>
-                    <option value="N">Inactivo</option>
+                    <option value="S">ACTIVO</option>
+                    <option value="N">INACTIVO</option>
                   </Select>
                 </FormControl>
               </ModalBody>
@@ -217,9 +216,9 @@ export default function TableCargo() {
                   colorScheme="green"
                   mr={3}
                 >
-                  Actualizar
+                  ACTUALIZAR
                 </Button>
-                <Button onClick={handleCloseEdit}>Cancelar</Button>
+                <Button onClick={handleCloseEdit}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
@@ -264,7 +263,7 @@ export default function TableCargo() {
     <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
           <Box>
             <Text fontSize='lg' fontWeight='600'>
-              Cargos Table
+              TABLA DE CARGOS
             </Text>
           </Box>
           <Box>

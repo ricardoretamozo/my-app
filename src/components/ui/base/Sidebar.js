@@ -10,7 +10,6 @@ import {
   Icon,
   useColorModeValue,
   Link as LinkB,
-  Button,
   Drawer,
   DrawerContent,
   Text,
@@ -47,7 +46,7 @@ import { useDispatch } from 'react-redux';
 
 const LinkItemsCoordinadorInformatico = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'Toda las Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
+  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
   { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
@@ -60,6 +59,7 @@ const LinkItemsCoordinadorInformatico = [
 ];
 
 const LinkItemsAsistenteInformatico = [
+  { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
   { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
   { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
@@ -69,11 +69,10 @@ const LinkItemsAsistenteInformatico = [
   { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
   { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
+  { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];
 
 const LinkItemsSoporteTecnico = [
-  { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
-  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Mis Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
@@ -93,7 +92,7 @@ export default function SidebarWithHeader({ componente: Component }) {
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
         onClose={() => onClose}
-        display={{ base: 'none', md: 'block' }}
+        display={{ base: 'none', md: 'none', lg: 'block' }}
       />
       <Drawer
         autoFocus={false}
@@ -110,7 +109,7 @@ export default function SidebarWithHeader({ componente: Component }) {
       </Drawer>
       {/* mobilenav */}
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 56 }} p="4">
+      <Box ml={{ base: 0, md: 0, lg: 56 }} p="4">
         <Component />
       </Box>
     </Box>
@@ -127,7 +126,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      w={{ base: 'full', md: 56 }}
+      w={{ base: 'full', md: 'full', lg: 56 }}
       pos="fixed"
       h="full"
       {...rest}
@@ -136,12 +135,12 @@ const SidebarContent = ({ onClose, ...rest }) => {
         <Text fontSize="2xl" color={useColorModeValue('red.700', 'white')} fontWeight="bold">
           Service Desk
         </Text>
-        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
+        <CloseButton display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} />
       </Flex>
       {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 
         LinkItemsCoordinadorInformatico.map(link => (
           <LinkA to={link.ruta}>
-            <NavItem icon={link.icon}>
+            <NavItem as="li" icon={link.icon}>
               {link.name}
             </NavItem>
           </LinkA>
@@ -149,7 +148,7 @@ const SidebarContent = ({ onClose, ...rest }) => {
       ) : usuario.rol === '[ASISTENTE INFORMATICO]' ?  (
         LinkItemsAsistenteInformatico.map(link => (
             <LinkA to={link.ruta}>
-              <NavItem icon={link.icon}>
+              <NavItem as="li" icon={link.icon}>
                 {link.name}
               </NavItem>
             </LinkA>
@@ -157,14 +156,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
         ) : usuario.rol === '[SOPORTE TECNICO]' ?  (
           LinkItemsSoporteTecnico.map(link => (
               <LinkA to={link.ruta}>
-                <NavItem icon={link.icon}>
+                <NavItem as="li" icon={link.icon}>
                   {link.name}
                 </NavItem>
               </LinkA>
             )) 
         ) : LinkItemsUsuarioComun.map(link => (
           <LinkA to={link.ruta}>
-            <NavItem icon={link.icon}>
+            <NavItem as="li" icon={link.icon}>
               {link.name}
             </NavItem>
           </LinkA>
@@ -224,20 +223,20 @@ const MobileNav = ({ onOpen, ...rest }) => {
   };
   return (
     <Flex
-      ml={{ base: 4, md: 60 }}
-      mr={{ base: 4, md: 4 }}
-      px={{ base: 4, md: 4 }}
+      ml={{ base: 4, md: 4, lg: 60 }}
+      mr={{ base: 4, md: 4, lg: 4 }}
+      px={{ base: 4, md: 4, lg: 4 }}
       height="20"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
       borderWidth="1px"
       borderRadius={'md'}
       borderColor={useColorModeValue('gray.200', 'gray.700')}
-      justifyContent={{ base: 'space-between', md: 'flex-end' }}
+      justifyContent={{ base: 'space-between', md: 'space-between', lg: 'flex-end' }}
       {...rest}
     >
       <IconButton
-        display={{ base: 'flex', md: 'none' }}
+        display={{ base: 'flex', md: 'flex', lg: 'none' }}
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
@@ -245,20 +244,21 @@ const MobileNav = ({ onOpen, ...rest }) => {
       />
 
       <Text
-        display={{ base: 'flex', md: 'none' }}
+        display={{ base: 'flex', md: 'flex', lg: 'none' }}
         fontSize="2xl"
         fontWeight="bold"
       >
         Service Desk
       </Text>
 
-      <HStack spacing={{ base: '2', md: '2' }}>        
+      <HStack spacing={{ base: '2', md: '2', lg: '2' }}>        
         <LinkA to="/dashboard/correos">
           <IconButton
             size="lg"
             variant="ghost"
             aria-label="open menu"
             icon={<FiMail />}
+            _focus={{ boxShadow: "none" }}
           />
         </LinkA>
         <IconButton
@@ -266,10 +266,15 @@ const MobileNav = ({ onOpen, ...rest }) => {
           variant="ghost"
           aria-label="open menu"
           icon={<FiBell />}
+          _focus={{ boxShadow: "none" }}
         />
-        <Button onClick={toggleColorMode}>
-          {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-        </Button>
+        <IconButton 
+          size="lg"
+          variant="ghost"
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          _focus={{ boxShadow: "none" }}
+          onClick={toggleColorMode}
+        />
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton

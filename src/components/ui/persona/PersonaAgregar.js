@@ -34,7 +34,6 @@ const PersonaAgregar = props => {
   const dispatch = useDispatch();
 
   const dataPerfil = store.getState().perfilPersona.rows;
-  // const dataPersona = store.getState().persona.rows;
 
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
@@ -43,12 +42,6 @@ const PersonaAgregar = props => {
   const handleCloseModal = () => {
     setOpenCreate(false);
   };
-
-  // const initialPerfil = {
-  //   idPerfilPersona: null,
-  // }
-
-  // const [perfiles, setPerfiles] = useState(initialPerfil);
 
   const initialPersona = {
     nombre: '',
@@ -159,7 +152,7 @@ const PersonaAgregar = props => {
                       setPersona({ ...persona, nombre: e.target.value })
                     }
                     placeholder="Nombres"
-                    style={{'text-transform':'uppercase'}}
+                    textTransform='uppercase'
                     type={'text'}
                     isRequired
                   />
@@ -171,7 +164,7 @@ const PersonaAgregar = props => {
                       setPersona({ ...persona, apellido: e.target.value })
                     }
                     placeholder="Apellidos"
-                    style={{'text-transform':'uppercase'}}
+                    textTransform='uppercase'
                     type={'text'}
                     isRequired
                   />
@@ -182,7 +175,7 @@ const PersonaAgregar = props => {
                   <FormLabel>USUARIO</FormLabel>
                   <Input
                     defaultValue={(persona.usuario = persona.dni)}
-                    onValueChange={persona.usuario}
+                    // onValueChange={persona.usuario}
                     onChange={e => {
                       setPersona({
                         ...persona,
@@ -191,7 +184,7 @@ const PersonaAgregar = props => {
                     }}
                     type={'text'}
                     placeholder="Usuario"
-                    style={{'text-transform':'uppercase'}}
+                    textTransform='uppercase'
                   />
                 </FormControl>
 
@@ -216,7 +209,7 @@ const PersonaAgregar = props => {
                     }
                     type={'email'}
                     placeholder="Correo"
-                    style={{'text-transform':'uppercase'}}
+                    textTransform='uppercase'
                     isRequired
                   />
                 </FormControl>
@@ -272,10 +265,6 @@ const PersonaAgregar = props => {
                 <FormControl>
                   <FormLabel>PERFIL PERSONA</FormLabel>
                   <Select
-                    // defaultValue={
-                    //   (persona.perfilPersona = dataPerfil[0].idPerfilPersona)
-                    // }
-                    // defaultValue={persona.perfilPersona.nombre === 'USUARIO COMUN'}
                     isRequired
                     onChange={e =>
                       setPersona({ ...persona, perfilPersona: e.target.value })

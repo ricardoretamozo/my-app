@@ -52,12 +52,13 @@ const CargoAgregar = () => {
 
 return (
     <>
-        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>Agregar</Button>
+        <Button leftIcon={<AddIcon/>} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>AGREGAR</Button>
 
         <Modal
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
+        size='lg'
         >
         <ModalOverlay />
         <ModalContent>
@@ -68,7 +69,7 @@ return (
                 <FormLabel>CARGO</FormLabel>
                 <Input 
                 onChange={(e)=> {setCargo({ ...dataCargo, cargo: (e.target.value).toUpperCase() })}}
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 placeholder='Cargo'
                 isRequired={true}
                 type={'text'} />
@@ -79,8 +80,8 @@ return (
                 defaultValue={dataCargo.activo = 'S'}
                 onChange={(e)=> {setCargo({...dataCargo,activo:(e.target.value) })}}
                 >
-                <option value='S'>Activo</option>
-                <option value='N'>Inactivo</option>
+                <option value='S'>ACTIVO</option>
+                <option value='N'>INACTIVO</option>
                 </Select>
             </FormControl>
             </ModalBody>

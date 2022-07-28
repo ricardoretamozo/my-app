@@ -24,7 +24,7 @@ import {
   Flex,
 } from '@chakra-ui/react';
 
-import { AddIcon, CheckIcon, CloseIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
+import { AddIcon, SearchIcon, TriangleDownIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -41,9 +41,6 @@ const IncidenciaAgregar = () => {
 
   const motivoData = store.getState().motivo.rows;
   const { identificador } = useSelector(state => state.auth);
-
-  const tiempoTranscurrido = Date.now();
-  const hoy = new Date(tiempoTranscurrido);
 
   const [indiceIncidencia, setIndiceIncidencia] = useState({
     idIncidencia: null,
@@ -69,6 +66,8 @@ const IncidenciaAgregar = () => {
 
   const [usuarioDNI, setUsuarioDNI] = useState(null);
   const [usuarioData, setUsuarioData] = useState([]);
+
+  console.log(usuarioData);
 
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
@@ -139,7 +138,7 @@ const IncidenciaAgregar = () => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'3xl'}
+        size={'4xl'}
       >
         <ModalOverlay />
 
@@ -171,7 +170,7 @@ const IncidenciaAgregar = () => {
                   });
                 }}
                 placeholder='Aqui describe la incidencia'
-                style={{'text-transform':'uppercase'}}
+                textTransform='uppercase'
                 size='sm'
             />
             </FormControl>
@@ -180,12 +179,12 @@ const IncidenciaAgregar = () => {
               <Spacer/>
               <HStack direction='row'>
                 <Button
-                  colorScheme='red'
+                  colorScheme='purple'
                   size='sm'
-                  rightIcon={<CheckIcon />}
+                  rightIcon={<TriangleDownIcon />}
                   onClick={onToggle}
                   _focus={{ boxShadow: "none" }}
-                >SI</Button>
+                >NO</Button>
               </HStack>
             </Flex>
             
@@ -213,6 +212,24 @@ const IncidenciaAgregar = () => {
                 <FormControl>
                     <FormLabel>NOMBRE DEL USUARIO</FormLabel>
                     <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} readOnly disabled/>
+                </FormControl>
+              </HStack>
+              <HStack textAlign={'center'} mt={2}>
+                <FormControl>
+                    <Text>SEDE</Text>
+                    <Input value={usuarioData.oficina} readOnly disabled/>
+                </FormControl>
+                <FormControl>
+                    <Text>ORGANO</Text>
+                    <Input value={usuarioData.oficina} readOnly disabled/>
+                </FormControl>
+                <FormControl>
+                    <Text>OFICINA</Text>
+                    <Input value={usuarioData.oficina} readOnly disabled/>
+                </FormControl>
+                <FormControl>
+                    <Text>CARGO</Text>
+                    <Input value={usuarioData.oficina} readOnly disabled/>
                 </FormControl>
               </HStack>
             </Collapse>

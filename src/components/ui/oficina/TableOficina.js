@@ -42,12 +42,9 @@ export default function TableOficina() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
-
-  const [sedeNombre, setsedeNombre] = useState(null);
   const [organoSelect, setorganoSelect] = useState([
     { idOrgano: 0, organo: 'Seleccione una Sede' },
   ]);
-  const [organoNombre, setorganoNombre] = useState(null);
 
   const bgStatus = useColorModeValue('gray.400', '#1a202c');
   const colorStatus = useColorModeValue('white', 'gray.400');
@@ -71,8 +68,7 @@ export default function TableOficina() {
   const [oficinaid, setOficinaid] = useState({
     idOficina: null,
   });
-  const [sedeid, setsedeid] = useState(0);
-  //organoInfo.filter(indice => indice.sede.idSede == sedeid);
+
   const [optionsOrgano, setoptionsOrgano] = useState(
     organoInfo.map(organo => ({
       value: organo.idOrgano,
@@ -95,16 +91,13 @@ export default function TableOficina() {
   const handleClickOpenEdit = index => {
     setIndice(index);
     setOpenEdit(true);
-    console.log(index);
     var i = 0;
     var sedeID;
     organoInfo.filter(indice => indice.sede.idSede == sedeID);
     setoptionsOrgano(
       organoInfo.map(organo => {
         if (index.organo.idOrgano == organo.idOrgano) {
-          console.log(organo.idOrgano);
           setoptionsOrganoindex(i);
-          //setsedeid(organo.sede.idSede);
           sedeID = organo.sede.idSede;
         }
         i++;
@@ -118,7 +111,6 @@ export default function TableOficina() {
     setoptionsSede(
       sedeInfo.map(sede => {
         if (sedeID == sede.idSede) {
-          // console.log(sede.id);
           setoptionsSedeindex(i);
         }
         i++;
@@ -158,7 +150,6 @@ export default function TableOficina() {
 
   // Select
   const handleChange = (value) => {
-    // setsedeNombre(e.target.value);
     console.log(value);
     if (value == null) {
     } else {
@@ -238,13 +229,8 @@ export default function TableOficina() {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
-        // const oficinaData = store.getState().oficina.rows;
         const sedeData = store.getState().sede.rows;
-        // console.log(sedeData);
         const organoData = store.getState().organo.rows;
-
-        console.log(indice);
-        console.log(row);
         return (
           <div>
             <Switch
@@ -331,6 +317,7 @@ export default function TableOficina() {
                     <Input
                       defaultValue={indice ? indice.oficina : ''}
                       type="text"
+                      textTransform='uppercase'
                       onChange={e =>
                         setIndice({ ...indice, oficina: e.target.value })
                       }

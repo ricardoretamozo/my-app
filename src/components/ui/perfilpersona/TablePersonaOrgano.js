@@ -189,7 +189,6 @@ export default function Tables() {
                   <Input
                     value={indice ? indice.idPerfilPersona : ''}
                     disabled={true}
-                    type="text"
                     hidden={true}
                   />
                 </FormControl>
@@ -199,6 +198,7 @@ export default function Tables() {
                     autoFocus
                     defaultValue={indice ? indice.perfil : ''}
                     type="text"
+                    textTransform='uppercase'
                     onChange={e =>
                       setIndice({ ...indice, perfil: e.target.value })
                     }
@@ -209,11 +209,11 @@ export default function Tables() {
                   <Textarea
                     autoFocus
                     defaultValue={indice ? indice.descripcion : ''}
-                    // defaultValue={item ? (item.descripcion):("")}
                     onChange={e =>
                       setIndice({ ...indice, descripcion: e.target.value })
                     }
                     placeholder="Descripcion"
+                    textTransform='uppercase'
                     type="text"
                   />
                 </FormControl>

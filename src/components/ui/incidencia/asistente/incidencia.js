@@ -40,6 +40,23 @@ export const IncidenciaAsistenteAsignados = () => {
     //fetchData();
   });
 
+  //  FETCH PARA TECNICOS DISPONIBLES
+
+  const fetchDataTecnicoDisponible = async ()=> {
+    
+    await fetchTecnicosDisponibles().then((res)=>{
+      dispatch(getTecnicosDisponibles(res));
+    });
+    
+  }
+  useEffect(() => {
+    
+    if(store.getState().tecnicoDisponible.checking){
+      fetchDataTecnicoDisponible();
+    }
+    //fetchData();
+  });
+
   //
   return (
     <>

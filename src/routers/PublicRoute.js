@@ -18,7 +18,7 @@ export const PublicRoute = ({
         (rol == '[COORDINADOR INFORMATICO]') ? (
           <Redirect to="/dashboard/incidencias"/>
         ) : (rol == '[ASISTENTE INFORMATICO]') ? (
-          <Redirect to="/dashboard/incidencias_asignadas"/>
+          <Redirect to="/dashboard/incidencias"/>
         ) : (rol == '[SOPORTE TECNICO]') ? (
           <Redirect to="/dashboard/soporte/incidencias" />
         ) : (

@@ -20,40 +20,35 @@ import {
   AlertDialogOverlay,
   AlertDialogFooter,
   AlertDialog,
-  Switch,
-  Select,
   Text,
   HStack,
-  Badge,
+  IconButton,
 } from '@chakra-ui/react';
+
+import { AiTwotoneEdit } from 'react-icons/ai';
+import { RiDeleteBackLine } from 'react-icons/ri';
+
 import { store } from '../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
-import 'react-data-table-component-extensions/dist/index.css';
 
-import {
-  deleteCargo,
-  updateCargo,
-} from '../../../actions/cargo';
+import { deleteOrigen, updateOrigen } from '../../../actions/origenIncidencia';
 
-import CargoAgregar from './CargoAgregar';
+import OrigenAgregar from './OrigenAgregar';
 
-export default function TableCargo() {
+export default function TableOrigen() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
+
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
-  const bgStatus = useColorModeValue("gray.400", "#1a202c");
-  const colorStatus = useColorModeValue("white", "gray.400");
-
-  const data = store.getState().cargo.rows;
+  const data = store.getState().origenIncidencia.rows;
 
   const [indice, setIndice] = useState({
-    idCargo: null,
-    cargo: "",
-    activo: "",
+    idOrigen: null,
+    origen: '',
   });
 
   const handleClickOpenEdit = index => {
@@ -65,11 +60,11 @@ export default function TableCargo() {
     setOpenEdit(false);
   };
 
-  const handleDeleteCargo = () => {
-    dispatch(deleteCargo(indice))
+  const handleClickDelete = () => {
+    dispatch(deleteOrigen(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Cargo eliminado');
+        console.log('Origen eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -77,12 +72,12 @@ export default function TableCargo() {
       });
   };
 
-  const actualizarCargo = e => {
+  const handleClickUpdate = e => {
     e.preventDefault();
-    dispatch(updateCargo(indice))
+    dispatch(updateOrigen(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
+        console.log('Origen actualizado');
       })
       .catch(e => {
         console.log(e);
@@ -100,54 +95,39 @@ export default function TableCargo() {
 
   const columns = [
     {
-      name: 'CARGO',
-      selector: row => row.cargo,
+      name: 'ORIGEN',
+      selector: row => row.origen,
       sortable: true,
-    },
-    {
-      name: 'ESTADO',
-      selector: row => row.activo,
-      sortable: true,
-      cell: row => (
-        <div>
-          <Badge
-          bg={row.activo === "S" ? "green.400" : bgStatus}
-          color={row.activo === "S" ? "white" : colorStatus}
-          p="3px 10px"
-          w={20}
-          textAlign={'center'}
-          borderRadius={'md'}
-          fontSize={'10px'}
-        >
-          {row.activo === "S" ? "Activo" : "Inactivo"}
-        </Badge>
-        </div>
-      ),
-      center: true,
+      wrap: true,
     },
     {
       name: 'ACCIONES',
       sortable: false,
       cell: row => (
         <div>
-          <Switch
-            colorScheme={'red'}
-            mr={2}
-            isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idCargo)}
-          />
-          <Button
-            onClick={() => handleClickOpenEdit(row)}
-            size={'xs'}
+          <IconButton
+            icon={<AiTwotoneEdit />}
+            variant={'outline'}
             colorScheme={'blue'}
-          >
-            EDITAR
-          </Button>
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+            onClick={() => handleClickOpenEdit(row)}
+            fontSize={'22px'}
+            size={'sm'}
+          />
+          <IconButton
+            icon={<RiDeleteBackLine />}
+            variant={'solid'}
+            colorScheme={'red'}
+            onClick={() => handleClickOpenDelete(row.idOrigen)}
+            fontSize={'22px'}
+            size={'sm'}
+            ml={2}
+          />
+
+          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {row.activo === 'S' ? <Text>ESTA SEGURO DE ANULAR?</Text> : <Text>ESTÁ SEGURO DE ACTIVAR?</Text>}
+                    <Text>¿ESTÁ SEGURO DE ELIMINAR ESTE ORIGEN?</Text>
                 </AlertDialogHeader>
 
                 <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
@@ -155,9 +135,7 @@ export default function TableCargo() {
                 <AlertDialogFooter>
                   <Button onClick={handleCloseDelete}>CANCELAR</Button>
                   <Button
-                    onClick={() =>
-                      handleDeleteCargo(row.idCargo)
-                    }
+                    onClick={() => handleClickDelete(row.idOrigen)}
                     colorScheme="red"
                     ml={3}
                   >
@@ -170,49 +148,37 @@ export default function TableCargo() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'lg'}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
             <ModalOverlay />
             <ModalContent>
-              <ModalHeader display={'flex'} justifyContent={'center'}>
-                EDITAR CARGO
+              <ModalHeader>
+                EDITAR EL ORIGEN DE LA INCIDENCIA
               </ModalHeader>
               <ModalCloseButton />
               <ModalBody pb={6}>
                 <FormControl>
                   <Input
-                    value={indice ? indice.idCargo : ''}
+                    value={indice ? indice.idOrigen : ''}
                     disabled={true}
                     type="text"
                     hidden={true}
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>CARGO</FormLabel>
+                  <FormLabel>ORIGEN</FormLabel>
                   <Input
-                    defaultValue={indice ? indice.cargo : ''}
-                    type="text"
+                    defaultValue={indice ? indice.origen : ''}
                     textTransform={'uppercase'}
+                    type="text"
                     onChange={e =>
-                      setIndice({ ...indice, cargo: e.target.value.toUpperCase() })
+                      setIndice({ ...indice, origen: e.target.value.toUpperCase() })
                     }
                   />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>ESTADO</FormLabel>
-                  <Select
-                    defaultValue={indice ? indice.activo : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, activo: e.target.value })
-                    }
-                  >
-                    <option value="S">ACTIVO</option>
-                    <option value="N">INACTIVO</option>
-                  </Select>
                 </FormControl>
               </ModalBody>
               <ModalFooter>
                 <Button
-                  onClick={e => actualizarCargo(e)}
+                  onClick={e => handleClickUpdate(e)}
                   colorScheme="green"
                   mr={3}
                 >
@@ -225,6 +191,7 @@ export default function TableCargo() {
         </div>
       ),
       center: true,
+      wrap: true,
     },
   ];
 
@@ -248,7 +215,7 @@ export default function TableCargo() {
       text: '#FFF',
     },
     divider: {
-      default: '#FFF opacity 92%' ,
+      default: '#FFF opacity 92%',
     },
   });
 
@@ -260,25 +227,33 @@ export default function TableCargo() {
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-    <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
-          <Box>
-            <Text fontSize='lg' fontWeight='600'>
-              TABLA DE CARGOS
-            </Text>
-          </Box>
-          <Box>
-            <CargoAgregar/>
-          </Box>
+      <HStack
+        spacing="24px"
+        width={'100%'}
+        justifyContent={'space-between'}
+        verticalAlign={'center'}
+        p={4}
+      >
+        <Box>
+          <Text fontSize="lg" fontWeight="600">
+            TABLA DE ORIGEN DE INCIDENCIA
+          </Text>
+        </Box>
+        <Box>
+          <OrigenAgregar />
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
           columns={columns}
           data={data}
           defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}  
+          theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
+          paginationPerPage={8}
+          paginationRowsPerPageOptions={[8, 15, 20, 30]}
         />
       </DataTableExtensions>
     </Box>

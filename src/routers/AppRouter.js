@@ -33,11 +33,11 @@ import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
 import { store } from '../store/store';
+import { fetchOrigen } from '../actions/origenIncidencia';
+import { getOrigen } from '../components/ui/origenIncidencia/origen';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
-
-  console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
   const { identificador } = useSelector(state => state.auth);
@@ -46,120 +46,99 @@ export const AppRouter = () => {
     dispatch(startChecking());
   }, [dispatch]);
 
-  const fetchData = async () => {
-    await fetchSedes().then(res => {
-      dispatch(getSede(res));
-    });
-  };
+  // SEDES
+
   useEffect(() => {
     if (store.getState().sede.checking) {
-      fetchData();
+      fetchSedes().then(res => {
+        dispatch(getSede(res))
+      });
     }
-    //fetchData();
   });
 
-  const fetchDataOrgano = async () => {
-    await fetchOrganos().then(res => {
-      dispatch(getOrgano(res));
-    });
-  };
+  // ORGANOS
+
   useEffect(() => {
     if (store.getState().organo.checking) {
-      fetchDataOrgano();
+      fetchOrganos().then(res => {
+        dispatch(getOrgano(res));
+      });
     }
-    //fetchData();
-  });
-
-  const fetchDataPerfil = async () => {
-    await perfilPersona().then(res => {
-      dispatch(getPerfilPersona(res));
-    });
-  };
-  useEffect(() => {
-    console.log(store.getState().perfilPersona);
-    if (store.getState().perfilPersona.checking) {
-      fetchDataPerfil();
-    }
-    //fetchData();
   });
 
   // OFICINAS
 
-  const fetchDataOficina= async ()=> {
-    await fetchOficinas().then((res)=>{
-      dispatch(getOficina(res));
-    });
-    
-  }
   useEffect(() => {
-    
+  
     if(store.getState().oficina.checking){
-      fetchDataOficina();
+      fetchOficinas().then((res)=>{
+      dispatch(getOficina(res));
+      });
     }
-    //fetchData();
   });
 
   // CARGOS
-  const fetchDataCargos= async ()=> {
-    await fetchCargos().then((res)=>{
-      dispatch(getCargo(res));
-    });
-    
-  }
+
   useEffect(() => {
-    
+  
     if(store.getState().cargo.checking){
-      fetchDataCargos();
+      fetchCargos().then((res)=>{
+        dispatch(getCargo(res));
+      });
     }
-    //fetchData();
   });
 
-  // MOTIVOS
-  const fetchDataMotivos= async ()=> {
-    await fetchMotivos().then((res)=>{
-      dispatch(getMotivo(res));
-    });
-    
-  }
+  // PERFIL PERSONA
+
   useEffect(() => {
-    
-    if(store.getState().motivo.checking){
-      fetchDataMotivos();
+    if (store.getState().perfilPersona.checking) {
+      perfilPersona().then(res => {
+        dispatch(getPerfilPersona(res));
+      });
     }
-    //fetchData();
+  });
+
+
+
+  // MOTIVOS
+
+  useEffect(() => {
+    if(store.getState().motivo.checking){
+      fetchMotivos().then((res)=>{
+        dispatch(getMotivo(res))
+      });
+    }
   });
 
   // INCIDENCIAS POR CADA USUARIO
 
-  const fetchDataId = async ()=> {
-    await fetchIncidenciasPersonas(identificador).then((res)=>{
-      dispatch(getIncidenciaId(res));
-    });
-    
-  }
   useEffect(() => {
     
     if(store.getState().incidenciaId.checking){
-      fetchDataId();
+      fetchIncidenciasPersonas(identificador).then((res)=>{
+        dispatch(getIncidenciaId(res));
+      });
     }
-    //fetchData();
   });
 
   //PERSONAS
 
-  const fetchDataPersona = async ()=> {
-    await personaList().then((res)=>{
-      dispatch(getPersona(res));
-    });
-    
-  }
-
   useEffect(() => {
-    // console.log(store.getState().personaList);
     if(store.getState().persona.checking){
-      fetchDataPersona();
+      personaList().then((res)=>{
+        dispatch(getPersona(res));
+      });
     }
-    //fetchData();
+  });
+
+  // ORIGEN INCIDENCIAS
+  
+  useEffect(() => {
+    if(store.getState().origenIncidencia.checking){
+      fetchOrigen().then((res) => {
+        dispatch(getOrigen(res))
+      });
+    }
   });
 
   return (
@@ -274,6 +253,12 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/correos"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/origen-incidencia"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

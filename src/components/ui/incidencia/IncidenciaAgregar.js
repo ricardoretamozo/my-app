@@ -12,12 +12,13 @@ import {
   FormLabel,
   Textarea,
   Input,
-  Select as SelectForm,
   HStack,
   InputGroup,
   InputRightElement,
   IconButton,
 } from '@chakra-ui/react';
+
+import Select from "react-select";
 
 import { AddIcon, SearchIcon } from '@chakra-ui/icons';
 
@@ -35,6 +36,7 @@ const IncidenciaAgregar = () => {
   const dispatch = useDispatch();
 
   const motivoData = store.getState().motivo.rows;
+  const origenData = store.getState().origenIncidencia.rows;
   const { identificador } = useSelector(state => state.auth);
 
   const tiempoTranscurrido = Date.now();
@@ -57,7 +59,9 @@ const IncidenciaAgregar = () => {
     motivo: {
         idMotivo: null,
       },
-    origen: '',
+    origen: {
+      idOrigen: null,
+    },
     descripcion: '',
     estado: 'P',
     fecha: hoy.toISOString().split('T')[0],
@@ -119,7 +123,27 @@ const IncidenciaAgregar = () => {
     fetchDataUsuario();
   }
 
-  const ORIGENES = ['SISTEMA','LLAMADA', 'SMS', 'WHATSAPP', 'CORREO', 'OTRO'];
+  const handleChangeMotivo = value => {
+    if (value === null) {
+      return "--------- SELECCIONE UN MOTIVO -----------"
+    }else{
+      setIndiceIncidencia({
+        ...indiceIncidencia,
+        motivo: value.value,
+      })
+    }
+  };
+
+  const handleChangeOrigen = value => {
+    if (value === null) {
+      return "--------- SELECCIONE UN ORIGEN -----------"
+    }else{
+      setIndiceIncidencia({
+        ...indiceIncidencia,
+        origen: value.value,
+      })
+    }
+  };
 
   return (
     <>
@@ -142,14 +166,16 @@ const IncidenciaAgregar = () => {
             <ModalBody pb={6}>
               <FormControl isRequired>
                 <FormLabel>MOTIVO</FormLabel>
-                  <SelectForm placeholder='--------- SELECCIONE UN MOTIVO -----------'
-                    onChange ={e => setIndiceIncidencia({...indiceIncidencia, motivo:  e.target.value })}
-                  >{motivoData.map((item, idx) => (
-                    <option value={item.idMotivo} key={idx}>
-                      {item.motivo}
-                    </option>
-                  ))}
-                  </SelectForm>
+                  <Select
+                    placeholder="--------- SELECCIONE UN MOTIVO -----------"
+                    onChange={handleChangeMotivo}
+                    options={motivoData.map(motivo => ({
+                      value: motivo.idMotivo,
+                      label: motivo.motivo
+                    }))}
+                    isSearchable
+                    isClearable
+                  />
               </FormControl>
               <FormControl mt={4} isRequired>
               <FormLabel>DESCRIPCIÓN</FormLabel>
@@ -161,32 +187,34 @@ const IncidenciaAgregar = () => {
                   });
                 }}
                 placeholder='Aqui describe la incidencia'
-                textTransform='uppercase'
+                textTransform={'uppercase'}
                 size='sm'
             />
             </FormControl>
             <FormControl mt={4} isRequired>
-                <FormLabel>ORIGEN</FormLabel>
-                  <SelectForm placeholder='--------- SELECCIONE EL ORIGEN -----------'
-                    onChange ={e => setIndiceIncidencia({...indiceIncidencia, origen:  e.target.value })}
-                  >
-                     {ORIGENES.map((item, idx) => (
-                      <option value={item} key={idx}>
-                        {item}
-                      </option>
-                    ))}
-                  </SelectForm>
+              <FormLabel>ORIGEN</FormLabel>
+              <Select
+                placeholder="--------- SELECCIONE UN ORIGEN -----------"
+                onChange={handleChangeOrigen}
+                options={origenData.map(origen => ({
+                  value: origen.idOrigen,
+                  label: origen.origen
+                }))}
+                isSearchable
+                isClearable
+              />
             </FormControl>
             <HStack spacing={2} mt={4}>
-            <FormControl isRequired>
+            <FormControl isRequired zIndex={0}>
                 <FormLabel>VALIDACIÓN DE USUARIO POR DNI</FormLabel>
-                <InputGroup>
+                <InputGroup >
                   <InputRightElement
                     children={
                       <IconButton
                         colorScheme='blue'
                         onClick={handleSearchDNI}
                         icon={<SearchIcon />}
+                        
                       />
                     }
                   />

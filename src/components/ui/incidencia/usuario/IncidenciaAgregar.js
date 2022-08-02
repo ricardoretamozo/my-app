@@ -19,10 +19,11 @@ import {
   InputRightElement,
   IconButton,  
   useDisclosure,
-  Select as SelectForm,
   Spacer,
   Flex,
 } from '@chakra-ui/react';
+
+import Select from 'react-select';
 
 import { AddIcon, SearchIcon, TriangleDownIcon } from '@chakra-ui/icons';
 
@@ -40,6 +41,8 @@ const IncidenciaAgregar = () => {
   const dispatch = useDispatch();
 
   const motivoData = store.getState().motivo.rows;
+  const origenData = store.getState().origenIncidencia.rows;
+
   const { identificador } = useSelector(state => state.auth);
 
   const [indiceIncidencia, setIndiceIncidencia] = useState({
@@ -83,10 +86,9 @@ const IncidenciaAgregar = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
@@ -110,8 +112,8 @@ const IncidenciaAgregar = () => {
     }
     dispatch(createIncidencia(incidencia))
       .then(() => {
-        handleCloseModal(true);
         fetchDataId();
+        handleCloseModal(true);
       })
       .catch(err => {
         console.log(err);
@@ -127,6 +129,13 @@ const IncidenciaAgregar = () => {
   const handleSearchDNI = () => {
     fetchDataUsuario();
   }
+
+  const handleChangeMotivo = value => {
+    setIndiceIncidencia({
+      ...indiceIncidencia,
+      motivo: value.value,
+    });
+  };
 
   return (
     <>
@@ -150,15 +159,15 @@ const IncidenciaAgregar = () => {
             <ModalBody pb={6}>
               <FormControl mt={4} isRequired>
                 <FormLabel>MOTIVO</FormLabel>
-                  <SelectForm placeholder='--------- SELECCIONE UN MOTIVO -----------'
-                    onChange ={e => setIndiceIncidencia({...indiceIncidencia, motivo:  e.target.value })}
-                  >
-                    {motivoData.map((item, idx) => (
-                      <option value={item.idMotivo} key={idx}>
-                        {item.motivo}
-                      </option>
-                    ))}
-                  </SelectForm>
+                <Select
+                  placeholder="--------- SELECCIONE UN MOTIVO -----------"
+                  onChange={handleChangeMotivo}
+                  options={motivoData.map(motivo => ({
+                    value: motivo.idMotivo,
+                    label: motivo.motivo
+                  }))}
+                  isSearchable
+                />
               </FormControl>
               <FormControl mt={4} isRequired>
               <FormLabel>DESCRIPCIÓN</FormLabel>

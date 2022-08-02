@@ -113,7 +113,7 @@ const OrganoAgregar = () => {
                 }}
                 type={'text'}
                 placeholder={'Nombre del Organo'}
-                textTransform="uppercase"
+                textTransform={'uppercase'}
               />
             </FormControl>
             <FormControl mt={4}>

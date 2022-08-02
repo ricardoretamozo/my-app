@@ -22,4 +22,5 @@ export const types = {
     eventLoadedPersonaOrgano: '[event] Events loaded PersonaOrgano',
     eventLoadedCorreoRecibido: '[event] Events loaded Correo Recibido',
     eventLoadedCorreoEnviado: '[event] Events loaded Correo Enviado',
+    eventLoadedOrigenIncidencia: '[event] Events loaded Origen Incidencia',
 }

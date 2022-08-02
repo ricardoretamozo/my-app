@@ -10,16 +10,15 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Icon,
 } from "@chakra-ui/react";
 
 import { AddIcon } from '@chakra-ui/icons';
 
 import { useDispatch } from 'react-redux'
 import React, { useState } from "react"
-import { createMotivo } from "../../../actions/motivo"
+import { createOrigen } from "../../../actions/origenIncidencia"
 
-const MotivoAgregar = () => {
+const OrigenAgregar = () => {
     const [openCreate, setOpenCreate] = React.useState(false);
     const dispatch = useDispatch()
 
@@ -31,17 +30,17 @@ const MotivoAgregar = () => {
         setOpenCreate(false);
     };
 
-    const initialMotivo = {
-        idMotivo: null,
-        motivo: "",
+    const initialOrigen = {
+        idOrigen: null,
+        origen: "",
     }
 
-    const [dataMotivo, setMotivo] = useState(initialMotivo);
+    const [dataOrigen, setOrigen] = useState(initialOrigen);
 
-    const { motivo } = dataMotivo;
+    const { origen } = dataOrigen;
 
-    const saveMotivo = () => {
-        dispatch(createMotivo({ motivo }))
+    const saveOrigen = () => {
+        dispatch(createOrigen({ origen }))
             .then(() => {
                 handleCloseModal(true);
             }).catch(err => {
@@ -62,21 +61,21 @@ const MotivoAgregar = () => {
             >
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>AGREGAR NUEVO MOTIVO PARA LA INCIDENCIA</ModalHeader>
+                    <ModalHeader>AGREGAR NUEVO ORIGEN PARA LA INCIDENCIA</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody pb={6}>
                         <FormControl>
-                            <FormLabel>Motivo</FormLabel>
+                            <FormLabel>Origen</FormLabel>
                             <Input
                                 textTransform={'uppercase'}
-                                onChange={(e) => { setMotivo({ ...dataMotivo, motivo: (e.target.value).toUpperCase() }) }}
-                                placeholder='MOTIVO DE INCIDENCIA'
+                                onChange={(e) => { setOrigen({ ...dataOrigen, origen: e.target.value.toUpperCase() }) }}
+                                placeholder='ORIGEN DE INCIDENCIA'
                                 isRequired={true}
                                 type={'text'} />
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => saveMotivo()} colorScheme={'blue'} autoFocus mr={3}>
+                        <Button onClick={() => saveOrigen()} colorScheme={'blue'} autoFocus mr={3}>
                             GUARDAR
                         </Button>
                         <Button onClick={handleCloseModal}>CANCELAR</Button>
@@ -87,4 +86,4 @@ const MotivoAgregar = () => {
     )
 }
 
-export default MotivoAgregar;
+export default OrigenAgregar;

@@ -49,27 +49,29 @@ const LinkItemsCoordinadorInformatico = [
   { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
   { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
+  { name: 'Motivo Incidencia', icon: FiCompass, ruta: '/dashboard/motivos' },
+  { name: 'Origen Incidencia', icon: FiTrello, ruta: '/dashboard/origen-incidencia' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
   { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
   { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
   { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
-  { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];
 
 const LinkItemsAsistenteInformatico = [
   { name: 'Inicio', icon: FiHome, ruta: '/dashboard/home' },
+  { name: 'Incidencias', icon: FiCompass, ruta: '/dashboard/incidencias' },
   { name: 'Incidencias Asignadas', icon: FiCompass, ruta: '/dashboard/incidencias_asignadas' },
   { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
-  { name: 'Motivos', icon: FiCompass, ruta: '/dashboard/motivos' },
+  { name: 'Motivo Incidencia', icon: FiCompass, ruta: '/dashboard/motivos' },
+  { name: 'Origen Incidencia', icon: FiTrello, ruta: '/dashboard/origen-incidencia' },
   { name: 'Perfiles', icon: FiUsers, ruta: '/dashboard/perfil' },
   { name: 'Sedes', icon: FiServer, ruta: '/dashboard/sedes' },
   { name: 'Organos', icon: FiLayers, ruta: '/dashboard/organos' },
   { name: 'Oficinas', icon: FiAirplay, ruta: '/dashboard/oficinas' },
   { name: 'Usuarios', icon: FiUsers, ruta: '/dashboard/personas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
-  { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];
 
 const LinkItemsSoporteTecnico = [

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Box,
@@ -29,26 +29,12 @@ import {
   GridItem,
   Tooltip,
   IconButton,
-  Divider,
-  Table,
-  Thead,
-  Th,
-  Tr,
-  Tfoot,
-  Td,
-  Tbody,
-  TableContainer,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
 } from '@chakra-ui/react';
 
 import {
   CheckCircleIcon,
   NotAllowedIcon,
   EditIcon,
-  CloseIcon,
 } from '@chakra-ui/icons';
 import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
 
@@ -59,13 +45,10 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
 import { deletePersona, updatePersona } from '../../../actions/persona';
-import { deletePersonaOrgano } from '../../../actions/personaOrgano';
 
 import PersonaAgregar from './PersonaAgregar';
 
-import Select from 'react-select';
 import {
-  createPersonaOrgano,
   fetchPersonaOrgano,
 } from '../../../actions/personaOrgano';
 import ModalOrganoAsignacion from './ModalOrganoAsignacion';
@@ -74,9 +57,6 @@ export default function TablePersona() {
   const [openedit, setOpenEdit] = React.useState(false);
   const [openModal, setOpenModal] = React.useState(false);
   const [opendelete, setOpenDelete] = React.useState(false);
-  const [opendeleteOrganoP, setOpenDeleteOrganoP] = React.useState(false);
-  const [openAlert, setOpenAlert] = React.useState(false);
-  const [openAlertDelete, setOpenAlertDelete] = React.useState(false);
   const dispatch = useDispatch();
 
   // Close Modal Organo Asignacion
@@ -107,63 +87,9 @@ export default function TablePersona() {
     },
   });
 
-  const initialPersonaOrgano = {
-    idPersonaOrganica: null,
-    persona: {
-      idpersona: null,
-    },
-    organo: {
-      idOrgano: null,
-    },
-  };
-
-  const [organoSelect, setorganoSelect] = useState([
-    { idOrgano: 0, organo: 'Seleccione una Sede' },
-  ]);
-
-  const [organoNombre, setorganoNombre] = useState(null);
-
   const [personaid, setPersonaid] = useState({
     idPersona: null,
   });
-
-  const handleOpenAlert = () => {
-    setOpenAlert(true);
-  };
-
-  const handleCloseAlert = () => {
-    setOpenAlert(false);
-  };
-
-  const handleCloseAlertDelete = () => {
-    setOpenAlertDelete(false);
-  };
-
-  const savePersonaOrgano = e => {
-    e.preventDefault();
-    var personaOrgano = {
-      persona: {
-        idpersona: indice.idpersona,
-      },
-      organo: {
-        idOrgano: organoNombre,
-      },
-    };
-    dispatch(createPersonaOrgano(personaOrgano))
-      .then(() => {
-        console.log('creado correctamente');
-        setOpenAlert(true);
-      })
-      .catch(err => {
-        console.log(err);
-        setOpenAlert(true);
-      });
-  };
-
-  const handleChangeOrgano = value => {
-    console.log(value);
-    setorganoNombre(value.value);
-  };
 
   const handleClickOpenEdit = index => {
     setIndice(index);
@@ -182,38 +108,6 @@ export default function TablePersona() {
     fetchDataPersonaOrgano(index.idpersona);
     setIndice(index);
     setOpenModal(true);
-  };
-
-  //console.log(personaOrganos);
-
-  const array = Object.keys(personaOrganos);
-
-  const result = array.map(key => {
-    const value = personaOrganos[key];
-    //console.log(value);
-    // setPersonaOrganosSede(value);
-
-    // Perform your desired logic here then return a new value
-    return value;
-  });
-
-  const handleDeletePersonaOrgano = (x, y) => {
-    dispatch(deletePersonaOrgano(x, y))
-      .then(() => {
-        handleCloseDeleteOrganoP(true);
-        console.log('Persona eliminado');
-        setOpenAlertDelete(true);
-        handleClickOpenModal();
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDeleteOrganoP(true);
-        setOpenAlertDelete(true);
-      });
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
   };
 
   const handleCloseEdit = () => {
@@ -252,16 +146,6 @@ export default function TablePersona() {
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
-  };
-
-  // Modal para confirmar eliminacion de persona Organos
-
-  const handleClickOpenDeleteOrganoP = index => {
-    setOpenDeleteOrganoP(true);
-  };
-
-  const handleCloseDeleteOrganoP = () => {
-    setOpenDeleteOrganoP(false);
   };
 
   const columns = [
@@ -430,7 +314,7 @@ export default function TablePersona() {
                         }
                         placeholder="Nombres"
                         type={'text'}
-                        textTransform='uppercase'
+                        textTransform={'uppercase'}
                       />
                     </FormControl>
                     <FormControl>
@@ -442,7 +326,7 @@ export default function TablePersona() {
                         }
                         placeholder="Apellidos"
                         type={'text'}
-                        textTransform='uppercase'
+                        textTransform={'uppercase'}
                       />
                     </FormControl>
                   </HStack>

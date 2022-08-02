@@ -39,6 +39,7 @@ export default function TableIncidenciaSoporte() {
   const [idIncidencia, setIndiceIncidencia] = React.useState(null);
 
   const data = store.getState().incidenciasAsignadasSoporte.rows;
+
   const fetchDataIncidencias = async () => {
     await fetchIncidenciaSoporte(identificador).then((res)=>{
       dispatch(getIncidenciasAsignadasId(res));
@@ -67,7 +68,7 @@ export default function TableIncidenciaSoporte() {
   const columns = [
     {
       name: 'USUARIO',
-      selector: row => row.persona.nombre,
+      selector: row => row.persona.nombre + ' ' + row.persona.apellido,
       sortable: true,
     },
     {

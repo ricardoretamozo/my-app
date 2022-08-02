@@ -58,9 +58,9 @@ export default function TableIncidencia() {
       sortable: true,
     },
     {
-        name: 'FECHA Y HORA',
-        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
-        sortable: true,
+      name: 'FECHA Y HORA',
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      sortable: true,
     },
     {
       name: 'ESTADO',
@@ -69,7 +69,7 @@ export default function TableIncidencia() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500' : 'green.500'}
             color={'white'}
             p="3px 10px"
             w={24}
@@ -89,11 +89,11 @@ export default function TableIncidencia() {
       cell: row => {
         return (
           <div>
-          <IncidenciaDetalles 
-            rowId = {row.idIncidencia}
-            identificador = { identificador }
-          />
-          {/* <IconButton
+            <IncidenciaDetalles
+              rowId={row.idIncidencia}
+              identificador={identificador}
+            />
+            {/* <IconButton
             icon={<RiDeleteBackLine />}
             variant={'solid'}
             colorScheme={'red'}
@@ -160,198 +160,198 @@ export default function TableIncidencia() {
 
   return (
     <>
-    <Box borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      boxShadow={'md'}
-      mb={4}
-      p={2}
-      fontSize={'xs'}
-      bg={useColorModeValue('gray.100', 'gray.900')}>
-      <SimpleGrid columns={4} spacing={5} textColor={'white'}>
-        <Box
-          w={'100%'}
-          bg="white"
-          _dark={{ bg: "gray.800" }}
-          shadow="lg"
-          rounded="lg"
-          overflow="hidden"
-          textAlign={'center'}
-        >
-          <chakra.h3
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color="gray.800"
-            _dark={{ color: "white" }}
+      <Box borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        boxShadow={'md'}
+        mb={4}
+        p={2}
+        fontSize={['6px', '9px', '10px', '12px']}
+        bg={useColorModeValue('gray.100', 'gray.900')} >
+        <SimpleGrid columns={4} spacing={5} textColor={'white'}>
+          <Box
+            w={'100%'}
+            bg="white"
+            _dark={{ bg: "gray.800", borderWidth: "1px" }}
+            shadow="lg"
+            rounded="lg"
+            overflow="hidden"
+            textAlign={'center'}
           >
-            Total Incidencias
-          </chakra.h3>
-          <Flex
-            alignItems="center"
-            justify={'center'}
-            py={2}
-            px={3}
-            bg="gray.400"
-            _dark={{ bg: "gray.700" }}
-          >
-            <chakra.span
+            <chakra.h3
+              py={2}
+              textAlign="center"
               fontWeight="bold"
-              color="white"
-              _dark={{ color: "gray.200" }}
+              textTransform="uppercase"
+              color="red.500"
+              _dark={{ color: "white" }}
             >
-              {data.length}
-            </chakra.span>
-          </Flex>
-        </Box>
-        <Box
-          w={'100%'}
-          bg="white"
-          _dark={{ bg: "gray.800" }}
-          shadow="lg"
-          rounded="lg"
-          overflow="hidden"
-          textAlign={'center'}
-        >
-          <chakra.h3
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color="gray.800"
-            _dark={{ color: "white" }}
+              INCIDENCIAS PENDIENTES
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              w={'100%'}
+              bg="red.500"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
+                fontWeight="bold"
+                color="white"
+                _dark={{ color: "gray.200" }}
+              >
+                {incidenciasPendientes.length}
+              </chakra.span>
+            </Flex>
+          </Box>
+          <Box
+            w={'100%'}
+            bg="white"
+            _dark={{ bg: "gray.800", borderWidth: "1px" }}
+            shadow="lg"
+            rounded="lg"
+            overflow="hidden"
+            textAlign={'center'}
           >
-            Incidencias Pendientes
-          </chakra.h3>
-          <Flex
-            alignItems="center"
-            justify={'center'}
-            py={2}
-            px={3}
-            bg="red.600"
-            _dark={{ bg: "gray.700" }}
-          >
-            <chakra.span
+            <chakra.h3
+              py={2}
+              textAlign="center"
               fontWeight="bold"
-              color="white"
-              _dark={{ color: "gray.200" }}
+              textTransform="uppercase"
+              color="yellow.500"
+              _dark={{ color: "white" }}
             >
-              {incidenciasPendientes.length}
-            </chakra.span>
-          </Flex>
-        </Box>
-        <Box
-          w={'100%'}
-          bg="white"
-          _dark={{ bg: "gray.800" }}
-          shadow="lg"
-          rounded="lg"
-          overflow="hidden"
-          textAlign={'center'}
-        >
-          <chakra.h3
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color="gray.800"
-            _dark={{ color: "white" }}
+              Incidencias en Tramite
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              px={3}
+              bg="yellow.500"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
+                fontWeight="bold"
+                color="gray.200"
+                _dark={{ color: "gray.200" }}
+              >
+                {incidenciasEnTramite.length}
+              </chakra.span>
+            </Flex>
+          </Box>
+          <Box
+            w={'100%'}
+            bg="white"
+            _dark={{ bg: "gray.800", borderWidth: "1px" }}
+            shadow="lg"
+            rounded="lg"
+            overflow="hidden"
+            textAlign={'center'}
           >
-            Incidencias en Tramite
-          </chakra.h3>
-          <Flex
-            alignItems="center"
-            justify={'center'}
-            py={2}
-            px={3}
-            bg="yellow.500"
-            _dark={{ bg: "gray.700" }}
-          >
-            <chakra.span
+            <chakra.h3
+              py={2}
+              textAlign="center"
               fontWeight="bold"
-              color="gray.200"
-              _dark={{ color: "gray.200" }}
+              textTransform="uppercase"
+              color="green.500"
+              _dark={{ color: "white" }}
             >
-              {incidenciasEnTramite.length}
-            </chakra.span>
-          </Flex>
-        </Box>
-        <Box
-          w={'100%'}
-          bg="white"
-          _dark={{ bg: "gray.800" }}
-          shadow="lg"
-          rounded="lg"
-          overflow="hidden"
-          textAlign={'center'}
-        >
-          <chakra.h3
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color="gray.800"
-            _dark={{ color: "white" }}
+              INCIDENCIAS ATENDIDAS
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              px={3}
+              bg="green.500"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
+                fontWeight="bold"
+                color="white"
+                _dark={{ color: "gray.200" }}
+              >
+                {incidenciasAtendidas.length}
+              </chakra.span>
+            </Flex>
+          </Box>
+          <Box
+            w={'100%'}
+            bg="white"
+            _dark={{ bg: "gray.800", borderWidth: "1px" }}
+            shadow="lg"
+            rounded="lg"
+            overflow="hidden"
+            textAlign={'center'}
           >
-            Incidencias atentidas
-          </chakra.h3>
-          <Flex
-            alignItems="center"
-            justify={'center'}
-            py={2}
-            px={3}
-            bg="blue.500"
-            _dark={{ bg: "gray.700" }}
-          >
-            <chakra.span
+            <chakra.h3
+              py={2}
+              textAlign="center"
               fontWeight="bold"
-              color="white"
-              _dark={{ color: "gray.200" }}
+              textTransform="uppercase"
+              color="gray.600"
+              _dark={{ color: "white" }}
             >
-              {incidenciasAtendidas.length}
-            </chakra.span>
-          </Flex>
-        </Box>
-      </SimpleGrid>
-    </Box>
-    <Box
-      borderWidth="1px"
-      borderRadius="lg"
-      overflow="hidden"
-      boxShadow={'md'}
-      bg={useColorModeValue('white', 'gray.900')}
-      paddingBottom={8}
-    >
-      <HStack
-        spacing="24px"
-        width={'100%'}
-        justifyContent={'space-between'}
-        verticalAlign={'center'}
-        p={4}
+              TOTAL DE INCIDENCIAS
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              px={3}
+              bg="gray.600"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
+                fontWeight="bold"
+                color="white"
+                _dark={{ color: "gray.200" }}
+              >
+                {data.length}
+              </chakra.span>
+            </Flex>
+          </Box>
+        </SimpleGrid>
+      </Box>
+      <Box
+        borderWidth="1px"
+        borderRadius="lg"
+        overflow="hidden"
+        boxShadow={'md'}
+        bg={useColorModeValue('white', 'gray.900')}
+        paddingBottom={8}
       >
-        <Box>
-          <Text fontSize="lg" fontWeight="600">
-            TABLA DE INCIDENCIAS
-          </Text>
-        </Box>
-        <Box>
-          <IncidenciaAgregar />
-        </Box>
-      </HStack>
-      <DataTableExtensions {...tableData}>
-        <DataTable
-          defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}
-          pagination
-          ignoreRowClick={true}
-          responsive={true}
-          paginationPerPage={5}
-          noDataComponent="No hay datos para mostrar refresca la página"
-          paginationRowsPerPageOptions={[5, 15, 20, 30]}
-        />
-      </DataTableExtensions>
-    </Box>
+        <HStack
+          spacing="24px"
+          width={'100%'}
+          justifyContent={'space-between'}
+          verticalAlign={'center'}
+          p={4}
+        >
+          <Box>
+            <Text fontSize="lg" fontWeight="600">
+              TABLA DE INCIDENCIAS
+            </Text>
+          </Box>
+          <Box>
+            <IncidenciaAgregar />
+          </Box>
+        </HStack>
+        <DataTableExtensions {...tableData}>
+          <DataTable
+            defaultSortAsc={false}
+            theme={useColorModeValue('default', 'solarized')}
+            pagination
+            ignoreRowClick={true}
+            responsive={true}
+            paginationPerPage={5}
+            noDataComponent="No hay datos para mostrar refresca la página"
+            paginationRowsPerPageOptions={[5, 15, 20, 30]}
+          />
+        </DataTableExtensions>
+      </Box>
     </>
   );
 }

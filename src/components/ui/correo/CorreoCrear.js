@@ -133,7 +133,7 @@ export default function CorreoCrear() {
                   }
                   variant="flushed"
                   placeholder="Asunto"
-                  textTransform='uppercase'
+                  textTransform={'uppercase'}
                 />
               </FormControl>
               <FormControl isRequired>
@@ -141,11 +141,11 @@ export default function CorreoCrear() {
                   onChange={e =>
                     setIndiceCorreo({
                       ...indiceCorreo,
-                      mensaje: e.target.value,
+                      mensaje: e.target.value.toUpperCase(),
                     })
                   }
                   placeholder="Escribe el Mensaje..."
-                  textTransform='uppercase'
+                  textTransform={'uppercase'}
                   variant={'flushed'}
                   rows={7}
                   isRequired

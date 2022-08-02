@@ -61,7 +61,6 @@ const OficinaAgregar = () => {
   };
 
   const [dataOficina, setOficina] = useState(initialOficina);
-  const [sedeNombre, setsedeNombre] = useState(null);
   const [organoSelect, setorganoSelect] = useState([
     { idOrgano: 0, organo: 'Seleccione una Sede' },
   ]);
@@ -153,7 +152,7 @@ const OficinaAgregar = () => {
                   });
                 }}
                 placeholder="Oficina"
-                textTransform='uppercase'
+                textTransform={'uppercase'}
                 type={'text'}
               />
             </FormControl>

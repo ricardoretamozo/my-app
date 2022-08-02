@@ -1,19 +1,26 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
   useColorModeValue,
-  AlertDialogBody,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogFooter,
-  AlertDialog,
   Text,
   HStack,
   Badge,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  FormControl,
+  FormLabel,
+  Select,
+  ModalFooter,
 } from '@chakra-ui/react';
+
+import { AiOutlineUserSwitch } from 'react-icons/ai';
 
 import { store } from '../../../../store/store';
 
@@ -24,21 +31,41 @@ import Moment from 'moment';
 
 import IncidenciaAgregar from '../IncidenciaAgregar';
 import IncidenciaDetalles from '../IncidenciaDetalles';
+import { asignarIncidencia } from '../../../../actions/incidencia';
 
 export default function TableIncidenciaAsignados() {
-  const [opendelete, setOpenDelete] = React.useState(false);
+  const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
-  // const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  // const colorStatus = useColorModeValue('white', 'gray.400');
-
   const data = store.getState().incidenciasAsignadas.rows;
+  const tecnicosDisponibles = store.getState().tecnicoDisponible.rows;
+  
+  const [openModal, setOpenModal] = React.useState(false);
+  
+  const [indice, setIndice] = useState({
+    idHistorialPersona: null,
+    persona: {
+      idpersona: null,
+    },
+    activo:''
+  })
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
+  const actualizarAsignacion = (id) => {
+    dispatch(asignarIncidencia(id, indice.persona))
+    .then(() => {
+      setOpenModal(false);      
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
+
+  const handleClickOpenModal = () => {
+    setOpenModal(true);
   };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  }
 
   const columns = [
     {
@@ -97,31 +124,50 @@ export default function TableIncidenciaAsignados() {
             rowId = {row.idIncidencia}
             identificador = { identificador }
           />
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {row.activo === 'S' ? (
-                    <Text>Está seguro de anular?</Text>
-                  ) : (
-                    <Text>Esta seguro de activar?</Text>
-                  )}
-                </AlertDialogHeader>
-
-                <AlertDialogBody>Confirmo la acción</AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>Cancelar</Button>
-                  <Button
-                    colorScheme="red"
-                    ml={3}
-                  >
-                    Si
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
+          {row.estado === 'A' ? (null) : (
+            <IconButton
+              icon={<AiOutlineUserSwitch />}
+              variant={'outline'}
+              colorScheme={'green'}
+              onClick={() => handleClickOpenModal(row.idIncidencia)}
+              fontSize='20px'
+              size={'sm'}
+              ml={1}
+              _focus={{ boxShadow: "none" }}
+            />       
+            )}
+            <Modal
+              isOpen={openModal}
+              onClose={handleCloseModal}
+              size={'xl'}
+            >
+              <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>RE-ASIGNAR A UN SOPORTE TÉCNICO</ModalHeader>
+                  <ModalCloseButton _focus={{ boxShadow: "none" }} />
+                  <ModalBody pb={6}>
+                    <FormControl>
+                      <FormLabel>SOPORTES TÉCNICOS</FormLabel>
+                      <Select placeholder='ELIGE UN SOPORTE TECNICO'
+                      
+                      onChange={(e)=> {setIndice({ ...indice, persona: (e.target.value) })}} 
+                      >
+                        {tecnicosDisponibles.map((item, idx) => (
+                          <option value={item.persona.idpersona} key={idx}>
+                            {item.persona.nombre + ' ' + item.persona.apellido}
+                          </option>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button colorScheme="blue" _focus={{ boxShadow: "none" }} mr={3} onClick={() => actualizarAsignacion(row.idIncidencia)}>
+                      ASIGNAR
+                    </Button>
+                    <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                  </ModalFooter>
+                </ModalContent>
+            </Modal>
           </div>
         );
       },

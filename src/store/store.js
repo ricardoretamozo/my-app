@@ -14,6 +14,7 @@ import { motivoReducer } from "../reducers/motivoReducer";
 import { personaOrganoReducer } from "../reducers/personaOrganoReducer";
 import { tecnicoDisponibleReducer } from "../reducers/tecnicoReducer";
 import { correoRecibidoReducer, correoEnviadoReducer } from "../reducers/correoReducer";
+import { origenIncidenciaReducer } from "../reducers/origenIncidenciaReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -37,6 +38,7 @@ const reducers = combineReducers({
     motivo: motivoReducer,
     correoRecibido: correoRecibidoReducer,
     correoEnviado: correoEnviadoReducer,
+    origenIncidencia: origenIncidenciaReducer,
 });
 
 export const store = createStore( 

@@ -317,9 +317,9 @@ export default function TableOficina() {
                     <Input
                       defaultValue={indice ? indice.oficina : ''}
                       type="text"
-                      textTransform='uppercase'
+                      textTransform={'uppercase'}
                       onChange={e =>
-                        setIndice({ ...indice, oficina: e.target.value })
+                        setIndice({ ...indice, oficina: e.target.value.toUpperCase() })
                       }
                     />
                   </FormControl>

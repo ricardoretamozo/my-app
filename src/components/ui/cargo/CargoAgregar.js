@@ -69,7 +69,7 @@ return (
                 <FormLabel>CARGO</FormLabel>
                 <Input 
                 onChange={(e)=> {setCargo({ ...dataCargo, cargo: (e.target.value).toUpperCase() })}}
-                textTransform='uppercase'
+                textTransform={'uppercase'}
                 placeholder='Cargo'
                 isRequired={true}
                 type={'text'} />

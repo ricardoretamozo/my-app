@@ -42,11 +42,6 @@ export default function TableMotivo() {
   const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
-
   const data = store.getState().motivo.rows;
 
   const [indice, setIndice] = useState({
@@ -130,7 +125,7 @@ export default function TableMotivo() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    <Text>¿ESTÁ SEGURO DE ELIMINAR?</Text>
+                    <Text>¿ESTÁ SEGURO DE ELIMINAR EL MOTIVO?</Text>
                 </AlertDialogHeader>
 
                 <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
@@ -171,10 +166,10 @@ export default function TableMotivo() {
                   <FormLabel>MOTIVO</FormLabel>
                   <Input
                     defaultValue={indice ? indice.motivo : ''}
-                    style={{'text-transform':'uppercase'}}
+                    textTransform={'uppercase'}
                     type="text"
                     onChange={e =>
-                      setIndice({ ...indice, motivo: e.target.value })
+                      setIndice({ ...indice, motivo: e.target.value.toUpperCase() })
                     }
                   />
                 </FormControl>
@@ -239,7 +234,7 @@ export default function TableMotivo() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            TABLA MOTIVOS
+            TABLA DE MOTIVOS DE INCIDENCIA
           </Text>
         </Box>
         <Box>

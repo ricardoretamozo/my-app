@@ -39,11 +39,6 @@ export default function TableIncidenciaNoAsignados() {
   const { identificador } = useSelector(state => state.auth);
   const usuario = store.getState().auth;
 
-  // const perfil_persona = useSelector(state => state.perfilPersona);
-
-  // const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  // const colorStatus = useColorModeValue('white', 'gray.400');
-
   const data = store.getState().incidenciasNoAsignadas.rows;
   const tecnicosDisponibles = store.getState().tecnicoDisponible.rows;
 
@@ -147,7 +142,8 @@ export default function TableIncidenciaNoAsignados() {
                   <ModalCloseButton _focus={{ boxShadow: "none" }} />
                   <ModalBody pb={6}>
                     <FormControl>
-                      <FormLabel>SOPORTES TÉCNICOS(DISPONIBLES)</FormLabel>
+                      <FormLabel>SOPORTES TÉCNICOS</FormLabel>
+                      
                       <Select placeholder='ELIGE UN SOPORTE TECNICO'
                       
                       onChange={(e)=> {setIndice({ ...indice, persona: (e.target.value) })}} 

@@ -6,7 +6,7 @@ import { Incidencia } from './incidencia/incidencia';
 import { IncidenciaUsuario } from './incidencia/usuario/incidencia';
 import { IncidenciaAsistenteNoAsignados, IncidenciaAsistenteAsignados } from './incidencia/asistente/incidencia';
 import { PerfilPersona } from './perfilpersona/perfilPersona';
-import { PrivateRoute } from '../../routers/PrivateRoute'; 
+import { PrivateRoute } from '../../routers/PrivateRoute';
 import { useSelector } from 'react-redux';
 import { Sede } from './sede/sede';
 import { Organo } from './organo/organo';
@@ -15,7 +15,8 @@ import { Persona } from './persona/persona';
 import { Cargo } from './cargo/cargo';
 import { Correo } from './correo/index';
 import { Motivo } from './motivo/motivo';
-import { IncidenciaSoporte } from './incidencia/soporte/incidencia'
+import { IncidenciaSoporte } from './incidencia/soporte/incidencia';
+import { OrigenIncidencia } from './origenIncidencia/origen';
 
 export const DasboardScreen = () => {
   //
@@ -24,74 +25,79 @@ export const DasboardScreen = () => {
     <>
       <Switch>
         <PrivateRoute
-        exact path="/dashboard/home"
-        component = { home } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/home"
+          component={home}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
           exact path="/dashboard/motivos"
-          component = { Motivo } 
-          isAuthenticated = { !!access_token }
+          component={Motivo}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/incidencias"
-        component = { Incidencia } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/incidencias"
+          component={Incidencia}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/usuario/incidencias"
-        component = { IncidenciaUsuario } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/usuario/incidencias"
+          component={IncidenciaUsuario}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/incidencias_asignadas"
-        component = { IncidenciaAsistenteAsignados } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/incidencias_asignadas"
+          component={IncidenciaAsistenteAsignados}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/incidencias_no_asignadas"
-        component = { IncidenciaAsistenteNoAsignados } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/incidencias_no_asignadas"
+          component={IncidenciaAsistenteNoAsignados}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/soporte/incidencias"
-        component = { IncidenciaSoporte } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/soporte/incidencias"
+          component={IncidenciaSoporte}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/perfil"
-        component = { PerfilPersona } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/perfil"
+          component={PerfilPersona}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/sedes"
-        component = { Sede } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/sedes"
+          component={Sede}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/organos"
-        component = { Organo } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/organos"
+          component={Organo}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/oficinas"
-        component = { Oficina } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/oficinas"
+          component={Oficina}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/personas"
-        component = { Persona } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/personas"
+          component={Persona}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/cargos"
-        component = { Cargo } 
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/cargos"
+          component={Cargo}
+          isAuthenticated={!!access_token}
         />
         <PrivateRoute
-        exact path="/dashboard/correos"
-        component = { Correo }
-        isAuthenticated = { !!access_token }
+          exact path="/dashboard/correos"
+          component={Correo}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/origen-incidencia"
+          component={OrigenIncidencia}
+          isAuthenticated={!!access_token}
         />
       </Switch>
     </>

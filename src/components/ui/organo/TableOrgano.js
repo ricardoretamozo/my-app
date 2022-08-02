@@ -218,9 +218,9 @@ export default function TableOrgano() {
                     <Input
                       defaultValue={indice ? indice.organo : ''}
                       type="text"
-                      textTransform='uppercase'
+                      textTransform={'uppercase'}
                       onChange={e =>
-                        setIndice({ ...indice, organo: e.target.value })
+                        setIndice({ ...indice, organo: e.target.value.toUpperCase() })
                       }
                     />
                   </FormControl>

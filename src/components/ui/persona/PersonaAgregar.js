@@ -149,10 +149,10 @@ const PersonaAgregar = props => {
                   <FormLabel>NOMBRES</FormLabel>
                   <Input
                     onChange={e =>
-                      setPersona({ ...persona, nombre: e.target.value })
+                      setPersona({ ...persona, nombre: (e.target.value).toUpperCase() })
                     }
                     placeholder="Nombres"
-                    textTransform='uppercase'
+                    textTransform={'uppercase'}
                     type={'text'}
                     isRequired
                   />
@@ -161,10 +161,10 @@ const PersonaAgregar = props => {
                   <FormLabel>APELLIDOS</FormLabel>
                   <Input
                     onChange={e =>
-                      setPersona({ ...persona, apellido: e.target.value })
+                      setPersona({ ...persona, apellido: (e.target.value).toUpperCase() })
                     }
                     placeholder="Apellidos"
-                    textTransform='uppercase'
+                    textTransform={'uppercase'}
                     type={'text'}
                     isRequired
                   />
@@ -184,7 +184,6 @@ const PersonaAgregar = props => {
                     }}
                     type={'text'}
                     placeholder="Usuario"
-                    textTransform='uppercase'
                   />
                 </FormControl>
 
@@ -209,8 +208,6 @@ const PersonaAgregar = props => {
                     }
                     type={'email'}
                     placeholder="Correo"
-                    textTransform='uppercase'
-                    isRequired
                   />
                 </FormControl>
                 <FormControl>

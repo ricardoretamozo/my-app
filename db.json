@@ -1,51 +1,39 @@
 {
   "dni": [
     {
-      "id": "70809010",
+      "id": "10203016",
       "nombre": "RENATO",
-      "numeroDocumento": "70809010",
+      "numeroDocumento": "10203016",
       "nombres": "RENATO",
       "apellidos": "MENDOZA GUTIERREZ",
       "apellidoMaterno": "MENDOZA",
       "ubigeo": "040407",
       "codigoVerificacion": "8",
-      "fechaNacimiento": "2022-07-08",
+      "fechaNacimiento": "2022-07-28",
       "sexo": "M"
     },
     {
-      "id": "70809011",
+      "id": "10203017",
       "nombre": "JOSE LUIS",
-      "numeroDocumento": "70809011",
+      "numeroDocumento": "10203017",
       "nombres": "JOSE LUIS",
       "apellidos": "GUTIERREZ",
       "apellidoMaterno": "MENDOZA",
       "ubigeo": "040407",
       "codigoVerificacion": "8",
-      "fechaNacimiento": "2022-07-11",
+      "fechaNacimiento": "2022-07-28",
       "sexo": "M"
     },
     {
-      "id": "70809012",
-      "nombre": "LUIS",
-      "numeroDocumento": "70809012",
-      "nombres": "LUIS",
-      "apellidos": "GUTIERREZ",
-      "apellidoMaterno": "MENDOZA",
-      "ubigeo": "040407",
-      "codigoVerificacion": "8",
-      "fechaNacimiento": "2022-07-11",
-      "sexo": "M"
-    },
-    {
-      "id": "70809013",
+      "id": "10203018",
       "nombre": "JAVIER",
-      "numeroDocumento": "70809013",
+      "numeroDocumento": "10203018",
       "nombres": "JAVIER",
       "apellidos": "QUISPE",
       "apellidoMaterno": "CASERES",
       "ubigeo": "040407",
       "codigoVerificacion": "8",
-      "fechaNacimiento": "2022-07-13",
+      "fechaNacimiento": "2022-07-28",
       "sexo": "M"
     }
   ]

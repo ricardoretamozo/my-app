@@ -198,9 +198,9 @@ export default function Tables() {
                     autoFocus
                     defaultValue={indice ? indice.perfil : ''}
                     type="text"
-                    textTransform='uppercase'
+                    textTransform={'uppercase'}
                     onChange={e =>
-                      setIndice({ ...indice, perfil: e.target.value })
+                      setIndice({ ...indice, perfil: (e.target.value).toUpperCase() })
                     }
                   />
                 </FormControl>
@@ -210,10 +210,10 @@ export default function Tables() {
                     autoFocus
                     defaultValue={indice ? indice.descripcion : ''}
                     onChange={e =>
-                      setIndice({ ...indice, descripcion: e.target.value })
+                      setIndice({ ...indice, descripcion: (e.target.value).toUpperCase() })
                     }
                     placeholder="Descripcion"
-                    textTransform='uppercase'
+                    textTransform={'uppercase'}
                     type="text"
                   />
                 </FormControl>

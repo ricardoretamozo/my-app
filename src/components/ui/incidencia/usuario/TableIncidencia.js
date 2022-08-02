@@ -22,9 +22,9 @@ export default function TableIncidencia() {
 
   var data = store.getState().incidenciaId.rows;
 
-  const incidenciasPendientes = data.filter(row => row.estado === 'P');
-  const incidenciasEnTramite = data.filter(row => row.estado === 'T');
-  const incidenciasAtendidas = data.filter(row => row.estado === 'A');
+  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
+  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
+  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
 
   const columns = [
     {
@@ -42,29 +42,24 @@ export default function TableIncidencia() {
       maxWidth: '20rem',
     },
     {
-        name: 'FECHA Y HORA',
-        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
-        sortable: true,
-        reorder: true,
-    },
-    {
-        name: 'USUARIO ASIGNADO',
-        selector: row => row.persona_asignado == null ? "NO ASIGNADO" : row.persona_asignado.nombre + " " + row.persona_asignado.apellido,
-        sortable: true,
-        wrap: false,
-    },
-    {
-      name: 'IP',
-      selector: row => row.ip,
+      name: 'FECHA Y HORA',
+      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
+      reorder: true,
+    },
+    {
+      name: 'USUARIO ASIGNADO',
+      selector: row => row.historialIncidencia.persona_asignado == null ? "NO ASIGNADO" : row.historialIncidencia.persona_asignado.nombre + " " + row.historialIncidencia.persona_asignado.apellido,
+      sortable: true,
+      wrap: false,
     },
     {
       name: 'ESTADO',
-      selector: row => row.estado,
+      selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
       cell: row => (
           <Badge
-            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500': 'green.500'}
+            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500': 'green.500'}
             color={'white'}
             p="4px 0px"
             w={24}
@@ -72,7 +67,7 @@ export default function TableIncidencia() {
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
+            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
       ),
       center: true,

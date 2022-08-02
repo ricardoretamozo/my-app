@@ -38,6 +38,7 @@ import { getOrigen } from '../components/ui/origenIncidencia/origen';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
+  console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
   const { identificador } = useSelector(state => state.auth);
@@ -69,7 +70,6 @@ export const AppRouter = () => {
   // OFICINAS
 
   useEffect(() => {
-  
     if(store.getState().oficina.checking){
       fetchOficinas().then((res)=>{
       dispatch(getOficina(res));
@@ -112,22 +112,30 @@ export const AppRouter = () => {
 
   // INCIDENCIAS POR CADA USUARIO
 
+  const DataFetchIncidenciasPersonas = async() => {
+    await fetchIncidenciasPersonas(identificador).then((res)=>{
+      dispatch(getIncidenciaId(res));
+    });
+  }
+
   useEffect(() => {
     
     if(store.getState().incidenciaId.checking){
-      fetchIncidenciasPersonas(identificador).then((res)=>{
-        dispatch(getIncidenciaId(res));
-      });
+      DataFetchIncidenciasPersonas()
     }
   });
 
   //PERSONAS
 
+  const DataFetchPersonas = async() => {
+    await personaList().then((res)=>{
+      dispatch(getPersona(res));
+    });
+  }
+
   useEffect(() => {
     if(store.getState().persona.checking){
-      personaList().then((res)=>{
-        dispatch(getPersona(res));
-      });
+      DataFetchPersonas()
     }
   });
 
@@ -259,6 +267,18 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/origen-incidencia"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/reportes"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/reportes/incidencias"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

@@ -6,16 +6,49 @@ import { getIncidenciaNoAsignadas, getIncidenciaAsignadas } from '../components/
 // CREATE PERSONA
 
 export const createIncidencia = (data) => {
+  console.log(data);
   return async dispatch => {
     const response = await fetchToken(
       `incidencias/usuariocomun`,
       {
         descripcion: data.descripcion,
-        estado: data.estado,
-        persona: { idpersona: data.persona.idpersona},
-        persona_registro: { idpersona: data.persona_registro.idpersona},
-        motivo: data.motivo,
-        origen: data.origen,
+        persona: { idpersona: data.persona.idpersona },
+        motivo: { idMotivo: data.motivo.idMotivo },
+        origen: { idOrigen: data.origen.idOrigen },
+        historialIncidencia: {
+          persona_registro: {
+            idpersona: data.historialIncidencia.persona_registro.idpersona
+          },
+          persona_asignado: {
+            idpersona: data.historialIncidencia.persona_asignado.idpersona
+          }
+        }
+      },
+      'POST'
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
+      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
+      notification('Incidencia registrado correctamente.', '', 'success');
+    } else {
+      notification('No se pudo registrar la Incidencia', '', 'error');
+    }
+  };
+};
+
+export const createIncidenciaUsuario = (data) => {
+  return async dispatch => {
+    const response = await fetchToken(
+      `incidencias/usuariocomun`,
+      {
+        descripcion: data.descripcion,
+        persona: { idpersona: data.persona.idpersona },
+        motivo: { idMotivo: data.motivo.idMotivo },
+        origen: { idOrigen: data.origen.idOrigen },
+        historialIncidencia: {
+          persona_registro: data.historialIncidencia.persona_registro,
+        }
       },
       'POST'
     );
@@ -30,11 +63,21 @@ export const createIncidencia = (data) => {
   };
 };
 
-export const asignarIncidencia = (id, data) => {
+// ASIGNACION DE INCIDENCIAS A SOPORTES TECNICOS
+
+export const asignarIncidencia = (data) => {
   return async dispatch => {
-    const response = await fetchToken(`incidencias/asignacion/${id}`,
+    const response = await fetchToken(`incidencias/asignacion/`,
       {
-        idpersona: data
+        idIncidencia: data.idIncidencia,
+        historialIncidencia: {
+          persona_registro: {
+            idpersona: data.historialIncidencia.persona_registro.idpersona
+          },
+          persona_asignado: {
+            idpersona: data.historialIncidencia.persona_asignado.idpersona
+          }
+        }
       },
       'PUT'
     );
@@ -42,9 +85,9 @@ export const asignarIncidencia = (id, data) => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
-      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
       dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
-      notification('Incidencia asignada correctamente.', body.message, 'success');
+      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
+      notification('Incidencia ha sido asignado correctamente.', body.message, 'success');
     }
     else {
       notification('No se pudo asignar la Incidencia', body.message, 'error');
@@ -52,14 +95,49 @@ export const asignarIncidencia = (id, data) => {
   };
 };
 
-// ACTUALIZAR EL ESTADO DE LA INCIDENCIA EN TRÁMITE
-export const incidenciaEnTramite = (id) => {
+
+export const reAsignarIncidencia = (data) => {
   return async dispatch => {
-    const response = await fetchToken(`incidencias/tramite/${id}`,'', 'PUT');
+    const response = await fetchToken(`incidencias/asignacion/`,
+      {
+        idIncidencia: data.idIncidencia,
+        historialIncidencia: {
+          persona_registro: {
+            idpersona: data.historialIncidencia.persona_registro.idpersona
+          },
+          persona_asignado: {
+            idpersona: data.historialIncidencia.persona_asignado.idpersona
+          }
+        }
+      },
+      'PUT'
+    );
+
+    // const body = await response.json();
+
+    if (response.status === 200 || response.status === 201) {
+      // dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
+      dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
+      notification('Incidencia Re-Asignada correctamente al técnico.', '', 'success');
+    }
+    else {
+      notification('No se pudo Re-Asignar la Incidencia', '', 'error');
+    }
+  };
+};
+
+
+// ACTUALIZAR EL ESTADO DE LA INCIDENCIA EN TRÁMITE
+
+export const incidenciaEnTramite = (data) => {
+  return async dispatch => {
+    const response = await fetchToken(`incidencias/tramite/`,
+      {
+        idIncidencia: data.idIncidencia,
+        historialIncidencia: data.historialIncidencia
+      }, 'PUT');
     const body = await response.json();
     if (response.status === 200 || response.status === 201) {
-      dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
-      dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
       notification('Incidencia actualizada correctamente.', body.message, 'success');
     }
     else {
@@ -77,17 +155,13 @@ export const fetchIncidencias = async () => {
 
   body.forEach(incidencia => {
     data.push({
-        idIncidencia: incidencia.idIncidencia,
-        descripcion: incidencia.descripcion,
-        estado: incidencia.estado,
-        fecha: incidencia.fecha,
-        ip: incidencia.ip,
-        persona: incidencia.persona,
-        persona_registro: incidencia.persona_registro,
-        persona_asignado: incidencia.persona_asignado,
-        oficina: incidencia.oficina,
-        motivo: incidencia.motivo,
-        origen: incidencia.origen,
+      idIncidencia: incidencia.idIncidencia,
+      descripcion: incidencia.descripcion,
+      persona: incidencia.persona,
+      oficina: incidencia.oficina,
+      motivo: incidencia.motivo,
+      origen: incidencia.origen,
+      historialIncidencia: incidencia.historialIncidencia,
     });
   });
   Incidencia.data = data;
@@ -102,44 +176,36 @@ export const fetchIncidenciasPersonas = async (id) => {
 
   body.forEach(incidencia => {
     data.push({
-        idIncidencia: incidencia.idIncidencia,
-        descripcion: incidencia.descripcion,
-        estado: incidencia.estado,
-        fecha: incidencia.fecha,
-        ip: incidencia.ip,
-        persona: incidencia.persona,
-        persona_registro: incidencia.persona_registro,
-        persona_asignado: incidencia.persona_asignado,
-        oficina: incidencia.oficina,
-        motivo: incidencia.motivo,
-        origen: incidencia.origen,
+      idIncidencia: incidencia.idIncidencia,
+      descripcion: incidencia.descripcion,
+      origen: incidencia.origen,
+      motivo: incidencia.motivo,
+      historialIncidencia: incidencia.historialIncidencia,
+      persona: incidencia.persona,
+      oficina: incidencia.oficina,
     });
   });
   Incidencia.data = data;
   return Incidencia;
 };
 
-//LISTAR INCIDENCIA POR ID
+//LISTAR INCIDENCIA POR ID PARA VER LOS DETALLES
 
-export const fetchIncidencia = async (id) => {
-    const response = await fetchToken('incidencias/persona/detalles/' + id);
-    const body = await response.json();
-    const Incidencia = {
-        idIncidencia: body.idIncidencia,
-        descripcion: body.descripcion,
-        estado: body.estado,
-        fecha: body.fecha,
-        ip: body.ip,
-        persona: body.persona,
-        persona_registro: body.persona_registro,
-        persona_asignado: body.persona_asignado,
-        oficina: body.oficina,
-        motivo: body.motivo,
-        origen: body.origen
-      };
-    // Incidencia.data = data;
-    // set user info
-    return Incidencia;
+export const fetchIncidenciaDetalles = async (id) => {
+  const response = await fetchToken('incidencias/persona/detalles/' + id);
+  const body = await response.json();
+  const Incidencia = {
+    idIncidencia: body.idIncidencia,
+    descripcion: body.descripcion,
+    persona: body.persona,
+    oficina: body.oficina,
+    motivo: body.motivo,
+    origen: body.origen,
+    historialIncidencia: body.historialIncidencia,
+  };
+  // Incidencia.data = data;
+  // set user info
+  return Incidencia;
 };
 
 // MOSTRAR INCIDENCIAS ASIGNADAS
@@ -151,17 +217,13 @@ export const fetchIncidenciasAsignadas = async () => {
   const data = [];
   body.forEach(incidencia => {
     data.push({
-        idIncidencia: incidencia.idIncidencia,
-        descripcion: incidencia.descripcion,
-        estado: incidencia.estado,
-        fecha: incidencia.fecha,
-        ip: incidencia.ip,
-        persona: incidencia.persona,
-        persona_registro: incidencia.persona_registro,
-        persona_asignado: incidencia.persona_asignado,
-        oficina: incidencia.oficina,
-        motivo: incidencia.motivo,
-        origen: incidencia.origen,
+      idIncidencia: incidencia.idIncidencia,
+      descripcion: incidencia.descripcion,
+      origen: incidencia.origen,
+      motivo: incidencia.motivo,
+      historialIncidencia: incidencia.historialIncidencia,
+      persona: incidencia.persona,
+      oficina: incidencia.oficina,
     });
   });
   IncidenciaAsignados.data = data;
@@ -169,60 +231,81 @@ export const fetchIncidenciasAsignadas = async () => {
   return IncidenciaAsignados;
 };
 
-// MOSTRAR INCIDENCIAS NO ASIGNADAS
+// LISTAR INCIDENCIAS NO ASIGNADAS
 
 export const fetchIncidenciasNoAsignadas = async () => {
   const response = await fetchToken('incidencias/persona/noasignados');
-  const body = await response.json();
-  const IncidenciaNoAsignados = {};
-  const data = [];
-  body.forEach(incidencia => {
-    data.push({
+  if (await response.status !== 404) {
+    const body = await response.json();
+    const IncidenciaNoAsignados = {};
+    const data = [];
+    body.forEach(incidencia => {
+      data.push({
         idIncidencia: incidencia.idIncidencia,
         descripcion: incidencia.descripcion,
-        estado: incidencia.estado,
-        fecha: incidencia.fecha,
-        ip: incidencia.ip,
-        persona: incidencia.persona,
-        persona_registro: incidencia.persona_registro,
-        persona_asignado: incidencia.persona_asignado,
-        oficina: incidencia.oficina,
-        motivo: incidencia.motivo,
         origen: incidencia.origen,
+        motivo: incidencia.motivo,
+        historialIncidencia: incidencia.historialIncidencia,
+        persona: incidencia.persona,
+        oficina: incidencia.oficina,
+      });
     });
-  });
-  IncidenciaNoAsignados.data = data;
-  // set user info
-  return IncidenciaNoAsignados;
-};
+    IncidenciaNoAsignados.data = data;
 
+    return IncidenciaNoAsignados;
+  } else {
+
+    const IncidenciaNoAsignados = {};
+    const data = [];
+    IncidenciaNoAsignados.data = data;
+
+    return IncidenciaNoAsignados;
+  }
+};
 
 //LISTAR INCIDENCIAS ASIGNADOS AL USUARIO
 
 export const fetchIncidenciaSoporte = async (id) => {
   const response = await fetchToken(`incidencias/persona/asignado/${id}`);
   const body = await response.json();
-  console.log(body);
   const Incidencia = {};
   const data = [];
   body.forEach(incidencia => {
     data.push({
-        idIncidencia: incidencia.idIncidencia,
-        descripcion: incidencia.descripcion,
-        estado: incidencia.estado,
-        fecha: incidencia.fecha,
-        ip: incidencia.ip,
-        persona: incidencia.persona,
-        persona_registro: incidencia.persona_registro,
-        persona_asignado: incidencia.persona_asignado,
-        oficina: incidencia.oficina,
-        motivo: incidencia.motivo,
-        origen: incidencia.origen,
+      idIncidencia: incidencia.idIncidencia,
+      descripcion: incidencia.descripcion,
+      origen: incidencia.origen,
+      motivo: incidencia.motivo,
+      historialIncidencia: incidencia.historialIncidencia,
+      persona: incidencia.persona,
+      oficina: incidencia.oficina,
     });
   });
   Incidencia.data = data;
   // set user info
   return Incidencia;
+};
+
+export const createSolucionIncidencia = (data) => {
+  console.log(data)
+  return async dispatch => {
+    const response = await fetchToken(
+      `incidencia/descripcion/save`,
+      {
+        descripcion: data.descripcion,
+        incidencia: { idIncidencia: data.incidencia }
+      },
+      'POST'
+    );
+
+    const body = await response.json();
+
+    if (response.status === 200 || response.status === 201) {
+      notification('Atención de la Incidencia registrado correctamente.', body.message, 'success');
+    } else {
+      notification('No se pudo registrar la Atención de la Incidencia correctamente', body.message, 'error');
+    }
+  };
 };
 
 
@@ -234,10 +317,10 @@ export const deleteIncidencia = id => {
     const body = await response.json();
 
     if (response.status === 200) {
-        dispatch(getIncidencia(await loadIncidencias()));
-        notification('Incidencia eliminado correctamente', body.message, 'success');
+      dispatch(getIncidencia(await loadIncidencias()));
+      notification('Incidencia eliminado correctamente', body.message, 'success');
     } else {
-        notification('No se pudo eliminar la incidencia', body.detalles, 'error');
+      notification('No se pudo eliminar la incidencia', body.detalles, 'error');
     }
   };
 };
@@ -245,37 +328,37 @@ export const deleteIncidencia = id => {
 // Refrescar la tabla
 
 export const loadIncidencias = async (id) => {
-    const response = await fetchToken('incidencias/personas/' + id);
-    const body = await response.json();
-    const Incidencia = {};
-    const data = [];
-  
-    body.forEach(incidencia => {
-      data.push({
-          idIncidencia: incidencia.idIncidencia,
-          descripcion: incidencia.descripcion,
-          estado: incidencia.estado,
-          fecha: incidencia.fecha,
-          ip: incidencia.ip,
-          persona: incidencia.persona,
-          persona_registro: incidencia.persona_registro,
-          persona_asignado: incidencia.persona_asignado,
-          oficina: incidencia.oficina,
-          motivo: incidencia.motivo,
-          origen: incidencia.origen,
-      });
+  const response = await fetchToken('incidencias/personas/' + id);
+  const body = await response.json();
+  const Incidencia = {};
+  const data = [];
+
+  body.forEach(incidencia => {
+    data.push({
+      idIncidencia: incidencia.idIncidencia,
+      descripcion: incidencia.descripcion,
+      estado: incidencia.estado,
+      fecha: incidencia.fecha,
+      ip: incidencia.ip,
+      persona: incidencia.persona,
+      persona_registro: incidencia.persona_registro,
+      persona_asignado: incidencia.persona_asignado,
+      oficina: incidencia.oficina,
+      motivo: incidencia.motivo,
+      origen: incidencia.origen,
     });
-    Incidencia.data = data;
-    // set user info
-  
-    return Incidencia;
-  };
+  });
+  Incidencia.data = data;
+  // set user info
+
+  return Incidencia;
+};
 
 
-  // MOSTRAR TECNICOS DISPONIBLES
+// MOSTRAR TECNICOS DISPONIBLES
 
 export const fetchTecnicosDisponibles = async () => {
-  const response = await fetchToken('tecnico/disponibilidad');
+  const response = await fetchToken('tecnico/');
   const body = await response.json();
   const TecnicosDisponibles = {};
   const data = [];
@@ -293,17 +376,17 @@ export const fetchTecnicosDisponibles = async () => {
 
 // BUSCAR POR DNI
 
-  export const buscarUsuarioDni = async (dni) => {
-    const response = await fetchToken(`personas/dni/${dni}`);
-    const body = await response.json();
-    const PersonasDni = {
-      idpersona: body.idpersona,
-      nombre: body.nombre,
-      apellido: body.apellido,
-      dni: body.dni,
-      oficina: body.oficina
-    };
-    // PersonasDni.data = data;
-    // set user info
-    return PersonasDni;
-  }
+export const buscarUsuarioDni = async (dni) => {
+  const response = await fetchToken(`personas/dni/${dni}`);
+  const body = await response.json();
+  const PersonasDni = {
+    idpersona: body.idpersona,
+    nombre: body.nombre,
+    apellido: body.apellido,
+    dni: body.dni,
+    oficina: body.oficina
+  };
+
+  return PersonasDni;
+
+}

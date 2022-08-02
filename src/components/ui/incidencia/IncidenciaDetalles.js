@@ -27,8 +27,9 @@ import {
 
 import { ViewIcon } from '@chakra-ui/icons';
 
-import { fetchIncidencia } from '../../../actions/incidencia';
-import Moment from 'moment'; // libreria para dar formato a fechas y horas
+import { fetchIncidenciaDetalles } from '../../../actions/incidencia';
+import { fetchHistorialPersona } from '../../../actions/historialpersona'; 
+import Moment from 'moment';
 
 const IncidenciaDetalles = props => {
   const colorStatus = useColorModeValue('gray.700', 'white');
@@ -37,7 +38,9 @@ const IncidenciaDetalles = props => {
   const [openCreate, setOpenCreate] = React.useState(false);
 
   const [detalleIncidencia, setDetalleIncidencia] = useState([]);
+  const [incidenciaHistorial, setIncidenciaHistorial] = useState([]);
   const [incidenciaMotivo, setIncidenciaMotivo] = useState([]);
+  const [incidenciaOrigen, setIncidenciaOrigen] = useState([]);
   const [incidenciaOficina, setIncidenciaOficina] = useState([]);
   const [incidenciaOrgano, setIncidenciaOrgano] = useState([]);
   const [incidenciaSede, setIncidenciaSede] = useState([]);
@@ -45,28 +48,32 @@ const IncidenciaDetalles = props => {
   const [incidenciaPerfilPersona, setIncidenciaPerfilPersona] = useState([]);
   const [incidenciaPersonaAsignado, setIncidenciaPersonaAsignado] = useState([]);
   const [incidenciaPerfilPersonaAsignado, setIncidenciaPerfilPersonaAsignado] = useState([]);
-  const [incidenciaFecha, setIncidenciaFecha] = useState();
+  const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState(null)
 
   
 
   const obtenerIncideciadetalle = async () => {
-    await fetchIncidencia(props.rowId).then(incidencia => {
+    await fetchIncidenciaDetalles(props.rowId).then(incidencia => {
       setDetalleIncidencia(incidencia);
-      setIncidenciaFecha(incidencia.fecha);
+      setIncidenciaHistorial(incidencia.historialIncidencia);
       setIncidenciaMotivo(incidencia.motivo); //
+      setIncidenciaOrigen(incidencia.origen); //
       setIncidenciaOficina(incidencia.oficina); //
       setIncidenciaOrgano(incidencia.oficina.organo); //
       setIncidenciaSede(incidencia.oficina.organo.sede); //
       setIncidenciaPersona(incidencia.persona); //
       setIncidenciaPerfilPersona(incidencia.persona.perfilPersona); //
-      if (incidencia.persona_asignado === null) {
+      if (incidencia.historialIncidencia.persona_asignado === null) {
         setIncidenciaPersonaAsignado('');
       } else {
-        setIncidenciaPersonaAsignado(incidencia.persona_asignado);
+        setIncidenciaPersonaAsignado(incidencia.historialIncidencia.persona_asignado);
         setIncidenciaPerfilPersonaAsignado(
-          incidencia.persona_asignado.perfilPersona
+          incidencia.historialIncidencia.persona_asignado.perfilPersona
         );
       }
+      fetchHistorialPersona(incidencia.persona.idpersona).then(historial => {
+        setIncidenciaUsuarioCargo(historial.cargo.cargo)
+      })
     });
   };
 
@@ -112,13 +119,13 @@ const IncidenciaDetalles = props => {
                   <Text fontSize={'14px'} fontWeight={'bold'}>
                     FECHA Y HORA
                   </Text>
-                  <Text fontSize={'13px'}>{Moment(detalleIncidencia.fecha).format("DD/MM/YYYY - hh:mm:ss A")}</Text>
+                  <Text fontSize={'13px'}>{Moment(incidenciaHistorial.fecha).format("DD/MM/YYYY - hh:mm:ss")}</Text>
                 </Box>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
-                    ORIGEN
+                    ORIGEN INCIDENCIA
                   </Text>
-                  <Text fontSize={'13px'}>{detalleIncidencia.origen}</Text>
+                  <Text fontSize={'13px'}>{incidenciaOrigen.origen}</Text>
                 </Box>
               </SimpleGrid>
             </Box>
@@ -126,28 +133,29 @@ const IncidenciaDetalles = props => {
               <SimpleGrid columns={2} spacing={1}>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
-                    MOTIVO
+                    MOTIVO INCIDENCIA
                   </Text>
                   <Text fontSize={'13px'}>{incidenciaMotivo.motivo}</Text>
                 </Box>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'} mb={-1}>
-                    ESTADO
+                    ESTADO INCIDENCIA
                   </Text>
                   <Badge
                     variant={'solid'}
                     fontSize={'11px'}
+                    p={0.5}
                     colorScheme={
-                      detalleIncidencia.estado === 'P'
+                      incidenciaHistorial.estadoIncidencia === 'P'
                         ? 'red'
-                        : detalleIncidencia.estado === 'T'
+                        : incidenciaHistorial.estadoIncidencia === 'T'
                         ? 'yellow'
                         : 'green'
                     }
                   >
-                    {detalleIncidencia.estado === 'P'
+                    {incidenciaHistorial.estadoIncidencia === 'P'
                       ? 'PENDIENTE'
-                      : detalleIncidencia.estado === 'T'
+                      : incidenciaHistorial.estadoIncidencia === 'T'
                       ? 'EN TRÁMITE'
                       : 'ATENDIDO'}
                   </Badge>
@@ -214,7 +222,7 @@ const IncidenciaDetalles = props => {
                       </Box>                      
                     </SimpleGrid>
                     <Divider mt={1} mb={1} />
-                    <SimpleGrid columns={[2,2,3]} spacing={1}>
+                    <SimpleGrid columns={[2,4,4]} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>SEDE</Text>
                         <Text>{incidenciaSede.sede}</Text>
@@ -226,6 +234,10 @@ const IncidenciaDetalles = props => {
                       <Box>
                         <Text fontWeight={'bold'}>OFICINA</Text>
                         <Text>{incidenciaOficina.oficina}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>CARGO</Text>
+                        <Text>{incidenciaUsuarioCargo}</Text>
                       </Box>
                     </SimpleGrid>
                   </Box>

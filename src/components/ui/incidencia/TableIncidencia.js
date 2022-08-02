@@ -33,9 +33,9 @@ export default function TableIncidencia() {
   const { identificador } = useSelector(state => state.auth);
 
   const data = store.getState().incidencia.rows;
-  const incidenciasPendientes = data.filter(row => row.estado === 'P');
-  const incidenciasEnTramite = data.filter(row => row.estado === 'T');
-  const incidenciasAtendidas = data.filter(row => row.estado === 'A');
+  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
+  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
+  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
@@ -48,28 +48,28 @@ export default function TableIncidencia() {
       sortable: true,
     },
     {
-      name: 'IP',
-      selector: row => row.ip,
-      sortable: true,
-    },
-    {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      sortable: true,
+    },
+    {
+      name: 'IP',
+      selector: row => row.historialIncidencia.ip,
       sortable: true,
     },
     {
       name: 'ESTADO',
-      selector: row => row.estado,
+      selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === 'P' ? 'red.500' : row.estado === 'T' ? 'yellow.500' : 'green.500'}
+            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
             color={'white'}
             p="3px 10px"
             w={24}
@@ -77,7 +77,7 @@ export default function TableIncidencia() {
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.estado === 'P' ? 'PENDIENTE' : row.estado === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
+            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
           </Badge>
         </div>
       ),

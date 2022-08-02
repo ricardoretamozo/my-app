@@ -78,13 +78,14 @@ export const AlertChackra = (icon, title, message) => {
 //   </AlertDialog>;
 // };
 
-export const notification = (title, message, type) => {
+export const notification = (title, message, type, id) => {
   Swal.fire({
     title: title,
     text: message,
     icon: type,
     confirmButtonText: 'Aceptar',
-    target: document.getElementById('chakra-modal-modalOrganoAsignacion')
+    target: document.getElementById(`chakra-modal-${id}`)
+    // target: document.getElementById('chakra-modal-modalOrganoAsignacion')
   });
 };
 

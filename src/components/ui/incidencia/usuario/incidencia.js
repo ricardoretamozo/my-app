@@ -22,7 +22,7 @@ export const IncidenciaUsuario = () => {
     if(store.getState().incidencia.checking){
       fetchData();
     }
-    //fetchData();
+    
   });
 
   const fetchDataId = async ()=> {
@@ -36,7 +36,7 @@ export const IncidenciaUsuario = () => {
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
-    //fetchData();
+
   });
 
   //

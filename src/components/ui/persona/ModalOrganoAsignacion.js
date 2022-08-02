@@ -116,9 +116,13 @@ export default function ModalOrganoAsignacion(props) {
     dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre))
     .then(() => {
       fetchDataPersonaOrgano(props.usuario.idpersona);
+      setorganoNombre(null);
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     })
     .catch(err => {
       console.log(err.message);
+      setorganoNombre(null);
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     });
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);

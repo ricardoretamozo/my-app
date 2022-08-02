@@ -32,7 +32,6 @@ import * as Yup from 'yup';
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#c53030', 'red.700');
   const textColor = useColorModeValue('gray.700', 'white');
-  const bgColor = useColorModeValue('white', 'gray.700');
   const bgCard = useColorModeValue("white", "gray.800");
 
   const dispatch = useDispatch();

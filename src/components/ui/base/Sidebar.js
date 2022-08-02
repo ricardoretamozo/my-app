@@ -76,6 +76,7 @@ const LinkItemsAsistenteInformatico = [
 
 const LinkItemsSoporteTecnico = [
   { name: 'Mis Incidencias', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
+  { name: 'Incidencias No Asig.', icon: FiCompass, ruta: '/dashboard/incidencias_no_asignadas' },
   { name: 'Cargos', icon: FiTrello, ruta: '/dashboard/cargos' },
   { name: 'Explore', icon: FiCompass, ruta: '/dashboard/perfil' },
 ];

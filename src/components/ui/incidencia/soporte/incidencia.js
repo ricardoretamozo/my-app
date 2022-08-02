@@ -14,7 +14,7 @@ export const IncidenciaSoporte = () => {
 
   const fetchIncidenciaSoporteData = async ()=> {
     await fetchIncidenciaSoporte(identificador).then((res)=>{
-      dispatch(getIncidenciasAsignadasId(res));
+      dispatch(getIncidenciasAsignadasSoporte(res));
     });
     
   }
@@ -46,7 +46,7 @@ export const IncidenciaSoporte = () => {
   );
 };
 
-export const getIncidenciasAsignadasId = incidenciasSoporte =>({
+export const getIncidenciasAsignadasSoporte = incidenciasSoporte =>({
   type: types.eventLoadedIncidenciasAsignadasSoporte,
   payload: incidenciasSoporte
 });

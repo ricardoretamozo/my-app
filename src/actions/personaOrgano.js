@@ -1,7 +1,5 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
-import { types } from '../types/types';
-import { useDispatch } from 'react-redux';
 
 export const createPersonaOrgano = (idpersona, idOrgano) => {
   return async dispatch => {
@@ -14,11 +12,11 @@ export const createPersonaOrgano = (idpersona, idOrgano) => {
       'POST'
     );
     if (response.status === 200 || response.status === 201) {
-      notification('Organo asiganado correctamente.', '', 'success');
+      notification('Organo asiganado correctamente.', '', 'success', 'modalOrganoAsignacion');
     } else if (response.status === 422) {
-      notification('No se puede asignar este organo', '', 'error');
+      notification('No se puede asignar este organo', '', 'error', 'modalOrganoAsignacion');
     } else {
-      notification('No se pudo asignar este organo', '', 'error');
+      notification('No se pudo asignar este organo', '', 'error', 'modalOrganoAsignacion');
     }
   };
 };
@@ -50,10 +48,10 @@ export const deletePersonaOrgano = id => {
     const response = await fetchToken(`personaorganos/${id}`, '', 'DELETE');
 
     if (response.status === 200) {
-      notification('Se ha Eliminado correctamente', '', 'success');
+      notification('Se ha Eliminado correctamente', '', 'success', 'modalOrganoAsignacion');
     } else {
       const body = await response.json();
-      notification('No se pudo eliminar', body.detalles, 'error');
+      notification('No se pudo eliminar', body.detalles, 'error', 'modalOrganoAsignacion');
     }
   };
 };
@@ -75,10 +73,3 @@ export const loadPersonaOrgano = async id => {
   // set user info
   return PersonaOrgano;
 };
-
-const getPersonaOrgano = personaOrgano => {
-  return {
-    type: types.eventLoadedPersonaOrgano,
-    payload: personaOrgano,
-  };
-}

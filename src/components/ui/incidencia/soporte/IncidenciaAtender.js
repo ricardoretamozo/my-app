@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Modal,
@@ -11,30 +11,34 @@ import {
   FormControl,
   FormLabel,
   Textarea,
-  IconButton,  
-  useDisclosure,
-  Select as SelectForm,
+  IconButton,
+  AlertDialogBody,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogFooter,
+  AlertDialog,
+  AlertDialogCloseButton,
 } from '@chakra-ui/react';
 
 import { CheckIcon } from '@chakra-ui/icons';
 
-import { store } from '../../../../store/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { getIncidenciaId } from './incidencia';
-
-import {
-    createIncidencia, fetchIncidenciasPersonas, buscarUsuarioDni
-  } from '../../../../actions/incidencia';
+import { createSolucionIncidencia, fetchIncidenciaSoporte } from '../../../../actions/incidencia';
+import { getIncidenciasAsignadasSoporte } from './incidencia';
 
 const IncidenciaAtender = (props) => {
-  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const { identificador } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
-  const motivoData = store.getState().motivo.rows;
-  const { identificador } = useSelector(state => state.auth);
-
-  const tiempoTranscurrido = Date.now();
-  const hoy = new Date(tiempoTranscurrido);
+  const [indice, setIndice] = useState({
+    descripcion: '',
+    incidencia: {
+      idIncidencia: props.rowId
+    }
+  })
 
   const handleClickOpenModal = () => {
     setOpenCreate(true);
@@ -44,9 +48,34 @@ const IncidenciaAtender = (props) => {
     setOpenCreate(false);
   };
 
-  const saveDetallesIncidenciaAtendida = e => {
+  const handleClickCloseAlert = () => {
+    setOpenAlert(false);
+  }
+
+  const handleClickOpenAlert = (e) => {
     e.preventDefault();
-    console.log('guardando los detalles de la incidencia atendida');
+    setOpenAlert(true);
+  }
+
+  const fetchDataIncidencias = async () => {
+    await fetchIncidenciaSoporte(identificador).then((res)=>{
+      dispatch(getIncidenciasAsignadasSoporte(res));
+    });
+  }
+
+  const saveDetallesIncidenciaAtendida = () => {
+    var detallesSolucion = {
+      descripcion: indice.descripcion,
+      incidencia: indice.incidencia.idIncidencia,
+    }
+    dispatch(createSolucionIncidencia(detallesSolucion)).then(() => {
+      fetchDataIncidencias();
+      handleCloseModal(true);
+      handleClickCloseAlert(true);
+    }).catch(() => {
+      handleCloseModal(true);
+      handleClickCloseAlert(true);
+    });
   };
 
   return (
@@ -55,7 +84,7 @@ const IncidenciaAtender = (props) => {
         icon={<CheckIcon />}
         variant={'solid'}
         colorScheme={'green'}
-        onClick={() => handleClickOpenModal(props.Id)}
+        onClick={() => handleClickOpenModal(props.rowId)}
         fontSize={'22px'}
         size={'sm'}
         ml={1}
@@ -69,7 +98,7 @@ const IncidenciaAtender = (props) => {
         size={'4xl'}
       >
         <ModalOverlay />
-        <form onSubmit={saveDetallesIncidenciaAtendida}>
+        <form onSubmit={handleClickOpenAlert}>
           <ModalContent>
             <ModalHeader>DETALLES DE LA ATENCIÓN A LA INCIDENCIA</ModalHeader>
             <ModalCloseButton _focus={{ boxShadow: "none" }} />
@@ -78,15 +107,16 @@ const IncidenciaAtender = (props) => {
               <FormControl mt={4} isRequired>
               <FormLabel>DESCRIPCIÓN DE LA ATENCIÓN</FormLabel>
               <Textarea
-                // onChange={e => {
-                //   setIndiceIncidencia({
-                //     ...indiceIncidencia,
-                //     descripcion: e.target.value.toUpperCase(),
-                //   });
-                // }}
+                onChange={e => {
+                  setIndice({
+                    ...indice,
+                    descripcion: e.target.value.toUpperCase(),
+                  });
+                }}
                 placeholder='DESCRIBE TODO LOS DETALLES DE LA ATENCIÓN BRINDADA A ESTA INCIDENCIA'
-                style={{'text-transform':'uppercase'}}
+                textTransform={'uppercase'}
                 rows={4}
+                required
             />
             </FormControl>
             </ModalBody>
@@ -99,6 +129,33 @@ const IncidenciaAtender = (props) => {
           </ModalContent>
         </form>
       </Modal>
+
+      {/* CONFIRMAR SI REALMENTE QUIERE GUARDAR LOS DETALLES */}
+      
+      <AlertDialog isOpen={openAlert} onClose={handleClickCloseAlert} size={'2xl'} isCentered>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="xl" fontWeight="bold">
+              ¿ESTÁ SEGURO DE GUARDAR DETALLES DE LA ATENCIÓN?
+            </AlertDialogHeader>
+            <AlertDialogCloseButton _focus={{ boxShadow: "none" }}/>
+            <AlertDialogBody>
+                ¿CONFIRMAR LA ACCIÓN?
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button
+                colorScheme="green"
+                ml={3}
+                _focus={{ boxShadow: "none" }}
+                onClick={() => saveDetallesIncidenciaAtendida()}
+              >
+                CONFIRMAR
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   );
 };

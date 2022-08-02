@@ -17,6 +17,8 @@ import { Correo } from './correo/index';
 import { Motivo } from './motivo/motivo';
 import { IncidenciaSoporte } from './incidencia/soporte/incidencia';
 import { OrigenIncidencia } from './origenIncidencia/origen';
+import { Reportes } from './home/reportes/reportes';
+import { ReporteIncidencia } from './home/reportes/incidencia/index'
 
 export const DasboardScreen = () => {
   //
@@ -97,6 +99,16 @@ export const DasboardScreen = () => {
         <PrivateRoute
           exact path="/dashboard/origen-incidencia"
           component={OrigenIncidencia}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/reportes"
+          component={Reportes}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/reportes/incidencias"
+          component={ReporteIncidencia}
           isAuthenticated={!!access_token}
         />
       </Switch>

@@ -38,60 +38,8 @@ import { deleteOrigen, updateOrigen } from '../../../actions/origenIncidencia';
 import OrigenAgregar from './OrigenAgregar';
 
 export default function TableOrigen() {
-  const [openedit, setOpenEdit] = React.useState(false);
-  const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
-
-  // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const data = store.getState().origenIncidencia.rows;
-
-  const [indice, setIndice] = useState({
-    idOrigen: null,
-    origen: '',
-  });
-
-  const handleClickOpenEdit = index => {
-    setIndice(index);
-    setOpenEdit(true);
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const handleClickDelete = () => {
-    dispatch(deleteOrigen(indice))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Origen eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
-  const handleClickUpdate = e => {
-    e.preventDefault();
-    dispatch(updateOrigen(indice))
-      .then(() => {
-        handleCloseEdit(true);
-        console.log('Origen actualizado');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const handleClickOpenDelete = index => {
-    setIndice(index);
-    setOpenDelete(true);
-  };
-
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
 
   const columns = [
     {
@@ -105,89 +53,11 @@ export default function TableOrigen() {
       sortable: false,
       cell: row => (
         <div>
-          <IconButton
-            icon={<AiTwotoneEdit />}
-            variant={'outline'}
-            colorScheme={'blue'}
-            onClick={() => handleClickOpenEdit(row)}
-            fontSize={'22px'}
-            size={'sm'}
-          />
-          <IconButton
-            icon={<RiDeleteBackLine />}
-            variant={'solid'}
-            colorScheme={'red'}
-            onClick={() => handleClickOpenDelete(row.idOrigen)}
-            fontSize={'22px'}
-            size={'sm'}
-            ml={2}
-          />
 
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    <Text>¿ESTÁ SEGURO DE ELIMINAR ESTE ORIGEN?</Text>
-                </AlertDialogHeader>
+          <ModalOrigenEditar row={row} />
 
-                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
+          <ModalOrigenEliminar row={row} />
 
-                <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
-                  <Button
-                    onClick={() => handleClickDelete(row.idOrigen)}
-                    colorScheme="red"
-                    ml={3}
-                  >
-                    SI
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
-
-          {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
-
-          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>
-                EDITAR EL ORIGEN DE LA INCIDENCIA
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody pb={6}>
-                <FormControl>
-                  <Input
-                    value={indice ? indice.idOrigen : ''}
-                    disabled={true}
-                    type="text"
-                    hidden={true}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>ORIGEN</FormLabel>
-                  <Input
-                    defaultValue={indice ? indice.origen : ''}
-                    textTransform={'uppercase'}
-                    type="text"
-                    onChange={e =>
-                      setIndice({ ...indice, origen: e.target.value.toUpperCase() })
-                    }
-                  />
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onClick={e => handleClickUpdate(e)}
-                  colorScheme="green"
-                  mr={3}
-                >
-                  ACTUALIZAR
-                </Button>
-                <Button onClick={handleCloseEdit}>CANCELAR</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
         </div>
       ),
       center: true,
@@ -200,7 +70,7 @@ export default function TableOrigen() {
     data,
   };
 
-  // CREANDO UN TEMA PARA LA TABLA
+  // TEMA PARA LA TABLA
 
   createTheme('solarized', {
     text: {
@@ -258,4 +128,164 @@ export default function TableOrigen() {
       </DataTableExtensions>
     </Box>
   );
+}
+
+
+const ModalOrigenEditar = ({ row }) => {
+
+  const [openedit, setOpenEdit] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const [indice, setIndice] = useState({
+    idOrigen: null,
+    origen: '',
+  });
+
+  const handleClickOpenEdit = index => {
+    setIndice(index);
+    setOpenEdit(true);
+  };
+
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
+
+  const handleClickUpdate = e => {
+    e.preventDefault();
+    dispatch(updateOrigen(indice))
+      .then(() => {
+        handleCloseEdit(true);
+        console.log('Origen actualizado');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  return (
+    <>
+      <IconButton
+        icon={<AiTwotoneEdit />}
+        variant={'outline'}
+        colorScheme={'facebook'}
+        onClick={() => handleClickOpenEdit(row)}
+        fontSize={'22px'}
+        size={'sm'}
+        _focus={{ boxShadow: "none" }}
+      />
+      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            EDITAR EL ORIGEN DE LA INCIDENCIA
+          </ModalHeader>
+          <ModalCloseButton _focus={{ boxShadow: "none" }} />
+          <ModalBody pb={6}>
+            <FormControl>
+              <Input
+                value={indice ? indice.idOrigen : ''}
+                disabled={true}
+                type="text"
+                hidden={true}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>ORIGEN</FormLabel>
+              <Input
+                defaultValue={indice ? indice.origen : ''}
+                textTransform={'uppercase'}
+                type="text"
+                onChange={e =>
+                  setIndice({ ...indice, origen: e.target.value.toUpperCase() })
+                }
+              />
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              onClick={e => handleClickUpdate(e)}
+              colorScheme="green"
+              mr={3}
+              _focus={{ boxShadow: "none" }}
+            >
+              ACTUALIZAR
+            </Button>
+            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  )
+}
+
+const ModalOrigenEliminar = ({ row }) => {
+
+  const [opendelete, setOpenDelete] = React.useState(false);
+
+  const dispatch = useDispatch();
+
+  const [indice, setIndice] = useState({
+    idOrigen: null,
+    origen: '',
+  });
+
+  const handleClickDelete = () => {
+    dispatch(deleteOrigen(indice))
+      .then(() => {
+        handleCloseDelete(true);
+        console.log('Origen eliminado');
+      })
+      .catch(e => {
+        console.log(e);
+        handleCloseDelete(true);
+      });
+  };
+
+  const handleClickOpenDelete = index => {
+    setIndice(index);
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
+
+
+  return (
+    <>
+      <IconButton
+        icon={<RiDeleteBackLine />}
+        variant={'solid'}
+        colorScheme={'red'}
+        onClick={() => handleClickOpenDelete(row.idOrigen)}
+        fontSize={'22px'}
+        size={'sm'}
+        ml={2}
+        _focus={{ boxShadow: "none" }}
+      />
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              <Text>¿ESTÁ SEGURO DE ELIMINAR ESTE ORIGEN?</Text>
+            </AlertDialogHeader>
+
+            <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button
+                onClick={() => handleClickDelete(row.idOrigen)}
+                colorScheme="red"
+                ml={3}
+                _focus={{ boxShadow: "none" }}
+              >
+                SI
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
+  )
 }

@@ -48,7 +48,7 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        INCIDENCIA
+                        REPORTE 1
                       </chakra.span>
                       <Link to='/dashboard/reportes/incidencias'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='red' variant='solid'>
@@ -82,7 +82,7 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        PERSONAS
+                        REPORTE 2
                       </chakra.span>
                       <Link to='/dashboard/reportes'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='green' variant='solid'>
@@ -116,7 +116,7 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        HISTORIAL
+                        REPORTE 3
                       </chakra.span>
                       <Link to='/dashboard/reportes'>
                         <Button _focus={{ boxShadow: "none" }} textAlign={'left'} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='blue' variant='solid'>

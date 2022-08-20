@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import { Tabla } from './tabla';
 import { fetchOrganos } from '../../../actions/organo'; 
 import { types } from '../../../types/types';
 import TableOrgano from './TableOrgano';

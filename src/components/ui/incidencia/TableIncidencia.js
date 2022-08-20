@@ -1,21 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
-  Button,
   useColorModeValue,
-  AlertDialogBody,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogFooter,
-  AlertDialog,
   Text,
   HStack,
   Badge,
   SimpleGrid,
   chakra,
   Flex,
+  IconButton,
 } from '@chakra-ui/react';
 
 import { store } from '../../../store/store';
@@ -27,19 +21,28 @@ import Moment from 'moment';
 
 import IncidenciaDetalles from './IncidenciaDetalles';
 import IncidenciaAgregar from './IncidenciaAgregar';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { fetchIncidencias } from '../../../actions/incidencia';
+import { getIncidencias } from './incidencia';
 
 export default function TableIncidencia() {
-  const [opendelete, setOpenDelete] = React.useState(false);
   const { identificador } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
 
   const data = store.getState().incidencia.rows;
   const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
   const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
   const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
 
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
+  const fetchDataIncidencias = async ()=> {
+    await fetchIncidencias().then((res)=>{
+      dispatch(getIncidencias(res));
+    });
+  }
+
+  const refreshTable = () => {
+    fetchDataIncidencias();
+  }
 
   const columns = [
     {
@@ -54,7 +57,13 @@ export default function TableIncidencia() {
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      sortable: true,
+    },
+    {
+      name: 'TÉCNICO ASIGNADO',
+      // selector: row => row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido,
+      selector: row => row.historialIncidencia.persona_asignado !== null ? row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido : 'NO ASIGNADO',
       sortable: true,
     },
     {
@@ -93,40 +102,6 @@ export default function TableIncidencia() {
               rowId={row.idIncidencia}
               identificador={identificador}
             />
-            {/* <IconButton
-            icon={<RiDeleteBackLine />}
-            variant={'solid'}
-            colorScheme={'red'}
-            onClick={() => handleClickOpenDelete(row.idIncidencia)}
-            fontSize={'22px'}
-            size={'sm'}
-            ml={2}
-          /> */}
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
-              <AlertDialogOverlay>
-                <AlertDialogContent>
-                  <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                    {row.activo === 'S' ? (
-                      <Text>Está seguro de anular?</Text>
-                    ) : (
-                      <Text>Esta seguro de activar?</Text>
-                    )}
-                  </AlertDialogHeader>
-
-                  <AlertDialogBody>Confirmo la acción</AlertDialogBody>
-
-                  <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
-                    <Button
-                      colorScheme="red"
-                      ml={3}
-                    >
-                      Si
-                    </Button>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialogOverlay>
-            </AlertDialog>
           </div>
         );
       },
@@ -336,6 +311,12 @@ export default function TableIncidencia() {
             </Text>
           </Box>
           <Box>
+            <IconButton
+              size={'sm'} mr={2} 
+              icon={<RepeatIcon boxSize={4} />} 
+              colorScheme={'facebook'}
+              _focus={{ boxShadow: "none" }}
+              onClick={refreshTable} />
             <IncidenciaAgregar />
           </Box>
         </HStack>

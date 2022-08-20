@@ -1,16 +1,15 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
-import { getIncidencia } from '../components/ui/incidencia/incidencia';
+import { getIncidencias } from '../components/ui/incidencia/incidencia';
 import { getIncidenciaNoAsignadas, getIncidenciaAsignadas } from '../components/ui/incidencia/asistente/incidencia';
 
 // CREATE PERSONA
 
 export const createIncidencia = (data) => {
-  console.log(data);
   return async dispatch => {
-    const response = await fetchToken(
-      `incidencias/usuariocomun`,
-      {
+    var incidencia;
+    if (data.historialIncidencia.persona_asignado != null){
+       incidencia = {
         descripcion: data.descripcion,
         persona: { idpersona: data.persona.idpersona },
         motivo: { idMotivo: data.motivo.idMotivo },
@@ -21,16 +20,29 @@ export const createIncidencia = (data) => {
           },
           persona_asignado: {
             idpersona: data.historialIncidencia.persona_asignado.idpersona
-          }
+          },
         }
-      },
-      'POST'
-    );
-
+      }
+    } else {
+      incidencia = {
+        descripcion: data.descripcion,
+        persona: { idpersona: data.persona.idpersona },
+        motivo: { idMotivo: data.motivo.idMotivo },
+        origen: { idOrigen: data.origen.idOrigen },
+        historialIncidencia: {
+          persona_registro: {
+            idpersona: data.historialIncidencia.persona_registro.idpersona
+          },
+        }
+      }
+    }
+    const response = await fetchToken(`incidencias/usuariocomun`, incidencia, 'POST');
     if (response.status === 200 || response.status === 201) {
       dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
       dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
-      notification('Incidencia registrado correctamente.', '', 'success');
+      dispatch(getIncidencias(await fetchIncidencias()));
+      notification('Incidencia Creada', 'La incidencia ha sido creada correctamente', 'success');
+      // notification((data.historialIncidencia.estado !== true ? 'Incidencia Creada, Asignada a un Técnico' : 'Incidencia Creada, Revisar si fue asignado a un Técnico'), '', 'success');
     } else {
       notification('No se pudo registrar la Incidencia', '', 'error');
     }
@@ -97,6 +109,7 @@ export const asignarIncidencia = (data) => {
 
 
 export const reAsignarIncidencia = (data) => {
+  console.log(data)
   return async dispatch => {
     const response = await fetchToken(`incidencias/asignacion/`,
       {
@@ -116,7 +129,6 @@ export const reAsignarIncidencia = (data) => {
     // const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
-      // dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
       dispatch(getIncidenciaAsignadas(await fetchIncidenciasAsignadas()));
       notification('Incidencia Re-Asignada correctamente al técnico.', '', 'success');
     }
@@ -157,6 +169,7 @@ export const fetchIncidencias = async () => {
     data.push({
       idIncidencia: incidencia.idIncidencia,
       descripcion: incidencia.descripcion,
+      fecha: incidencia.fecha,
       persona: incidencia.persona,
       oficina: incidencia.oficina,
       motivo: incidencia.motivo,
@@ -178,6 +191,7 @@ export const fetchIncidenciasPersonas = async (id) => {
     data.push({
       idIncidencia: incidencia.idIncidencia,
       descripcion: incidencia.descripcion,
+      fecha: incidencia.fecha,
       origen: incidencia.origen,
       motivo: incidencia.motivo,
       historialIncidencia: incidencia.historialIncidencia,
@@ -197,6 +211,7 @@ export const fetchIncidenciaDetalles = async (id) => {
   const Incidencia = {
     idIncidencia: body.idIncidencia,
     descripcion: body.descripcion,
+    fecha: body.fecha,
     persona: body.persona,
     oficina: body.oficina,
     motivo: body.motivo,
@@ -219,6 +234,7 @@ export const fetchIncidenciasAsignadas = async () => {
     data.push({
       idIncidencia: incidencia.idIncidencia,
       descripcion: incidencia.descripcion,
+      fecha: incidencia.fecha,
       origen: incidencia.origen,
       motivo: incidencia.motivo,
       historialIncidencia: incidencia.historialIncidencia,
@@ -243,6 +259,7 @@ export const fetchIncidenciasNoAsignadas = async () => {
       data.push({
         idIncidencia: incidencia.idIncidencia,
         descripcion: incidencia.descripcion,
+        fecha: incidencia.fecha,
         origen: incidencia.origen,
         motivo: incidencia.motivo,
         historialIncidencia: incidencia.historialIncidencia,
@@ -274,6 +291,7 @@ export const fetchIncidenciaSoporte = async (id) => {
     data.push({
       idIncidencia: incidencia.idIncidencia,
       descripcion: incidencia.descripcion,
+      fecha: incidencia.fecha,
       origen: incidencia.origen,
       motivo: incidencia.motivo,
       historialIncidencia: incidencia.historialIncidencia,
@@ -286,8 +304,9 @@ export const fetchIncidenciaSoporte = async (id) => {
   return Incidencia;
 };
 
+// SOLUCION DE LA INCIDENCIA
+
 export const createSolucionIncidencia = (data) => {
-  console.log(data)
   return async dispatch => {
     const response = await fetchToken(
       `incidencia/descripcion/save`,
@@ -308,6 +327,19 @@ export const createSolucionIncidencia = (data) => {
   };
 };
 
+// LISTAR SOLUCIONES DE LA INCIDENCIA
+
+export const fetchDetallesIncidenciaAtendida = async (id) => {
+  const response = await fetchToken(`incidencia/descripcion/incidencia/${id}`);
+  const body = await response.json();
+  const SolucionIncidencia = {
+    idDescripcionIncidencia: body.idDescripcionIncidencia,
+    descripcion: body.descripcion,
+  };
+  // set user info
+  return SolucionIncidencia;
+}
+
 
 // DELETE 
 
@@ -317,7 +349,7 @@ export const deleteIncidencia = id => {
     const body = await response.json();
 
     if (response.status === 200) {
-      dispatch(getIncidencia(await loadIncidencias()));
+      dispatch(getIncidencias(await loadIncidencias()));
       notification('Incidencia eliminado correctamente', body.message, 'success');
     } else {
       notification('No se pudo eliminar la incidencia', body.detalles, 'error');
@@ -337,15 +369,12 @@ export const loadIncidencias = async (id) => {
     data.push({
       idIncidencia: incidencia.idIncidencia,
       descripcion: incidencia.descripcion,
-      estado: incidencia.estado,
       fecha: incidencia.fecha,
-      ip: incidencia.ip,
-      persona: incidencia.persona,
-      persona_registro: incidencia.persona_registro,
-      persona_asignado: incidencia.persona_asignado,
-      oficina: incidencia.oficina,
-      motivo: incidencia.motivo,
       origen: incidencia.origen,
+      motivo: incidencia.motivo,
+      historialIncidencia: incidencia.historialIncidencia,
+      persona: incidencia.persona,
+      oficina: incidencia.oficina,
     });
   });
   Incidencia.data = data;
@@ -390,3 +419,5 @@ export const buscarUsuarioDni = async (dni) => {
   return PersonasDni;
 
 }
+
+// 

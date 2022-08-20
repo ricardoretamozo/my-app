@@ -19,7 +19,7 @@ import {
   chakra,
   Flex,
 } from '@chakra-ui/react';
-import { CalendarIcon } from '@chakra-ui/icons';
+import { CalendarIcon, RepeatIcon } from '@chakra-ui/icons';
 
 import { store } from '../../../../store/store';
 
@@ -86,6 +86,10 @@ export default function TableIncidenciaSoporte() {
     setOpenAlert(false);
   };
 
+  const refreshTable = () => {
+    fetchDataIncidencias();
+  }
+
   const columns = [
     {
       name: 'USUARIO',
@@ -99,7 +103,7 @@ export default function TableIncidenciaSoporte() {
     },
     {
         name: 'FECHA Y HORA',
-        selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
         sortable: true,
     },
     {
@@ -176,7 +180,7 @@ export default function TableIncidenciaSoporte() {
             <AlertDialogOverlay>
               <AlertDialogContent>
                 <AlertDialogHeader fontSize="xl" fontWeight="bold">
-                  ¿DESEA DERIVAR EL ESTADO DE LA INCIDENCIA, EN TRÁMITE?
+                  ¿DESEA CAMBIAR EL ESTADO, EN TRÁMITE?
                 </AlertDialogHeader>
                 <AlertDialogCloseButton _focus={{ boxShadow: "none" }}/>
                 <AlertDialogBody>
@@ -185,9 +189,11 @@ export default function TableIncidenciaSoporte() {
                   </Box>
                 </AlertDialogBody>
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseAlert} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                  <Button onClick={handleCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
                   <Button
-                    colorScheme="blue"
+                    bg={'yellow.500'}
+                    _hover={{ bg: 'yellow.600' }}
+                    color={'white'}
                     ml={3}
                     _focus={{ boxShadow: "none" }}
                     onClick={() => ActualizarIncidenciaEnTramite()}
@@ -403,6 +409,13 @@ export default function TableIncidenciaSoporte() {
             </Text>
           </Box>
           <Box>
+            <IconButton
+                size={'sm'} mr={2} 
+                icon={<RepeatIcon boxSize={4} />} 
+                colorScheme={'facebook'}
+                _focus={{ boxShadow: "none" }}
+                onClick={refreshTable}
+            />
             <IncidenciaAgregar />
           </Box>
         </HStack>
@@ -413,9 +426,9 @@ export default function TableIncidenciaSoporte() {
             pagination
             ignoreRowClick={true}
             responsive={true}
-            paginationPerPage={8}
+            paginationPerPage={5}
             noDataComponent="No hay datos para mostrar refresca la página"
-            paginationRowsPerPageOptions={[8, 15, 20, 30]}
+            paginationRowsPerPageOptions={[5, 10, 20, 30]}
             
           />
         </DataTableExtensions>

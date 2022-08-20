@@ -25,8 +25,6 @@ import {
   Text,
   HStack,
   Badge,
-  Grid,
-  GridItem,
   Tooltip,
   IconButton,
 } from '@chakra-ui/react';
@@ -36,7 +34,7 @@ import {
   NotAllowedIcon,
   EditIcon,
 } from '@chakra-ui/icons';
-import { FaFingerprint, FaUserSecret } from 'react-icons/fa';
+import { FaUserSecret } from 'react-icons/fa';
 
 import { store } from '../../../store/store';
 
@@ -62,6 +60,10 @@ export default function TablePersona() {
   // Close Modal Organo Asignacion
   const handleCloseModalOrganoAsignacion = () => {
     setOpenModal(false);
+  };
+
+  const handleOpenModalOrganoAsignacion = () => {
+    setOpenModal(true);
   };
   // const perfil_persona = useSelector(state => state.perfilPersona);
 
@@ -180,7 +182,7 @@ export default function TablePersona() {
         <div>
           <Tooltip
             hasArrow
-            label={row.activo === 'S' ? 'activo' : 'inactivo'}
+            label={row.activo === 'S' ? 'ACTIVO' : 'INACTIVO'}
             bg="gray.300"
             color="black"
           >
@@ -213,9 +215,10 @@ export default function TablePersona() {
               onClick={() => handleClickOpenModal(row)}
               variant={'ghost'}
               bgColor={'none'}
-              color="blue.500"
+              colorScheme="facebook"
               icon={<FaUserSecret size={24} />}
               h={8}
+              _focus={{ boxShadow: "none" }}
             />
           ) : // <TableModal handleCloseModal={handleCloseModal} open={openModal} handleOpen={handleClickOpenModal(row)}  />
           null}
@@ -238,7 +241,8 @@ export default function TablePersona() {
           <Button
             onClick={() => handleClickOpenEdit(row)}
             size={'xs'}
-            colorScheme={'blue'}
+            colorScheme={'facebook'}
+            _focus={{ boxShadow: "none" }}
           >
             <EditIcon />
           </Button>
@@ -256,11 +260,12 @@ export default function TablePersona() {
                 <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
+                  <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                   <Button
                     onClick={() => handleDeletePersona(personaid)}
                     colorScheme="red"
                     ml={3}
+                    _focus={{ boxShadow: "none" }}
                   >
                     SI
                   </Button>
@@ -276,7 +281,7 @@ export default function TablePersona() {
             <form onSubmit={handleUpdatePersona}>
               <ModalContent>
                 <ModalHeader>EDITAR PERSONA</ModalHeader>
-                <ModalCloseButton />
+                <ModalCloseButton _focus={{ boxShadow: "none" }} />
                 <ModalBody pb={2}>
                   <FormControl>
                     <Input
@@ -286,8 +291,9 @@ export default function TablePersona() {
                       hidden={true}
                     />
                   </FormControl>
-                  <Grid templateColumns="repeat(5, 1fr)" gap={4} mt={3}>
-                    <GridItem h="10" colSpan={4}>
+                  <HStack spacing={'10px'} mt={3}>
+                    <FormControl>
+                      <FormLabel>DNI</FormLabel>
                       <Input
                         defaultValue={indice ? indice.dni : ''}
                         onChange={e =>
@@ -296,14 +302,8 @@ export default function TablePersona() {
                         placeholder="ingrese su DNI"
                         type={'text'}                        
                       />
-                    </GridItem>
-                    <GridItem h="10" colSpan={1}>
-                      <Button colorScheme="teal" variant="solid">
-                        {' '}
-                        <FaFingerprint />{' '}
-                      </Button>
-                    </GridItem>
-                  </Grid>
+                    </FormControl>
+                  </HStack>
                   <HStack spacing={'10px'} mt={3}>
                     <FormControl>
                       <FormLabel>NOMBRE</FormLabel>
@@ -443,13 +443,13 @@ export default function TablePersona() {
                 <ModalFooter>
                   <Button
                     type={'submit'}
-                    // onClick={e => handleUpdatePersona(e)}
                     colorScheme={'green'}
                     mr={3}
+                    _focus={{ boxShadow: "none" }}
                   >
                     ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
+                  <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </form>
@@ -491,6 +491,7 @@ export default function TablePersona() {
         cerrar={handleCloseModalOrganoAsignacion}
         usuario={indice}
         abrirSeter={setOpenModal}
+        abrirModalPersonaOrgano={handleOpenModalOrganoAsignacion}
         personaOrgano={personaOrganos}
         setpersonaOrgano={setPersonaOrganos}
       />

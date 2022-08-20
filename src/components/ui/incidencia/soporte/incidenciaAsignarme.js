@@ -66,7 +66,7 @@ const IncidenciaAsignarme = (props) => {
             <IconButton
                 icon={<VscAdd />}
                 variant={'solid'}
-                colorScheme={'blue'}
+                colorScheme={'facebook'}
                 onClick={() => handleClickOpenAlert(props.rowId)}
                 fontSize='20px'
                 size={'sm'}
@@ -87,9 +87,9 @@ const IncidenciaAsignarme = (props) => {
                                 ¿CONFIRMAR LA ACCIÓN?
                         </AlertDialogBody>
                         <AlertDialogFooter>
-                            <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                            <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
                             <Button
-                                colorScheme="blue"
+                                colorScheme="facebook"
                                 ml={3}
                                 _focus={{ boxShadow: "none" }}
                                 onClick={() => AsignarmeIncidencia()}

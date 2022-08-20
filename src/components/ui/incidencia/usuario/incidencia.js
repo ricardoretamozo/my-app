@@ -11,7 +11,7 @@ export const IncidenciaUsuario = () => {
 
   const { identificador } = useSelector(state => state.auth);
 
-  const fetchData= async ()=> {
+  const fetchData = async ()=> {
     await fetchIncidencias().then((res)=>{
       dispatch(getIncidencia(res));
     });

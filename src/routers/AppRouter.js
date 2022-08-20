@@ -23,7 +23,7 @@ import { getOficina } from '../components/ui/oficina/oficina';
 import { fetchCargos } from '../actions/cargo';
 import { getCargo } from '../components/ui/cargo/cargo';
 import { fetchMotivos } from '../actions/motivo';
-import { getMotivo } from '../components/ui/motivo/motivo';
+import { getMotivo } from '../components/ui/motivoIncidencia/motivo';
 import { fetchIncidenciasPersonas } from '../actions/incidencia';
 import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
 import { personaList } from '../actions/persona';
@@ -38,11 +38,13 @@ import { getOrigen } from '../components/ui/origenIncidencia/origen';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
-  console.log(useSelector(state => state));
+  // console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
   const { identificador } = useSelector(state => state.auth);
-  
+
+  useSelector(state => state);
+
   useEffect(() => {
     dispatch(startChecking());
   }, [dispatch]);
@@ -236,13 +238,13 @@ export const AppRouter = () => {
           />
           <PrivateRoute
             exact
-            path="/dashboard/incidencias_asignadas"
+            path="/dashboard/incidencias-asignadas"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
             exact
-            path="/dashboard/incidencias_no_asignadas"
+            path="/dashboard/incidencias-no-asignadas"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
@@ -279,6 +281,12 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/reportes/incidencias"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/mi-perfil"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

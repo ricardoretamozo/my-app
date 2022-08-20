@@ -7,18 +7,18 @@ import { types } from '../../../types/types';
 import TableIncidencia from './TableIncidencia';
 
 export const Incidencia = () => {
+  
   const dispatch = useDispatch();
 
   const { identificador } = useSelector(state => state.auth);
 
-  const fetchData= async ()=> {
+  const fetchData = async ()=> {
     await fetchIncidencias().then((res)=>{
-      dispatch(getIncidencia(res));
+      dispatch(getIncidencias(res));
     });
-    
   }
+  
   useEffect(() => {
-    
     if(store.getState().incidencia.checking){
       fetchData();
     }
@@ -30,6 +30,7 @@ export const Incidencia = () => {
     });
     
   }
+
   useEffect(() => {
     
     if(store.getState().incidenciaId.checking){
@@ -45,7 +46,7 @@ export const Incidencia = () => {
   );
 };
 
-export const getIncidencia = incidencia =>({
+export const getIncidencias = incidencia =>({
   type: types.eventLoadedIncidencia,
   payload: incidencia
 });

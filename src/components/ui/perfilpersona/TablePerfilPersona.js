@@ -14,6 +14,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Textarea,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -23,8 +24,8 @@ import {
   Switch,
   Select,
   Text,
-  HStack,
   Badge,
+  HStack,
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
@@ -32,29 +33,30 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteSede, updateSede } from '../../../actions/sede';
+import {
+  deletePerfilPersona,
+  updatePerfilPersona,
+} from '../../../actions/perfilPersona';
 
-import SedeAgregar from './SedeAgregar';
+import PerfilPersonaAgregar from './PerfilPersonaAgregar';
 
-export default function TableSede() {
+export default function Tables() {
 
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
+  const data = store.getState().perfilPersona.rows;
 
-  const data = store.getState().sede.rows;
+  const bgStatus = useColorModeValue("gray.400", "#1a202c");
+  const colorStatus = useColorModeValue("white", "gray.400");
 
   const columns = [
     {
-      name: 'SEDE',
-      selector: row => row.sede,
+      name: 'PERFIL',
+      selector: row => row.perfil,
       sortable: true,
-      wrap: true,
     },
     {
-      name: 'DIRECCIÓN',
-      selector: row => row.direccion,
+      name: 'DESCRIPCIÓN',
+      selector: row => row.descripcion,
       sortable: true,
-      wrap: true,
     },
     {
       name: 'ESTADO',
@@ -63,32 +65,30 @@ export default function TableSede() {
       cell: row => (
         <div>
           <Badge
-            bg={row.activo === 'S' ? 'green.400' : bgStatus}
-            color={row.activo === 'S' ? 'white' : colorStatus}
+            bg={row.activo === "S" ? "green.400" : bgStatus}
+            color={row.activo === "S" ? "white" : colorStatus}
             p="3px 10px"
             w={20}
             textAlign={'center'}
             borderRadius={'md'}
             fontSize={'10px'}
           >
-            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+            {row.activo === "S" ? "Activo" : "Inactivo"}
           </Badge>
         </div>
       ),
       center: true,
-      wrap: true,
     },
     {
       name: 'ACCIONES',
       sortable: false,
       cell: row => (
         <div>
-          <ModalSedeEliminar row={row} />
-          <ModalSedeEditar row={row} />
+          <ModalPerfilPersonaEliminar row={row} />
+          <ModalPerfilPersonaEditar row={row} />
         </div>
       ),
       center: true,
-      wrap: true,
     },
   ];
 
@@ -97,7 +97,7 @@ export default function TableSede() {
     data,
   };
 
-  // CREANDO UN TEMA PARA LA TABLA
+  // TEMA PARA LA TABLA
 
   createTheme('solarized', {
     text: {
@@ -124,20 +124,14 @@ export default function TableSede() {
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-      <HStack
-        spacing="24px"
-        width={'100%'}
-        justifyContent={'space-between'}
-        verticalAlign={'center'}
-        p={4}
-      >
+      <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
         <Box>
-          <Text fontSize="lg" fontWeight="600">
-            TABLA DE SEDES
+          <Text fontSize='lg' fontWeight='600'>
+            TABLA DE PERFILES DEL USUARIO
           </Text>
         </Box>
         <Box>
-          <SedeAgregar />
+          <PerfilPersonaAgregar />
         </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
@@ -149,23 +143,27 @@ export default function TableSede() {
           pagination
           ignoreRowClick={true}
           responsive={true}
-          paginationPerPage={8}
-          paginationRowsPerPageOptions={[8, 15, 20, 30]}
         />
       </DataTableExtensions>
     </Box>
   );
 }
 
-const ModalSedeEditar = ({ row }) => {
+/**
+ * 
+ * @param { COMPONENTE MODAL EDITAR UN PERFIL PERSONA } param0 
+ * @returns 
+ */
 
-  const [openedit, setOpenEdit] = useState(false);
+const ModalPerfilPersonaEditar = ({ row }) => {
+
+  const [openedit, setOpenEdit] = React.useState(false);
   const dispatch = useDispatch();
 
   const [indice, setIndice] = useState({
-    idSede: null,
-    sede: '',
-    direccion: '',
+    idPerfilPersona: null,
+    perfil: '',
+    descripcion: '',
     activo: '',
   });
 
@@ -178,17 +176,18 @@ const ModalSedeEditar = ({ row }) => {
     setOpenEdit(false);
   };
 
-  const actualizarSede = e => {
+  const actualizarPerfilPersona = e => {
     e.preventDefault();
-    dispatch(updateSede(indice))
+    dispatch(updatePerfilPersona(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
+        console.log('perfilPersona actualizado');
       })
       .catch(e => {
         console.log(e);
       });
   };
+
 
   return (
     <>
@@ -196,46 +195,48 @@ const ModalSedeEditar = ({ row }) => {
         onClick={() => handleClickOpenEdit(row)}
         size={'xs'}
         colorScheme={'facebook'}
+        _focus={{ boxShadow: "none" }}
       >
         EDITAR
       </Button>
-      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
+      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display={'flex'} justifyContent={'center'}>
-            EDITAR SEDE
+            EDITAR PERFIL
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
               <Input
-                value={indice ? indice.idSede : ''}
+                value={indice ? indice.idPerfilPersona : ''}
                 disabled={true}
-                type="text"
                 hidden={true}
               />
             </FormControl>
             <FormControl>
-              <FormLabel>SEDE</FormLabel>
+              <FormLabel>PERFIL</FormLabel>
               <Input
-                defaultValue={indice ? indice.sede : ''}
+                autoFocus
+                defaultValue={indice ? indice.perfil : ''}
                 type="text"
                 textTransform={'uppercase'}
                 onChange={e =>
-                  setIndice({ ...indice, sede: (e.target.value).toUpperCase() })
+                  setIndice({ ...indice, perfil: (e.target.value).toUpperCase() })
                 }
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>DIRECCIÓN</FormLabel>
-              <Input
-                defaultValue={indice ? indice.direccion : ''}
+              <FormLabel>DESCRIPCIÓN</FormLabel>
+              <Textarea
+                autoFocus
+                defaultValue={indice ? indice.descripcion : ''}
                 onChange={e =>
-                  setIndice({ ...indice, direccion: (e.target.value).toUpperCase() })
+                  setIndice({ ...indice, descripcion: (e.target.value).toUpperCase() })
                 }
-                placeholder="Dirección"
-                type="text"
+                placeholder="Descripcion"
                 textTransform={'uppercase'}
+                type="text"
               />
             </FormControl>
             <FormControl mt={4}>
@@ -253,13 +254,13 @@ const ModalSedeEditar = ({ row }) => {
           </ModalBody>
           <ModalFooter>
             <Button
-              onClick={e => actualizarSede(e)}
+              onClick={e => actualizarPerfilPersona(e)}
               colorScheme="green"
               mr={3}
             >
               ACTUALIZAR
             </Button>
-            <Button onClick={handleCloseEdit}>CANCELAR</Button>
+            <Button onClick={handleCloseEdit}>Cancelar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -269,27 +270,26 @@ const ModalSedeEditar = ({ row }) => {
 
 /**
  * 
- * @param { MODAL ELIMINAR SEDE } param0 
- * @returns 
+ * @param { MODAL ELIMINAR UN PERFIL PERSONA }
  */
 
-const ModalSedeEliminar = ({ row }) => {
+const ModalPerfilPersonaEliminar = ({ row }) => {
 
-  const [opendelete, setOpenDelete] = useState(false);
+  const [opendelete, setOpenDelete] = React.useState(false);
   const dispatch = useDispatch();
 
   const [indice, setIndice] = useState({
-    idSede: null,
-    sede: '',
-    direccion: '',
+    idPerfilPersona: null,
+    perfil: '',
+    descripcion: '',
     activo: '',
   });
 
-  const handleDeleteSede = () => {
-    dispatch(deleteSede(indice))
+  const handleDeletePerfilPersona = () => {
+    dispatch(deletePerfilPersona(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Sede eliminado');
+        console.log('perfilPersona eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -305,33 +305,35 @@ const ModalSedeEliminar = ({ row }) => {
   const handleCloseDelete = () => {
     setOpenDelete(false);
   };
+
   return (
     <>
       <Switch
         colorScheme={'red'}
         mr={2}
         isChecked={row.activo === 'S'}
-        onChange={() => handleClickOpenDelete(row.idSede)}
+        onChange={() => handleClickOpenDelete(row.idPerfilPersona)}
       />
-      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size="2xl">
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size="xl">
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {row.activo === 'S' ? (
-                <Text>ESTA SEGURO DE ANULAR?</Text>
-              ) : (
-                <Text>ESTA SEGURO DE ACTIVAR?</Text>
-              )}
+
+              {row.activo === 'S' ? '¿ESTÁ SEGURO DE ACTIVAR?' : 'ESTÁ SEGURO DE ANULAR?'}
+
             </AlertDialogHeader>
 
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
               <Button
-                onClick={() => handleDeleteSede(row.idSede)}
+                onClick={() =>
+                  handleDeletePerfilPersona(row.idPerfilPersona)
+                }
                 colorScheme="red"
                 ml={3}
+                _focus={{ boxShadow: "none" }}
               >
                 SI
               </Button>

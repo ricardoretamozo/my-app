@@ -1,5 +1,4 @@
 import React from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   useColorModeValue,
@@ -9,6 +8,7 @@ import {
   chakra,
   Flex,
   SimpleGrid,
+  IconButton,
 } from '@chakra-ui/react';
 import { store } from '../../../../store/store';
 
@@ -17,14 +17,33 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import Moment from 'moment';
 import IncidenciaAgregar from './IncidenciaAgregar';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { fetchIncidenciasPersonas } from '../../../../actions/incidencia';
+import { useDispatch, useSelector } from 'react-redux';
+import { getIncidenciaId } from '../incidencia';
 
 export default function TableIncidencia() {
 
+  const { identificador } = useSelector(state => state.auth);
+
+  const dispatch = useDispatch();
+
   var data = store.getState().incidenciaId.rows;
+  console.log(data)
 
   const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
   const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
   const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
+
+  const fetchDataId = async () => {
+    await fetchIncidenciasPersonas(identificador).then((res) => {
+      dispatch(getIncidenciaId(res));
+    });
+  }
+
+  const refreshTable = () => {
+    fetchDataId();
+  }
 
   const columns = [
     {
@@ -43,12 +62,12 @@ export default function TableIncidencia() {
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
       reorder: true,
     },
     {
-      name: 'USUARIO ASIGNADO',
+      name: 'TÉCNICO ASIGNADO',
       selector: row => row.historialIncidencia.persona_asignado == null ? "NO ASIGNADO" : row.historialIncidencia.persona_asignado.nombre + " " + row.historialIncidencia.persona_asignado.apellido,
       sortable: true,
       wrap: false,
@@ -58,17 +77,17 @@ export default function TableIncidencia() {
       selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
       cell: row => (
-          <Badge
-            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500': 'green.500'}
-            color={'white'}
-            p="4px 0px"
-            w={24}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
-          </Badge>
+        <Badge
+          bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
+          color={'white'}
+          p="4px 0px"
+          w={24}
+          textAlign={'center'}
+          borderRadius={'md'}
+          fontSize={'10px'}
+        >
+          {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
+        </Badge>
       ),
       center: true,
     },
@@ -110,40 +129,40 @@ export default function TableIncidencia() {
         bg={useColorModeValue('gray.100', 'gray.900')} >
         <SimpleGrid columns={4} spacing={5} textColor={'white'}>
           <Box
-              w={'100%'}
-              bg="white"
-              _dark={{ bg: "gray.800", borderWidth: "1px" }}
-              shadow="lg"
-              rounded="lg"
-              overflow="hidden"
-              textAlign={'center'}
+            w={'100%'}
+            bg="white"
+            _dark={{ bg: "gray.800", borderWidth: "1px" }}
+            shadow="lg"
+            rounded="lg"
+            overflow="hidden"
+            textAlign={'center'}
+          >
+            <chakra.h3
+              py={2}
+              textAlign="center"
+              fontWeight="bold"
+              textTransform="uppercase"
+              color="red.500"
+              _dark={{ color: "white" }}
             >
-              <chakra.h3
-                py={2}
-                textAlign="center"
+              INCIDENCIAS PENDIENTES
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              w={'100%'}
+              bg="red.500"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
                 fontWeight="bold"
-                textTransform="uppercase"
-                color="red.500"
-                _dark={{ color: "white" }}
+                color="white"
+                _dark={{ color: "gray.200" }}
               >
-                INCIDENCIAS PENDIENTES
-              </chakra.h3>
-              <Flex
-                alignItems="center"
-                justify={'center'}
-                py={2}
-                w={'100%'}
-                bg="red.500"
-                _dark={{ bg: "gray.700" }}
-              >
-                <chakra.span
-                  fontWeight="bold"
-                  color="white"
-                  _dark={{ color: "gray.200" }}
-                >
-                  {incidenciasPendientes.length}
-                </chakra.span>
-              </Flex>
+                {incidenciasPendientes.length}
+              </chakra.span>
+            </Flex>
           </Box>
           <Box
             w={'100%'}
@@ -154,32 +173,32 @@ export default function TableIncidencia() {
             overflow="hidden"
             textAlign={'center'}
           >
-          <chakra.h3
-            py={2}
-            textAlign="center"
-            fontWeight="bold"
-            textTransform="uppercase"
-            color="yellow.500"
-            _dark={{ color: "white" }}
-          >
-            Incidencias en Tramite
-          </chakra.h3>
-          <Flex
-            alignItems="center"
-            justify={'center'}
-            py={2}
-            px={3}
-            bg="yellow.500"
-            _dark={{ bg: "gray.700" }}
-          >
-            <chakra.span
+            <chakra.h3
+              py={2}
+              textAlign="center"
               fontWeight="bold"
-              color="gray.200"
-              _dark={{ color: "gray.200" }}
+              textTransform="uppercase"
+              color="yellow.500"
+              _dark={{ color: "white" }}
             >
-              {incidenciasEnTramite.length}
-            </chakra.span>
-          </Flex>
+              Incidencias en Tramite
+            </chakra.h3>
+            <Flex
+              alignItems="center"
+              justify={'center'}
+              py={2}
+              px={3}
+              bg="yellow.500"
+              _dark={{ bg: "gray.700" }}
+            >
+              <chakra.span
+                fontWeight="bold"
+                color="gray.200"
+                _dark={{ color: "gray.200" }}
+              >
+                {incidenciasEnTramite.length}
+              </chakra.span>
+            </Flex>
           </Box>
           <Box
             w={'100%'}
@@ -276,6 +295,12 @@ export default function TableIncidencia() {
             </Text>
           </Box>
           <Box>
+            <IconButton 
+              size={'sm'} mr={2} 
+              icon={<RepeatIcon boxSize={4} />} 
+              colorScheme={'facebook'}
+              _focus={{ boxShadow: "none" }}
+              onClick={refreshTable} />
             <IncidenciaAgregar />
           </Box>
         </HStack>

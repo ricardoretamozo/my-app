@@ -14,11 +14,12 @@ import { Oficina } from './oficina/oficina';
 import { Persona } from './persona/persona';
 import { Cargo } from './cargo/cargo';
 import { Correo } from './correo/index';
-import { Motivo } from './motivo/motivo';
+import { Motivo } from './motivoIncidencia/motivo';
 import { IncidenciaSoporte } from './incidencia/soporte/incidencia';
 import { OrigenIncidencia } from './origenIncidencia/origen';
 import { Reportes } from './home/reportes/reportes';
 import { ReporteIncidencia } from './home/reportes/incidencia/index'
+import { perfil } from './perfil/index';
 
 export const DasboardScreen = () => {
   //
@@ -47,12 +48,12 @@ export const DasboardScreen = () => {
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
-          exact path="/dashboard/incidencias_asignadas"
+          exact path="/dashboard/incidencias-asignadas"
           component={IncidenciaAsistenteAsignados}
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
-          exact path="/dashboard/incidencias_no_asignadas"
+          exact path="/dashboard/incidencias-no-asignadas"
           component={IncidenciaAsistenteNoAsignados}
           isAuthenticated={!!access_token}
         />
@@ -109,6 +110,11 @@ export const DasboardScreen = () => {
         <PrivateRoute
           exact path="/dashboard/reportes/incidencias"
           component={ReporteIncidencia}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/mi-perfil"
+          component={perfil}
           isAuthenticated={!!access_token}
         />
       </Switch>

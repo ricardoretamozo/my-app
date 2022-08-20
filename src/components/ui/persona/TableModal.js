@@ -108,6 +108,7 @@ import {
             color="blue.500"
             icon={<FaUserSecret size={24} />}
             h={8}
+            _focus={{ boxShadow: "none" }}
           />
   
         <Modal
@@ -119,7 +120,7 @@ import {
           <form onSubmit={savePersona}>
             <ModalContent>
               <ModalHeader>ASIGNACIÓN DE ORGANOS JURIDICCIONALES A ASISTENTES</ModalHeader>
-              <ModalCloseButton />
+              <ModalCloseButton _focus={{ boxShadow: "none" }} />
               <ModalBody pb={2}>
                 <HStack spacing={'10px'} mt={5}>
                   <FormControl>
@@ -256,10 +257,10 @@ import {
                 </HStack>
               </ModalBody>
               <ModalFooter>
-                <Button type={'submit'} colorScheme={'blue'} mr={3}>
+                <Button type={'submit'} colorScheme={'facebook'} mr={3} _focus={{ boxShadow: "none" }}>
                   GUARDAR
                 </Button>
-                <Button onClick={props.handleCloseModal}>CANCELAR</Button>
+                <Button onClick={props.handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </form>

@@ -12,6 +12,8 @@ import {
   FormLabel,
   Textarea,
   Input,
+  Radio,
+  RadioGroup,
   HStack,
   InputGroup,
   InputRightElement,
@@ -23,6 +25,7 @@ import {
   Th,
   Td,
   TableContainer,
+  Stack,
 } from '@chakra-ui/react';
 
 import { notification } from '../../../helpers/alert';
@@ -40,21 +43,26 @@ import {
 } from '../../../actions/incidencia';
 
 import { getIncidenciasAsignadasSoporte } from './soporte/incidencia';
-
-import { fetchHistorialPersona } from '../../../actions/historialpersona'
+import { buscarPersonaApellido } from '../../../actions/persona';
+import { fetchHistorialPersona } from '../../../actions/historialpersona';
 
 const IncidenciaAgregar = () => {
-  const [openCreate, setOpenCreate] = React.useState(false);
   const dispatch = useDispatch();
-
+  const usuario = store.getState().auth;
+  const { identificador } = useSelector(state => state.auth);
+  
   const motivoData = store.getState().motivo.rows;
   const origenData = store.getState().origenIncidencia.rows;
-  const { identificador } = useSelector(state => state.auth);
-
-  const usuario = store.getState().auth;
+  
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [openSearch, setOpenSearchUsuarios] = React.useState(false);
+  const [radioValue, setRadioValue] = useState('apellido');
 
   const [usuarioDNI, setUsuarioDNI] = useState(null);
+  const [usuarioApellido, setUsuarioApellido] = useState(null);
   const [usuarioData, setUsuarioData] = useState([]);
+  const [usuarioListData, setUsuarioListData] = useState([]);
+  const [usuarioDataNombre, setUsuarioDataNombre] = useState(null);
   const [usuarioSede, setUsuarioSede] = useState(null);
   const [usuarioOrgano, setUsuarioOrgano] = useState(null);
   const [usuarioOficina, setUsuarioOficina] = useState(null);
@@ -62,6 +70,7 @@ const IncidenciaAgregar = () => {
 
   const [indiceMotivo, setIndiceMotivo] = useState(null);
   const [indiceOrigen, setIndiceOrigen] = useState(null);
+  const [indiceUsuario, setIndiceUsuario] = useState(null);
 
   const [indiceIncidencia, setIndiceIncidencia] = useState({
     idIncidencia: null,
@@ -98,18 +107,24 @@ const IncidenciaAgregar = () => {
     setOpenCreate(true);
   };
 
-  const handleCloseModal = () => {
-    setIndiceMotivo(null);
-    setIndiceOrigen(null);
-    setOpenCreate(false);
-
+  const handleResetValues = () => {
     setUsuarioData([]);
     setUsuarioDNI(null);
-
     setUsuarioSede(null);
     setUsuarioOrgano(null);
     setUsuarioOficina(null);
     setUsuarioCargo(null);
+    setIndiceUsuario(null);
+    setUsuarioApellido(null);
+    setUsuarioDataNombre(null);
+  }
+
+  const handleCloseModal = () => {
+    setIndiceMotivo(null);
+    setIndiceOrigen(null);
+    handleResetValues();
+    setRadioValue('apellido');
+    setOpenCreate(false);
   };
 
   const fetchDataSoporteIncidencias = async () => {
@@ -122,7 +137,7 @@ const IncidenciaAgregar = () => {
     e.preventDefault();
     var incidencia = {
       persona: {
-        idpersona: usuarioData.idpersona,
+        idpersona: indiceUsuario === null ? usuarioData.idpersona : indiceUsuario,
       },
       motivo: {
         idMotivo: indiceMotivo,
@@ -134,27 +149,30 @@ const IncidenciaAgregar = () => {
       historialIncidencia: (usuario.rol !== '[SOPORTE TECNICO]') ? ({
         persona_registro: {
           idpersona: Number(identificador),
-        }
+        },
+        estado: false,
       }) : ({
         persona_registro: {
           idpersona: Number(identificador),
         },
         persona_asignado: {
           idpersona: Number(identificador)
-        }
+        },
+        estado: true,
       })
     }
     dispatch(createIncidencia(incidencia))
       .then(() => {
+        // notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'error', 'modalCrearIncidencia');
         handleCloseModal(true);
-        fetchDataSoporteIncidencias()
+        fetchDataSoporteIncidencias();
       })
       .catch(err => {
         console.log(err);
       });
   };
 
-  const fetchDataUsuario = async () => {
+  const buscarPorDni = async () => {
     await buscarUsuarioDni(usuarioDNI).then((res) => {
       fetchHistorialPersona(res.idpersona).then(historial => {
         setUsuarioSede(historial.oficina.organo.sede.sede)
@@ -163,27 +181,46 @@ const IncidenciaAgregar = () => {
         setUsuarioCargo(historial.cargo.cargo)
       }).catch(() => {
         notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'error', 'modalCrearIncidencia');
-        setUsuarioSede(null);
-        setUsuarioOrgano(null);
-        setUsuarioOficina(null);
-        setUsuarioCargo(null);
-        setUsuarioData([]);
-        setUsuarioDNI(null);
+        handleResetValues();
       });
       setUsuarioData(res);
     }).catch(() => {
       notification('Usuario no encontrado', 'No se pudo encontrar el Usuario', 'error', 'modalCrearIncidencia');
-      setUsuarioSede(null);
-      setUsuarioOrgano(null);
-      setUsuarioOficina(null);
-      setUsuarioCargo(null);
-      setUsuarioData([]);
-      setUsuarioDNI(null);
+      handleResetValues();
     });
   }
 
+  const buscarPorApellido = async () => {
+    await buscarPersonaApellido(usuarioApellido).then((res) => {
+      if (res.data.length > 0) {
+        setUsuarioListData(res.data);
+        setOpenSearchUsuarios(true);
+      } else {
+        notification('Usuario no encontrado', 'No se pudo encontrar el usuario con ese apellido', 'error', 'modalCrearIncidencia');
+        handleResetValues()
+      }
+    }).catch(() => {
+      notification('Usuario no encontrado', 'No se pudo encontrar el usuario', 'error', 'modalCrearIncidencia');
+      setUsuarioData([]);
+    })
+  }
+
+  const seleccionarUsuario = async (usuario) => {
+    await fetchHistorialPersona(usuario).then(historial => {
+      setUsuarioDataNombre(historial.persona.nombre + ' ' + historial.persona.apellido);
+      setUsuarioSede(historial.oficina.organo.sede.sede)
+      setUsuarioOrgano(historial.oficina.organo.organo)
+      setUsuarioOficina(historial.oficina.oficina)
+      setUsuarioCargo(historial.cargo.cargo)
+    }).catch(() => {
+      setOpenSearchUsuarios(false);
+      notification('Error al Seleccionar', 'No se puede crear incidencia para este usuario, no tiene asignado a ninguna sede, organo, oficina', 'info', 'modalCrearIncidencia');
+      handleResetValues();
+    })
+  }
+
   const handleSearchDNI = () => {
-    fetchDataUsuario();
+    buscarPorDni();
   }
 
   const handleChangeMotivo = value => {
@@ -202,10 +239,32 @@ const IncidenciaAgregar = () => {
     }
   };
 
+  const handleChangeRadio = value => {
+    handleResetValues();
+    setRadioValue(value);
+  }
+
+  const handleChangeUsuario = (value) => {
+    if (value === null) {
+      return "SELECCIONE UN USUARIO"
+    } else {
+      seleccionarUsuario(value.value);
+      setIndiceUsuario(value.value);
+    }
+  }
+
+  const handleSearchApellido = () => {
+    buscarPorApellido();
+  }
+
+  const handleCloseModalSearch = () => {
+    setOpenSearchUsuarios(false);
+  }
+
   return (
     <>
 
-      <Button leftIcon={<AddIcon />} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'} _focus={{ boxShadow: "none" }}>
+      <Button leftIcon={<AddIcon />} size="sm" onClick={handleClickOpenCreate} colorScheme={'facebook'} _focus={{ boxShadow: "none" }}>
         NUEVA INCIDENCIA
       </Button>
 
@@ -213,8 +272,7 @@ const IncidenciaAgregar = () => {
         id="modalCrearIncidencia"
         isOpen={openCreate}
         onClose={handleCloseModal}
-        closeOnOverlayClick={true}
-        size={'4xl'}
+        size={'5xl'}
       >
         <ModalOverlay />
 
@@ -236,28 +294,92 @@ const IncidenciaAgregar = () => {
                   isClearable
                 />
               </FormControl>
-              <HStack spacing={2} mt={4} mb={2}>
-                <FormControl isRequired zIndex={0}>
-                  <FormLabel>VALIDACIÓN DE USUARIO POR DNI</FormLabel>
+
+              <RadioGroup onChange={handleChangeRadio} value={radioValue} defaultValue={'apellido'} mt={4}>
+                <Stack direction='row'>
+                  <Radio size='md' value='apellido' _focus={{ boxShadow: "none" }} defaultChecked={true}>BUSQUEDA POR APELLIDO</Radio>
+                  <Radio size='md' value='dni' _focus={{ boxShadow: "none" }}>BUSQUEDA POR DNI</Radio>
+                </Stack>
+              </RadioGroup>
+
+              <HStack spacing={2} mt={2} mb={2} hidden = { radioValue === 'apellido' } >
+                <FormControl isRequired = { radioValue === 'dni' } zIndex={0}>
+                  <FormLabel>BUSQUEDA DE USUARIO POR DNI</FormLabel>
                   <InputGroup >
                     <InputRightElement
                       children={
                         <IconButton
-                          colorScheme='blue'
+                          colorScheme='facebook'
                           onClick={handleSearchDNI}
                           icon={<SearchIcon />}
-
+                          _focus={{ boxShadow: "none" }}
                         />
                       }
                     />
-                    <Input placeholder="DIGITE EL DNI" onChange={e => { setUsuarioDNI(e.target.value) }} isRequired />
+                    <Input placeholder="DIGITE EL DNI" onChange={e => { setUsuarioDNI(e.target.value) }} />
                   </InputGroup>
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel>NOMBRE DEL USUARIO</FormLabel>
-                  <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} readOnly isDisabled />
+                  <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} isDisabled />
                 </FormControl>
               </HStack>
+
+              <HStack spacing={2} mt={2} mb={2} hidden = { radioValue === 'dni' }>
+                <FormControl isRequired = { radioValue === 'apellido' } zIndex={0}>
+                  <FormLabel>BUSQUEDA POR APELLIDO DEL USUARIO</FormLabel>
+                  <InputGroup>
+                    <InputRightElement
+                      children={
+                        <IconButton
+                          colorScheme='facebook'
+                          onClick={handleSearchApellido}
+                          icon={<SearchIcon />}
+                          _focus={{ boxShadow: "none" }}
+                          disabled = { usuarioApellido === null || usuarioApellido.length < 3 }
+                        />
+                      }
+                    />
+                    <Input placeholder="INGRESE EL APELLIDO"  textTransform={'uppercase'} onChange={e => { setUsuarioApellido(e.target.value.toUpperCase()) }} />
+                  </InputGroup>
+                </FormControl>
+
+                <Modal
+                  isOpen={openSearch}
+                  onClose={handleCloseModalSearch}
+                  size={'2xl'}
+                >
+                  <ModalOverlay />
+                  <ModalContent>
+                    <ModalHeader>LISTA DE USUARIOS CON EL APELLIDO BUSCADO</ModalHeader>
+                    <ModalCloseButton _focus={{ boxShadow: "none" }} onClick={handleCloseModalSearch} />
+                    <ModalBody pb={6}>
+                      <FormControl>
+                        <FormLabel>LISTA DE USUARIOS</FormLabel>
+                        <Select
+                          placeholder=" SELECCIONE UN USUARIO "
+                          onChange={handleChangeUsuario}
+                          options={usuarioListData?.map(usuario => ({
+                            value: usuario.idpersona,
+                            label: usuario.apellido + ', ' + usuario.nombre
+                          }))}
+                          isSearchable
+                          isClearable
+                        />
+                      </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button onClick={handleCloseModalSearch} disabled={indiceUsuario === null} colorScheme="facebook">ACEPTAR</Button>
+                    </ModalFooter>
+                  </ModalContent>
+                </Modal>
+                
+                <FormControl isRequired>
+                  <FormLabel>NOMBRE DEL USUARIO</FormLabel>
+                  <Input defaultValue={usuarioDataNombre ? usuarioDataNombre : ''} isDisabled />
+                </FormControl>
+              </HStack>
+
               <TableContainer>
                 <Table size='sm'>
                   <Thead>
@@ -308,10 +430,16 @@ const IncidenciaAgregar = () => {
               </FormControl>              
             </ModalBody>
             <ModalFooter>
-              <Button disabled={indiceMotivo === null ? true : false || indiceOrigen === null ? true : false} type={'submit'} colorScheme={'blue'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
+              <Button 
+                disabled={indiceMotivo === null ? true : false || indiceOrigen === null ? true : false || radioValue === 'apellido' ? indiceUsuario === null ? true : false : false } 
+                type={'submit'} 
+                colorScheme={'facebook'} 
+                autoFocus mr={3} 
+                _focus={{ boxShadow: "none"}}
+                >
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

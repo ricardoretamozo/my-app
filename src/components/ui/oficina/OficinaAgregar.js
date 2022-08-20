@@ -19,29 +19,18 @@ import Select from 'react-select';
 
 import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
-import { createOficina, fetchOficinas } from '../../../actions/oficina';
+import { createOficina } from '../../../actions/oficina';
 
 import { AddIcon } from '@chakra-ui/icons';
-
-import { types } from '../../../types/types';
 
 const OficinaAgregar = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const dispatch = useDispatch();
 
-  // const oficinaData = store.getState().oficina.rows;
   const sedeData = store.getState().sede.rows;
-  // console.log(sedeData);
   const organoData = store.getState().organo.rows;
 
   var organoInfo = organoData;
-
-  const [indice, setIndice] = useState({
-    idOrgano: null,
-    organo: '',
-    sede: '',
-    activo: '',
-  });
 
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
@@ -66,21 +55,18 @@ const OficinaAgregar = () => {
   ]);
   const [organoNombre, setorganoNombre] = useState(null);
 
-  // console.log(sedeNombre);
-
   const { oficina, organo, activo } = dataOficina;
 
   const handleChange = value => {
-    if (value == null) {
+    if (value === null) {
       setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     } else {
       setorganoSelect(
-        organoInfo.filter(indice => indice.sede.idSede == value.value)
+        organoInfo.filter(indice => indice.sede.idSede === value.value)
       );
     }
   };
 
-  //
   const handleChangeOrgano = value => {
     setorganoNombre(value.value);
   };
@@ -98,7 +84,7 @@ const OficinaAgregar = () => {
 
   return (
     <>
-      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'blue'}>
+      <Button leftIcon={<AddIcon/>} size="sm" onClick={handleClickOpenCreate} colorScheme={'facebook'} _focus={{ boxShadow: "none" }}>
         AGREGAR
       </Button>
 
@@ -111,7 +97,7 @@ const OficinaAgregar = () => {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>AGREGAR NUEVA OFICINA</ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
             <FormControl isRequired={true}>
               <FormLabel>SEDE</FormLabel>
@@ -163,7 +149,6 @@ const OficinaAgregar = () => {
                 onChange={e => {
                   setOficina({ ...dataOficina, activo: e.target.value });
                 }}
-                // options={ estados }
                 autoFocus={true}
               >
                 <option value="S">ACTIVO</option>
@@ -175,23 +160,19 @@ const OficinaAgregar = () => {
             <Button
               type={'submit'}
               onClick={() => saveOficina()}
-              colorScheme={'blue'}
+              colorScheme={'facebook'}
               autoFocus
               mr={3}
+              _focus={{ boxShadow: "none" }}
             >
               GUARDAR
             </Button>
-            <Button onClick={handleCloseModal}>CANCELAR</Button>
+            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   );
 };
-
-const organoID = organo => ({
-  type: types.eventOrganoId,
-  payload: organo,
-});
 
 export default OficinaAgregar;

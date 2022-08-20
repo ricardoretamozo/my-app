@@ -14,7 +14,6 @@ import { Link } from 'react-router-dom';
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 
 import { BsPerson } from 'react-icons/bs';
-import { FiSettings } from 'react-icons/fi';
 import { GoCalendar } from 'react-icons/go';
 import { HiOutlineDocumentReport } from "react-icons/hi"
 
@@ -131,40 +130,6 @@ export default function Inicio() {
 
               <Flex justifyContent="center" alignItems="center" w={20} bg="blue.600" rounded="md">
                 <Icon as={BsPerson} color="white" boxSize={12} />
-              </Flex>
-            </Flex>
-            <Flex
-              w="full"
-              bg="white"
-              _dark={{ bg: "gray.800", borderWidth: "1px" }}
-              rounded="md"
-              overflow="hidden"
-              justify={'space-between'}
-              boxShadow={'md'}
-              _hover={{boxShadow: 'lg'}}
-            >
-              <Box py={6}>
-                <Box mx={3}>
-                  <VStack>
-                    <chakra.span
-                      color="purple.500"
-                      _dark={{ color: "purple.600" }}
-                      fontWeight="bold"
-                      fontSize="lg"
-                    >
-                      AJUSTAR
-                    </chakra.span>
-                    <Link to='/dashboard/reportes'>
-                      <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='purple' variant='solid'>
-                        INGRESAR
-                      </Button>
-                    </Link>
-                  </VStack>
-                </Box>
-              </Box>
-
-              <Flex justifyContent="center" alignItems="center" w={20} bg="purple.600" rounded="md">
-                <Icon as={FiSettings} color="white" boxSize={12} />
               </Flex>
             </Flex>          
         </SimpleGrid>

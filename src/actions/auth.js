@@ -2,11 +2,11 @@ import { notification, timerNotification } from '../helpers/alert';
 import {
   fetchWithoutToken,
   fetchWithToken,
-  fetchServicioDni,
   fetchToken,
 } from '../helpers/fetch';
 import { types } from '../types/types';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import Moment from 'moment';
 
 export const startLogin = (dni, password) => {
   return async dispatch => {
@@ -35,10 +35,8 @@ export const startLogin = (dni, password) => {
         })
       );
       timerNotification('Inicio de Sesion Exitoso!');
-    // } else if(response.status === 401){
-    //   notification('Login Error','El usuario no tiene permisos para usar esta cuenta, comuníquese con el administrador.','info');
     } else {
-    notification( 'Login Error', 'Credenciales inválidas, vuelve a intentarlo de nuevo', 'error');
+    notification( 'ERROR AL INICIAR SESIÓN', 'CREDENCIALES INVALIDAS', 'error');
     }
   };
 };
@@ -49,32 +47,74 @@ export const LogOut = () =>{
     dispatch(
       logout()
     );
+    timerNotification('Cerrando de Sesion!');
     window.location.reload();
   }
 }
 
+// export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
+//   return async( dispatch ) =>{
+//     const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
+//     const body = await response.json();
+//     // console.log(body[0]);
+//     if (!!body[0]) {
+//       timerNotification('Validacion correcta');
+//       dispatch(validadorUsuario(body[0]));
+//     } else {
+//       notification('ERROR DE VALIDACIÓN', 'Los datos ingresados nos son validos', 'error');
+//       Error();
+//     }
+//   }
+// }
+
 export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
-  return async( dispatch ) =>{
-    const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
-    const body = await response.json();
-    // console.log(body[0]);
-    if (!!body[0]) {
-      timerNotification('Validacion correcta');
-      dispatch(validadorUsuario(body[0]));
-    } else {
-      notification('ERROR DE VALIDACIÓN', 'Los datos ingresados nos son validos', 'error');
-      Error();
+  return async (dispatch) =>{
+   await fetch(`http://172.28.206.57:8080/SIJ/Reniec/${numeroDocumento}`, { method:'POST' })
+   .then(res =>  res.json())
+   .then(data => {
+    const stringToDate = (_date, _format, _delimiter) => {
+      var formatLowerCase = _format.toLowerCase();
+      var formatItems = formatLowerCase.split(_delimiter);
+      var dateItems = _date.split(_delimiter);
+      var monthIndex = formatItems.indexOf("mm");
+      var dayIndex = formatItems.indexOf("dd");
+      var yearIndex = formatItems.indexOf("yyyy");
+      var month = parseInt(dateItems[monthIndex]);
+      month -= 1;
+      var formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
+      return formatedDate;
     }
+    var fechax = Moment(new Date(stringToDate(data[28], "dd/MM/yyyy", "/"))).format('yyyy-MM-DD')
+      if ((data[0] === numeroDocumento) && (data[1] === codigoVerificacion) && (fechax === fechaNacimiento)) {
+        timerNotification('Validacion correcta');
+        dispatch(validadorUsuario({
+          dni: data[0],
+          nombres: data[5],
+          apellidos: data[3] + ' ' + data[4],
+          fechaNacimiento: data[28],
+          sexo: data[17],
+        })).then(() => {
+          Sigte()
+        })
+      } else {
+        notification('Error los datos ingresados nos son validos', '', 'error');
+        Error();
+      }
+    });
   }
 }
 
-export const validadorUsuarioCreado = async dni => {
+export const validadorUsuarioCreado = async (dni) => {
     const response = await fetchToken('personas/dni/'+ dni);
-    const body = await response.json();
-    if (response.status == 404) {
+    console.log(response.status)
+    if( response.status === 200 || response.status === 201){
+      notification('Error, este usuario ya esta registrado en el sistema', '', 'error');
+      return false;
+    }
+    else if (response.status === 404 || response.status === 500 || response.status === 403) {
       return true;
     }else{
-      notification('Error', 'Este usuario ya esta registrado en el sistema', 'error');
+      notification('Error, no se logró validar, intente de nuevo', '', 'error');
       return false;
     }
 }

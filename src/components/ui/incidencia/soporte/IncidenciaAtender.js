@@ -121,10 +121,10 @@ const IncidenciaAtender = (props) => {
             </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'blue'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
+              <Button type={'submit'} colorScheme={'green'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>
@@ -143,7 +143,7 @@ const IncidenciaAtender = (props) => {
                 ¿CONFIRMAR LA ACCIÓN?
             </AlertDialogBody>
             <AlertDialogFooter>
-              <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
               <Button
                 colorScheme="green"
                 ml={3}

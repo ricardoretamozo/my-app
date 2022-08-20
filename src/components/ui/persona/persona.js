@@ -14,7 +14,6 @@ export const Persona = () => {
     await personaList().then((res)=>{
       dispatch(getPersona(res));
     });
-    
   }
 
   const fetchDataPersonaOrgano = async () => {

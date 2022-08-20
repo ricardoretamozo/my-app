@@ -20,62 +20,32 @@ import {
   AlertDialogOverlay,
   AlertDialogFooter,
   AlertDialog,
-  Switch,
-  Select,
   Text,
   HStack,
-  Badge,
+  IconButton,
 } from '@chakra-ui/react';
+
+import { AiTwotoneEdit } from 'react-icons/ai';
+import { RiDeleteBackLine } from 'react-icons/ri';
+
 import { store } from '../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
-import 'react-data-table-component-extensions/dist/index.css';
 
-import { deleteSede, updateSede } from '../../../actions/sede';
+import { deleteMotivo, updateMotivo } from '../../../actions/motivo';
 
-import SedeAgregar from './SedeAgregar';
+import MotivoAgregar from './MotivoAgregar';
 
-export default function TableSede() {
+export default function TableMotivo() {
 
-  const bgStatus = useColorModeValue('gray.400', '#1a202c');
-  const colorStatus = useColorModeValue('white', 'gray.400');
-
-  const data = store.getState().sede.rows;
+  const data = store.getState().motivo.rows;
 
   const columns = [
     {
-      name: 'SEDE',
-      selector: row => row.sede,
+      name: 'MOTIVO',
+      selector: row => row.motivo,
       sortable: true,
-      wrap: true,
-    },
-    {
-      name: 'DIRECCIÓN',
-      selector: row => row.direccion,
-      sortable: true,
-      wrap: true,
-    },
-    {
-      name: 'ESTADO',
-      selector: row => row.activo,
-      sortable: true,
-      cell: row => (
-        <div>
-          <Badge
-            bg={row.activo === 'S' ? 'green.400' : bgStatus}
-            color={row.activo === 'S' ? 'white' : colorStatus}
-            p="3px 10px"
-            w={20}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
-          </Badge>
-        </div>
-      ),
-      center: true,
       wrap: true,
     },
     {
@@ -83,8 +53,11 @@ export default function TableSede() {
       sortable: false,
       cell: row => (
         <div>
-          <ModalSedeEliminar row={row} />
-          <ModalSedeEditar row={row} />
+
+          <ModalMotivoEditar row = { row } />
+
+          <ModalMotivoEliminar row = { row } />
+
         </div>
       ),
       center: true,
@@ -133,11 +106,11 @@ export default function TableSede() {
       >
         <Box>
           <Text fontSize="lg" fontWeight="600">
-            TABLA DE SEDES
+            TABLA DE MOTIVOS DE INCIDENCIA
           </Text>
         </Box>
         <Box>
-          <SedeAgregar />
+          <MotivoAgregar />
         </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
@@ -157,16 +130,16 @@ export default function TableSede() {
   );
 }
 
-const ModalSedeEditar = ({ row }) => {
+// Modal Editar Motivo
+
+const ModalMotivoEditar = ({ row }) => {
 
   const [openedit, setOpenEdit] = useState(false);
   const dispatch = useDispatch();
 
   const [indice, setIndice] = useState({
-    idSede: null,
-    sede: '',
-    direccion: '',
-    activo: '',
+    idMotivo: null,
+    motivo: '',
   });
 
   const handleClickOpenEdit = index => {
@@ -178,12 +151,12 @@ const ModalSedeEditar = ({ row }) => {
     setOpenEdit(false);
   };
 
-  const actualizarSede = e => {
+  const handleUpdateMotivo = e => {
     e.preventDefault();
-    dispatch(updateSede(indice))
+    dispatch(updateMotivo(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
+        console.log('Motivo actualizado');
       })
       .catch(e => {
         console.log(e);
@@ -192,104 +165,77 @@ const ModalSedeEditar = ({ row }) => {
 
   return (
     <>
-      <Button
-        onClick={() => handleClickOpenEdit(row)}
-        size={'xs'}
-        colorScheme={'facebook'}
-      >
-        EDITAR
-      </Button>
+      <IconButton
+          icon={<AiTwotoneEdit />}
+          variant={'outline'}
+          colorScheme={'facebook'}
+          onClick={() => handleClickOpenEdit(row)}
+          fontSize={'22px'}
+          size={'sm'}
+          _focus={{ boxShadow: "none" }}
+        />
       <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader display={'flex'} justifyContent={'center'}>
-            EDITAR SEDE
+          <ModalHeader>
+            EDITAR EL MOTIVO DE LA INCIDENCIA
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
             <FormControl>
               <Input
-                value={indice ? indice.idSede : ''}
+                value={indice ? indice.idMotivo : ''}
                 disabled={true}
                 type="text"
                 hidden={true}
               />
             </FormControl>
             <FormControl>
-              <FormLabel>SEDE</FormLabel>
+              <FormLabel>MOTIVO</FormLabel>
               <Input
-                defaultValue={indice ? indice.sede : ''}
-                type="text"
+                defaultValue={indice ? indice.motivo : ''}
                 textTransform={'uppercase'}
+                type="text"
                 onChange={e =>
-                  setIndice({ ...indice, sede: (e.target.value).toUpperCase() })
+                  setIndice({ ...indice, motivo: e.target.value.toUpperCase() })
                 }
               />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>DIRECCIÓN</FormLabel>
-              <Input
-                defaultValue={indice ? indice.direccion : ''}
-                onChange={e =>
-                  setIndice({ ...indice, direccion: (e.target.value).toUpperCase() })
-                }
-                placeholder="Dirección"
-                type="text"
-                textTransform={'uppercase'}
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>ESTADO</FormLabel>
-              <Select
-                defaultValue={indice ? indice.activo : ''}
-                onChange={e =>
-                  setIndice({ ...indice, activo: e.target.value })
-                }
-              >
-                <option value="S">ACTIVO</option>
-                <option value="N">INACTIVO</option>
-              </Select>
             </FormControl>
           </ModalBody>
           <ModalFooter>
             <Button
-              onClick={e => actualizarSede(e)}
+              onClick={e => handleUpdateMotivo(e)}
               colorScheme="green"
               mr={3}
+              _focus={{ boxShadow: "none" }}
             >
               ACTUALIZAR
             </Button>
-            <Button onClick={handleCloseEdit}>CANCELAR</Button>
+            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   )
+
 }
 
-/**
- * 
- * @param { MODAL ELIMINAR SEDE } param0 
- * @returns 
- */
-
-const ModalSedeEliminar = ({ row }) => {
+// Modal Eliminar Motivo
+const ModalMotivoEliminar = ({ row }) => {
 
   const [opendelete, setOpenDelete] = useState(false);
   const dispatch = useDispatch();
 
   const [indice, setIndice] = useState({
-    idSede: null,
-    sede: '',
-    direccion: '',
-    activo: '',
+    idMotivo: null,
+    motivo: '',
   });
 
-  const handleDeleteSede = () => {
-    dispatch(deleteSede(indice))
+  const handleDeleteMotivo = () => {
+    dispatch(deleteMotivo(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Sede eliminado');
+        console.log('Motivo eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -307,31 +253,33 @@ const ModalSedeEliminar = ({ row }) => {
   };
   return (
     <>
-      <Switch
+      <IconButton
+        icon={<RiDeleteBackLine />}
+        variant={'solid'}
         colorScheme={'red'}
-        mr={2}
-        isChecked={row.activo === 'S'}
-        onChange={() => handleClickOpenDelete(row.idSede)}
+        onClick={() => handleClickOpenDelete(row.idMotivo)}
+        fontSize={'22px'}
+        size={'sm'}
+        ml={2}
+        _focus={{ boxShadow: "none" }}
       />
-      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size="2xl">
+
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              {row.activo === 'S' ? (
-                <Text>ESTA SEGURO DE ANULAR?</Text>
-              ) : (
-                <Text>ESTA SEGURO DE ACTIVAR?</Text>
-              )}
+                <Text>¿ESTÁ SEGURO DE ELIMINAR EL MOTIVO?</Text>
             </AlertDialogHeader>
 
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
               <Button
-                onClick={() => handleDeleteSede(row.idSede)}
+                onClick={() => handleDeleteMotivo(row.idMotivo)}
                 colorScheme="red"
                 ml={3}
+                _focus={{ boxShadow: "none" }}
               >
                 SI
               </Button>

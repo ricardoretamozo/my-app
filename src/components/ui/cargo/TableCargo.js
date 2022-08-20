@@ -111,13 +111,13 @@ export default function TableCargo() {
       cell: row => (
         <div>
           <Badge
-          bg={row.activo === "S" ? "green.400" : bgStatus}
-          color={row.activo === "S" ? "white" : colorStatus}
-          p="3px 10px"
-          w={20}
-          textAlign={'center'}
-          borderRadius={'md'}
-          fontSize={'10px'}
+            bg={row.activo === "S" ? "green.400" : bgStatus}
+            color={row.activo === "S" ? "white" : colorStatus}
+            p="3px 10px"
+            w={20}
+            textAlign={'center'}
+            borderRadius={'md'}
+            fontSize={'10px'}
         >
           {row.activo === "S" ? "Activo" : "Inactivo"}
         </Badge>
@@ -139,7 +139,8 @@ export default function TableCargo() {
           <Button
             onClick={() => handleClickOpenEdit(row)}
             size={'xs'}
-            colorScheme={'blue'}
+            colorScheme={'facebook'}
+            _focus={{ boxShadow: "none" }}
           >
             EDITAR
           </Button>
@@ -153,13 +154,12 @@ export default function TableCargo() {
                 <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete}>CANCELAR</Button>
+                  <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                   <Button
-                    onClick={() =>
-                      handleDeleteCargo(row.idCargo)
-                    }
+                    onClick={() => handleDeleteCargo(row.idCargo)}
                     colorScheme="red"
                     ml={3}
+                    _focus={{ boxShadow: "none" }}
                   >
                     SI
                   </Button>
@@ -170,13 +170,13 @@ export default function TableCargo() {
 
           {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
 
-          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'lg'}>
+          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
               <ModalHeader display={'flex'} justifyContent={'center'}>
                 EDITAR CARGO
               </ModalHeader>
-              <ModalCloseButton />
+              <ModalCloseButton _focus={{ boxShadow: "none" }}/>
               <ModalBody pb={6}>
                 <FormControl>
                   <Input
@@ -215,10 +215,11 @@ export default function TableCargo() {
                   onClick={e => actualizarCargo(e)}
                   colorScheme="green"
                   mr={3}
+                  _focus={{ boxShadow: "none" }}
                 >
                   ACTUALIZAR
                 </Button>
-                <Button onClick={handleCloseEdit}>CANCELAR</Button>
+                <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>

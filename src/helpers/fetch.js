@@ -38,6 +38,21 @@ export const fetchServicioDni = ( endpoint, method='GET' ) => {
 
 }
 
+export const fetchServicioReniec = ( endpoint, method='POST' ) => {
+
+    const url = `http://172.28.206.57:8080/${ endpoint }`;
+
+    if ( method === 'POST' ){
+        return fetch( url );
+    } else {
+        return fetch( url , {
+            method,
+            redirect: 'follow'
+        });
+    }
+
+}
+
 export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
     
     const url = `${ baseURL }/${ endpoint }`;

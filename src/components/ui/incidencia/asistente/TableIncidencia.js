@@ -22,8 +22,6 @@ import {
   Flex,
 } from '@chakra-ui/react';
 
-import { AiOutlineUserSwitch } from 'react-icons/ai';
-
 import { store } from '../../../../store/store';
 
 import DataTable, { createTheme } from 'react-data-table-component';
@@ -35,6 +33,7 @@ import Select from 'react-select';
 
 import IncidenciaDetalles from '../IncidenciaDetalles';
 import { reAsignarIncidencia } from '../../../../actions/incidencia';
+import { RiUserShared2Line } from 'react-icons/ri';
 
 export default function TableIncidenciaAsignados() {
   const dispatch = useDispatch();
@@ -51,6 +50,10 @@ export default function TableIncidenciaAsignados() {
   const [openModal, setOpenModal] = useState(false);  
   const [idIncidencia, setIndiceIncidencia] = useState(null);
   const [indiceTecnico, setIndiceTecnico] = useState(null);
+  const [indiceIdPersona, setIndiceIdPersona] = useState(null);
+
+  // filtrar tecnicos que no se repitan en la lista de tecnicos para asignar
+  const tecnicoFilter = tecnicosData.filter(row => row.persona.idpersona !== indiceIdPersona);
 
   const ReAsignacionIncidencia = (e) => {
     e.preventDefault();
@@ -67,14 +70,15 @@ export default function TableIncidenciaAsignados() {
     }
     dispatch(reAsignarIncidencia(incidencia))
     .then(() => {
-      setOpenModal(false);      
+      setOpenModal(false);
     }).catch((error) => {
       console.log(error);
     })
   }
 
   const handleClickOpenModal = (index) => {
-    setIndiceIncidencia(index);
+    setIndiceIdPersona(index.historialIncidencia.persona_asignado.idpersona);
+    setIndiceIncidencia(index.idIncidencia);
     setOpenModal(true);
   };
 
@@ -100,11 +104,11 @@ export default function TableIncidenciaAsignados() {
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
     },
     {
-      name: 'USUARIO ASIGNADO',
+      name: 'TÉCNICO ASIGNADO',
       selector: row => row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido,
       sortable: true,
     },
@@ -146,9 +150,9 @@ export default function TableIncidenciaAsignados() {
           />
           {row.historialIncidencia.estadoIncidencia  === 'A' ? (null) : (
             <IconButton
-              icon={<AiOutlineUserSwitch />}
+              icon={<RiUserShared2Line />}
               colorScheme={'teal'}
-              onClick={() => handleClickOpenModal(row.idIncidencia)}
+              onClick={() => handleClickOpenModal(row)}
               fontSize='20px'
               size={'sm'}
               ml={1}
@@ -171,7 +175,7 @@ export default function TableIncidenciaAsignados() {
                       <Select                      
                         placeholder="--------- ELIGE UN SOPORTE TECNICO -----------"
                         onChange={handleChangeTecnico}
-                        options={tecnicosData.map(tecnico => ({
+                        options={tecnicoFilter.map(tecnico => ({
                           value: tecnico.persona.idpersona,
                           label: tecnico.persona.nombre + ' ' + tecnico.persona.apellido
                         }))}
@@ -180,7 +184,7 @@ export default function TableIncidenciaAsignados() {
                     </FormControl>
                   </ModalBody>
                   <ModalFooter>
-                    <Button disabled = {indiceTecnico === null ? true : false} colorScheme="blue" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
+                    <Button disabled = {indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
                       RE-ASIGNAR
                     </Button>
                     <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>

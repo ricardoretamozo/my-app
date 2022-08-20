@@ -11,10 +11,10 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Grid,
-  GridItem,
+  InputGroup,
   Select,
   HStack,
+  InputRightElement,
 } from '@chakra-ui/react';
 
 import { AddIcon } from '@chakra-ui/icons';
@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import React, { useState } from 'react';
 
 import { store } from '../../../store/store';
+import { notification } from '../../../helpers/alert';
 
 const PersonaAgregar = props => {
   const [openCreate, setOpenCreate] = React.useState(false);
@@ -35,13 +36,9 @@ const PersonaAgregar = props => {
 
   const dataPerfil = store.getState().perfilPersona.rows;
 
-  const handleClickOpenCreate = () => {
-    setOpenCreate(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenCreate(false);
-  };
+  const PerfilUsuarioDefault = dataPerfil.filter(perfil =>
+    perfil.perfil === 'USUARIO COMUN'
+  )
 
   const initialPersona = {
     nombre: '',
@@ -51,7 +48,7 @@ const PersonaAgregar = props => {
     password: '',
     correo: '',
     celular: '',
-    fecha: null,
+    fecha: '',
     sexo: '',
     activo: '',
     perfilPersona: {
@@ -60,6 +57,8 @@ const PersonaAgregar = props => {
   };
 
   const [persona, setPersona] = useState(initialPersona);
+
+  const [estadoInput, setEstadoInput] = useState(false);
 
   const savePersona = e => {
     e.preventDefault();
@@ -76,7 +75,6 @@ const PersonaAgregar = props => {
       activo,
       perfilPersona,
     } = persona;
-    // const {idPerfilPersona} = perfiles
 
     dispatch(
       createPersona({
@@ -94,7 +92,6 @@ const PersonaAgregar = props => {
       })
     )
       .then(() => {
-        console.log(persona);
         handleCloseModal(true);
       })
       .catch(error => {
@@ -103,9 +100,45 @@ const PersonaAgregar = props => {
       });
   };
 
+  const handleClickOpenCreate = () => {
+    setOpenCreate(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenCreate(false);
+    setPersona(initialPersona);
+    setEstadoInput(false);
+  };
+
+  /** MÉTODO PARA REALIZAR LA CONSULTA A LA API DE LA RENIEC */
+  
+  const consultaReniecDNI = async() => {
+    try {
+      const respuesta = await fetch("http://172.28.206.57:8080/SIJ/Reniec/" + persona.dni, { method: 'POST' });
+      if (respuesta.status === 200 || respuesta.status === 201) {
+        const body = await respuesta.json();
+        setPersona({
+          ...persona,
+          nombre: body[5],
+          apellido: body[2] + ' ' + body[3],
+          fecha: body[28].split('/').reverse().join('-'),
+          sexo: body[17] === 'MASCULINO' ? 'M' : 'F',
+        });
+      } else if (respuesta.status === 404) {
+        notification('Persona no encontrada', 'Persona con ese DNI no existe', 'error');
+      }
+       else {
+        notification('Error', 'Error al consultar DNI', 'error');
+      }
+    } catch (error) {
+      console.log(error);
+      notification('Error al consultar el DNI', 'No se logró realizar la consulta', 'error', 'modalOrganoAsignacion');
+    }
+  }
+
   return (
     <>
-      <Button leftIcon={<AddIcon/>} size="sm" colorScheme={'blue'} onClick={handleClickOpenCreate}>
+      <Button leftIcon={<AddIcon />} size="sm" colorScheme={'facebook'} onClick={handleClickOpenCreate} _focus={{ boxShadow: "none" }}>
         AGREGAR
       </Button>
 
@@ -114,21 +147,16 @@ const PersonaAgregar = props => {
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
         size={'4xl'}
+        id="modalOrganoAsignacion"
       >
         <ModalOverlay />
         <form onSubmit={savePersona}>
           <ModalContent>
-            <ModalHeader>AGREGAR NUEVA PERSONA</ModalHeader>
-            <ModalCloseButton />
+            <ModalHeader>AGREGAR NUEVO USUARIO</ModalHeader>
+            <ModalCloseButton _focus={{ boxShadow: "none" }} />
             <ModalBody pb={2}>
-              <Grid
-                templateColumns="repeat(5, 1fr)"
-                gap={5}
-                width="100%"
-                alignContent={'space-between'}
-              >
-                <GridItem h="10" colSpan={4}>
-                  <Input
+              <InputGroup size='md'>
+                 <Input
                     onChange={e =>
                       setPersona({ ...persona, dni: e.target.value })
                     }
@@ -136,37 +164,46 @@ const PersonaAgregar = props => {
                     type={'text'}
                     isRequired
                   />
-                </GridItem>
-                <GridItem h="10" colSpan={1} mx={0}>
-                  <Button colorScheme="teal" variant="solid">
-                    {' '}
-                    <FaFingerprint />{' '}
+                <InputRightElement width='8.5rem'>
+                  <Button 
+                    rightIcon={<FaFingerprint />} 
+                    colorScheme="facebook" 
+                    variant="solid" 
+                    h='1.85rem' 
+                    size='sm' 
+                    onClick={consultaReniecDNI} 
+                    disabled={persona.dni === '' || persona.dni.length !== 8 }
+                    _focus={{ boxShadow: "none" }}
+                    >
+                    CONSULTAR
                   </Button>
-                </GridItem>
-              </Grid>
+                </InputRightElement>
+              </InputGroup>
               <HStack spacing={'10px'} mt={5}>
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>NOMBRES</FormLabel>
                   <Input
+                    defaultValue={persona.nombre}
                     onChange={e =>
                       setPersona({ ...persona, nombre: (e.target.value).toUpperCase() })
                     }
                     placeholder="Nombres"
                     textTransform={'uppercase'}
                     type={'text'}
-                    isRequired
+                    disabled = {estadoInput}
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>APELLIDOS</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, apellido: (e.target.value).toUpperCase() })
                     }
+                    defaultValue={persona.apellido}
                     placeholder="Apellidos"
                     textTransform={'uppercase'}
                     type={'text'}
-                    isRequired
+                    disabled = {estadoInput}
                   />
                 </FormControl>
               </HStack>
@@ -175,7 +212,6 @@ const PersonaAgregar = props => {
                   <FormLabel>USUARIO</FormLabel>
                   <Input
                     defaultValue={(persona.usuario = persona.dni)}
-                    // onValueChange={persona.usuario}
                     onChange={e => {
                       setPersona({
                         ...persona,
@@ -187,15 +223,15 @@ const PersonaAgregar = props => {
                   />
                 </FormControl>
 
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>PASSWORD</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, password: e.target.value })
                     }
                     type={'password'}
-                    placeholder="minimo 8 caracteres"
-                    isRequired
+                    placeholder="Contraseña(min 6 caracteres)"
+                    autoComplete='off'                    
                   />
                 </FormControl>
               </HStack>
@@ -214,7 +250,7 @@ const PersonaAgregar = props => {
                   <FormLabel>NRO CELULAR</FormLabel>
                   <Input
                     type={'text'}
-                    placeholder="942123567"
+                    placeholder="INGRESE SU # DE CELULAR"
                     onChange={e =>
                       setPersona({ ...persona, celular: e.target.value })
                     }
@@ -223,23 +259,25 @@ const PersonaAgregar = props => {
               </HStack>
 
               <HStack spacing={'10px'} mt={'10px'}>
-                <FormControl>
+                <FormControl isRequired>
                   <FormLabel>FECHA DE NACIMIENTO</FormLabel>
                   <Input
-                    type={'date'}
+                    defaultValue={persona ? persona.fecha : ''}
                     onChange={e =>
                       setPersona({ ...persona, fecha: e.target.value })
                     }
-                    isRequired
+                    disabled = {estadoInput}
+                    type={'date'}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>SEXO</FormLabel>
                   <Select
-                    defaultValue={(persona.sexo = 'M')}
+                    value={persona ? persona.sexo : ''}
                     onChange={e => {
                       setPersona({ ...persona, sexo: e.target.value });
                     }}
+                    // disabled = {estadoInput}
                   >
                     <option value="M">MASCULINO</option>
                     <option value="F">FEMENINO</option>
@@ -263,6 +301,7 @@ const PersonaAgregar = props => {
                   <FormLabel>PERFIL PERSONA</FormLabel>
                   <Select
                     isRequired
+                    defaultValue={persona.perfilPersona = PerfilUsuarioDefault[0].idPerfilPersona}
                     onChange={e =>
                       setPersona({ ...persona, perfilPersona: e.target.value })
                     }
@@ -277,10 +316,10 @@ const PersonaAgregar = props => {
               </HStack>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'blue'} mr={3}>
+              <Button type={'submit'} colorScheme={'facebook'} mr={3} _focus={{ boxShadow: "none" }}>
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

@@ -1,4 +1,4 @@
-import { fetchToken } from '../helpers/fetch';
+import { fetchServicioReniec, fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
 import { getPersona } from '../components/ui/persona/persona';
 import { startLogin } from './auth';
@@ -6,14 +6,11 @@ import { startLogin } from './auth';
 // // CREATE PERSONA
 
 export const createPersona = data => {
-  console.log(data);
   var idPerfilPersona = {};
   if (data.perfilPersona.idPerfilPersona != null) {
     idPerfilPersona = {
       idPerfilPersona: Number(data.perfilPersona.idPerfilPersona),
     };
-    console.log(data.perfilPersona.idPerfilPersona);
-    console.log('ingreso');
   } else {
     idPerfilPersona = {
       idPerfilPersona: Number(data.perfilPersona),
@@ -33,7 +30,7 @@ export const createPersona = data => {
         fecha: data.fecha,
         sexo: data.sexo,
         activo: data.activo,
-        perfilPersona: {idPerfilPersona: data.perfilPersona}
+        perfilPersona: {idPerfilPersona: Number(data.perfilPersona)}
       },
       'POST'
     );
@@ -60,12 +57,12 @@ export const createPersonaRegister = data => {
         dni: data.dni,
         usuario: data.dni,
         password: data.password,
-        correo: data.correo,
-        celular: data.celular,
         fecha: data.fecha,
         sexo: data.sexo,
         activo: data.activo,
-        perfilPersona: {idPerfilPersona: 4}
+        perfilPersona: {
+          idPerfilPersona: 4
+        }
       },
       'POST'
     );
@@ -149,12 +146,33 @@ export const updatePersona = data => {
 
     if (response.status === 200) {
       dispatch(getPersona(await loadPersona()));
-      notification('Persona actualizado correctamente', body.message, 'success');
+      notification('Persona actualizado correctamente', '', 'success');
     } else {
-      notification('No se pudo actualizar la Persona', body.detalles, 'error');
+      notification('No se pudo actualizar la Persona', '', 'error');
     }
   };
 };
+
+export const fetchUsuarioId = async (id) => {
+  const response = await fetchToken(`personas/${id}`);
+  const body = await response.json();
+  const Usuario = {
+    idpersona: body.idpersona,
+    nombre: body.nombre,
+    apellido: body.apellido,
+    dni: body.dni,
+    usuario: body.usuario,
+    password: body.password,
+    correo: body.correo,
+    celular: body.celular,
+    fecha: body.fecha,
+    sexo: body.sexo,
+    activo: body.activo,
+    perfilPersona: body.perfilPersona
+  };
+
+  return Usuario;
+}
 
 // DELETE / DISABLED ORGANO
 
@@ -171,6 +189,46 @@ export const deletePersona = id => {
     }
   };
 };
+
+// Consulta API reniec para obtener datos de persona
+
+export const consultaReniec = (dni) => {
+  return async dispatch => {
+    const response = await fetchServicioReniec(`SIJ/Reniec/${dni}`);
+    const body = await response.json();
+    console.log(body);
+  }
+}
+
+// Busqueda de usuarios por apellido
+export const buscarPersonaApellido = async (apellido) => {
+    const response = await fetchToken(`personas/buscar/apellido?apellido=${apellido}`);
+    const body = await response.json();
+    const Persona = {};
+    const data = [];
+
+    body.forEach(persona => {
+      data.push({
+        idpersona: persona.idpersona,
+        nombre: persona.nombre,
+        apellido: persona.apellido,
+        dni: persona.dni,
+        usuario: persona.usuario,
+        password: persona.password,
+        correo: persona.correo,
+        celular: persona.celular,
+        fecha: persona.fecha,
+        sexo: persona.sexo,
+        activo: persona.activo,
+        perfilPersona: persona.perfilPersona
+      });
+    });
+
+    Persona.data = data;
+    // set user info
+
+    return Persona;
+  }
 
 // Refrescar la tabla
 

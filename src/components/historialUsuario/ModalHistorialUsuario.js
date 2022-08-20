@@ -9,31 +9,23 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Input,
-  Select as SelectForm,
+  Input
 } from '@chakra-ui/react';
-
-import { notification } from '../../helpers/alert';
 
 import { store } from '../../store/store';
 
 import Select from 'react-select';
 
 import { useDispatch } from 'react-redux';
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { createOficina, fetchOficinas } from '../../actions/oficina';
-import {
-  fetchHistorialPersona,
-  createHistorialPersona,
-} from '../../actions/historialpersona';
-
-import { types } from '../../types/types';
-// import { getIP } from 'external-ip';
+import React, { useState, useEffect, useRef } from 'react';
+import { createHistorialPersona } from '../../actions/historialpersona';
 
 const ModalHistorialUsuario = (props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
+  const selectInputRefSede = useRef();
+  const selectInputRef = useRef();
+  const selectOficinaRef = useRef();
+  
 
   const sedeData = store.getState().sede.rows;
   const organoData = store.getState().organo.rows;
@@ -74,34 +66,17 @@ const ModalHistorialUsuario = (props) => {
   });
 
   const [organoSelect, setOrganoSelect] = useState([
-    { label: 'Seleccione una Sede' },
+    { value: 0, label: 'SELECCIONE UNA SEDE' },
   ]);
+
   const [oficinaSelect, setOficinaSelect] = useState([
-    { idOficina: 0, label: 'Seleccione un Organo' },
+    { value: 0, label: 'SELECCIONE UN ORGANO' },
   ]);
 
-  const [organoNombre, setOrganoNombre] = useState(null);
-  const [oficinaNombre, setOficinaNombre] = useState(null);
-
-  const [optionsSede, setoptionsSede] = useState(
+  const [optionsSede, setOptionsSede] = useState(
     sedeInfo.map(sede => ({
       value: sede.idSede,
       label: sede.sede,
-    }))
-  );
-  console.log(props.oficina);
-  const [optionsOrgano, setoptionsOrgano] = useState(
-    organoInfo.map(organo => ({
-      value: organo.idOrgano,
-      label: organo.organo,
-    }))
-  );
-
-  console.log(optionsOrgano);
-  const [optionsOficina, setoptionsOficina] = useState(
-    oficinaInfo.map(oficina => ({
-      value: oficina.idOficina,
-      label: oficina.oficina,
     }))
   );
 
@@ -111,14 +86,14 @@ const ModalHistorialUsuario = (props) => {
     if (estado) {
       if (props.oficina != null) {
         setEstado(false);
-        setoptionsOrgano(
+        setOrganoSelect(
           organoInfo
             .filter(
               indice => indice.sede.idSede == props.oficina.organo.sede.idSede
             )
             .map(value => ({ value: value.idOrgano, label: value.organo }))
         );
-        setoptionsOficina(
+        setOficinaSelect(
           oficinaInfo
             .filter(
               indice => indice.organo.idOrgano == props.oficina.organo.idOrgano
@@ -132,17 +107,14 @@ const ModalHistorialUsuario = (props) => {
             oficina: props.oficina.oficina,
           },
         });
-        console.log(optionsOrgano);
         setOrganoSelect(
-          optionsOrgano.find(
+          organoSelect.find(
             organo => organo.value == props.oficina.organo.idOrgano
           )
         );
       }
     }
   });
-  const [optionsCargoIndex, setOptionsCargoIndex] = useState(0);
-  const [optionsOficinaIndex, setOficinaIndex] = useState(0);
 
   const [optionsCargo, setoptionsCargo] = useState(
     cargoInfo.map(cargo => ({
@@ -151,47 +123,51 @@ const ModalHistorialUsuario = (props) => {
     }))
   );
 
-  const [optionsOrganoindex, setoptionsOrganoindex] = useState(0);
-  const [optionsSedeindex, setoptionsSedeindex] = useState(0);
-
-  // const { oficina, organo } = dataOficina;
-
   // Select
   const handleChangeSede = value => {
-    if (value == null) {
-      //setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+    if (value === null) {
+      selectInputRef.current.clearValue();
+      selectOficinaRef.current.clearValue();
+      setOrganoSelect([{ value: 0, label: 'SELECCIONE UNA SEDE' }]);
     } else {
       var organo = organoInfo.filter(
         indice => indice.sede.idSede == value.value
       );
-      setoptionsOrgano(
+      setOrganoSelect(
         organo.map(organo => ({
           value: organo.idOrgano,
           label: organo.organo,
         }))
       );
-      setoptionsOrganoindex(0);
+      selectInputRef.current.clearValue();
+      selectOficinaRef.current.clearValue();
     }
   };
 
   //
   const handleChangeOrgano = value => {
-    if (value == null) {
-      setoptionsOficina([{ idOficina: 0, oficina: 'Seleccione un Organo' }]);
+    if (value === null) {
+      selectOficinaRef.current.clearValue();
+      setOficinaSelect([{ value: 0, label: 'SELECCIONE UN ORGANO' }]);
     } else {
-      setoptionsOficina(
+      setOficinaSelect(
         oficinaData
           .filter(indice => indice.organo.idOrgano == value.value)
           .map(value => ({ value: value.idOficina, label: value.oficina }))
       );
+      selectOficinaRef.current.clearValue();
     }
   };
 
   const handleChangeOficina = value => {
-    setIndiceHistorial({
-      ...indiceHistorial,
-      oficina: { idOficina: value.value, oficina: value.label },
-    });
+    if (value === null) {
+      // selectOficinaRef.current.clearValue();
+    } else {
+      setIndiceHistorial({
+        ...indiceHistorial,
+        oficina: { idOficina: value.value, oficina: value.label },
+      });
+    }
   };
 
   const handleChangeCargo = value => {
@@ -226,7 +202,8 @@ const ModalHistorialUsuario = (props) => {
         if (
           indiceHistorial.oficina.idOficina != null ||
           indiceHistorial.cargo.idCargo != null
-        ) {
+          ) {
+          console.log("editado")
           dispatch(props.handleClick());
         }
       } else {
@@ -248,25 +225,22 @@ const ModalHistorialUsuario = (props) => {
       cargo: { idCargo: null },
       oficina: { idOficina: null },
     });
-    console.log("cerrando modal");
     props.cerrar();
   }
 
   return (
     <>
       <Modal
-        // id="modalOrganoAsignacion"
         isOpen={props.abrir}
         onClose={cerrarModal}
         closeOnOverlayClick={true}
-        size={'lg'}
+        size={'2xl'}
       >
         <ModalOverlay />
 
         <ModalContent>
-          <ModalHeader>Actualizar sede, organo, oficina, cargo</ModalHeader>
+          <ModalHeader>ACTUALIZAR, SEDE, ORGANO, OFICINA</ModalHeader>
           <ModalCloseButton />
-
           <ModalBody pb={6}>
             <FormControl>
               <Input
@@ -276,74 +250,43 @@ const ModalHistorialUsuario = (props) => {
                 hidden={true}
               />
             </FormControl>
-            <FormControl isRequired>
-              <FormLabel>Sede</FormLabel>
+            <FormControl>
+              <FormLabel>SEDE</FormLabel>
               <Select
                 onChange={handleChangeSede}
-                //  defaultValue={optionsSede[optionsSedeindex]}
-                // defaultValue={
-                //   props.oficina
-                //     ? optionsSede.find(
-                //         sede => sede.value == props.oficina.organo.sede.idSede
-                //       )
-                //     : null
-                // }
-                isRequired
+                placeholder="SELECCIONE UNA SEDE"
                 isSearchable
                 isClearable
                 options={optionsSede}
+                ref={selectInputRefSede}
               />
             </FormControl>
-            <FormControl mt={4} isRequired>
-              <FormLabel>Organo</FormLabel>
+            <FormControl mt={4}>
+              <FormLabel>ORGANO</FormLabel>
               <Select
                 onChange={handleChangeOrgano}
-                // defaultValue={organoSelect}
-                placeholder={'Seleccione un Organo'}
+                placeholder="SELECCIONE UN ORGANO"
                 isClearable
-                options={optionsOrgano}
+                options={organoSelect}
+                ref = {selectInputRef}
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Oficina</FormLabel>
+              <FormLabel>OFICINA</FormLabel>
               <Select
                 onChange={handleChangeOficina}
-                // defaultValue={
-                //   props.oficina
-                //     ? optionsOficina.find(
-                //         oficina => oficina.value == props.oficina.idOficina
-                //       )
-                //     : null
-                // }
+                placeholder="SELECCIONE UNA OFICINA"
                 isClearable={true}
-                options={optionsOficina}
+                options={oficinaSelect}
                 isRequired
+                ref = {selectOficinaRef}
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Cargo</FormLabel>
-              {/* <SelectForm
-              defaultValue={props.cargo ? props.cargo.idCargo : ''}
-              onChange ={e => setIndiceHistorial({...indiceHistorial, cargo:  e.target.value })
-              }
-              >
-                {cargoData.map((item, idx) => (
-                  <option value={item.idCargo} key={idx}>
-                    {item.cargo}
-                  </option>
-                ))}
-              </SelectForm> */}
+              <FormLabel>CARGO</FormLabel>
               <Select
                 onChange={handleChangeCargo}
-                // defaultValue={
-                //   props.cargo
-                //     ? optionsCargo.find(
-                //         cargo => cargo.value == props.cargo.idCargo
-                //       )
-                //     : ''
-                // }
-                // defaultInputValue = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
-                // value = {indiceHistorial ? indiceHistorial.cargo.cargo : ''}
+                placeholder="SELECCIONE UN CARGO"
                 defaultValue={
                   indiceHistorial ? indiceHistorial.cargo.cargo : ''
                 }
@@ -356,23 +299,20 @@ const ModalHistorialUsuario = (props) => {
           <ModalFooter>
             <Button
               onClick={saveHistorialPersona}
-              colorScheme={'blue'}
+              colorScheme={'facebook'}
               autoFocus
               mr={3}
+              _focus={{ boxShadow: "none" }}
+              disabled = {indiceHistorial.oficina.idOficina === null && indiceHistorial.cargo.idCargo === null}
             >
-              Guardar
+              GUARDAR
             </Button>
-            <Button onClick={cerrarModal}>Cancelar</Button>
+            <Button onClick={cerrarModal} colorScheme="red" _focus={{ boxShadow: "none" }}>CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
   );
 };
-
-const organoID = organo => ({
-  type: types.eventOrganoId,
-  payload: organo,
-});
 
 export default ModalHistorialUsuario;

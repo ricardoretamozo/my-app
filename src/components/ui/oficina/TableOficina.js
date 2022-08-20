@@ -229,8 +229,6 @@ export default function TableOficina() {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
-        const sedeData = store.getState().sede.rows;
-        const organoData = store.getState().organo.rows;
         return (
           <div>
             <Switch
@@ -242,11 +240,12 @@ export default function TableOficina() {
             <Button
               onClick={() => handleClickOpenEdit(row)}
               size={'xs'}
-              colorScheme={'blue'}
+              colorScheme={'facebook'}
+              _focus={{ boxShadow: "none" }}
             >
               EDITAR
             </Button>
-            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
+            <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="lg" fontWeight="bold">
@@ -260,11 +259,12 @@ export default function TableOficina() {
                   <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                   <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>CANCELAR</Button>
+                    <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                     <Button
                       onClick={() => handleDeleteOficina(oficinaid)}
                       colorScheme="red"
                       ml={3}
+                      _focus={{ boxShadow: "none" }}
                     >
                       SI
                     </Button>
@@ -281,7 +281,7 @@ export default function TableOficina() {
                 <ModalHeader display={'flex'} justifyContent={'center'}>
                   EDITAR LA OFICINA
                 </ModalHeader>
-                <ModalCloseButton />
+                <ModalCloseButton _focus={{ boxShadow: "none" }} />
                 <ModalBody pb={6}>
                   <FormControl>
                     <Input
@@ -341,10 +341,11 @@ export default function TableOficina() {
                     onClick={e => handleUpdateOrgano(e)}
                     colorScheme="green"
                     mr={3}
+                    _focus={{ boxShadow: "none" }}
                   >
                     ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
+                  <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>

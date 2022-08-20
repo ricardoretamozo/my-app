@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -44,8 +44,14 @@ export default function ModalOrganoAsignacion(props) {
 
   //State select organo
   const [organoSelect, setorganoSelect] = useState([
-    { idOrgano: 0, organo: 'Seleccione una Sede' },
+    { value: 0, label: 'Seleccione una Sede' },
   ]);
+
+  const [selectOrgano, setselectOrgano] = useState([{ value: 0, label: 'Seleccione una Sede' }]);
+
+  const selectInputRef = useRef();
+  const selectInputRefSede = useRef();
+
   const [organoNombre, setorganoNombre] = useState(null);
   const [openModalDelete, setOpenModalDelete] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
@@ -55,17 +61,38 @@ export default function ModalOrganoAsignacion(props) {
       props.setpersonaOrgano(res.data);
     });
   };
+
+  // console.log(organoSelect);
+
   //Cambiar opciones select organo
   const handleChangeSede = value => {
-    if (value != null) {
+    console.log(value);    
+    if (value !== null) {
+      console.log("se setea la lista de organos")
+      console.log(organoData);
       setorganoSelect(
-        organoData.filter(indice => indice.sede.idSede == value.value)
+        organoData.filter(indice => indice.sede.idSede === value.value).map(organo => ({
+          value: organo.idOrgano,
+          label: organo.organo,
+        }))
       );
+    } else {
+      console.log("se reinicia la lista de organos")
+      selectInputRef.current.clearValue();
+      setorganoSelect([{ value: 0, label: 'Seleccione una Sede' }]);
+      selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
     }
   };
   //setear organo
   const handleChangeOrgano = value => {
-    setorganoNombre(value.value);
+    console.log(value)
+    if (value !== null){
+      setorganoNombre(value.value);
+    } else {
+      // return "SELECCIONE UN ORGANO"
+      // setorganoNombre(null);
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);      
+    }
   };
 
   //defaul input
@@ -74,7 +101,7 @@ export default function ModalOrganoAsignacion(props) {
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     props.cerrar();
-
+    
   };
   const closeModalDelete = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
@@ -115,17 +142,24 @@ export default function ModalOrganoAsignacion(props) {
     fetchDataPersonaOrgano(props.usuario.idpersona);
     dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre))
     .then(() => {
-      fetchDataPersonaOrgano(props.usuario.idpersona);
       setorganoNombre(null);
+      selectInputRef.current.clearValue();
       setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+      selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+      fetchDataPersonaOrgano(props.usuario.idpersona);
+      selectInputRefSede.current.clearValue();
+      selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+
     })
     .catch(err => {
       console.log(err.message);
       setorganoNombre(null);
+      selectInputRef.current.clearValue();
       setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+      selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+      selectInputRefSede.current.clearValue();
+      selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
     });
-    setorganoNombre(null);
-    setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     closeModalCreate();
   };
 
@@ -150,12 +184,13 @@ export default function ModalOrganoAsignacion(props) {
           <ModalHeader>
             ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES INFORMATICOS
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
             <HStack spacing={'10px'} mt={'10px'}>
               <FormControl>
                 <FormLabel>SEDE</FormLabel>
                 <Select
+                  placeholder="Seleccione una Sede"
                   required
                   onChange={handleChangeSede}
                   isRequired
@@ -165,6 +200,7 @@ export default function ModalOrganoAsignacion(props) {
                     value: sede.idSede,
                     label: sede.sede,
                   }))}
+                  ref={selectInputRefSede}
                 />
               </FormControl>
               <FormControl>
@@ -172,19 +208,17 @@ export default function ModalOrganoAsignacion(props) {
                 <Select
                   onChange={handleChangeOrgano}
                   isClearable
-                  options={organoSelect.map(organo => ({
-                    value: organo.idOrgano,
-                    label: organo.organo,
-                  }))}
+                  options={organoSelect}
+                  defaultValue={selectOrgano[0]}
+                  ref = {selectInputRef}
                 />
               </FormControl>
             </HStack>
             <FormControl mt={'10px'}>
               <Button
                 disabled={organoNombre == null ? true : false}
-                type={'submit'}
                 onClick={createPersonaOrganoModal}
-                colorScheme={'blue'}
+                colorScheme={'facebook'}
                 mr={3}
               >
                 ASIGNAR
@@ -192,7 +226,7 @@ export default function ModalOrganoAsignacion(props) {
             </FormControl>
             <Divider
               orientation="horizontal"
-              borderColor={'blue.500'}
+              borderColor={'blue.600'}
               border={2}
               mt={'10px'}
             />
@@ -231,6 +265,7 @@ export default function ModalOrganoAsignacion(props) {
                         color={'red.600'}
                         fontSize="20px"
                         icon={<CloseIcon />}
+                        _focus={{ boxShadow: "none" }}
                       ></IconButton>
                     </Td>
                   </Tr>
@@ -240,7 +275,7 @@ export default function ModalOrganoAsignacion(props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={closeModal} colorScheme="red">
+            <Button onClick={closeModal} colorScheme="red" _focus={{ boxShadow: "none" }}>
               CANCELAR
             </Button>
           </ModalFooter>

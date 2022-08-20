@@ -28,6 +28,8 @@ import {
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
+// import Select from 'react-select';
+
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
@@ -51,7 +53,9 @@ export default function TableOrgano() {
   const [indice, setIndice] = useState({
     idOrgano: null,
     organo: '',
-    sede: '',
+    sede: {
+      idSede: null,
+    },
     activo: '',
   });
 
@@ -102,6 +106,13 @@ export default function TableOrgano() {
     setOpenDelete(false);
   };
 
+  // const handleChangeSede = value => {
+  //   setIndice({
+  //     ...indice,
+  //     sede: { idSede: value.value, sede: value.label },
+  //   });
+  // }
+
   const columns = [
     {
       name: 'ORGANO',
@@ -149,7 +160,8 @@ export default function TableOrgano() {
             <Button
               onClick={() => handleClickOpenEdit(row)}
               size={'xs'}
-              colorScheme={'blue'}
+              colorScheme={'facebook'}
+              _focus={{ boxShadow: "none" }}
             >
               EDITAR
             </Button>
@@ -167,11 +179,12 @@ export default function TableOrgano() {
                   <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                   <AlertDialogFooter>
-                    <Button onClick={handleCloseDelete}>Cancelar</Button>
+                    <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                     <Button
                       onClick={() => handleDeleteOrgano(organoid)}
                       colorScheme="red"
                       ml={3}
+                      _focus={{ boxShadow: "none" }}
                     >
                       SI
                     </Button>
@@ -188,7 +201,7 @@ export default function TableOrgano() {
                 <ModalHeader display={'flex'} justifyContent={'center'}>
                   EDITAR ORGANO
                 </ModalHeader>
-                <ModalCloseButton />
+                <ModalCloseButton _focus={{ boxShadow: "none" }} />
                 <ModalBody pb={6}>
                   <FormControl>
                     <Input
@@ -201,10 +214,18 @@ export default function TableOrgano() {
                   <FormControl>
                     <FormLabel>SEDE</FormLabel>
                     <Select
-                      defaultValue={indice ? indice.sede.idSede : ''}
+                      defaultValue={ indice ? indice.sede : '' }
                       onChange={e =>
                         setIndice({ ...indice, sede: e.target.value })
                       }
+                      // onChange={handleChangeSede}
+                      // options={
+                      //   dataSede.map((item, idx) => ({
+                      //     key: idx,
+                      //     value: item.idSede,
+                      //     label: item.sede,
+                      //   }))
+                      // }
                     >
                       {dataSede.map((item, idx) => (
                         <option value={item.idSede} key={idx}>
@@ -242,10 +263,11 @@ export default function TableOrgano() {
                     onClick={e => handleUpdateOrgano(e)}
                     colorScheme="green"
                     mr={3}
+                    _focus={{ boxShadow: "none" }}
                   >
                     ACTUALIZAR
                   </Button>
-                  <Button onClick={handleCloseEdit}>CANCELAR</Button>
+                  <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>

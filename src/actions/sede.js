@@ -22,9 +22,9 @@ export const createSede = data => {
       
       dispatch(getSede(await loadSede()));
 
-      notification('Sede registrado correctamente.', body.message, 'success');
+      notification('Sede registrado correctamente.', '', 'success');
     } else {
-      notification('No se pudo registrar la Sede', body.error, 'error');
+      notification('No se pudo registrar la Sede', '', 'error');
     }
   };
 };

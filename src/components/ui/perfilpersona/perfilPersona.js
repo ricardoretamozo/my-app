@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
-import Tables from './TablePersonaOrgano';
+import Tables from './TablePerfilPersona';
 import { perfilPersona } from '../../../actions/perfilPersona'; 
 import { types } from '../../../types/types';
 
@@ -16,7 +16,6 @@ export const PerfilPersona = () => {
     
   }
   useEffect(() => {
-    console.log(store.getState().perfilPersona);
     if(store.getState().perfilPersona.rows.length <= 0){
       fetchData();
     }

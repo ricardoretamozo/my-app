@@ -27,7 +27,7 @@ import {
 
 import { ViewIcon } from '@chakra-ui/icons';
 
-import { fetchIncidenciaDetalles } from '../../../actions/incidencia';
+import { fetchIncidenciaDetalles, fetchDetallesIncidenciaAtendida } from '../../../actions/incidencia';
 import { fetchHistorialPersona } from '../../../actions/historialpersona'; 
 import Moment from 'moment';
 
@@ -38,6 +38,7 @@ const IncidenciaDetalles = props => {
   const [openCreate, setOpenCreate] = React.useState(false);
 
   const [detalleIncidencia, setDetalleIncidencia] = useState([]);
+  const [detalleIncidenciaAtendida, setDetalleIncidenciaAtendida] = useState([]);
   const [incidenciaHistorial, setIncidenciaHistorial] = useState([]);
   const [incidenciaMotivo, setIncidenciaMotivo] = useState([]);
   const [incidenciaOrigen, setIncidenciaOrigen] = useState([]);
@@ -48,32 +49,35 @@ const IncidenciaDetalles = props => {
   const [incidenciaPerfilPersona, setIncidenciaPerfilPersona] = useState([]);
   const [incidenciaPersonaAsignado, setIncidenciaPersonaAsignado] = useState([]);
   const [incidenciaPerfilPersonaAsignado, setIncidenciaPerfilPersonaAsignado] = useState([]);
-  const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState(null)
-
-  
+  const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState(null);
 
   const obtenerIncideciadetalle = async () => {
     await fetchIncidenciaDetalles(props.rowId).then(incidencia => {
       setDetalleIncidencia(incidencia);
       setIncidenciaHistorial(incidencia.historialIncidencia);
-      setIncidenciaMotivo(incidencia.motivo); //
-      setIncidenciaOrigen(incidencia.origen); //
-      setIncidenciaOficina(incidencia.oficina); //
-      setIncidenciaOrgano(incidencia.oficina.organo); //
-      setIncidenciaSede(incidencia.oficina.organo.sede); //
-      setIncidenciaPersona(incidencia.persona); //
-      setIncidenciaPerfilPersona(incidencia.persona.perfilPersona); //
+      setIncidenciaMotivo(incidencia.motivo);
+      setIncidenciaOrigen(incidencia.origen);
+      setIncidenciaOficina(incidencia.oficina);
+      setIncidenciaOrgano(incidencia.oficina.organo);
+      setIncidenciaSede(incidencia.oficina.organo.sede);
+      setIncidenciaPersona(incidencia.persona);
+      setIncidenciaPerfilPersona(incidencia.persona.perfilPersona);
       if (incidencia.historialIncidencia.persona_asignado === null) {
-        setIncidenciaPersonaAsignado('');
+        setIncidenciaPersonaAsignado(null);
       } else {
         setIncidenciaPersonaAsignado(incidencia.historialIncidencia.persona_asignado);
-        setIncidenciaPerfilPersonaAsignado(
-          incidencia.historialIncidencia.persona_asignado.perfilPersona
-        );
+        setIncidenciaPerfilPersonaAsignado(incidencia.historialIncidencia.persona_asignado.perfilPersona);
       }
       fetchHistorialPersona(incidencia.persona.idpersona).then(historial => {
         setIncidenciaUsuarioCargo(historial.cargo.cargo)
       })
+
+      fetchDetallesIncidenciaAtendida(incidencia.idIncidencia).then((atendida) => {
+        setDetalleIncidenciaAtendida(atendida);
+      }).catch((error) => {
+        console.log(error);
+      });
+
     });
   };
 
@@ -91,7 +95,7 @@ const IncidenciaDetalles = props => {
       <IconButton
         icon={<ViewIcon />}
         variant={'outline'}
-        colorScheme={'blue'}
+        colorScheme={'facebook'}
         onClick={handleClickOpenCreate}
         fontSize={'20px'}
         size={'sm'}
@@ -108,18 +112,18 @@ const IncidenciaDetalles = props => {
         <DrawerContent>
           <DrawerHeader>
             <Box flex="1" textAlign="center" fontSize={'20px'}>
-              <Text as="u">DETALLES DE LA INCIDENCIA</Text>
+              <Text as="u" fontWeight={'bold'}>DETALLES DE LA INCIDENCIA</Text>
             </Box>
           </DrawerHeader>
           <DrawerCloseButton _focus={{ boxShadow: 'none' }} />
           <DrawerBody pb={2}>
             <Box flex="1" textAlign="center">
-              <SimpleGrid columns={2} spacing={1}>
+              <SimpleGrid columns={4} spacing={1}>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
                     FECHA Y HORA
                   </Text>
-                  <Text fontSize={'13px'}>{Moment(incidenciaHistorial.fecha).format("DD/MM/YYYY - hh:mm:ss")}</Text>
+                  <Text fontSize={'13px'}>{Moment(detalleIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss")}</Text>
                 </Box>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
@@ -127,10 +131,6 @@ const IncidenciaDetalles = props => {
                   </Text>
                   <Text fontSize={'13px'}>{incidenciaOrigen.origen}</Text>
                 </Box>
-              </SimpleGrid>
-            </Box>
-            <Box flex="1" textAlign="center" mt={4}>
-              <SimpleGrid columns={2} spacing={1}>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
                     MOTIVO INCIDENCIA
@@ -169,23 +169,22 @@ const IncidenciaDetalles = props => {
                   textAlign="center"
                   fontWeight={'bold'}
                 >
-                  DESCRIPCIÓN DE LA INCIDENCIA
+                  DESCRIPCIÓN DE LA INCIDENCIA CREADA
                 </FormLabel>
                 <Textarea
                   fontSize={'13px'}
                   textColor={'blue.500'}
                   textAlign="center"
                   size={'sm'}
-                  rows={3}
+                  fontWeight={'bold'}
+                  rows={2}
                   value={detalleIncidencia.descripcion}
-                  state={''}
-                  onChange={null}
                   readOnly
                 />
               </FormControl>
             </Box>
             {/* Acordion items */}
-            <Accordion defaultIndex={[0, 1, 2]} mt={4} allowMultiple>
+            <Accordion defaultIndex={[0, 1, 2]} mt={2} allowMultiple>
               <AccordionItem>
                 <AccordionButton
                   _focus={{ boxShadow: 'none' }}
@@ -203,7 +202,7 @@ const IncidenciaDetalles = props => {
                 </AccordionButton>
                 <AccordionPanel pb={2}>
                   <Box flex="1" textAlign="center" fontSize={'13px'}>
-                    <SimpleGrid columns={2} spacing={1}>
+                    <SimpleGrid columns={3} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>NOMBRES</Text>
                         <Text>{incidenciaPersona.nombre}</Text>
@@ -219,7 +218,15 @@ const IncidenciaDetalles = props => {
                       <Box>
                         <Text fontWeight={'bold'}>PERFIL PERSONA</Text>
                         <Text>{incidenciaPerfilPersona.perfil}</Text>
-                      </Box>                      
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>NUMERO DE CELULAR</Text>
+                        <Text>{incidenciaPersona.celular}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>CORREO ELECTRÓNICO</Text>
+                        <Text>{incidenciaPersona.correo}</Text>
+                      </Box>                 
                     </SimpleGrid>
                     <Divider mt={1} mb={1} />
                     <SimpleGrid columns={[2,4,4]} spacing={1}>
@@ -243,7 +250,9 @@ const IncidenciaDetalles = props => {
                   </Box>
                 </AccordionPanel>
               </AccordionItem>
-              <AccordionItem>
+              { incidenciaPersonaAsignado === null ?
+                (
+                  <AccordionItem>
                 <AccordionButton
                   _focus={{ boxShadow: 'none' }}
                   _expanded={{ bg: bgAcordion, color: colorStatus }}
@@ -254,13 +263,29 @@ const IncidenciaDetalles = props => {
                     fontWeight={'bold'}
                     fontSize={'14px'}
                   >
-                    DETALLES DEL USUARIO ASIGNADO
+                    ESTA INCIDENCIA NO ESTÁ ASIGNADO A NINGÚN TÉCNICO
                   </Box>
-                  <AccordionIcon />
+                </AccordionButton>
+                </AccordionItem>
+                ) : (
+              <AccordionItem>
+                <AccordionButton
+                  _focus={{ boxShadow: 'none' }}
+                  _expanded={{ bg: bgAcordion, color: colorStatus }}
+                >
+                    <Box
+                      flex="1"
+                      textAlign="center"
+                      fontWeight={'bold'}
+                      fontSize={'14px'}
+                    >
+                      DETALLES DEL TÉCNICO ASIGNADO
+                    </Box>
+                  <AccordionIcon/>
                 </AccordionButton>
                 <AccordionPanel pb={2}>
                   <Box flex="1" textAlign="center" fontSize={'13px'}>
-                    <SimpleGrid columns={2} spacing={1}>
+                    <SimpleGrid columns={3} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>NOMBRES</Text>
                         <Text>{incidenciaPersonaAsignado.nombre}</Text>
@@ -277,14 +302,61 @@ const IncidenciaDetalles = props => {
                         <Text fontWeight={'bold'}>PERFIL PERSONA</Text>
                         <Text>{incidenciaPerfilPersonaAsignado.perfil}</Text>
                       </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>NUMERO DE CELULAR</Text>
+                        <Text>{incidenciaPersonaAsignado.celular}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>CORREO ELECTRÓNICO</Text>
+                        <Text>{incidenciaPersonaAsignado.correo}</Text>
+                      </Box>   
                     </SimpleGrid>
                   </Box>
                 </AccordionPanel>
               </AccordionItem>
+              )}
             </Accordion>
+            { detalleIncidenciaAtendida.length === 0 ?
+                (
+                <Box flex="1" textAlign="center" mt={2}>
+                  <FormControl>
+                    <FormLabel
+                      fontSize={'14px'}
+                      textAlign="center"
+                      fontWeight={'bold'}
+                      color={'red.500'}
+                    >
+                      ESTA INCIDENCIA AÚN NO TIENE UNA ATENCIÓN DE UN SOPORTE
+                    </FormLabel>
+                  </FormControl>
+                </Box>
+                ) : (
+                <Box flex="1" textAlign="center" mt={2}>
+                  <FormControl>
+                    <FormLabel
+                      fontSize={'14px'}
+                      textAlign="center"
+                      fontWeight={'bold'}
+                    >
+                      DESCRIPCIÓN DE LA ATENCIÓN DE LA INCIDENCIA
+                    </FormLabel>
+                    <Textarea
+                      fontSize={'13px'}
+                      textColor={'green.500'}
+                      textAlign="center"
+                      size={'sm'}
+                      fontWeight={'bold'}
+                      rows={2}
+                      value={detalleIncidenciaAtendida.descripcion}
+                      readOnly
+                    />
+                  </FormControl>
+                </Box>
+                ) }
+           
           </DrawerBody>
           <DrawerFooter>
-            <Button colorScheme={'blue'} onClick={handleCloseModal}>
+            <Button colorScheme={'facebook'} onClick={handleCloseModal}>
               OK
             </Button>
           </DrawerFooter>

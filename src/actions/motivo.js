@@ -1,6 +1,6 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
-import { getMotivo } from '../components/ui/motivo/motivo';
+import { getMotivo } from '../components/ui/motivoIncidencia/motivo';
 
 // CREATE SEDE
 

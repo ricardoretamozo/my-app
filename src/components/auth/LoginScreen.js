@@ -53,112 +53,109 @@ export const LoginScreen = () => {
 
   const handleLogin = e => {
     e.preventDefault();
-    dispatch(startLogin(username, password))
-    .then(() =>{
-      console.log('Login exitoso');
-    })
-    .catch((err) =>{
-      console.log(err);
-      console.log('Login fallido');
-    })
+    dispatch(startLogin(username, password));
   };
 
   return (
-    <Flex
-      flexDirection="column"
-      width="100wh"
-      height="100vh"
-      bg={bg}
-      backgroundSize={'cover'}
-      justifyContent="center"
-      alignItems="center"
-    >
-      <Heading color={primaryColor} size={'xl'} mb={4}>SERVICE DESK</Heading>
-      <Stack
-        flexDir="column"
-        mb="2"
+    <>
+      <Flex
+        flexDirection="column"
+        width="100wh"
+        height="100vh"
+        bg={bg}
+        backgroundSize={'cover'}
         justifyContent="center"
         alignItems="center"
-        backgroundColor="whiteAlpha.900"
-        boxShadow={'md'}
-        px={'3rem'}
-        py={'5rem'}
-        borderRadius="lg"
-        rounded="lg"
-        borderTop="6px solid"
-        borderColor={primaryColor}
-        bg={bgCard}
       >
-        <Image boxSize='50px' objectFit='cover' src={logoPJ} />
-        <Heading color={primaryColor}>Bienvenido</Heading>
-        <Text ms="4px" color={textColor} fontWeight="bold" fontSize="14px" textAlign={'center'}
+        <Heading color={primaryColor} size={'xl'} mb={4}>SERVICE DESK</Heading>
+        <Stack
+          flexDir="column"
+          mb="2"
+          justifyContent="center"
+          alignItems="center"
+          backgroundColor="whiteAlpha.900"
+          boxShadow={'md'}
+          px={'3rem'}
+          py={'5rem'}
+          borderRadius="lg"
+          borderTop="6px solid"
+          borderColor={primaryColor}
+          bg={bgCard}
+        >
+          <Box p={2} boxShadow="md" borderRadius="md">
+            <Image boxSize='50px' objectFit='cover' src={logoPJ} />
+          </Box>
+          <Heading color={primaryColor}>Bienvenido</Heading>
+          <Text ms="4px" color={textColor} fontWeight="bold" fontSize="14px" textAlign={'center'}
           >Ingresa tu DNI y tu contraseña.
-        </Text>
-        <Box minW={{ base: "90%", md: "340px" }}>
-          <form onSubmit={handleLogin}>
-            <Stack spacing={4}>
-              <FormControl mt={2} isRequired>
-                <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    children={<CFaUserAlt color="gray.300" />}
-                  />
-                  <Input 
-                    type="text" 
-                    placeholder="Usuario (DNI)" 
-                    name="username"
-                    value={username}
-                    onChange={handleInputChange}
-                  />
-                </InputGroup>
-              </FormControl>
-              <FormControl isRequired>
-                <InputGroup>
-                  <InputLeftElement
-                    pointerEvents="none"
-                    color="gray.300"
-                    children={<CFaLock color="gray.300" />}
-                  />
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Contraseña"
-                    name="password"
-                    value={password}
-                    onChange={handleInputChange}
-                  />
-                  <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleShowClick}>
-                      {showPassword ? <Icon as={ViewIcon} /> : <Icon as={ViewOffIcon} />}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-                <FormHelperText textAlign="right" textColor={primaryColor}>
-                  <Link to="/auth/password/reset">¿Olvidó la Contraseña?</Link>
-                </FormHelperText>
-              </FormControl>
-              <Button
-                borderRadius={'md'}
-                type="submit"
-                variant="solid"
-                colorScheme={buttonColor}
-                width="full"
-                _hover={{
-                  bg: 'red.600',
-                }}
-                _focus={{ boxShadow: "none" }}
-              >
-                Iniciar Sesión
-              </Button>
-            </Stack>
-          </form>
-        </Box>
-        <Box>
-          ¿No tienes una cuenta?{" "}
-          <LinkChackra color={primaryColor} ms="5px" fontWeight="bold">            
-            <Link to="/auth/register">Crear una cuenta</Link>
-          </LinkChackra>
-        </Box>
-      </Stack>
-    </Flex>
+          </Text>
+          <Box minW={{ base: "90%", md: "340px" }}>
+            <form onSubmit={handleLogin}>
+              <Stack spacing={4}>
+                <FormControl mt={2} isRequired>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      children={<CFaUserAlt color="gray.300" />}
+                    />
+                    <Input
+                      type="text"
+                      placeholder="Usuario (DNI)"
+                      name="username"
+                      value={username}
+                      onChange={handleInputChange}
+                    />
+                  </InputGroup>
+                </FormControl>
+                <FormControl isRequired>
+                  <InputGroup>
+                    <InputLeftElement
+                      pointerEvents="none"
+                      color="gray.300"
+                      children={<CFaLock color="gray.300" />}
+                    />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Contraseña"
+                      name="password"
+                      autoComplete='off'
+                      value={password}
+                      onChange={handleInputChange}
+                    />
+                    <InputRightElement width="4.5rem">
+                      <Button h="1.75rem" size="sm" onClick={handleShowClick}>
+                        {showPassword ? <Icon as={ViewIcon} /> : <Icon as={ViewOffIcon} />}
+                      </Button>
+                    </InputRightElement>
+                  </InputGroup>
+                  <FormHelperText textAlign="right" textColor={primaryColor}>
+                    <Link to="/auth/password/reset">¿Olvidó la Contraseña?</Link>
+                  </FormHelperText>
+                </FormControl>
+                <Button
+                  borderRadius={'md'}
+                  type="submit"
+                  variant="solid"
+                  colorScheme={buttonColor}
+                  width="full"
+                  _hover={{
+                    bg: 'red.600',
+                  }}
+                  _focus={{ boxShadow: "none" }}
+                >
+                  Iniciar Sesión
+                </Button>
+              </Stack>
+            </form>
+          </Box>
+          <Box>
+            ¿No tienes una cuenta?{" "}
+            <LinkChackra color={primaryColor} as={Link} ms="5px" fontWeight="bold" to="/auth/register">
+              Crear una cuenta
+            </LinkChackra>
+          </Box>
+        </Stack>
+      </Flex>
+    </>
   );
 };

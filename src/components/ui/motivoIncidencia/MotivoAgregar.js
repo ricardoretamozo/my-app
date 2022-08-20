@@ -10,7 +10,6 @@ import {
     FormControl,
     FormLabel,
     Input,
-    Icon,
 } from "@chakra-ui/react";
 
 import { AddIcon } from '@chakra-ui/icons';
@@ -52,7 +51,7 @@ const MotivoAgregar = () => {
 
     return (
         <>
-            <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'blue'}>NUEVO</Button>
+            <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'facebook'} _focus={{ boxShadow: "none" }}>NUEVO</Button>
 
             <Modal
                 isOpen={openCreate}
@@ -63,7 +62,7 @@ const MotivoAgregar = () => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>AGREGAR NUEVO MOTIVO PARA LA INCIDENCIA</ModalHeader>
-                    <ModalCloseButton />
+                    <ModalCloseButton _focus={{ boxShadow: "none" }}/>
                     <ModalBody pb={6}>
                         <FormControl>
                             <FormLabel>Motivo</FormLabel>
@@ -76,10 +75,10 @@ const MotivoAgregar = () => {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => saveMotivo()} colorScheme={'blue'} autoFocus mr={3}>
+                        <Button onClick={() => saveMotivo()} colorScheme={'facebook'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
                             GUARDAR
                         </Button>
-                        <Button onClick={handleCloseModal}>CANCELAR</Button>
+                        <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

@@ -102,7 +102,7 @@ export default function TableIncidenciaNoAsignados() {
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.historialIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
     },
     {
@@ -150,7 +150,7 @@ export default function TableIncidenciaNoAsignados() {
               <IconButton
                 icon={<AiOutlineUserAdd />}
                 variant={'solid'}
-                colorScheme={'blue'}
+                colorScheme={'facebook'}
                 onClick={() => handleClickOpenModal(row.idIncidencia)}
                 fontSize='20px'
                 size={'sm'}
@@ -183,7 +183,7 @@ export default function TableIncidenciaNoAsignados() {
                     </FormControl>
                   </ModalBody>
                   <ModalFooter>
-                    <Button disabled = {indiceTecnico === null ? true : false} colorScheme="blue" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
+                    <Button disabled = {indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
                       ASIGNAR
                     </Button>
                     <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
@@ -395,7 +395,6 @@ export default function TableIncidenciaNoAsignados() {
             </Text>
           </Box>
           <Box>
-            {/* <IncidenciaAgregar /> */}
           </Box>
         </HStack>
         <DataTableExtensions columns={columns} data={data}>

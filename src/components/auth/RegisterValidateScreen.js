@@ -20,15 +20,12 @@ import {
 
 import { ImUserPlus } from "react-icons/im";
 
-import {
-  InputControl,
-} from "formik-chakra-ui";
+import { InputControl } from "formik-chakra-ui";
 
 import { notification } from '../../helpers/alert';
 
 // Assets
 import BgSignUp from '../../assets/img/fondo.jpg';
-import { StartDni, startLogin } from '../../actions/auth';
 import { createPersonaRegister } from '../../actions/persona';
 import { store } from '../../store/store';
 
@@ -42,6 +39,7 @@ export const RegisterValidateScreen = () => {
   const dispatch = useDispatch();
 
   const data = store.getState().usuarioDni;
+  console.log(data)
 
   const initialUsuario = {
     nombre: '',
@@ -54,15 +52,15 @@ export const RegisterValidateScreen = () => {
     sexo: '',
     activo: '',
     perfilPersona: {
-      idPerfilPersona: 66,
+      idPerfilPersona: 4,
     },
   };
 
   const [dataUsuario, setUsuario] = useState(initialUsuario);
 
-  const onSubmit = (values) => {
+  const onSubmit = () => {
     // values.preventDefault();
-    console.log(values);
+    // console.log(values);
     if (
       dataUsuario.password1 != dataUsuario.password2 &&
       dataUsuario.password1 != '' &&
@@ -72,13 +70,13 @@ export const RegisterValidateScreen = () => {
     } else {
       console.log(data);
       var usuario = {
-        nombre: data.nombres,
+        nombre: data.nombre,
         apellido: data.apellidos,
-        dni: data.numeroDocumento,
-        usuario: data.numeroDocumentod,
+        dni: data.dni,
+        usuario: data.dni,
         password: dataUsuario.password1,
-        fecha: data.fechaNacimiento,
-        sexo: data.sexo,
+        fecha: data.fechaNacimiento.split('/').reverse().join('-'),
+        sexo: data.sexo === 'MASCULINO' ? 'M' : 'F',
         activo: 'S',
       };
       dispatch(createPersonaRegister(usuario));
@@ -177,7 +175,7 @@ export const RegisterValidateScreen = () => {
                           size="lg"
                           isDisabled
                           name="documentoIdentificacion"
-                          defaultValue={data ? data.numeroDocumento : ''}
+                          defaultValue={data ? data.dni : ''}
                           onChange={e => {
                             setUsuario({ ...dataUsuario, dni: e.target.value });
                           }}

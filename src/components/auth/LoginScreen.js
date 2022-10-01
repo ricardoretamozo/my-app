@@ -25,6 +25,7 @@ import {
 
 import { Link } from 'react-router-dom';
 import logoPJ from '../../assets/img/logo_pj.png';
+import logoPJA from '../../assets/img/csjar.svg';
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
@@ -36,6 +37,7 @@ export const LoginScreen = () => {
   const primaryColor = useColorModeValue('#c53030', 'red.800');
   const textColor = useColorModeValue('black.400', 'white');
   const bg = useColorModeValue('white', 'gray.900');
+  const bgImg = useColorModeValue('white', 'gray.100');
   const bgCard = useColorModeValue("white", "gray.800");
   const buttonColor = useColorModeValue("red", "red");
 
@@ -51,7 +53,7 @@ export const LoginScreen = () => {
 
   const { username, password } = formValues;
 
-  const handleLogin = e => {
+  const handleLogin = (e) => {
     e.preventDefault();
     dispatch(startLogin(username, password));
   };
@@ -82,12 +84,13 @@ export const LoginScreen = () => {
           borderColor={primaryColor}
           bg={bgCard}
         >
-          <Box p={2} boxShadow="md" borderRadius="md">
-            <Image boxSize='50px' objectFit='cover' src={logoPJ} />
+          <Box maxW={{ base: "275px", md: "340px" }} borderRadius="md" boxShadow="base" mb={2}>
+            <Image py={2} px={4} src={logoPJA} alt="Service Desk" />
           </Box>
-          <Heading color={primaryColor}>Bienvenido</Heading>
+          {/* <Image borderRadius={'md'} bg={bgImg} maxW={'180px'} src={logoPJA} /> */}
+          {/* <Heading color={primaryColor}>Bienvenido</Heading> */}
           <Text ms="4px" color={textColor} fontWeight="bold" fontSize="14px" textAlign={'center'}
-          >Ingresa tu DNI y tu contraseña.
+          >INGRESE SU DNI Y SU CONTRASEÑA
           </Text>
           <Box minW={{ base: "90%", md: "340px" }}>
             <form onSubmit={handleLogin}>
@@ -128,9 +131,9 @@ export const LoginScreen = () => {
                       </Button>
                     </InputRightElement>
                   </InputGroup>
-                  <FormHelperText textAlign="right" textColor={primaryColor}>
+                  {/* <FormHelperText textAlign="right" textColor={primaryColor}>
                     <Link to="/auth/password/reset">¿Olvidó la Contraseña?</Link>
-                  </FormHelperText>
+                  </FormHelperText> */}
                 </FormControl>
                 <Button
                   borderRadius={'md'}

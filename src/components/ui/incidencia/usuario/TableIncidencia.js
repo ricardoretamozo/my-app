@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   useColorModeValue,
@@ -9,9 +9,21 @@ import {
   Flex,
   SimpleGrid,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Popover,
+  PopoverTrigger,
+  Stack,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  Portal,
 } from '@chakra-ui/react';
 import { store } from '../../../../store/store';
-
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
@@ -21,6 +33,13 @@ import { RepeatIcon } from '@chakra-ui/icons';
 import { fetchIncidenciasPersonas } from '../../../../actions/incidencia';
 import { useDispatch, useSelector } from 'react-redux';
 import { getIncidenciaId } from '../incidencia';
+import { AiFillFileText, AiFillFilter } from 'react-icons/ai';
+import { FaFilter } from 'react-icons/fa';
+import IncidenciaDetalles from '../IncidenciaDetalles';
+import AtencionViewFileConocimiento from '../conocimiento/AtencionViewFile';
+import IncidenciaViewFileConocimiento from '../conocimiento/IncidenciaViewFile';
+
+// import parse from 'html-react-parser';
 
 export default function TableIncidencia() {
 
@@ -28,16 +47,19 @@ export default function TableIncidencia() {
 
   const dispatch = useDispatch();
 
-  var data = store.getState().incidenciaId.rows;
-  console.log(data)
+  const data = store.getState().incidenciaId.rows;
 
-  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
-  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
-  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
+  const [tableRowsData, setTableRowsData] = useState(data);
+
+  const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+  const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
+  const ContadorAtendidas = data.filter(row => row.historialIncidencia.filter(atendida => atendida.estadoIncidencia === "A" && atendida.estado === "A").length > 0);
 
   const fetchDataId = async () => {
     await fetchIncidenciasPersonas(identificador).then((res) => {
       dispatch(getIncidenciaId(res));
+    }).catch((err) => {
+      console.log("WARN " + err);
     });
   }
 
@@ -45,58 +67,132 @@ export default function TableIncidencia() {
     fetchDataId();
   }
 
+  // filtros por estado
+
+  const handleClickFilterPendientes = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterTramite = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "T" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterAtendidas = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
   const columns = [
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
       sortable: true,
-      reorder: true,
     },
     {
-      name: 'DESCRIPCION',
-      selector: row => row.descripcion,
+      name: 'ORIGEN',
+      selector: row => row.origen.origen,
       sortable: true,
-      reorder: true,
-      hide: 'md',
-      maxWidth: '20rem',
     },
     {
       name: 'FECHA Y HORA',
       selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
       sortable: true,
-      reorder: true,
     },
     {
       name: 'TÉCNICO ASIGNADO',
-      selector: row => row.historialIncidencia.persona_asignado == null ? "NO ASIGNADO" : row.historialIncidencia.persona_asignado.nombre + " " + row.historialIncidencia.persona_asignado.apellido,
+      // selector: row => row.historialIncidencia.persona_asignado == null ? "NO ASIGNADO" : row.historialIncidencia.persona_asignado.nombre + " " + row.historialIncidencia.persona_asignado.apellido,
       sortable: true,
-      wrap: false,
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <Text>
+            {historial[0]?.persona_asignado === null ? "NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido}
+          </Text>
+        )
+      },
     },
     {
       name: 'ESTADO',
-      selector: row => row.historialIncidencia.estadoIncidencia,
+      selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
       sortable: true,
-      cell: row => (
-        <Badge
-          bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-          color={'white'}
-          p="4px 0px"
-          w={24}
-          textAlign={'center'}
-          borderRadius={'md'}
-          fontSize={'10px'}
-        >
-          {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
-        </Badge>
-      ),
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <div>
+            <Badge
+              bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
+              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
+              color={'white'}
+              p="3px 10px"
+              w={24}
+              textAlign={'center'}
+              borderRadius={'md'}
+              fontSize={'10px'}
+            >
+              {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
+            </Badge>
+          </div>
+        )
+      },
       center: true,
     },
-  ];
+    {
+      name: 'ACCIONES',
+      cell: row => {
+        let archivoTecnico = row.descripcionIncidencia?.incidenciaArchivos?.usuario === "T" ? row.descripcionIncidencia.incidenciaArchivos : null;
+        let archivoUsuario = row.incidenciaArchivos?.usuario === "R" ? row.incidenciaArchivos : null;
+        return (
+          <div>
+            <IncidenciaDetalles
+              rowId={row.idIncidencia}
+              identificador={identificador}
+            />
+            {((row.descripcionIncidencia !== null) && (row.descripcionIncidencia?.incidenciaArchivos !== null)) || (row.incidenciaArchivos !== null) ? (
+              <Popover placement='left'>
+                <PopoverTrigger>
+                  <IconButton
+                    size="sm"
+                    colorScheme="purple"
+                    icon={<AiFillFileText />}
+                    ml={1}
+                    fontSize={'20px'}
+                    _focus={{ boxShadow: 'none' }}
+                  />
+                </PopoverTrigger>
+                <Portal>
+                  <PopoverContent _focus={{ boxShadow: 'none' }}>
+                    <PopoverArrow />
+                    <PopoverCloseButton _focus={{ boxShadow: 'none' }} />
+                    <PopoverHeader>VISUALIZAR ARCHIVO</PopoverHeader>
+                    <PopoverBody>
+                      <Stack direction={'column'} spacing={4} alignItems="start">
+                        {archivoUsuario !== null ? (
+                          <IncidenciaViewFileConocimiento
+                            rowData={row?.incidenciaArchivos}
+                            typeFile={archivoUsuario?.file}
+                          />
+                        ) : null}
 
-  const tableData = {
-    columns,
-    data,
-  };
+                        {archivoTecnico !== null ? (
+                          <AtencionViewFileConocimiento
+                            rowData={row.descripcionIncidencia?.incidenciaArchivos}
+                            typeFile={archivoTecnico?.file}
+                          />
+                        ) : null}
+                      </Stack>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Portal>
+              </Popover>
+            ) : null}
+          </div>
+        )
+      },
+      wrap : true,
+    }
+  ];
 
   // CREANDO UN TEMA PARA LA TABLA
 
@@ -160,7 +256,7 @@ export default function TableIncidencia() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasPendientes.length}
+                {ContadorPendientes.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -196,7 +292,7 @@ export default function TableIncidencia() {
                 color="gray.200"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasEnTramite.length}
+                {ContadorTramite.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -232,7 +328,7 @@ export default function TableIncidencia() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasAtendidas.length}
+                {ContadorAtendidas.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -281,6 +377,7 @@ export default function TableIncidencia() {
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
         paddingBottom={8}
+        zIndex={0}
       >
         <HStack
           spacing="24px"
@@ -295,24 +392,52 @@ export default function TableIncidencia() {
             </Text>
           </Box>
           <Box>
-            <IconButton 
-              size={'sm'} mr={2} 
-              icon={<RepeatIcon boxSize={4} />} 
+            <Menu size={'xs'}>
+              <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                <HStack spacing={2}>
+                  <Text fontSize="sm" fontWeight="600">
+                    FILTRAR POR ESTADO
+                  </Text>
+                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                </HStack>
+              </MenuButton>
+              <MenuList zIndex={2}>
+                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+          <Box>
+            <IconButton
+              size={'sm'} mr={2}
+              icon={<RepeatIcon boxSize={4} />}
               colorScheme={'facebook'}
               _focus={{ boxShadow: "none" }}
               onClick={refreshTable} />
             <IncidenciaAgregar />
           </Box>
         </HStack>
-        <DataTableExtensions {...tableData}>
+        <DataTableExtensions columns={columns} data={tableRowsData}>
           <DataTable
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
-            paginationPerPage={6}
             noDataComponent="No hay datos para mostrar refresca la página"
-            paginationRowsPerPageOptions={[6, 15, 20, 30]}
+            paginationPerPage={10}
+            responsive={true}
+            paginationRowsPerPageOptions={[10, 15, 20, 30]}
+            fixedHeader
+            fixedHeaderScrollHeight="550px"
+            paginationComponentOptions={{
+              rowsPerPageText: 'Filas por página:',
+              rangeSeparatorText: 'de',
+              selectAllRowsItem: true,
+              selectAllRowsItemText: 'Todos',
+            }}
+            key={tableRowsData.map((item) => { return item.idIncidencia })}
           />
         </DataTableExtensions>
       </Box>

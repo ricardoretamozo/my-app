@@ -19,6 +19,7 @@ export default function AlertaDialogo(props) {
         isOpen={props.isOpen}
         leastDestructiveRef={cancelRef}
         onClose={props.onClose}
+        size={props.size}
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
@@ -26,14 +27,14 @@ export default function AlertaDialogo(props) {
               {props.title}
             </AlertDialogHeader>
 
-            <AlertDialogBody>Confirmo la acción</AlertDialogBody>
+            <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={props.onClose}>
-                Cancel
+              <Button ref={cancelRef} onClick={props.onClose} _focus={{ boxShadow: "none" }}>
+                CANCELAR
               </Button>
-              <Button colorScheme="red" onClick={props.metodo} ml={3}>
-                Confirmación
+              <Button colorScheme="red" onClick={props.metodo} ml={3} _focus={{ boxShadow: "none" }}>
+                CONFIRMAR
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>

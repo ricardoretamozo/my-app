@@ -15,6 +15,7 @@ import { personaOrganoReducer } from "../reducers/personaOrganoReducer";
 import { tecnicoDisponibleReducer } from "../reducers/tecnicoReducer";
 import { correoRecibidoReducer, correoEnviadoReducer } from "../reducers/correoReducer";
 import { origenIncidenciaReducer } from "../reducers/origenIncidenciaReducer";
+import { ftpReducer } from "../reducers/ftpReducer";
 
 const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
@@ -39,6 +40,7 @@ const reducers = combineReducers({
     correoRecibido: correoRecibidoReducer,
     correoEnviado: correoEnviadoReducer,
     origenIncidencia: origenIncidenciaReducer,
+    ftp: ftpReducer,
 });
 
 export const store = createStore( 

@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DataTable, { createTheme } from "react-data-table-component";
-import { Button, Input, useColorModeValue } from '@chakra-ui/react';
+import DataTableExtensions from 'react-data-table-component-extensions';
+import 'react-data-table-component-extensions/dist/index.css';
+import { Button, useColorModeValue } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+
+import Export from "react-data-table-component"
 
 const FilterComponent = ({ filterText, onFilter }) => (
 	<>
@@ -18,68 +24,71 @@ const FilterComponent = ({ filterText, onFilter }) => (
 	</>
 );
 
-const Export = ({ onExport }) => <Button colorScheme="facebook" _focus={{ boxShadow: "none" }} rightIcon={<DownloadIcon />} size="sm" onClick={e => onExport(e.target.value)}>EXPORTAR</Button>;
+// export const Exportar = ({ onExport }) => <Button colorScheme="facebook" _focus={{ boxShadow: "none" }} rightIcon={<DownloadIcon />} size="sm" onClick={e => onExport(e.target.value)}>EXPORTAR</Button>;
 
 export const Filtering = ({ reportes }) => {
 
-    const columns = [
-        {
-            name: 'TECNICO',
-            selector: row => row?.usuario.nombre + ' ' + row?.usuario.apellido,
-            sortable: true,
-        },
-        {
-            name: 'PENDIENTES',
-            selector: row => row.pendientes,
-            sortable: true,
-            center: true,
-        },
-        {
-            name: 'EN TRAMITE',
-            selector: row => row.tramitadas,
-            sortable: true,
-            center: true,
-        },
-        {
-            name: 'ATENDIDOS',
-            selector: row => row.atendidas,
-            sortable: true,
-            center: true,
-        },
-        {
-            name: 'TOTAL',
-            selector: row => row.total,
-            sortable: true,
-            center: true,
-        },
-    ];
+	const reports = reportes;
+	console.log(reports);
 
-    createTheme('solarized', {
-        text: {
-          primary: '#FFF',
-          secondary: '#FFF',
-        },
-        background: {
-          default: '#171923',
-        },
-        context: {
-          background: '#171923',
-          text: '#FFF',
-        },
-        divider: {
-          default: '#FFF opacity 92%',
-        },
-      });
+	const columns = [
+		{
+			name: 'TECNICO',
+			selector: row => row?.usuario.nombre + ' ' + row?.usuario.apellido,
+			sortable: true,
+		},
+		{
+			name: 'PENDIENTES',
+			selector: row => row.pendientes,
+			sortable: true,
+			center: true,
+		},
+		{
+			name: 'EN TRAMITE',
+			selector: row => row.tramitadas,
+			sortable: true,
+			center: true,
+		},
+		{
+			name: 'ATENDIDOS',
+			selector: row => row.atendidas,
+			sortable: true,
+			center: true,
+		},
+		{
+			name: 'TOTAL',
+			selector: row => row.total,
+			sortable: true,
+			center: true,
+		},
+	];
+
+	createTheme('solarized', {
+		text: {
+			primary: '#FFF',
+			secondary: '#FFF',
+		},
+		background: {
+			default: '#171923',
+		},
+		context: {
+			background: '#171923',
+			text: '#FFF',
+		},
+		divider: {
+			default: '#FFF opacity 92%',
+		},
+	});
 
 	const [filterText, setFilterText] = React.useState('');
 
 	const [resetPaginationToggle, setResetPaginationToggle] = React.useState(false);
 
 	const filteredItems = reportes.filter(
-        item => item.usuario?.nombre && item.usuario?.nombre.toLowerCase().includes(filterText.toLowerCase()),
+		item => item.usuario?.nombre && item.usuario?.nombre.toLowerCase().includes(filterText.toLowerCase()),
 	);
 
-    const actionsMemo = React.useMemo(() => <Export onExport={() => downloadCSV(reportes)} />, []);
+	const actionsMemo = React.useMemo(() => <Exportar reportes = { reports } onExport={() => downloadCSV(reportes)} />, []);
 
 	const subHeaderComponentMemo = React.useMemo(() => {
 		const handleClear = () => {
@@ -91,73 +100,72 @@ export const Filtering = ({ reportes }) => {
 
 		return (
 			<FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
-            
+
 		);
 	}, [filterText, resetPaginationToggle]);
 
-    
-function convertArrayOfObjectsToCSV(array) {
-    const filteredItems = reportes.filter(
-        item => item.usuario?.nombre && item.usuario?.nombre.toLowerCase(),
-	);
 
-	let result;
+	function convertArrayOfObjectsToCSV(array) {
+		const filteredItems = reportes.filter(
+			item => item.usuario?.nombre && item.usuario?.nombre.toLowerCase(),
+		);
 
-	const columnDelimiter = ',';
-	const lineDelimiter = '\n';
-	const keys = Object.keys(reportes[0]);
+		let result;
 
-	result = '';
-	result += keys.join(columnDelimiter);
-	result += lineDelimiter;
+		const columnDelimiter = ',';
+		const lineDelimiter = '\n';
+		const keys = Object.keys(reportes[0]);
 
-	array.forEach(item => {
-		let ctr = 0;
-		keys.forEach(key => {
-			if (ctr > 0) result += columnDelimiter;
-
-			result += item[key];
-			
-			ctr++;
-		});
+		result = '';
+		result += keys.join(columnDelimiter);
 		result += lineDelimiter;
-	});
 
-	return result;
-}
+		array.forEach(item => {
+			let ctr = 0;
+			keys.forEach(key => {
+				if (ctr > 0) result += columnDelimiter;
 
-function downloadCSV(array) {
-	const link = document.createElement('a');
-	let csv = convertArrayOfObjectsToCSV(array);
-	if (csv == null) return;
+				result += item[key];
 
-	const filename = 'export.csv';
+				ctr++;
+			});
+			result += lineDelimiter;
+		});
 
-	if (!csv.match(/^data:text\/csv/i)) {
-		csv = `data:text/csv;charset=utf-8,${csv}`;
+		return result;
 	}
 
-	link.setAttribute('href', encodeURI(csv));
-	link.setAttribute('download', filename);
-	link.click();
-}
+	function downloadCSV(array) {
+		const link = document.createElement('a');
+		let csv = convertArrayOfObjectsToCSV(array);
+		if (csv == null) return;
+
+		const filename = 'export.csv';
+
+		if (!csv.match(/^data:text\/csv/i)) {
+			csv = `data:text/csv;charset=utf-8,${csv}`;
+		}
+
+		link.setAttribute('href', encodeURI(csv));
+		link.setAttribute('download', filename);
+		link.click();
+	}
 
 	return (
-		<DataTable
-			columns={columns}
-			data={reportes}
-			pagination
-			paginationResetDefaultPage={resetPaginationToggle}
-			subHeader
-			subHeaderComponent={subHeaderComponentMemo}
-			persistTableHead
-            paginationPerPage={5}
-            paginationRowsPerPageOptions={[5, 15, 20, 30]}
-            actions={actionsMemo}
-            theme={useColorModeValue('default', 'solarized')}
-            responsive={true}
-			// noDataComponent="No hay datos para mostrar"
-		/>
+		<DataTableExtensions columns={columns} data={reportes}>
+			<DataTable
+				pagination
+				paginationResetDefaultPage={resetPaginationToggle}
+				subHeader
+				subHeaderComponent={subHeaderComponentMemo}
+				persistTableHead
+				paginationPerPage={5}
+				paginationRowsPerPageOptions={[5, 15, 20, 30]}
+				actions={actionsMemo}
+				theme={useColorModeValue('default', 'solarized')}
+				responsive={true}
+			/>
+		</DataTableExtensions>
 	);
 };
 
@@ -165,3 +173,39 @@ export default {
 	title: 'Examples/Filtering',
 	component: Filtering,
 };
+
+export const Exportar = ({ reportes }) => {
+
+	const exportPDF = () => {
+
+		const unit = "pt";
+		const size = "A4"; // Use A1, A2, A3 or A4
+		const orientation = "portrait"; // portrait or landscape
+	
+		const marginLeft = 40;
+		const doc = new jsPDF(orientation, unit, size);
+	
+		doc.setFontSize(10);
+	
+		const title = "REPORTE DE TICKETS HÁCIA UN SOPORTE TECNICO";
+		const headers = [["TECNICO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"]];
+	
+		const data = reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]);
+		console.log(data);
+		let content = {
+		  startY: 50,
+		  head: headers,
+		  body: data,
+		};
+	
+		doc.text(title, marginLeft, 40);
+		doc.autoTable(content);
+		doc.save("report.pdf")
+	  }
+
+	return (
+		<>
+			<Button colorScheme="facebook" _focus={{ boxShadow: "none" }} rightIcon={<DownloadIcon />} size="sm" onClick={ exportPDF }>EXPORTAR PDF</Button>
+		</>
+	)
+}

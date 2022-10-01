@@ -12,18 +12,17 @@ export const Sede = () => {
   const fetchData= async ()=> {
     await fetchSedes().then((res)=>{
       dispatch(getSede(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().sede.checking){
       fetchData();
     }
-    //fetchData();
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableSede} />

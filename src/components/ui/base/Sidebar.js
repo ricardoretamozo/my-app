@@ -29,22 +29,33 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Link,
+  Image,
 } from '@chakra-ui/react';
 
 import {
-  FiHome,
-  FiUsers,
-  FiCompass,
   FiMenu,
   FiBell,
   FiMail,
   FiChevronDown,
-  FiServer,
-  FiLayers,
-  FiAirplay,
-  FiTrello,
   FiLogOut,
 } from 'react-icons/fi';
+
+import {  
+  FaBox,
+  FaBuilding,
+  FaExclamationCircle,
+  FaMap,
+  FaMapMarkedAlt,
+  FaQuestionCircle,
+  FaTachometerAlt,
+  FaUserAlt,
+  FaUsers,
+  FaBrain
+} from 'react-icons/fa';
+
+import { ImCheckboxChecked, ImCheckboxUnchecked } from 'react-icons/im';
+import { HiViewBoards } from 'react-icons/hi';
+import { FaUser } from 'react-icons/fa';
 
 import { NavLink } from 'react-router-dom';
 
@@ -53,54 +64,59 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { store } from '../../../store/store';
 import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
-import { FaUser } from 'react-icons/fa';
+
+// import logoPJ from '../../../assets/img/logo_pj.png';
+import logoPJA from '../../../assets/img/logopja.svg';
 
 const LinkItemsCoordinadorInformatico = [
-  { name: 'INICIO', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'INCIDENCIAS', icon: FiCompass, ruta: '/dashboard/incidencias' },
-  { name: 'INCIDENCIAS ASIGNADAS', icon: FiCompass, ruta: '/dashboard/incidencias-asignadas' },
-  { name: 'INCIDENCIAS NO ASIG.', icon: FiCompass, ruta: '/dashboard/incidencias-no-asignadas' },
-  { name: 'MOTIVO INCIDENCIA', icon: FiCompass, ruta: '/dashboard/motivos' },
-  { name: 'ORIGEN INCIDENCIA', icon: FiTrello, ruta: '/dashboard/origen-incidencia' },
-  { name: 'PERFILES USUARIO', icon: FiUsers, ruta: '/dashboard/perfil' },
-  { name: 'SEDE', icon: FiServer, ruta: '/dashboard/sedes' },
-  { name: 'ÓRGANOS', icon: FiLayers, ruta: '/dashboard/organos' },
-  { name: 'OFICINAS', icon: FiAirplay, ruta: '/dashboard/oficinas' },
-  { name: 'USUARIOS', icon: FiUsers, ruta: '/dashboard/personas' },
-  { name: 'CARGOS', icon: FiTrello, ruta: '/dashboard/cargos' },
+  { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/home' },
+  { name: 'INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
+  { name: 'INCIDENCIAS ASIGNADAS', icon: ImCheckboxChecked, ruta: '/dashboard/incidencias-asignadas' },
+  { name: 'INCIDENCIAS NO ASIG.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
+  { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
+  { name: 'ORIGEN INCIDENCIA', icon: FaExclamationCircle, ruta: '/dashboard/origen-incidencia' },
+  { name: 'PERFILES USUARIO', icon: FaUserAlt, ruta: '/dashboard/perfil' },
+  { name: 'SEDE', icon: FaMapMarkedAlt, ruta: '/dashboard/sedes' },
+  { name: 'ÓRGANOS', icon: FaMap, ruta: '/dashboard/organos' },
+  { name: 'OFICINAS', icon: FaBuilding, ruta: '/dashboard/oficinas' },
+  { name: 'USUARIOS', icon: FaUsers, ruta: '/dashboard/personas' },
+  { name: 'TABLA DE CONOCIMIENTO', icon: FaBrain, ruta: '/dashboard/tabla-conocimiento' },
+  { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
+  { name: 'FTP', icon: FaBox, ruta: '/dashboard/ftp' },
 ];
 
 const LinkItemsAsistenteInformatico = [
-  { name: 'INICIO', icon: FiHome, ruta: '/dashboard/home' },
-  { name: 'INCIDENCIAS', icon: FiCompass, ruta: '/dashboard/incidencias' },
-  { name: 'INCIDENCIAS ASIGNADAS', icon: FiCompass, ruta: '/dashboard/incidencias-asignadas' },
-  { name: 'INCIDENCIAS NO ASIG.', icon: FiCompass, ruta: '/dashboard/incidencias-no-asignadas' },
-  { name: 'MOTIVO INCIDENCIA', icon: FiCompass, ruta: '/dashboard/motivos' },
-  { name: 'ORIGEN INCIDENCIA', icon: FiTrello, ruta: '/dashboard/origen-incidencia' },
-  { name: 'PERFILES USUARIO', icon: FiUsers, ruta: '/dashboard/perfil' },
-  { name: 'SEDE', icon: FiServer, ruta: '/dashboard/sedes' },
-  { name: 'ÓRGANOS', icon: FiLayers, ruta: '/dashboard/organos' },
-  { name: 'OFICINAS', icon: FiAirplay, ruta: '/dashboard/oficinas' },
-  { name: 'USUARIOS', icon: FiUsers, ruta: '/dashboard/personas' },
-  { name: 'CARGOS', icon: FiTrello, ruta: '/dashboard/cargos' },
+  { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/home' },
+  { name: 'INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
+  { name: 'INCIDENCIAS ASIGNADAS', icon: ImCheckboxChecked, ruta: '/dashboard/incidencias-asignadas' },
+  { name: 'INCIDENCIAS NO ASIG.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
+  { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
+  { name: 'ORIGEN INCIDENCIA', icon: FaExclamationCircle, ruta: '/dashboard/origen-incidencia' },
+  { name: 'PERFILES USUARIO', icon: FaUserAlt, ruta: '/dashboard/perfil' },
+  { name: 'SEDE', icon: FaMapMarkedAlt, ruta: '/dashboard/sedes' },
+  { name: 'ÓRGANOS', icon: FaMap, ruta: '/dashboard/organos' },
+  { name: 'OFICINAS', icon: FaBuilding, ruta: '/dashboard/oficinas' },
+  { name: 'USUARIOS', icon: FaUsers, ruta: '/dashboard/personas' },
+  { name: 'TABLA DE CONOCIMIENTO', icon: FaBrain, ruta: '/dashboard/tabla-conocimiento' },
+  { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
+  { name: 'FTP', icon: FaBox, ruta: '/dashboard/ftp' },
 ];
 
 const LinkItemsSoporteTecnico = [
-  { name: 'MIS INCIDENCIAS', icon: FiCompass, ruta: '/dashboard/soporte/incidencias'},
-  { name: 'INCIDENCIAS NO ASIGN.', icon: FiCompass, ruta: '/dashboard/incidencias-no-asignadas' },
-  { name: 'CARGOS', icon: FiTrello, ruta: '/dashboard/cargos' },
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/soporte/incidencias'},
+  { name: 'INCIDENCIAS NO ASIGN.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
+  { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
+  { name: 'ORIGEN INCIDENCIA', icon: FaExclamationCircle, ruta: '/dashboard/origen-incidencia' },
+  { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
+  { name: 'TABLA DE CONOCIMIENTO', icon: FaBrain, ruta: '/dashboard/tabla-conocimiento' },
 ];
 
 const LinkItemsUsuarioComun = [
-  { name: 'MIS INCIDENCIAS', icon: FiCompass, ruta: '/dashboard/usuario/incidencias'},
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/usuario/incidencias'},
 ];
 
 export default function SidebarWithHeader({ componente: Component }) {
-  
-  
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
-  
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'gray.900')}>
       <SidebarContent
@@ -137,7 +153,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
     <>
       <Box
         transition="3s ease"
-        bg={useColorModeValue('white', 'gray.900')}
+        bg={useColorModeValue('gray.900', 'gray.800')}
+        color={useColorModeValue('white', 'white')}
         borderRight="1px"
         borderRightColor={useColorModeValue('gray.200', 'gray.700')}
         w={{ base: 'full', md: 'full', lg: 56 }}
@@ -145,12 +162,20 @@ const SidebarContent = ({ onClose, ...rest }) => {
         h="full"
         {...rest}
       >
-        <Flex h="20" alignItems="center" mx="6" justifyContent="space-between">
-          <Text fontSize="2xl" color={useColorModeValue('red.600', 'white')} fontWeight="bold">
-            SERVICE DESK
+        <Flex mt={4} mb={2} alignItems="center" justifyContent="center" mr={2}>
+          <Text fontSize="2xl" color={'#999999'} fontWeight="bold">
+            <span style={{ 'color': '#B40001' }}>SERVICE</span> DESk
           </Text>
-          <CloseButton display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} />
+          <CloseButton ml={2} display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} _focus={{ boxShadow: "none" }} />
         </Flex>
+        <Flex alignItems="center" justifyContent="center" mr={1} mb={2}>
+          {/* <Avatar size="md" p={1} name={usuario?.rol} /> */}
+            <Image src={logoPJA} borderRadius="md" boxSize="50px"/>
+        </Flex>
+        {/* <Flex alignItems="center" justifyContent="center" mr={2} mb={4}>
+          <Text fontSize={'x-small'} color="#999999" fontWeight='semibold'>Sistema de Incidencias - CSJ - Arequipa</Text>
+        </Flex> */}
+        
         {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 
           LinkItemsCoordinadorInformatico.map((link, index) => (
             <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
@@ -193,20 +218,20 @@ const NavItem = ({ icon, children, ...rest }) => {
   return (
       <Flex
         align="center"
-        p="2"
-        mx="4"
-        borderRadius="md"
+        p={3}
+        mx={2}
+        borderRadius="lg"
         role="group"
         cursor="pointer"
         textDecoration={'none'}
-        height={50}
-        {...rest}
+        height={"44px"}
         fontSize={'xs'}
+        {...rest}
       >
         {icon && (
           <Icon
-            mr="4"
-            fontSize="14"
+            mr="2"
+            fontSize="16"
             _groupHover={{
               color: 'white',
             }}
@@ -225,16 +250,18 @@ const MobileNav = ({ onOpen, ...rest }) => {
 
   return (
     <Flex
-      ml={{ base: 4, md: 4, lg: 60 }}
-      mr={{ base: 4, md: 4, lg: 4 }}
-      px={{ base: 4, md: 4, lg: 4 }}
+      as="header"
+      // ml={{ base: 4, md: 4, lg: 60 }}
+      ml={['4', '4', '4', '60']}
+      mr={['4', '4', '4', '4']}
+      px={4}
       height="20"
       alignItems="center"
       bg={useColorModeValue('white', 'gray.900')}
       borderWidth="1px"
       borderRadius={'md'}
       borderColor={useColorModeValue('gray.200', 'gray.700')}
-      justifyContent={{ base: 'space-between', md: 'space-between', lg: 'flex-end' }}
+      justifyContent={['space-between', 'space-between', 'space-between', 'flex-end']}
       {...rest}
     >
       <IconButton
@@ -251,18 +278,17 @@ const MobileNav = ({ onOpen, ...rest }) => {
         fontWeight="bold"
         color={useColorModeValue('red.600', 'white')}
       >
-        SERVICE DESK
+        SERVICE DESk
       </Text>
 
       <HStack spacing={{ base: '2', md: '2', lg: '2' }}>        
-        <Link as={NavLink} to="/dashboard/correos" _activeLink={{ bg: 'red.600', color: 'white', borderRadius: 'md'}}>
+        <Link as={NavLink} to="/dashboard/correos">
           <IconButton
             size="lg"
             variant="ghost"
             aria-label="open menu"
             icon={<FiMail />}
             _focus={{ boxShadow: "none" }}
-            _hover={{ color: 'white', bg: 'red.600' }}
           />
         </Link>
         <IconButton
@@ -289,7 +315,10 @@ const MobileNav = ({ onOpen, ...rest }) => {
               <HStack>
                 <Avatar
                   size={'sm'}
-                  src={'https://avatars.dicebear.com/img/favicon.svg'}
+                  color={'white'}
+                  bg={usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600' : usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600' : usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600' : 'gray.600'}
+                  name={usuario?.name}
+                  // src={'https://avatars.dicebear.com/img/favicon.svg'}
                 />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
@@ -312,11 +341,16 @@ const MobileNav = ({ onOpen, ...rest }) => {
               borderColor={useColorModeValue('gray.200', 'gray.700')}
               alignItems={'center'}
               bgSize={'md'}
+              zIndex="50"
               >
                 <Center>
                   <Avatar
                     size={'lg'}
-                    src={'https://avatars.dicebear.com/img/favicon.svg'}
+                    color={'white'}
+                    fontWeight={'bold'}
+                    bg={usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600' : usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600' : usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600' : 'gray.600'}
+                    name={usuario?.name}
+                    // src={'https://avatars.dicebear.com/img/favicon.svg'}
                   />
                 </Center>
                 <Center>
@@ -362,12 +396,12 @@ const ModalCerrarSesion = () => {
         motionPreset='slideInBottom'
         onClose={handleCloseModal}
         isOpen={openModal}
-        size="lg"
+        size="xl"
       >
         <AlertDialogOverlay />
         <AlertDialogContent>
           <AlertDialogHeader>CERRAR SESIÓN</AlertDialogHeader>
-          <AlertDialogCloseButton />
+          <AlertDialogCloseButton _focus={{ boxShadow: 'none' }}/>
           <AlertDialogBody>
             ¿ESTÁS SEGURO DE CERRAR SESIÓN?
           </AlertDialogBody>

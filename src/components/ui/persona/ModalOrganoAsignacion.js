@@ -20,6 +20,7 @@ import {
   Td,
   Thead,
   Tbody,
+  TableContainer,
 } from '@chakra-ui/react';
 import { CloseIcon } from '@chakra-ui/icons';
 import Select from 'react-select';
@@ -62,14 +63,9 @@ export default function ModalOrganoAsignacion(props) {
     });
   };
 
-  // console.log(organoSelect);
-
   //Cambiar opciones select organo
   const handleChangeSede = value => {
-    console.log(value);    
     if (value !== null) {
-      console.log("se setea la lista de organos")
-      console.log(organoData);
       setorganoSelect(
         organoData.filter(indice => indice.sede.idSede === value.value).map(organo => ({
           value: organo.idOrgano,
@@ -77,7 +73,6 @@ export default function ModalOrganoAsignacion(props) {
         }))
       );
     } else {
-      console.log("se reinicia la lista de organos")
       selectInputRef.current.clearValue();
       setorganoSelect([{ value: 0, label: 'Seleccione una Sede' }]);
       selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
@@ -86,12 +81,10 @@ export default function ModalOrganoAsignacion(props) {
   //setear organo
   const handleChangeOrgano = value => {
     console.log(value)
-    if (value !== null){
+    if (value !== null) {
       setorganoNombre(value.value);
     } else {
-      // return "SELECCIONE UN ORGANO"
-      // setorganoNombre(null);
-      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);      
+      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     }
   };
 
@@ -101,7 +94,7 @@ export default function ModalOrganoAsignacion(props) {
     setorganoNombre(null);
     setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
     props.cerrar();
-    
+
   };
   const closeModalDelete = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
@@ -111,11 +104,11 @@ export default function ModalOrganoAsignacion(props) {
   const deletePersonaOrganoId = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
     dispatch(deletePersonaOrgano(idDeleteOrgano))
-    .then(() => {
-      fetchDataPersonaOrgano(props.usuario.idpersona);
-    }).catch(err => {
-      console.log(err.message);
-    });
+      .then(() => {
+        fetchDataPersonaOrgano(props.usuario.idpersona);
+      }).catch(err => {
+        console.log(err.message);
+      });
     closeModalDelete();
   };
 
@@ -141,25 +134,25 @@ export default function ModalOrganoAsignacion(props) {
   const createPersonaOrganoDModal = () => {
     fetchDataPersonaOrgano(props.usuario.idpersona);
     dispatch(createPersonaOrgano(props.usuario.idpersona, organoNombre))
-    .then(() => {
-      setorganoNombre(null);
-      selectInputRef.current.clearValue();
-      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
-      selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
-      fetchDataPersonaOrgano(props.usuario.idpersona);
-      selectInputRefSede.current.clearValue();
-      selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+      .then(() => {
+        setorganoNombre(null);
+        selectInputRef.current.clearValue();
+        setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+        selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+        fetchDataPersonaOrgano(props.usuario.idpersona);
+        selectInputRefSede.current.clearValue();
+        selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
 
-    })
-    .catch(err => {
-      console.log(err.message);
-      setorganoNombre(null);
-      selectInputRef.current.clearValue();
-      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
-      selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
-      selectInputRefSede.current.clearValue();
-      selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
-    });
+      })
+      .catch(err => {
+        console.log(err.message);
+        setorganoNombre(null);
+        selectInputRef.current.clearValue();
+        setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+        selectInputRef.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+        selectInputRefSede.current.clearValue();
+        selectInputRefSede.current.setValue([{ value: 0, label: 'Seleccione una Sede' }]);
+      });
     closeModalCreate();
   };
 
@@ -168,8 +161,9 @@ export default function ModalOrganoAsignacion(props) {
       <AlertaDialogo
         isOpen={openModalDelete}
         onClose={closeModalDelete}
-        title={'Estas seguro de eliminar el registro?'}
+        title={'ESTÁS SEGURO DE ELIMINAR LA ASIGNACIÓN?'}
         metodo={deletePersonaOrganoId}
+        size="2xl"
       />
       <Modal
         id="modalOrganoAsignacion"
@@ -182,7 +176,7 @@ export default function ModalOrganoAsignacion(props) {
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
-            ASIGNACION DE ORGANOS JURIDICCIONALES A ASISTENTES INFORMATICOS
+            ASIGNACION DE ORGANOS JURIDICCIONALES A SOPORTES TÉCNICOS
           </ModalHeader>
           <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
@@ -210,7 +204,7 @@ export default function ModalOrganoAsignacion(props) {
                   isClearable
                   options={organoSelect}
                   defaultValue={selectOrgano[0]}
-                  ref = {selectInputRef}
+                  ref={selectInputRef}
                 />
               </FormControl>
             </HStack>
@@ -232,46 +226,45 @@ export default function ModalOrganoAsignacion(props) {
             />
 
             <Text mt={'10px'}>
-              ORGANOS JURIDICCIONALES ASIGNADAS A{' '}
+              ORGANOS JURIDICCIONALES ASIGNADAS A:{' '} 🤵 {' '}
               <b> {props.usuario.nombre + ' ' + props.usuario.apellido}</b>
             </Text>
 
             {/* Listado de Organos asignados a ese usuario */}
-
-            <Table
-              size="sm"
-              alignSelf={'start'}
-              variant="simple"
-              overflowX={'auto'}
-              mt={'10px'}
-            >
-              <Thead>
-                <Tr>
-                  <Th>SEDE</Th>
-                  <Th>ORGANO</Th>
-                  <Th>ACCIÓN</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {props.personaOrgano.map(x => (
-                  <Tr key={x.idPersonaOrgano}>
-                    <Td>{x.sede}</Td>
-                    <Td>{x.organo}</Td>
-                    <Td>
-                      <IconButton
-                        onClick={() =>
-                          handleClickOpenDeleteOrganoP(x.idPersonaOrgano)
-                        }
-                        color={'red.600'}
-                        fontSize="20px"
-                        icon={<CloseIcon />}
-                        _focus={{ boxShadow: "none" }}
-                      ></IconButton>
-                    </Td>
+            <TableContainer>
+              <Table
+                size="sm"
+                mt={'10px'}
+              >
+                <Thead>
+                  <Tr>
+                    <Th>SEDE</Th>
+                    <Th>ORGANO</Th>
+                    <Th>ACCIÓN</Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
+                </Thead>
+                <Tbody>
+                  {props.personaOrgano.map(x => (
+                    <Tr key={x.idPersonaOrgano}>
+                      <Td>{x.sede}</Td>
+                      <Td>{x.organo}</Td>
+                      <Td>
+                        <IconButton
+                          onClick={() =>
+                            handleClickOpenDeleteOrganoP(x.idPersonaOrgano)
+                          }
+                          colorScheme={'red'}
+                          size="sm"
+                          fontSize="14px"
+                          icon={<CloseIcon />}
+                          _focus={{ boxShadow: "none" }}
+                        />
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </TableContainer>
           </ModalBody>
 
           <ModalFooter>
@@ -282,9 +275,10 @@ export default function ModalOrganoAsignacion(props) {
         </ModalContent>
       </Modal>
       <AlertaDialogo
+        size={'2xl'}
         isOpen={openModalCreate}
         onClose={closeModalCreate}
-        title={'Estas seguro de agregar el registro'}
+        title={'ESTÁS SEGURO DE ASIGNAR EL ORGANO?'}
         metodo={createPersonaOrganoDModal}
       />
     </>

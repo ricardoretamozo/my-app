@@ -27,6 +27,7 @@ const OrigenAgregar = () => {
     }
 
     const handleCloseModal = () => {
+        dataOrigen.origen = "";
         setOpenCreate(false);
     };
 
@@ -75,7 +76,13 @@ const OrigenAgregar = () => {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => saveOrigen()} colorScheme={'facebook'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
+                        <Button 
+                            onClick={() => saveOrigen()} 
+                            colorScheme={'facebook'}
+                            autoFocus mr={3} 
+                            _focus={{ boxShadow: "none" }}
+                            disabled = { dataOrigen.origen === "" ? true : false }
+                        >
                             GUARDAR
                         </Button>
                         <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>

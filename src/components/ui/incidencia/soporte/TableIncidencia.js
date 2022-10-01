@@ -18,6 +18,10 @@ import {
   SimpleGrid,
   chakra,
   Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 import { CalendarIcon, RepeatIcon } from '@chakra-ui/icons';
 
@@ -33,20 +37,27 @@ import IncidenciaAtender from './IncidenciaAtender';
 import { incidenciaEnTramite, fetchIncidenciaSoporte } from '../../../../actions/incidencia';
 import { getIncidenciasAsignadasSoporte } from './incidencia';
 import Moment from 'moment';
+import IncidenciaViewFile from './IncidenciaViewFile';
+import { FaFilter } from 'react-icons/fa';
+import { AiFillFilter } from 'react-icons/ai';
 
 export default function TableIncidenciaSoporte() {
-  const [openAlert, setOpenAlert] = React.useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
   const { identificador } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
-  const data = store.getState().incidenciasAsignadasSoporte.rows;
-  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
-  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
-  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
+  const [indiceIncidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(identificador);
 
+  const data = store.getState().incidenciasAsignadasSoporte.rows;
+
+  const [tableRowsData, setTableRowsData] = useState(data);
+
+  const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+  const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
+  const ContadorAtendidas = data.filter(row => row.historialIncidencia.filter(atendida => atendida.estadoIncidencia === "A" && atendida.estado === "A").length > 0);
 
   const fetchDataIncidencias = async () => {
-    await fetchIncidenciaSoporte(identificador).then((res)=>{
+    await fetchIncidenciaSoporte(identificador).then((res) => {
       dispatch(getIncidenciasAsignadasSoporte(res));
     });
   }
@@ -59,6 +70,9 @@ export default function TableIncidenciaSoporte() {
       },
       persona_asignado: {
         idpersona: Number(identificador)
+      },
+      persona_notifica: {
+        idpersona: indiceIncidenciaPersonaNotifica ? Number(indiceIncidenciaPersonaNotifica) : Number(identificador),
       }
     }
   });
@@ -66,19 +80,20 @@ export default function TableIncidenciaSoporte() {
   const ActualizarIncidenciaEnTramite = () => {
     var incidencia = {
       idIncidencia: indice.idIncidencia,
-      historialIncidencia: indice.historialIncidencia
+      historialIncidencia: [indice.historialIncidencia]
     }
     dispatch(incidenciaEnTramite(incidencia))
-    .then(() => {
-      fetchDataIncidencias();
-      setOpenAlert(false);
-    }).catch((error) => {
-      console.log(error);
-    });
+      .then(() => {
+        fetchDataIncidencias();
+        setOpenAlert(false);
+      }).catch((error) => {
+        console.log(error);
+      });
   }
 
-  const handleClickOpenAlert = index => {
-    setIndice({...indice, idIncidencia : index});
+  const handleClickOpenAlert = (index) => {
+    setIndice({ ...indice, idIncidencia: index.idIncidencia });
+    setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A")[0].persona_notifica.idpersona);
     setOpenAlert(true);
   };
 
@@ -90,10 +105,27 @@ export default function TableIncidenciaSoporte() {
     fetchDataIncidencias();
   }
 
+  // filtros por estado
+
+  const handleClickFilterPendientes = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterTramite = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "T" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterAtendidas = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
   const columns = [
     {
       name: 'USUARIO',
-      selector: row => row.persona.nombre + ' ' + row.persona.apellido,
+      selector: row => row.persona?.nombre + ' ' + row.persona?.apellido,
       sortable: true,
     },
     {
@@ -102,113 +134,139 @@ export default function TableIncidenciaSoporte() {
       sortable: true,
     },
     {
-        name: 'FECHA Y HORA',
-        selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
-        sortable: true,
+      name: 'FECHA Y HORA',
+      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      sortable: true,
     },
     {
       name: 'IP',
-      selector: row => row.historialIncidencia.ip,
+      selector: row => row.historialIncidencia.filter(p => p.estado === 'A' ? p.ip : null),
+      // selector: row => row.historialIncidencia.ip,
       sortable: true,
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A' ? p.ip : null);
+        return (
+          <Text>
+            {historial[0].ip}
+          </Text>
+        )
+      }
     },
     {
       name: 'ESTADO',
-      selector: row => row.historialIncidencia.estadoIncidencia,
+      // selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
       sortable: true,
-      cell: row => (
-        <div>
-          <Badge
-            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500': 'green.500'}
-            color={'white'}
-            p="4px 10px"
-            w={24}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
-          </Badge>
-        </div>
-      ),
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <div>
+            <Badge
+              bg={historial[0].estadoIncidencia === 'P' ? 'red.500' : historial[0].estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
+              color={'white'}
+              p="3px 10px"
+              w={24}
+              textAlign={'center'}
+              borderRadius={'md'}
+              fontSize={'10px'}
+            >
+              {historial[0].estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0].estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
+            </Badge>
+          </div>
+        )
+      },
       center: true,
     },
     {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        var archivosTecnico = row.incidenciaArchivos?.usuario === "R" ? row.incidenciaArchivos : null;
         return (
           <div>
-          {row.historialIncidencia.estadoIncidencia === 'P' ? (
-            <div>
-              <IncidenciaDetalles 
-                rowId = {row.idIncidencia}
-                identificador = { identificador }
-              />
-              <IconButton
-                icon={<CalendarIcon />}
-                variant={'outline'}
-                colorScheme={'yellow'}
-                onClick={() => handleClickOpenAlert(row.idIncidencia)}
-                fontSize='20px'
-                size={'sm'}
-                ml={1}
-                _focus={{ boxShadow: "none" }}
-              />
-              <IncidenciaAtender 
-                rowId = {row.idIncidencia}
-              />
-            </div>
-          ) : (
-            row.historialIncidencia.estadoIncidencia === 'T' ? (
+            {historial[0].estadoIncidencia === 'P' ? (
               <div>
-              <IncidenciaDetalles 
-                rowId = {row.idIncidencia}
-                identificador = { identificador }
-              />
-              <IncidenciaAtender 
-                rowId = {row.idIncidencia}
-              />
+                <IncidenciaDetalles
+                  rowId={row.idIncidencia}
+                  identificador={identificador}
+                />
+                {archivosTecnico !== null ? (
+                  <IncidenciaViewFile
+                    rowData={row.incidenciaArchivos}
+                    typeFile = {archivosTecnico.file}
+                  />
+                ) : (null)}
+                <IconButton
+                  icon={<CalendarIcon />}
+                  variant={'outline'}
+                  colorScheme={'yellow'}
+                  onClick={() => handleClickOpenAlert(row)}
+                  size={'sm'}
+                  fontSize={'20px'}
+                  ml={1}
+                  _focus={{ boxShadow: "none" }}
+                />
+                <IncidenciaAtender
+                  rowId={row.idIncidencia}
+                />
               </div>
             ) : (
-              <IncidenciaDetalles 
-                rowId = {row.idIncidencia}
-                identificador = { identificador }
-              />
-            )
-          )}
-          <AlertDialog isOpen={openAlert} onClose={handleCloseAlert} size={'3xl'}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="xl" fontWeight="bold">
-                  ¿DESEA CAMBIAR EL ESTADO, EN TRÁMITE?
-                </AlertDialogHeader>
-                <AlertDialogCloseButton _focus={{ boxShadow: "none" }}/>
-                <AlertDialogBody>
-                  <Box px={2}>
+              historial[0].estadoIncidencia === 'T' ? (
+                <>
+                  <IncidenciaDetalles
+                    rowId={row.idIncidencia}
+                    identificador={identificador}
+                  />
+                  {archivosTecnico !== null ? (
+                    <IncidenciaViewFile
+                      rowData={row.incidenciaArchivos}
+                      typeFile = {archivosTecnico.file}
+                    />
+                  ) : (null)}
+                  <IncidenciaAtender
+                    rowId={row.idIncidencia}
+                  />
+                </>
+              ) : (
+                <IncidenciaDetalles
+                  rowId={row.idIncidencia}
+                  identificador={identificador}
+                />
+              )
+            )}
+            <AlertDialog isOpen={openAlert} onClose={handleCloseAlert} size={'3xl'}>
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="xl" fontWeight="bold">
+                    ¿DESEA CAMBIAR EL ESTADO, EN TRÁMITE?
+                  </AlertDialogHeader>
+                  <AlertDialogCloseButton _focus={{ boxShadow: "none" }} />
+                  <AlertDialogBody>
+                    <Box px={2}>
                       <Text>¿CONFIRMAR LA ACCIÓN?</Text>
-                  </Box>
-                </AlertDialogBody>
-                <AlertDialogFooter>
-                  <Button onClick={handleCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
-                  <Button
-                    bg={'yellow.500'}
-                    _hover={{ bg: 'yellow.600' }}
-                    color={'white'}
-                    ml={3}
-                    _focus={{ boxShadow: "none" }}
-                    onClick={() => ActualizarIncidenciaEnTramite()}
-                  >
-                    CONFIRMAR
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
+                    </Box>
+                  </AlertDialogBody>
+                  <AlertDialogFooter>
+                    <Button onClick={handleCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
+                    <Button
+                      bg={'yellow.500'}
+                      _hover={{ bg: 'yellow.600' }}
+                      color={'white'}
+                      ml={3}
+                      _focus={{ boxShadow: "none" }}
+                      onClick={() => ActualizarIncidenciaEnTramite()}
+                    >
+                      CONFIRMAR
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
           </div>
         );
       },
-      center: true,
-      width: '140px',
+      width: '200px',
+      wrap: true,
     },
   ];
 
@@ -233,7 +291,7 @@ export default function TableIncidenciaSoporte() {
 
   return (
     <>
-    <Box borderWidth="1px"
+      <Box borderWidth="1px"
         borderRadius="lg"
         overflow="hidden"
         boxShadow={'md'}
@@ -274,7 +332,7 @@ export default function TableIncidenciaSoporte() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasPendientes.length}
+                {ContadorPendientes.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -310,7 +368,7 @@ export default function TableIncidenciaSoporte() {
                 color="gray.200"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasEnTramite.length}
+                {ContadorTramite.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -346,7 +404,7 @@ export default function TableIncidenciaSoporte() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasAtendidas.length}
+                {ContadorAtendidas.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -409,27 +467,52 @@ export default function TableIncidenciaSoporte() {
             </Text>
           </Box>
           <Box>
+            <Menu size={'xs'}>
+              <MenuButton as={'menu'} style={{ cursor: 'pointer'}}>
+                <HStack spacing={2}>
+                  <Text fontSize="sm" fontWeight="600">
+                    FILTRAR POR ESTADO
+                  </Text>
+                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                </HStack>
+              </MenuButton>
+              <MenuList zIndex={2}>
+                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+          <Box>
             <IconButton
-                size={'sm'} mr={2} 
-                icon={<RepeatIcon boxSize={4} />} 
-                colorScheme={'facebook'}
-                _focus={{ boxShadow: "none" }}
-                onClick={refreshTable}
+              size={'sm'} mr={2}
+              icon={<RepeatIcon boxSize={4} />}
+              colorScheme={'facebook'}
+              _focus={{ boxShadow: "none" }}
+              onClick={refreshTable}
             />
             <IncidenciaAgregar />
           </Box>
         </HStack>
-        <DataTableExtensions columns={columns} data={data}>
+        <DataTableExtensions columns={columns} data={tableRowsData}>
           <DataTable
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
-            ignoreRowClick={true}
             responsive={true}
-            paginationPerPage={5}
+            paginationPerPage={10}
             noDataComponent="No hay datos para mostrar refresca la página"
-            paginationRowsPerPageOptions={[5, 10, 20, 30]}
-            
+            paginationRowsPerPageOptions={[10, 15, 20, 30]}
+            paginationComponentOptions={{
+              rowsPerPageText: 'Filas por página:',
+              rangeSeparatorText: 'de',
+              selectAllRowsItem: true,
+              selectAllRowsItemText: 'Todos',
+            }}           
+            fixedHeader
+            fixedHeaderScrollHeight="550px"
+            key={ tableRowsData.map((item) => { return item.idIncidencia }) }
           />
         </DataTableExtensions>
       </Box>

@@ -5,7 +5,6 @@ import { getOficina } from '../components/ui/oficina/oficina';
 // CREATE ORGANO
 
 export const createOficina = data => {
-  // console.log(data);
   var idOrgano = {};
   if (data.organo != null) {
     idOrgano = {
@@ -24,13 +23,11 @@ export const createOficina = data => {
       'POST'
     );
 
-    const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
       dispatch(getOficina(await loadOficina()));
-      notification('Oficina registrado correctamente.', body.message, 'success');
+      notification('Oficina registrado', 'Oficina registrado correctamente.', 'success');
     } else {
-      notification('No se pudo registrar la Oficina', body.erroresValidacion.oficina, 'error');
+      notification('Error de registro', 'No se pudo registrar la Oficina', 'error');
     }
   };
 };
@@ -38,14 +35,13 @@ export const createOficina = data => {
 export const cargarOficinas = () => {
   return async dispatch => {
 
-    const response = await fetchToken('oficinas',
-    'GET');
+    const response = await fetchToken('oficinas', 'GET');
     const body = await response.json();
 
     if ( response.status === 200 || response.status === 201 ) {
       dispatch(getOficina(body));
     }else{
-      notification('No se pudo cargar las Oficinas', body.message, 'error');
+      notification('Error al cargar Oficinas', 'No se pudo cargar las Oficinas', 'error');
     }
   }
 }
@@ -65,7 +61,6 @@ export const fetchOficinas = async () => {
     });
   });
   Oficina.data = data;
-  // set user info
 
   return Oficina;
 };
@@ -74,7 +69,6 @@ export const fetchOficina = async (id) => {
   const response = await fetchToken('oficinas/listall/' + id);
   const body = await response.json();
   var Oficina = {};
-  const data = [];
 
   Oficina = {
     idOficina: body.idOficina,
@@ -82,9 +76,6 @@ export const fetchOficina = async (id) => {
     organo: body.organo,
     activo: body.activo,  
   };
-
-  //Oficina.data = data;
-  // set user info
 
   return Oficina;
 };
@@ -121,13 +112,11 @@ export const updateOficina = data => {
       'PUT'
     );
 
-    const body = await response.json();
-
     if (response.status === 200) {
       dispatch(getOficina(await loadOficina()));
-      notification('Oficina actualizado correctamente', body.message, 'success');
+      notification('Oficina actualizado', 'Oficina actualizado correctamente', 'success');
     } else {
-      notification('No se pudo actualizar el Oficina', body.detalles, 'error');
+      notification('Error al actualizar', 'No se pudo actualizar el Oficina', 'error');
     }
   };
 };
@@ -137,13 +126,12 @@ export const updateOficina = data => {
 export const deleteOficina = id => {
   return async dispatch => {
     const response = await fetchToken(`oficinas/${id}`, '', 'DELETE');
-    const body = await response.json();
 
     if (response.status === 200) {
       dispatch(getOficina(await loadOficina()));
-      notification('Oficina actualizado correctamente', body.message, 'success');
+      notification('Oficina actualizado', 'Oficina se ha actualizado correctamente.', 'success');
     } else {
-      notification('No se pudo eliminar la Oficina', body.detalles, 'error');
+      notification('Error al eliminar', 'No se pudo eliminar la Oficina', 'error');
     }
   };
 };

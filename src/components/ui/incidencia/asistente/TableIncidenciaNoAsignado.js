@@ -20,22 +20,22 @@ import {
   SimpleGrid,
   chakra,
   Flex,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
-import { AiOutlineUserAdd } from 'react-icons/ai'
-
+import { AiFillFilter, AiOutlineUserAdd } from 'react-icons/ai'
 import { store } from '../../../../store/store';
-
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
-
 import Moment from 'moment';
 import Select from 'react-select';
-
 import { asignarIncidencia } from '../../../../actions/incidencia';
-
 import IncidenciaDetalles from '../IncidenciaDetalles';
 import IncidenciaAsignarme from '../soporte/incidenciaAsignarme';
+import { FaFilter } from 'react-icons/fa';
 
 export default function TableIncidenciaNoAsignados() {
   const dispatch = useDispatch();
@@ -43,14 +43,18 @@ export default function TableIncidenciaNoAsignados() {
 
   const data = store.getState().incidenciasNoAsignadas.rows;
   const tecnicosData = store.getState().tecnicoDisponible.rows;
-  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
-  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
-  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
+
+  const [tableRowsData, setTableRowsData] = useState(data);
+
+  const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+  const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
+  const ContadorAtendidas = data.filter(row => row.historialIncidencia.filter(atendida => atendida.estadoIncidencia === "A" && atendida.estado === "A").length > 0);
 
   const [openModal, setOpenModal] = React.useState(false);
 
   const [idIncidencia, setIndiceIncidencia] = useState(null);
   const [indiceTecnico, setIndiceTecnico] = useState(null);
+  const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
 
   const usuario = store.getState().auth;
 
@@ -58,14 +62,17 @@ export default function TableIncidenciaNoAsignados() {
     e.preventDefault();
     var incidencia = {
       idIncidencia: idIncidencia,
-      historialIncidencia: {
+      historialIncidencia: [{
         persona_registro: {
           idpersona: Number(identificador)
         },
         persona_asignado: {
           idpersona: indiceTecnico,
+        },
+        persona_notifica: {
+          idpersona: incidenciaPersonaNotifica ? incidenciaPersonaNotifica : Number(identificador),
         }
-      }
+      }]
     }
     dispatch(asignarIncidencia(incidencia))
       .then(() => {
@@ -80,14 +87,40 @@ export default function TableIncidenciaNoAsignados() {
     setOpenModal(false);
   }
 
-  const handleClickOpenModal = index => {
-    setIndiceIncidencia(index);
+  const handleClickOpenModal = (index) => {
+    setIndiceIncidencia(index.idIncidencia);
+    setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A")[0].persona_notifica.idpersona);
     setOpenModal(true);
   };
 
   const handleChangeTecnico = value => {
     setIndiceTecnico(value.value);
   };
+
+  // filtros por estado
+
+  const handleClickFilterPendientes = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterTramite = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "T" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterAtendidas = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const fetchData = async () => {
+    setTableRowsData(data);
+  }
+
+  const refreshTable = () => {
+    fetchData();
+  }
 
   const columns = [
     {
@@ -107,28 +140,40 @@ export default function TableIncidenciaNoAsignados() {
     },
     {
       name: 'IP',
-      selector: row => row.historialIncidencia.ip,
+      // selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.ip : ''),
       sortable: true,
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <Text key={row.idIncidencia.toString()}>
+            {historial[0]?.ip}
+          </Text>
+        )
+      }
     },
     {
       name: 'ESTADO',
-      selector: row => row.historialIncidencia.estadoIncidencia,
+      selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
       sortable: true,
-      cell: row => (
-        <div>
-          <Badge
-            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-            color={'white'}
-            p="3px 10px"
-            w={24}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
-          </Badge>
-        </div>
-      ),
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <div key={row.idIncidencia.toString()}>
+            <Badge
+              bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
+              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
+              color={'white'}
+              p="3px 10px"
+              w={24}
+              textAlign={'center'}
+              borderRadius={'md'}
+              fontSize={'10px'}
+            >
+              {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
+            </Badge>
+          </div>
+        )
+      },
       center: true,
     },
     {
@@ -136,22 +181,22 @@ export default function TableIncidenciaNoAsignados() {
       sortable: false,
       cell: row => {
         return (
-          <div>
+          <div key={row.idIncidencia.toString()}>
             <IncidenciaDetalles
               rowId={row.idIncidencia}
               identificador={identificador}
             />
             {usuario.rol === '[SOPORTE TECNICO]' ? (
               <IncidenciaAsignarme
-                rowId={row.idIncidencia}
+                rowData={row}
                 identificador={identificador}
-              />              
+              />
             ) : (
               <IconButton
                 icon={<AiOutlineUserAdd />}
                 variant={'solid'}
                 colorScheme={'facebook'}
-                onClick={() => handleClickOpenModal(row.idIncidencia)}
+                onClick={() => handleClickOpenModal(row)}
                 fontSize='20px'
                 size={'sm'}
                 ml={1}
@@ -171,7 +216,7 @@ export default function TableIncidenciaNoAsignados() {
                   <ModalBody pb={6}>
                     <FormControl isRequired>
                       <FormLabel>SOPORTES TÉCNICOS</FormLabel>
-                      <Select                      
+                      <Select
                         placeholder="--------- ELIGE UN SOPORTE TECNICO -----------"
                         onChange={handleChangeTecnico}
                         options={tecnicosData.map(tecnico => ({
@@ -183,7 +228,7 @@ export default function TableIncidenciaNoAsignados() {
                     </FormControl>
                   </ModalBody>
                   <ModalFooter>
-                    <Button disabled = {indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
+                    <Button disabled={indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
                       ASIGNAR
                     </Button>
                     <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
@@ -219,7 +264,7 @@ export default function TableIncidenciaNoAsignados() {
 
   return (
     <>
-    <Box borderWidth="1px"
+      <Box borderWidth="1px"
         borderRadius="lg"
         overflow="hidden"
         boxShadow={'md'}
@@ -260,7 +305,7 @@ export default function TableIncidenciaNoAsignados() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasPendientes.length}
+                {ContadorPendientes.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -296,7 +341,7 @@ export default function TableIncidenciaNoAsignados() {
                 color="gray.200"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasEnTramite.length}
+                {ContadorTramite.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -332,7 +377,7 @@ export default function TableIncidenciaNoAsignados() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasAtendidas.length}
+                {ContadorAtendidas.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -395,18 +440,42 @@ export default function TableIncidenciaNoAsignados() {
             </Text>
           </Box>
           <Box>
+            <Menu size={'xs'}>
+              <MenuButton as={'menu'} style={{ cursor: 'pointer'}}>
+                <HStack spacing={2}>
+                  <Text fontSize="sm" fontWeight="600">
+                    FILTRAR POR ESTADO
+                  </Text>
+                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                </HStack>
+              </MenuButton>
+              <MenuList zIndex={2}>
+                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+              </MenuList>
+            </Menu>
           </Box>
         </HStack>
-        <DataTableExtensions columns={columns} data={data}>
+        <DataTableExtensions columns={columns} data={tableRowsData}>
           <DataTable
-            defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
             responsive={true}
-            paginationPerPage={8}
+            paginationPerPage={10}
             noDataComponent="No hay datos para mostrar refresca la página"
-            paginationRowsPerPageOptions={[8, 15, 20, 30]}
+            paginationRowsPerPageOptions={[10, 15, 20, 30]}
+            fixedHeader
+            fixedHeaderScrollHeight="550px"
+            paginationComponentOptions={{
+              rowsPerPageText: 'Filas por página:',
+              rangeSeparatorText: 'de',
+              selectAllRowsItem: true,
+              selectAllRowsItemText: 'Todos',
+            }}
+            key={ tableRowsData.map((item) => { return item.idIncidencia }) }
           />
         </DataTableExtensions>
       </Box>

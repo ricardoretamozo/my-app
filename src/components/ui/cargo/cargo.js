@@ -12,18 +12,17 @@ export const Cargo = () => {
   const fetchData= async ()=> {
     await fetchCargos().then((res)=>{
       dispatch(getCargo(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().cargo.checking){
       fetchData();
     }
-    //fetchData();
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableCargo} />

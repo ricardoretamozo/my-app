@@ -19,8 +19,10 @@ import Select from 'react-select';
 import { useDispatch } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
 import { createHistorialPersona } from '../../actions/historialpersona';
+import { useHistory } from 'react-router-dom';
 
 const ModalHistorialUsuario = (props) => {
+  const history = useHistory();
   const dispatch = useDispatch();
   const selectInputRefSede = useRef();
   const selectInputRef = useRef();
@@ -124,7 +126,7 @@ const ModalHistorialUsuario = (props) => {
   );
 
   // Select
-  const handleChangeSede = value => {
+  const handleChangeSede = (value) => {
     if (value === null) {
       selectInputRef.current.clearValue();
       selectOficinaRef.current.clearValue();
@@ -145,7 +147,7 @@ const ModalHistorialUsuario = (props) => {
   };
 
   //
-  const handleChangeOrgano = value => {
+  const handleChangeOrgano = (value) => {
     if (value === null) {
       selectOficinaRef.current.clearValue();
       setOficinaSelect([{ value: 0, label: 'SELECCIONE UN ORGANO' }]);
@@ -159,7 +161,7 @@ const ModalHistorialUsuario = (props) => {
     }
   };
 
-  const handleChangeOficina = value => {
+  const handleChangeOficina = (value) => {
     if (value === null) {
       // selectOficinaRef.current.clearValue();
     } else {
@@ -170,7 +172,7 @@ const ModalHistorialUsuario = (props) => {
     }
   };
 
-  const handleChangeCargo = value => {
+  const handleChangeCargo = (value) => {
     setIndiceHistorial({
       ...indiceHistorial,
       cargo: { idCargo: value.value, cargo: value.label },
@@ -193,10 +195,7 @@ const ModalHistorialUsuario = (props) => {
       iniciaCargo: indiceHistorial.iniciaCargo,
       terminaCargo: indiceHistorial.terminaCargo,
       activo: indiceHistorial.activo,
-      fecha: indiceHistorial.fecha,
-      ip: indiceHistorial.ip,
     };
-
     dispatch(createHistorialPersona(historialUsuario)).then(() => {
       if ( props.editar ){
         if (
@@ -215,6 +214,9 @@ const ModalHistorialUsuario = (props) => {
         }
       }
       dispatch(props.listarHistorialPersona());
+    }).catch((e) => {
+      console.error("Error de guardar historial" + e)
+      history.push('/dashboard/usuario')
     });
     props.cerrar();
   };
@@ -234,14 +236,13 @@ const ModalHistorialUsuario = (props) => {
         isOpen={props.abrir}
         onClose={cerrarModal}
         closeOnOverlayClick={true}
-        size={'2xl'}
+        size={'6xl'}
       >
         <ModalOverlay />
-
         <ModalContent>
-          <ModalHeader>ACTUALIZAR, SEDE, ORGANO, OFICINA</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
+          <ModalHeader textAlign="center" fontWeight={'bold'} mt={2}>ACTUALIZAR INFORMACIÓN</ModalHeader>
+          <ModalCloseButton _focus={{ boxShadow: "none" }}/>
+          <ModalBody pb={5} mt={5}>
             <FormControl>
               <Input
                 value={indice ? indice.idOficina : ''}
@@ -287,9 +288,9 @@ const ModalHistorialUsuario = (props) => {
               <Select
                 onChange={handleChangeCargo}
                 placeholder="SELECCIONE UN CARGO"
-                defaultValue={
-                  indiceHistorial ? indiceHistorial.cargo.cargo : ''
-                }
+                // defaultValue={
+                //   indiceHistorial ? indiceHistorial.cargo.cargo : ''
+                // }
                 isClearable={true}
                 options={optionsCargo}
                 isRequired

@@ -11,7 +11,22 @@ import {
   useColorModeValue,
   HStack,
   Stack,
-  Image
+  Image,
+  IconButton,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverClose,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  Input,
+  FormHelperText,
 } from '@chakra-ui/react';
 
 import {
@@ -28,6 +43,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Moment from 'moment';
 import { notification, timerNotification } from '../../helpers/alert';
+import { HiOutlinePlusCircle } from 'react-icons/hi';
+import { QuestionIcon } from '@chakra-ui/icons';
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#c53030', 'red.700');
@@ -73,12 +90,12 @@ export const RegisterScreen = () => {
             nombre: data[5],
             apellidos: data[2] + ' ' + data[3],
             fechaNacimiento: data[28],
-            sexo : data[17]
+            sexo: data[17]
           }))
           history.push('/auth/register/validate');
         } else {
           history.push('/auth/register');
-          notification('Los datos no coinciden, error de validacion','', 'error');
+          notification('Los datos no coinciden, error de validacion', '', 'error');
         }
       }
       ).catch((error) => {
@@ -89,7 +106,6 @@ export const RegisterScreen = () => {
   const HandleValidatorUser = () => {
     validadorUsuarioCreado(validadorDni.dni)
       .then((value) => {
-        console.log(value)
         if (value === true) {
           dispatch(StartDni(
             validadorDni.dni,
@@ -109,24 +125,24 @@ export const RegisterScreen = () => {
     //   validadorDni.codigoVerificacion,
     //   validadorDni.fechaNacimiento
     // ).then(() => {
-    //   // history.push('/auth/register/validate');
+    //   // history('/auth/register/validate');
     //   validadorUsuarioCreado(validadorDni.dni)
     //     .then((res) => {
     //       console.log(res)
-    //       history.push('/auth/register');
-    //       // history.push('/auth/register/validate');
+    //       history('/auth/register');
+    //       // history('/auth/register/validate');
     //       console.log('ingreso 1')
     //     })
     //     .catch((e) => {
     //       console.log(e)
-    //       history.push('/auth/register/validate');
+    //       history('/auth/register/validate');
     //       console.log('ingreso 2')
-    //       // history.push('/auth/register');
+    //       // history('/auth/register');
     //     })
     //   }).catch(() => {
-    //     history.push('/auth/register');
+    //     history('/auth/register');
     //     console.log('ingreso 3')
-    //     // history.push('/auth/register');
+    //     // history('/auth/register');
     //   })
   };
 
@@ -184,7 +200,7 @@ export const RegisterScreen = () => {
             backgroundColor={bgCard}
             boxShadow={'md'}
             px={'3rem'}
-            py={'3rem'}
+            py={'2.5rem'}
             borderRadius="lg"
             rounded="lg"
             borderTop="6px solid"
@@ -200,7 +216,7 @@ export const RegisterScreen = () => {
               textAlign="center"
               mb={'20px'}
             >
-              Validar DNI
+              VALIDAR DNI
             </Text>
             <Box minW={{ base: "90%", md: "350px" }}>
               <Formik
@@ -210,17 +226,22 @@ export const RegisterScreen = () => {
               >
                 {({ handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
-                    <VStack spacing={2} align="flex-start" mt={2}>
+                    <VStack spacing={1} align="flex-start" mt={2}>
                       <InputControl
                         name={'dni'}
-                        inputProps={{ type: "text", placeholder: "DNI" }}
+                        label={'DNI'}
+                        inputProps={{ type: "text", placeholder: "INGRESE SU DNI" }}
                         onChange={e => {
                           setDni({ ...validadorDni, dni: e.target.value });
                         }}
                       />
                       <InputControl
                         name={'codigoVerificacion'}
-                        inputProps={{ type: "text", placeholder: "Código de Verificacion" }}
+                        label={<Flex justify="space-between">
+                          <Text>CODIGO DE VERIFICACIÓN</Text>
+                          <PopoverForm />
+                        </Flex>}
+                        inputProps={{ type: "text", placeholder: "CÓDIGO DE VERIFICACIÓN" }}
                         onChange={e => {
                           setDni({
                             ...validadorDni,
@@ -229,10 +250,9 @@ export const RegisterScreen = () => {
                         }}
                       />
                       <InputControl
-                        mb={'20px'}
                         name={'fechaNacimiento'}
                         inputProps={{ type: "date" }}
-                        label={'Fecha de Nacimiento'}
+                        label={'FECHA DE NACIMIENTO'}
                         onChange={e => {
                           setDni({
                             ...validadorDni,
@@ -282,3 +302,36 @@ export const RegisterScreen = () => {
     </>
   );
 };
+
+const PopoverForm = () => {
+  const { onOpen, onClose, isOpen } = useDisclosure()
+  const firstFieldRef = React.useRef(null)
+
+  return (
+    <>
+      <Popover
+        isOpen={isOpen}
+        initialFocusRef={firstFieldRef}
+        onOpen={onOpen}
+        onClose={onClose}
+        placement='right'
+        _focus={{ boxShadow: "none" }}
+      >
+        <PopoverTrigger>
+          <IconButton size='xs' icon={<QuestionIcon />} _focus={{ boxShadow: "none" }} />
+        </PopoverTrigger>
+        <PopoverContent p={5} _focus={{ boxShadow: "none" }} color='white' bg='gray.700' borderColor='blue.600'>
+          <PopoverArrow bg='gray.700'/>
+          <PopoverCloseButton _focus={{ boxShadow: "none" }} />
+          <PopoverHeader fontWeight="bold" fontSize={'sm'} textAlign="center">¿Donde está el código verificador de mi DNI?</PopoverHeader>
+          <PopoverBody>
+            <Text fontSize="xs" color="gray.500">
+              Este número se encuentra en la parte superior derecha de tu DNI, justo después del número de tu documento. Este dígito es antecedido por un guión (-).
+            </Text>
+            <Image src='https://www.consultadniperu.com/wp-content/uploads/2021/01/dni.png' mt={2} />
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    </>
+  )
+}

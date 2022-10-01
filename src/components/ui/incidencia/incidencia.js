@@ -15,6 +15,8 @@ export const Incidencia = () => {
   const fetchData = async ()=> {
     await fetchIncidencias().then((res)=>{
       dispatch(getIncidencias(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
   
@@ -27,12 +29,13 @@ export const Incidencia = () => {
   const fetchDataId = async ()=> {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
     
   }
 
   useEffect(() => {
-    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }

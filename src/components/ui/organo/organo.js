@@ -12,18 +12,17 @@ export const Organo = () => {
   const fetchData= async ()=> {
     await fetchOrganos().then((res)=>{
       dispatch(getOrgano(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().organo.checking){
       fetchData();
     }
-    //fetchData();
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableOrgano} />

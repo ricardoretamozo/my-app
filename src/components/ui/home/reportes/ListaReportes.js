@@ -48,9 +48,9 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        REPORTE 1
+                        POR TÉCNICOS
                       </chakra.span>
-                      <Link to='/dashboard/reportes/incidencias'>
+                      <Link to='/dashboard/reportes/incidencias-one'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='red' variant='solid'>
                           INGRESAR
                         </Button>
@@ -82,9 +82,9 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        REPORTE 2
+                        POR USUARIOS
                       </chakra.span>
-                      <Link to='/dashboard/reportes'>
+                      <Link to='/dashboard/reportes/incidencias-two'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='green' variant='solid'>
                           INGRESAR
                         </Button>
@@ -116,9 +116,9 @@ import {
                         fontWeight="bold"
                         fontSize="lg"
                       >
-                        REPORTE 3
+                        TIEMPO
                       </chakra.span>
-                      <Link to='/dashboard/reportes'>
+                      <Link to='/dashboard/reportes/incidencias-three'>
                         <Button _focus={{ boxShadow: "none" }} textAlign={'left'} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='blue' variant='solid'>
                           INGRESAR
                         </Button>

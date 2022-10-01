@@ -10,7 +10,7 @@ import { LoginScreen } from '../components/auth/LoginScreen';
 import { RegisterScreen } from '../components/auth/RegisterScreen';
 import { RegisterValidateScreen } from '../components/auth/RegisterValidateScreen';
 import { DasboardScreen } from '../components/ui/DasboardScreen';
-import HistorialUsuario  from '../components/historialUsuario/HistorialUsuario';
+import HistorialUsuario from '../components/historialUsuario/HistorialUsuario';
 
 import { fetchSedes } from '../actions/sede';
 import { fetchOrganos } from '../actions/organo';
@@ -55,6 +55,8 @@ export const AppRouter = () => {
     if (store.getState().sede.checking) {
       fetchSedes().then(res => {
         dispatch(getSede(res))
+      }).catch((err)=>{
+        console.log("warn " + err);
       });
     }
   });
@@ -65,27 +67,37 @@ export const AppRouter = () => {
     if (store.getState().organo.checking) {
       fetchOrganos().then(res => {
         dispatch(getOrgano(res));
+      }).catch((err)=>{
+        console.log("warn " + err);
       });
     }
   });
 
   // OFICINAS
 
-  useEffect(() => {
-    if(store.getState().oficina.checking){
-      fetchOficinas().then((res)=>{
+  const FetchDataOficinas = async () => {
+    await fetchOficinas().then(res => {
       dispatch(getOficina(res));
-      });
+    }).catch((err)=>{
+      console.log("WARN " + err);
+    });
+  }
+
+  useEffect(() => {
+    if (store.getState().oficina.checking) {
+      FetchDataOficinas();
     }
   });
 
   // CARGOS
 
   useEffect(() => {
-  
-    if(store.getState().cargo.checking){
-      fetchCargos().then((res)=>{
+
+    if (store.getState().cargo.checking) {
+      fetchCargos().then((res) => {
         dispatch(getCargo(res));
+      }).catch((err) => {
+        console.log("warn " + err);
       });
     }
   });
@@ -96,6 +108,8 @@ export const AppRouter = () => {
     if (store.getState().perfilPersona.checking) {
       perfilPersona().then(res => {
         dispatch(getPerfilPersona(res));
+      }).catch((err) => {
+        console.log("warn " + err);
       });
     }
   });
@@ -105,48 +119,55 @@ export const AppRouter = () => {
   // MOTIVOS
 
   useEffect(() => {
-    if(store.getState().motivo.checking){
-      fetchMotivos().then((res)=>{
+    if (store.getState().motivo.checking) {
+      fetchMotivos().then((res) => {
         dispatch(getMotivo(res))
+      }).catch((err) => {
+        console.log("warn " + err);
       });
     }
   });
 
   // INCIDENCIAS POR CADA USUARIO
 
-  const DataFetchIncidenciasPersonas = async() => {
-    await fetchIncidenciasPersonas(identificador).then((res)=>{
+  const DataFetchIncidenciasPersonas = async () => {
+    await fetchIncidenciasPersonas(identificador).then((res) => {
       dispatch(getIncidenciaId(res));
-    });
+    }).catch((err) => {
+      console.log("WARN " + err);
+    })
   }
 
   useEffect(() => {
-    
-    if(store.getState().incidenciaId.checking){
+    if (store.getState().incidenciaId.checking) {
       DataFetchIncidenciasPersonas()
     }
   });
 
   //PERSONAS
 
-  const DataFetchPersonas = async() => {
-    await personaList().then((res)=>{
+  const DataFetchPersonas = async () => {
+    await personaList().then((res) => {
       dispatch(getPersona(res));
+    }).catch((err) => {
+      console.log("WARN " + err);
     });
   }
 
   useEffect(() => {
-    if(store.getState().persona.checking){
+    if (store.getState().persona.checking) {
       DataFetchPersonas()
     }
   });
 
   // ORIGEN INCIDENCIAS
-  
+
   useEffect(() => {
-    if(store.getState().origenIncidencia.checking){
+    if (store.getState().origenIncidencia.checking) {
       fetchOrigen().then((res) => {
         dispatch(getOrigen(res))
+      }).catch((err) => {
+        console.log("WARN " + err);
       });
     }
   });
@@ -280,17 +301,36 @@ export const AppRouter = () => {
           />
           <PrivateRoute
             exact
-            path="/dashboard/reportes/incidencias"
+            path="/dashboard/reportes/incidencias-one"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
-            exact
+            path="/dashboard/reportes/incidencias-two"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            path="/dashboard/reportes/incidencias-three"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
             path="/dashboard/mi-perfil"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
-          <Redirect to="/dashboard/home" />
+          <PrivateRoute
+            path="/dashboard/ftp"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            path="/dashboard/tabla-conocimiento"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <Redirect to="/dashboard/incidencias" />
         </Switch>
       </div>
     </Router>

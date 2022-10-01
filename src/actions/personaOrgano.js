@@ -12,17 +12,16 @@ export const createPersonaOrgano = (idpersona, idOrgano) => {
       'POST'
     );
     if (response.status === 200 || response.status === 201) {
-      notification('Organo asiganado correctamente.', '', 'success', 'modalOrganoAsignacion');
+      notification('Organo asiganado', 'Organo ha sido asiganado correctamente.', 'success', 'modalOrganoAsignacion');
     } else if (response.status === 422) {
-      notification('No se puede asignar este organo', '', 'error', 'modalOrganoAsignacion');
+      notification('Error de asignación', 'No se puede asignar este organo', 'error', 'modalOrganoAsignacion');
     } else {
-      notification('No se pudo asignar este organo', '', 'error', 'modalOrganoAsignacion');
+      notification('Error de asignacion', 'No se pudo asignar este organo', 'error', 'modalOrganoAsignacion');
     }
   };
 };
 
 export const fetchPersonaOrgano = async id => {
-
   const response = await fetchToken('personaorganos/persona/' + id);
   const body = await response.json();
   const PersonaOrgano = {};
@@ -38,8 +37,6 @@ export const fetchPersonaOrgano = async id => {
     });
   });
   PersonaOrgano.data = data;
-
-  // set user info
   return PersonaOrgano;
 };
 
@@ -47,11 +44,10 @@ export const deletePersonaOrgano = id => {
   return async dispatch => {
     const response = await fetchToken(`personaorganos/${id}`, '', 'DELETE');
 
-    if (response.status === 200) {
-      notification('Se ha Eliminado correctamente', '', 'success', 'modalOrganoAsignacion');
+    if (response.status === 200 || response.status === 201) {
+      notification('Eliminado', 'Se ha eliminado correctamente', 'success', 'modalOrganoAsignacion');
     } else {
-      const body = await response.json();
-      notification('No se pudo eliminar', body.detalles, 'error', 'modalOrganoAsignacion');
+      notification('No se pudo eliminar', 'No se pudo eliminar correctamente', 'error', 'modalOrganoAsignacion');
     }
   };
 };
@@ -70,6 +66,5 @@ export const loadPersonaOrgano = async id => {
     });
   });
   PersonaOrgano.data = data;
-  // set user info
   return PersonaOrgano;
 };

@@ -4,7 +4,7 @@ import { getMotivo } from '../components/ui/motivoIncidencia/motivo';
 
 // CREATE SEDE
 
-export const createMotivo = data => {
+export const createMotivo = (data) => {
   return async dispatch => {
     const response = await fetchToken(
       `motivos`,
@@ -14,13 +14,30 @@ export const createMotivo = data => {
       'POST'
     );
 
-    const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
       dispatch(getMotivo(await loadMotivo()));
-      notification('Motivo registrado correctamente.', body.message, 'success');
+      notification('Motivo registrado', 'El Motivo ha sido registrado correctamente.', 'success');
     } else {
-      notification('No se pudo registrar el Motivo', body.error, 'error');
+      notification('Error de registro', 'No se pudo registrar el Motivo', 'error');
+    }
+  };
+};
+
+export const createMotivo1 = (data) => {
+  return async dispatch => {
+    const response = await fetchToken(
+      `motivos`,
+      {
+        motivo: data.motivo,
+      },
+      'POST'
+    );
+
+    if (response.status === 200 || response.status === 201) {
+      // dispatch(getMotivo(await loadMotivo()));
+      // notification('Motivo registrado', 'El Motivo ha sido registrado correctamente.', 'success');
+    } else {
+      notification('Error de registro', 'No se pudo registrar el Motivo', 'error');
     }
   };
 };
@@ -56,13 +73,11 @@ export const updateMotivo = data => {
       'PUT'
     );
 
-    const body = await response.json();
-
     if (response.status === 200) {
       dispatch(getMotivo(await loadMotivo()));
-      notification('Motivo actualizado correctamente', body.message, 'success');
+      notification('Motivo modificado', 'El motivo ha sido modificado correctamente.', 'success');
     } else {
-      notification('No se pudo actualizar el Motivo', body.error, 'error');
+      notification('Error de modificación', 'No se pudo actualizar el motivo', 'error');
     }
   };
 };
@@ -75,10 +90,9 @@ export const deleteMotivo = (id) => {
 
     if (response.status === 200) {
       dispatch(getMotivo(await loadMotivo()));
-      notification('Motivo eliminado correctamente', "", 'success');
-
+      notification('Motivo eliminado correctamente', "Se ha eliminado correctame el motivo", 'success');
     } else {
-      notification('No se pudo eliminar el Motivo', "", 'error');
+      notification('No se pudo eliminar el Motivo', "No se ha logrado eliminar el motivo", 'error');
     }
   };
 };

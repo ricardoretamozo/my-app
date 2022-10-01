@@ -92,7 +92,7 @@ const OficinaAgregar = () => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'xl'}
+        size={'2xl'}
       >
         <ModalOverlay />
         <ModalContent>

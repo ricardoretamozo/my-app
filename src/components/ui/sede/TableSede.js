@@ -25,6 +25,7 @@ import {
   Text,
   HStack,
   Badge,
+  IconButton,
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
@@ -35,6 +36,8 @@ import 'react-data-table-component-extensions/dist/index.css';
 import { deleteSede, updateSede } from '../../../actions/sede';
 
 import SedeAgregar from './SedeAgregar';
+import { BsArrowDown } from 'react-icons/bs';
+import { AiTwotoneEdit } from 'react-icons/ai';
 
 export default function TableSede() {
 
@@ -48,13 +51,11 @@ export default function TableSede() {
       name: 'SEDE',
       selector: row => row.sede,
       sortable: true,
-      wrap: true,
     },
     {
       name: 'DIRECCIÓN',
       selector: row => row.direccion,
       sortable: true,
-      wrap: true,
     },
     {
       name: 'ESTADO',
@@ -76,7 +77,6 @@ export default function TableSede() {
         </div>
       ),
       center: true,
-      wrap: true,
     },
     {
       name: 'ACCIONES',
@@ -88,7 +88,6 @@ export default function TableSede() {
         </div>
       ),
       center: true,
-      wrap: true,
     },
   ];
 
@@ -144,13 +143,15 @@ export default function TableSede() {
         <DataTable
           columns={columns}
           data={data}
-          defaultSortAsc={false}
+          sortIcon={<BsArrowDown />}
           theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
-          paginationPerPage={8}
-          paginationRowsPerPageOptions={[8, 15, 20, 30]}
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 15, 20, 30]}
+          fixedHeader
+          fixedHeaderScrollHeight="550px"
         />
       </DataTableExtensions>
     </Box>
@@ -192,20 +193,22 @@ const ModalSedeEditar = ({ row }) => {
 
   return (
     <>
-      <Button
-        onClick={() => handleClickOpenEdit(row)}
-        size={'xs'}
+      <IconButton
+        icon={<AiTwotoneEdit />}
+        variant={'outline'}
         colorScheme={'facebook'}
-      >
-        EDITAR
-      </Button>
+        onClick={() => handleClickOpenEdit(row)}
+        fontSize={'22px'}
+        size={'sm'}
+        _focus={{ boxShadow: "none" }}
+      />
       <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display={'flex'} justifyContent={'center'}>
             EDITAR SEDE
           </ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
             <FormControl>
               <Input
@@ -256,10 +259,11 @@ const ModalSedeEditar = ({ row }) => {
               onClick={e => actualizarSede(e)}
               colorScheme="green"
               mr={3}
+              _focus={{ boxShadow: "none" }}
             >
               ACTUALIZAR
             </Button>
-            <Button onClick={handleCloseEdit}>CANCELAR</Button>
+            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -327,11 +331,12 @@ const ModalSedeEliminar = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteSede(row.idSede)}
                 colorScheme="red"
                 ml={3}
+                _focus={{ boxShadow: "none" }}
               >
                 SI
               </Button>

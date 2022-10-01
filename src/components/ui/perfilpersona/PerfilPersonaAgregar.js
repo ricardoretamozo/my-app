@@ -53,12 +53,12 @@ const PerfilPersonaAgregar = () => {
     }
     return (
         <>
-            <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'facebook'}>AGREGAR</Button>
+            <Button leftIcon={<AddIcon />} size='sm' onClick={handleClickOpenCreate} colorScheme={'facebook'} _focus={{ boxShadow: "none" }}>AGREGAR</Button>
 
             <Modal
                 isOpen={openCreate}
                 onClose={handleCloseModal}
-                size={'xl'}
+                size={'2xl'}
             >
                 <ModalOverlay />
                 <form>
@@ -81,6 +81,7 @@ const PerfilPersonaAgregar = () => {
                                     onChange={(e) => { setPerfil({ ...userperfil, descripcion: (e.target.value).toUpperCase() }) }}
                                     placeholder='Descripcion'
                                     textTransform={'uppercase'}
+                                    rows={2}
                                 />
                             </FormControl>
                             <FormControl mt={4} isRequired>

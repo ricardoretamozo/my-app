@@ -11,7 +11,6 @@ import {
   FormControl,
   FormLabel,
   IconButton,
-  Textarea,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -23,22 +22,27 @@ import {
   Badge,
   Divider,
   useColorModeValue,
+  Flex,
 } from '@chakra-ui/react';
 
 import { ViewIcon } from '@chakra-ui/icons';
 
-import { fetchIncidenciaDetalles, fetchDetallesIncidenciaAtendida } from '../../../actions/incidencia';
-import { fetchHistorialPersona } from '../../../actions/historialpersona'; 
+import { fetchIncidenciaDetalles } from '../../../actions/incidencia';
+import { fetchHistorialPersona } from '../../../actions/historialpersona';
 import Moment from 'moment';
 
-const IncidenciaDetalles = props => {
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+//import parse from 'html-react-parser';
+
+const IncidenciaDetalles = (props) => {
   const colorStatus = useColorModeValue('gray.700', 'white');
   const bgAcordion = useColorModeValue('gray.100', 'gray.600');
 
   const [openCreate, setOpenCreate] = React.useState(false);
 
   const [detalleIncidencia, setDetalleIncidencia] = useState([]);
-  const [detalleIncidenciaAtendida, setDetalleIncidenciaAtendida] = useState([]);
+  // const [detalleIncidenciaAtendida, setDetalleIncidenciaAtendida] = useState([]);
   const [incidenciaHistorial, setIncidenciaHistorial] = useState([]);
   const [incidenciaMotivo, setIncidenciaMotivo] = useState([]);
   const [incidenciaOrigen, setIncidenciaOrigen] = useState([]);
@@ -48,36 +52,38 @@ const IncidenciaDetalles = props => {
   const [incidenciaPersona, setIncidenciaPersona] = useState([]);
   const [incidenciaPerfilPersona, setIncidenciaPerfilPersona] = useState([]);
   const [incidenciaPersonaAsignado, setIncidenciaPersonaAsignado] = useState([]);
+  const [incidenciaPersonaReporta, setIncidenciaPersonaReporta] = useState([]);
   const [incidenciaPerfilPersonaAsignado, setIncidenciaPerfilPersonaAsignado] = useState([]);
-  const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState(null);
+  const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState('');
 
   const obtenerIncideciadetalle = async () => {
     await fetchIncidenciaDetalles(props.rowId).then(incidencia => {
-      setDetalleIncidencia(incidencia);
-      setIncidenciaHistorial(incidencia.historialIncidencia);
-      setIncidenciaMotivo(incidencia.motivo);
-      setIncidenciaOrigen(incidencia.origen);
-      setIncidenciaOficina(incidencia.oficina);
-      setIncidenciaOrgano(incidencia.oficina.organo);
-      setIncidenciaSede(incidencia.oficina.organo.sede);
-      setIncidenciaPersona(incidencia.persona);
-      setIncidenciaPerfilPersona(incidencia.persona.perfilPersona);
-      if (incidencia.historialIncidencia.persona_asignado === null) {
+      setDetalleIncidencia(incidencia.data);
+      var incidenciaHistorialFilter = [];
+      incidenciaHistorialFilter = incidencia.data.historialIncidencia.filter(historial => historial.estado === 'A');
+      setIncidenciaHistorial(incidenciaHistorialFilter);
+      setIncidenciaMotivo(incidencia.data.motivo);
+      setIncidenciaOrigen(incidencia.data.origen);
+      setIncidenciaOficina(incidencia.data.oficina);
+      setIncidenciaOrgano(incidencia.data.oficina.organo);
+      setIncidenciaSede(incidencia.data.oficina.organo.sede);
+      setIncidenciaPersona(incidencia.data.persona);
+      setIncidenciaPerfilPersona(incidencia.data.persona.perfilPersona);
+      setIncidenciaPersonaReporta(incidenciaHistorialFilter.map(persona => persona.persona_notifica));
+      fetchHistorialPersona(incidencia.data.persona.idpersona).then(historial => {
+        setIncidenciaUsuarioCargo(historial.cargo.cargo);
+      })
+      // fetchDetallesIncidenciaAtendida(incidencia.data.idIncidencia).then((atendida) => {
+      //   setDetalleIncidenciaAtendida(atendida);
+      // }).catch((error) => {
+      //   console.log(error);
+      // });
+      if (incidenciaHistorialFilter.persona_asignado === null) {
         setIncidenciaPersonaAsignado(null);
       } else {
-        setIncidenciaPersonaAsignado(incidencia.historialIncidencia.persona_asignado);
-        setIncidenciaPerfilPersonaAsignado(incidencia.historialIncidencia.persona_asignado.perfilPersona);
+        setIncidenciaPersonaAsignado(incidenciaHistorialFilter.map(persona => persona.persona_asignado));
+        setIncidenciaPerfilPersonaAsignado(incidenciaHistorialFilter.map(persona => persona.persona_asignado?.perfilPersona));
       }
-      fetchHistorialPersona(incidencia.persona.idpersona).then(historial => {
-        setIncidenciaUsuarioCargo(historial.cargo.cargo)
-      })
-
-      fetchDetallesIncidenciaAtendida(incidencia.idIncidencia).then((atendida) => {
-        setDetalleIncidenciaAtendida(atendida);
-      }).catch((error) => {
-        console.log(error);
-      });
-
     });
   };
 
@@ -97,8 +103,8 @@ const IncidenciaDetalles = props => {
         variant={'outline'}
         colorScheme={'facebook'}
         onClick={handleClickOpenCreate}
-        fontSize={'20px'}
         size={'sm'}
+        fontSize={'20px'}
         _focus={{ boxShadow: 'none' }}
       />
 
@@ -106,7 +112,7 @@ const IncidenciaDetalles = props => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'xl'}
+        size={"xl"}
       >
         <DrawerOverlay />
         <DrawerContent>
@@ -146,23 +152,79 @@ const IncidenciaDetalles = props => {
                     fontSize={'11px'}
                     p={0.5}
                     colorScheme={
-                      incidenciaHistorial.estadoIncidencia === 'P'
+                      incidenciaHistorial[0]?.estadoIncidencia === 'P'
                         ? 'red'
-                        : incidenciaHistorial.estadoIncidencia === 'T'
-                        ? 'yellow'
-                        : 'green'
+                        : incidenciaHistorial[0]?.estadoIncidencia === 'T'
+                          ? 'yellow'
+                          : 'green'
                     }
                   >
-                    {incidenciaHistorial.estadoIncidencia === 'P'
+                    {incidenciaHistorial[0]?.estadoIncidencia === 'P'
                       ? 'PENDIENTE'
-                      : incidenciaHistorial.estadoIncidencia === 'T'
-                      ? 'EN TRÁMITE'
-                      : 'ATENDIDO'}
+                      : incidenciaHistorial[0]?.estadoIncidencia === 'T'
+                        ? 'EN TRÁMITE'
+                        : 'ATENDIDO'}
                   </Badge>
                 </Box>
               </SimpleGrid>
             </Box>
-            <Box flex="1" textAlign="center" mt={4}>
+            <Flex w='full' mt={2}>
+              <Box flex="1" textAlign="center">
+                <FormControl>
+                  <FormLabel
+                    fontSize={'14px'}
+                    textAlign="center"
+                    fontWeight={'bold'}
+                  >
+                    DESCRIPCIÓN DE LA INCIDENCIA
+                  </FormLabel>
+                  <ReactQuill 
+                    style={{
+                      border: '1px solid #385898', 
+                      borderRadius: '5px', 
+                      color: '#385898',
+                      fontSize: '13px',
+                      fontWeight: 'bold',
+                      maxHeight: '60px',
+                    }} 
+                    scrollingContainer="true" 
+                    tabIndex={2} 
+                    theme="bubble" 
+                    value={detalleIncidencia.descripcion} 
+                    readOnly={true} 
+                  />
+                  {/* <Textarea
+                    fontSize={'13px'}
+                    textColor={'blue.500'}
+                    textAlign="center"
+                    size={'sm'}
+                    fontWeight={'bold'}
+                    rows={2}
+                    value={detalleIncidencia.descripcion}
+                    readOnly
+                  /> */}
+                </FormControl>
+              </Box>
+              {/* <Box textAlign="center" w="auto">
+                <FormControl>
+                  <FormLabel
+                    fontSize={'14px'}
+                    textAlign="center"
+                    fontWeight={'bold'}
+                  >
+                    MAS DETALLES
+                  </FormLabel>
+                  <IconButton
+                    icon={<FaFileArchive />}
+                    variant={'outline'}
+                    colorScheme={'telegram'}
+                    size={'lg'}
+                    fontSize={'30px'}
+                    _focus={{ boxShadow: 'none' }} />
+                </FormControl>
+              </Box> */}
+            </Flex>
+            {/* <Box flex="1" textAlign="center" mt={4}>
               <FormControl>
                 <FormLabel
                   fontSize={'14px'}
@@ -182,9 +244,9 @@ const IncidenciaDetalles = props => {
                   readOnly
                 />
               </FormControl>
-            </Box>
+            </Box> */}
             {/* Acordion items */}
-            <Accordion defaultIndex={[0, 1, 2]} mt={2} allowMultiple>
+            <Accordion defaultIndex={[0, 2,3]} mt={2} allowMultiple>
               <AccordionItem>
                 <AccordionButton
                   _focus={{ boxShadow: 'none' }}
@@ -196,13 +258,13 @@ const IncidenciaDetalles = props => {
                     textAlign="center"
                     fontWeight={'bold'}
                   >
-                    DETALLES DEL USUARIO
+                    DETALLES DEL USUARIO CON EL PROBLEMA
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel pb={2}>
                   <Box flex="1" textAlign="center" fontSize={'13px'}>
-                    <SimpleGrid columns={3} spacing={1}>
+                    <SimpleGrid columns={4} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>NOMBRES</Text>
                         <Text>{incidenciaPersona.nombre}</Text>
@@ -226,10 +288,18 @@ const IncidenciaDetalles = props => {
                       <Box>
                         <Text fontWeight={'bold'}>CORREO ELECTRÓNICO</Text>
                         <Text>{incidenciaPersona.correo}</Text>
-                      </Box>                 
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>TELEFONO</Text>
+                        <Text>{incidenciaPersona.telefono}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>ANEXO</Text>
+                        <Text>{incidenciaPersona.anexo}</Text>
+                      </Box>
                     </SimpleGrid>
                     <Divider mt={1} mb={1} />
-                    <SimpleGrid columns={[2,4,4]} spacing={1}>
+                    <SimpleGrid columns={[2, 4, 4]} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>SEDE</Text>
                         <Text>{incidenciaSede.sede}</Text>
@@ -250,74 +320,137 @@ const IncidenciaDetalles = props => {
                   </Box>
                 </AccordionPanel>
               </AccordionItem>
-              { incidenciaPersonaAsignado === null ?
-                (
-                  <AccordionItem>
+              <AccordionItem>
                 <AccordionButton
                   _focus={{ boxShadow: 'none' }}
                   _expanded={{ bg: bgAcordion, color: colorStatus }}
                 >
                   <Box
                     flex="1"
+                    fontSize={'14px'}
                     textAlign="center"
                     fontWeight={'bold'}
-                    fontSize={'14px'}
                   >
-                    ESTA INCIDENCIA NO ESTÁ ASIGNADO A NINGÚN TÉCNICO
+                    DETALLES DEL USUARIO QUIEN REPORTÓ
                   </Box>
-                </AccordionButton>
-                </AccordionItem>
-                ) : (
-              <AccordionItem>
-                <AccordionButton
-                  _focus={{ boxShadow: 'none' }}
-                  _expanded={{ bg: bgAcordion, color: colorStatus }}
-                >
-                    <Box
-                      flex="1"
-                      textAlign="center"
-                      fontWeight={'bold'}
-                      fontSize={'14px'}
-                    >
-                      DETALLES DEL TÉCNICO ASIGNADO
-                    </Box>
-                  <AccordionIcon/>
+                  <AccordionIcon />
                 </AccordionButton>
                 <AccordionPanel pb={2}>
                   <Box flex="1" textAlign="center" fontSize={'13px'}>
-                    <SimpleGrid columns={3} spacing={1}>
+                    <SimpleGrid columns={4} spacing={1}>
                       <Box>
                         <Text fontWeight={'bold'}>NOMBRES</Text>
-                        <Text>{incidenciaPersonaAsignado.nombre}</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.nombre}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>APELLIDOS</Text>
-                        <Text>{incidenciaPersonaAsignado.apellido}</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.apellido}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>DNI</Text>
-                        <Text>{incidenciaPersonaAsignado.dni}</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.dni}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>PERFIL PERSONA</Text>
-                        <Text>{incidenciaPerfilPersonaAsignado.perfil}</Text>
+                        <Text>{incidenciaPerfilPersona.perfil}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>NUMERO DE CELULAR</Text>
-                        <Text>{incidenciaPersonaAsignado.celular}</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.celular}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>CORREO ELECTRÓNICO</Text>
-                        <Text>{incidenciaPersonaAsignado.correo}</Text>
-                      </Box>   
+                        <Text>{incidenciaPersonaReporta[0]?.correo}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>TELEFONO</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.telefono}</Text>
+                      </Box>
+                      <Box>
+                        <Text fontWeight={'bold'}>ANEXO</Text>
+                        <Text>{incidenciaPersonaReporta[0]?.anexo}</Text>
+                      </Box>
                     </SimpleGrid>
                   </Box>
                 </AccordionPanel>
               </AccordionItem>
-              )}
-            </Accordion>
-            { detalleIncidenciaAtendida.length === 0 ?
+              {incidenciaPersonaAsignado[0] === null ?
                 (
+                  <AccordionItem>
+                    <AccordionButton
+                      _focus={{ boxShadow: 'none' }}
+                      _expanded={{ bg: bgAcordion, color: colorStatus }}
+                    >
+                      <Box
+                        flex="1"
+                        textAlign="center"
+                        fontWeight={'bold'}
+                        fontSize={'14px'}
+                        color={'red.500'}
+                      >
+                        ESTA INCIDENCIA NO ESTÁ ASIGNADO A NINGÚN TÉCNICO
+                      </Box>
+                    </AccordionButton>
+                  </AccordionItem>
+                ) : (
+                  <AccordionItem>
+                    <AccordionButton
+                      _focus={{ boxShadow: 'none' }}
+                      _expanded={{ bg: bgAcordion, color: colorStatus }}
+                    >
+                      <Box
+                        flex="1"
+                        textAlign="center"
+                        fontWeight={'bold'}
+                        fontSize={'14px'}
+                      >
+                        DETALLES DEL TÉCNICO ASIGNADO
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                    <AccordionPanel pb={2}>
+                      <Box flex="1" textAlign="center" fontSize={'13px'}>
+                        <SimpleGrid columns={4} alignItems='center' spacing={1}>
+                          <Box>
+                            <Text fontWeight={'bold'}>NOMBRES</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.nombre}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>APELLIDOS</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.apellido}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>DNI</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.dni}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>PERFIL PERSONA</Text>
+                            <Text>{incidenciaPerfilPersonaAsignado[0]?.perfil}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>NUMERO DE CELULAR</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.celular}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>CORREO ELECTRÓNICO</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.correo}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>TELEFONO</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.telefono}</Text>
+                          </Box>
+                          <Box>
+                            <Text fontWeight={'bold'}>ANEXO</Text>
+                            <Text>{incidenciaPersonaAsignado[0]?.anexo}</Text>
+                          </Box>
+                        </SimpleGrid>
+                      </Box>
+                    </AccordionPanel>
+                  </AccordionItem>
+                )}
+            </Accordion>
+            {detalleIncidencia.descripcionIncidencia === null ?
+              (
                 <Box flex="1" textAlign="center" mt={2}>
                   <FormControl>
                     <FormLabel
@@ -326,12 +459,12 @@ const IncidenciaDetalles = props => {
                       fontWeight={'bold'}
                       color={'red.500'}
                     >
-                      ESTA INCIDENCIA AÚN NO TIENE UNA ATENCIÓN DE UN SOPORTE
+                      ESTA INCIDENCIA AÚN NO TIENE UNA ATENCIÓN DE UN SOPORTE T.
                     </FormLabel>
                   </FormControl>
                 </Box>
-                ) : (
-                <Box flex="1" textAlign="center" mt={2}>
+              ) : (
+                <Box flex="1" mt={2} justify="center" alignItems={'center'}>
                   <FormControl>
                     <FormLabel
                       fontSize={'14px'}
@@ -340,20 +473,39 @@ const IncidenciaDetalles = props => {
                     >
                       DESCRIPCIÓN DE LA ATENCIÓN DE LA INCIDENCIA
                     </FormLabel>
-                    <Textarea
+                    {/* <Textarea
                       fontSize={'13px'}
                       textColor={'green.500'}
                       textAlign="center"
                       size={'sm'}
                       fontWeight={'bold'}
                       rows={2}
-                      value={detalleIncidenciaAtendida.descripcion}
+                      value={parse(detalleIncidenciaAtendida.descripcion)}
                       readOnly
-                    />
+                    /> */}
+                    <Box flex="1" mt={2} textAlign="center" alignItems={'center'}>
+                      <ReactQuill
+                        style={{
+                          border: '1px solid #38a169', 
+                          borderRadius: '5px', 
+                          color: '#38a169',
+                          fontWeight: 'bold',
+                          fontSize: '13px',
+                          maxHeight: '60px',
+                        }} 
+                        theme="bubble"
+                        value={detalleIncidencia?.descripcionIncidencia?.descripcion}
+                        rows={2}
+                        scrollingContainer="true" 
+                        tabIndex={2} 
+                        readOnly
+                      />
+                      {/* {parse(detalleIncidenciaAtendida.descripcion)} */}
+                    </Box>
                   </FormControl>
                 </Box>
-                ) }
-           
+              )}
+
           </DrawerBody>
           <DrawerFooter>
             <Button colorScheme={'facebook'} onClick={handleCloseModal}>

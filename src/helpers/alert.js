@@ -13,9 +13,10 @@ import {
 import Swal from 'sweetalert2';
 
 export const AlertChackra = (icon, title, message) => {
+  
   const { onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef();
-  console.log('abriendo alerta chackra')
+
   return (
     <>
       <AlertDialog

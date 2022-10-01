@@ -4,17 +4,6 @@ import {
   Box,
   Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -22,7 +11,6 @@ import {
   AlertDialogFooter,
   AlertDialog,
   Switch,
-  Select,
   Text,
   Badge,
   HStack,
@@ -34,11 +22,11 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
 import {
-  deletePerfilPersona,
-  updatePerfilPersona,
-} from '../../../actions/perfilPersona';
+  deletePerfilPersona } from '../../../actions/perfilPersona';
 
 import PerfilPersonaAgregar from './PerfilPersonaAgregar';
+import { BsArrowDown } from 'react-icons/bs';
+import { PerfilPersonaEditar } from './PerfilPersonaEditar';
 
 export default function Tables() {
 
@@ -85,7 +73,7 @@ export default function Tables() {
       cell: row => (
         <div>
           <ModalPerfilPersonaEliminar row={row} />
-          <ModalPerfilPersonaEditar row={row} />
+          <PerfilPersonaEditar row={row} />
         </div>
       ),
       center: true,
@@ -143,129 +131,15 @@ export default function Tables() {
           pagination
           ignoreRowClick={true}
           responsive={true}
+          sortIcon={<BsArrowDown />}
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
+          fixedHeader
+          fixedHeaderScrollHeight="550px"
         />
       </DataTableExtensions>
     </Box>
   );
-}
-
-/**
- * 
- * @param { COMPONENTE MODAL EDITAR UN PERFIL PERSONA } param0 
- * @returns 
- */
-
-const ModalPerfilPersonaEditar = ({ row }) => {
-
-  const [openedit, setOpenEdit] = React.useState(false);
-  const dispatch = useDispatch();
-
-  const [indice, setIndice] = useState({
-    idPerfilPersona: null,
-    perfil: '',
-    descripcion: '',
-    activo: '',
-  });
-
-  const handleClickOpenEdit = index => {
-    setIndice(index);
-    setOpenEdit(true);
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const actualizarPerfilPersona = e => {
-    e.preventDefault();
-    dispatch(updatePerfilPersona(indice))
-      .then(() => {
-        handleCloseEdit(true);
-        console.log('perfilPersona actualizado');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-
-  return (
-    <>
-      <Button
-        onClick={() => handleClickOpenEdit(row)}
-        size={'xs'}
-        colorScheme={'facebook'}
-        _focus={{ boxShadow: "none" }}
-      >
-        EDITAR
-      </Button>
-      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader display={'flex'} justifyContent={'center'}>
-            EDITAR PERFIL
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                value={indice ? indice.idPerfilPersona : ''}
-                disabled={true}
-                hidden={true}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>PERFIL</FormLabel>
-              <Input
-                autoFocus
-                defaultValue={indice ? indice.perfil : ''}
-                type="text"
-                textTransform={'uppercase'}
-                onChange={e =>
-                  setIndice({ ...indice, perfil: (e.target.value).toUpperCase() })
-                }
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>DESCRIPCIÓN</FormLabel>
-              <Textarea
-                autoFocus
-                defaultValue={indice ? indice.descripcion : ''}
-                onChange={e =>
-                  setIndice({ ...indice, descripcion: (e.target.value).toUpperCase() })
-                }
-                placeholder="Descripcion"
-                textTransform={'uppercase'}
-                type="text"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>ESTADO</FormLabel>
-              <Select
-                defaultValue={indice ? indice.activo : ''}
-                onChange={e =>
-                  setIndice({ ...indice, activo: e.target.value })
-                }
-              >
-                <option value="S">ACTIVO</option>
-                <option value="N">INACTIVO</option>
-              </Select>
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={e => actualizarPerfilPersona(e)}
-              colorScheme="green"
-              mr={3}
-            >
-              ACTUALIZAR
-            </Button>
-            <Button onClick={handleCloseEdit}>Cancelar</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  )
 }
 
 /**

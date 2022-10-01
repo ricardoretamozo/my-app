@@ -4,7 +4,7 @@ import { getCargo } from '../components/ui/cargo/cargo';
 
 // CREATE SEDE
 
-export const createCargo = data => {
+export const createCargo = (data) => {
   return async dispatch => {
     const response = await fetchToken(
       `cargos`,
@@ -15,14 +15,11 @@ export const createCargo = data => {
       'POST'
     );
 
-    const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
       dispatch(getCargo(await loadCargo()));
-
-      notification('Cargo registrado correctamente.', body.message, 'success');
+      notification('Cargo registrado', 'Cargo se ha registrado correctamente.', 'success');
     } else {
-      notification('No se pudo registrar el Cargo', body.error, 'error');
+      notification('Error de registro', 'No se pudo registrar el Cargo', 'error');
     }
   };
 };
@@ -30,33 +27,35 @@ export const createCargo = data => {
 // LIST CARGO
 
 export const fetchCargos = async () => {
-  const response = await fetchToken('cargos');
-  const body = await response.json();
-  const Cargo = {};
-  const data = [];
-  body.forEach(cargo => {
-    data.push({
-      idCargo: cargo.idCargo,
-      cargo: cargo.cargo,
-      activo: cargo.activo,
-    });
-  });
-  Cargo.data = data;
-  return Cargo;
+  try {
+    const response = await fetchToken('cargos');
+    if (!response.ok) {
+      throw new Error(response.status);
+    } else {
+      const data = await response.json();
+      const Cargo = {};
+      Cargo.data = data;
+      return Cargo;
+    }
+  } catch (error) {
+    console.log("WARN " + error);
+  }
 };
 
 export const fetchCargo = async (id) => {
-  const response = await fetchToken('cargos/listall/' + id);
-  const body = await response.json();
-  var Cargo = {};
-  const data = [];
-  Cargo = {
-    idCargo: body.idCargo,
-    cargo: body.cargo,
-    activo: body.activo,  
-  };
-  Cargo.data = data;
-  return Cargo;
+  try {
+    const response = await fetchToken(`cargos/${id}`);
+    if (!response.ok) {
+      throw new Error(response.status);
+    } else {
+      const data = await response.json();
+      const Cargo = {};
+      Cargo.data = data;
+      return Cargo;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 //  UPDATE SEDE
@@ -73,13 +72,11 @@ export const updateCargo = data => {
       'PUT'
     );
 
-    const body = await response.json();
-
     if (response.status === 200) {
       dispatch(getCargo(await loadCargo()));
-      notification('Cargo actualizado correctamente', body.message, 'success');
+      notification('Cargo actualizado', 'Cargo se ha actualizado correctamente', 'success');
     } else {
-      notification('No se pudo actualizar el Cargo', body.error, 'error');
+      notification('Error de actualización', 'No se pudo actualizar el Cargo', 'error');
     }
   };
 };
@@ -90,13 +87,11 @@ export const deleteCargo = id => {
   return async dispatch => {
     const response = await fetchToken(`cargos/${id}`, '', 'DELETE');
 
-    const body = await response.json();
-
     if (response.status === 200) {
       dispatch(getCargo(await loadCargo()));
-      notification('Cargo actualizado correctamente', body.message, 'success');
+      notification('Cargo modificado', 'Cargo se ha actualizado su estado correctamente', 'success');
     } else {
-      notification('No se pudo eliminar el Cargo', body.error, 'error');
+      notification('Error de actualización', 'No se pudo eliminar el Cargo', 'error');
     }
   };
 };
@@ -104,18 +99,17 @@ export const deleteCargo = id => {
 // Refrescar la tabla
 
 export const loadCargo = async () => {
-  const response = await fetchToken('cargos');
-  const body = await response.json();
-  const Cargo = {};
-  const data = [];
-
-  body.forEach(cargo => {
-    data.push({
-      idCargo: cargo.idCargo,
-      cargo: cargo.cargo,
-      activo: cargo.activo,
-    });
-  });
-  Cargo.data = data;
-  return Cargo;
+  try {
+    const response = await fetchToken('cargos');
+    if (!response.ok) {
+      throw new Error(response.status);
+    } else {
+      const data = await response.json();
+      const Cargo = {};
+      Cargo.data = data;
+      return Cargo;
+    }
+  } catch (error) {
+    console.log(error);
+  }
 };

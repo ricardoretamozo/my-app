@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Button,
   Modal,
@@ -10,7 +10,7 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Textarea,
+  Text,
   Input,
   Radio,
   RadioGroup,
@@ -26,6 +26,21 @@ import {
   Td,
   TableContainer,
   Stack,
+  Divider,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  ButtonGroup,
+  PopoverFooter,
 } from '@chakra-ui/react';
 
 import { notification } from '../../../helpers/alert';
@@ -46,22 +61,42 @@ import { getIncidenciasAsignadasSoporte } from './soporte/incidencia';
 import { buscarPersonaApellido } from '../../../actions/persona';
 import { fetchHistorialPersona } from '../../../actions/historialpersona';
 
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { formats, modules } from '../../../helpers/quillConfig';
+import { createMotivo1, fetchMotivos } from '../../../actions/motivo';
+import { createOrigen1, fetchOrigen } from '../../../actions/origenIncidencia';
+
 const IncidenciaAgregar = () => {
   const dispatch = useDispatch();
   const usuario = store.getState().auth;
   const { identificador } = useSelector(state => state.auth);
-  
+
   const motivoData = store.getState().motivo.rows;
   const origenData = store.getState().origenIncidencia.rows;
-  
-  const [openCreate, setOpenCreate] = React.useState(false);
-  const [openSearch, setOpenSearchUsuarios] = React.useState(false);
-  const [radioValue, setRadioValue] = useState('apellido');
 
-  const [usuarioDNI, setUsuarioDNI] = useState(null);
-  const [usuarioApellido, setUsuarioApellido] = useState(null);
+  // BUSQUEDA DE USUARIO QUIEN REPORTÓ O NOTIFICÓ LA INCIDENCIA
+
+  const [openSearch1, setOpenSearchUsuarios1] = useState(false);
+  const [usuarioApellido1, setUsuarioApellido1] = useState('');
+  const [indiceUsuario1, setIndiceUsuario1] = useState(null);
+  const [usuarioDataNombre1, setUsuarioDataNombre1] = useState(null);
+
+
+  const [openCreate, setOpenCreate] = useState(false);
+  const [openSearch, setOpenSearchUsuarios] = useState(false);
+  const [radioValue, setRadioValue] = useState('apellido');
+  const [radioUserValue, setRadioUserValue] = useState('mismo');
+
+  const [usuarioDNI, setUsuarioDNI] = useState('');
+  const [usuarioNotificaDNI, setUsuarioNotificaDNI] = useState('');
+  const [usuarioApellido, setUsuarioApellido] = useState('');
   const [usuarioData, setUsuarioData] = useState([]);
+  const [usuarioNotificaData, setUsuarioNotificaData] = useState([]);
+  const [dataNombres, setDataNombres] = useState('');
+  const [dataNombresNotifico, setDataNombresNotifico] = useState('');
   const [usuarioListData, setUsuarioListData] = useState([]);
+  const [usuarioListData1, setUsuarioListData1] = useState([]);
   const [usuarioDataNombre, setUsuarioDataNombre] = useState(null);
   const [usuarioSede, setUsuarioSede] = useState(null);
   const [usuarioOrgano, setUsuarioOrgano] = useState(null);
@@ -71,6 +106,9 @@ const IncidenciaAgregar = () => {
   const [indiceMotivo, setIndiceMotivo] = useState(null);
   const [indiceOrigen, setIndiceOrigen] = useState(null);
   const [indiceUsuario, setIndiceUsuario] = useState(null);
+
+  const [incidenciaArchivos, setIncidenciaArchivos] = useState(null);
+  const [usuarioNotificaId, setUsuarioNotificaId] = useState(null);
 
   const [indiceIncidencia, setIndiceIncidencia] = useState({
     idIncidencia: null,
@@ -103,38 +141,65 @@ const IncidenciaAgregar = () => {
     }
   });
 
+  const inputRefDNI = useRef(null);
+  const inputRefApellido = useRef(null);
+  const inputRefDNI1 = useRef(null);
+  const inputRefApellido1 = useRef(null);
+
   const handleClickOpenCreate = () => {
     setOpenCreate(true);
   };
 
   const handleResetValues = () => {
     setUsuarioData([]);
-    setUsuarioDNI(null);
+    setUsuarioDNI('');
     setUsuarioSede(null);
     setUsuarioOrgano(null);
     setUsuarioOficina(null);
     setUsuarioCargo(null);
     setIndiceUsuario(null);
-    setUsuarioApellido(null);
-    setUsuarioDataNombre(null);
+    setUsuarioApellido('');
+    setUsuarioDataNombre('');
+    setDataNombres('');
+    inputRefDNI.current.value = "";
+    inputRefApellido.current.value = "";
+  }
+
+  const handleResetValues1 = () => {
+    setUsuarioNotificaId(null)
+    setUsuarioData([]);
+    setUsuarioDNI('');
+    setIndiceUsuario1(null);
+    setUsuarioApellido1('');
+    setUsuarioDataNombre1('');
+    setDataNombresNotifico('');
+    setDataNombres('');
+    inputRefDNI1.current.value = "";
+    inputRefApellido1.current.value = "";
   }
 
   const handleCloseModal = () => {
     setIndiceMotivo(null);
     setIndiceOrigen(null);
+    setUsuarioNotificaData([]);
+    setDataNombresNotifico('');
     handleResetValues();
+    handleResetValues1();
     setRadioValue('apellido');
+    setRadioUserValue('mismo');
     setOpenCreate(false);
+    setUsuarioNotificaId(null);
   };
 
   const fetchDataSoporteIncidencias = async () => {
     await fetchIncidenciaSoporte(identificador).then((res) => {
       dispatch(getIncidenciasAsignadasSoporte(res));
+    }).catch((err) => {
+      console.log("WARN " + err);
     });
   }
 
-  const crearIncidencia = e => {
-    e.preventDefault();
+  const crearIncidencia = () => {
     var incidencia = {
       persona: {
         idpersona: indiceUsuario === null ? usuarioData.idpersona : indiceUsuario,
@@ -146,26 +211,30 @@ const IncidenciaAgregar = () => {
         idOrigen: indiceOrigen,
       },
       descripcion: indiceIncidencia.descripcion,
-      historialIncidencia: (usuario.rol !== '[SOPORTE TECNICO]') ? ({
+      historialIncidencia: usuario.rol === '[SOPORTE TECNICO]' ? [{
         persona_registro: {
-          idpersona: Number(identificador),
-        },
-        estado: false,
-      }) : ({
-        persona_registro: {
-          idpersona: Number(identificador),
+          idpersona: identificador,
         },
         persona_asignado: {
-          idpersona: Number(identificador)
+          idpersona: identificador
         },
-        estado: true,
-      })
+        persona_notifica: {
+          idpersona: usuarioNotificaId === null ? usuarioListData[0].idpersona : usuarioNotificaId
+        }
+      }] : [{
+        persona_registro: {
+          idpersona: identificador,
+        },
+        persona_notifica: {
+          idpersona: usuarioNotificaId === null ? usuarioNotificaData.idpersona : usuarioNotificaId
+        }
+      }],
+      archivo: incidenciaArchivos,
     }
     dispatch(createIncidencia(incidencia))
       .then(() => {
-        // notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'error', 'modalCrearIncidencia');
-        handleCloseModal(true);
         fetchDataSoporteIncidencias();
+        handleCloseModal(true);
       })
       .catch(err => {
         console.log(err);
@@ -184,6 +253,19 @@ const IncidenciaAgregar = () => {
         handleResetValues();
       });
       setUsuarioData(res);
+      setUsuarioNotificaData(res);
+      setDataNombres(res.nombre + ' ' + res.apellido);
+    }).catch(() => {
+      notification('Usuario no encontrado', 'No se pudo encontrar el Usuario', 'error', 'modalCrearIncidencia');
+      handleResetValues();
+    });
+  }
+
+  const buscarPorDni1 = async () => {
+    await buscarUsuarioDni(usuarioNotificaDNI).then((res) => {
+      // setUsuarioNotificaData(res);
+      setUsuarioNotificaId(res.idpersona);
+      setDataNombresNotifico(res.nombre + ' ' + res.apellido);
     }).catch(() => {
       notification('Usuario no encontrado', 'No se pudo encontrar el Usuario', 'error', 'modalCrearIncidencia');
       handleResetValues();
@@ -202,12 +284,30 @@ const IncidenciaAgregar = () => {
     }).catch(() => {
       notification('Usuario no encontrado', 'No se pudo encontrar el usuario', 'error', 'modalCrearIncidencia');
       setUsuarioData([]);
+      handleResetValues()
+    })
+  }
+
+  const buscarPorApellido1 = async () => {
+    await buscarPersonaApellido(usuarioApellido1).then((res) => {
+      if (res.data.length > 0) {
+        setUsuarioListData1(res.data);
+        setOpenSearchUsuarios1(true);
+      } else {
+        notification('Usuario no encontrado', 'No se pudo encontrar el usuario con ese apellido', 'error', 'modalCrearIncidencia');
+        handleResetValues()
+      }
+    }).catch(() => {
+      notification('Usuario no encontrado', 'No se pudo encontrar el usuario', 'error', 'modalCrearIncidencia');
+      setUsuarioData([]);
+      handleResetValues()
     })
   }
 
   const seleccionarUsuario = async (usuario) => {
     await fetchHistorialPersona(usuario).then(historial => {
       setUsuarioDataNombre(historial.persona.nombre + ' ' + historial.persona.apellido);
+      setUsuarioNotificaData(historial.persona);
       setUsuarioSede(historial.oficina.organo.sede.sede)
       setUsuarioOrgano(historial.oficina.organo.organo)
       setUsuarioOficina(historial.oficina.oficina)
@@ -219,13 +319,29 @@ const IncidenciaAgregar = () => {
     })
   }
 
+  const seleccionarUsuario1 = async (usuario) => {
+    await fetchHistorialPersona(usuario).then(historial => {
+      setUsuarioDataNombre1(historial.persona.nombre + ' ' + historial.persona.apellido);
+      setUsuarioNotificaData(historial.persona);
+      setUsuarioNotificaId(historial.persona.idpersona);
+    }).catch(() => {
+      setOpenSearchUsuarios1(false);
+      notification('Error al Seleccionar', 'No se puede crear incidencia para este usuario, no tiene asignado a ninguna sede, organo, oficina', 'info', 'modalCrearIncidencia');
+      handleResetValues();
+    })
+  }
+
   const handleSearchDNI = () => {
     buscarPorDni();
   }
 
+  const handleSearchDNI1 = () => {
+    buscarPorDni1();
+  }
+
   const handleChangeMotivo = value => {
     if (value === null) {
-      return "--------- SELECCIONE UN MOTIVO -----------"
+      return "SELECCIONE UN MOTIVO"
     } else {
       setIndiceMotivo(value.value);
     }
@@ -233,13 +349,13 @@ const IncidenciaAgregar = () => {
 
   const handleChangeOrigen = value => {
     if (value === null) {
-      return "--------- SELECCIONE UN ORIGEN -----------"
+      return "SELECCIONE UN ORIGEN"
     } else {
       setIndiceOrigen(value.value);
     }
   };
 
-  const handleChangeRadio = value => {
+  const handleChangeRadio = (value) => {
     handleResetValues();
     setRadioValue(value);
   }
@@ -253,17 +369,114 @@ const IncidenciaAgregar = () => {
     }
   }
 
+  const handleChangeUsuario1 = (value) => {
+    if (value === null) {
+      return "SELECCIONE UN USUARIO"
+    } else {
+      seleccionarUsuario1(value.value);
+      setIndiceUsuario1(value.value);
+    }
+  }
+
   const handleSearchApellido = () => {
     buscarPorApellido();
+  }
+
+  const handleSearchApellido1 = () => {
+    buscarPorApellido1();
   }
 
   const handleCloseModalSearch = () => {
     setOpenSearchUsuarios(false);
   }
 
+  const handleCloseModalSearch1 = () => {
+    setOpenSearchUsuarios1(false);
+  }
+
+  const handleSubmitFile = (e) => {
+    setIncidenciaArchivos(e.target.files[0]);
+  }
+
+  const handleChangeUserRadio = (value) => {
+    handleResetValues1();
+    setRadioUserValue(value);
+  }
+
+  // MOTIVOS DE LA INCIDENCIA AGREGAR Y LISTAR
+
+  const [motivos, setMotivos] = useState(motivoData);
+
+  const listarMotivos = async () => {
+    await fetchMotivos().then(res => {
+      setMotivos(res.data);
+    }).catch(() => {
+      notification('Error al listar', 'No se pudo listar los motivos', 'error', 'modalCrearIncidencia');
+    })
+  }
+
+  const initialMotivo = {
+    idMotivo: null,
+    motivo: "",
+  }
+
+  const [dataMotivo, setMotivo] = useState(initialMotivo);
+
+  const { motivo } = dataMotivo;
+
+  const inputRefMotivo = useRef(null);
+
+  const saveMotivo = () => {
+    dispatch(createMotivo1({ motivo }))
+      .then(() => {
+        listarMotivos();
+        notification('Motivo creado', 'Se ha creado el motivo correctamente', 'success', 'modalCrearIncidencia');
+        inputRefMotivo.current.value = "";
+        setMotivo(initialMotivo);
+      }).catch(err => {
+        console.log(err);
+        notification('Error al crear', 'No se pudo crear el motivo', 'error', 'modalCrearIncidencia');
+      })
+  }
+
+  // ORIGENES DE LA INCIDENCIA AGREGAR Y LISTAR
+
+  const [origenes, setOrigenes] = useState(origenData);
+
+  const listarOrigenes = async () => {
+    await fetchOrigen().then(res => {
+      setOrigenes(res.data);
+    }).catch(() => {
+      notification('Error al listar', 'No se pudo listar los motivos', 'error', 'modalCrearIncidencia');
+    })
+  }
+
+  const initialOrigen = {
+    idOrigen: null,
+    origen: "",
+}
+
+const [dataOrigen, setOrigen] = useState(initialOrigen);
+
+const { origen } = dataOrigen;
+
+const inputRefOrigen = useRef(null);
+
+const saveOrigen = () => {
+    dispatch(createOrigen1({ origen }))
+        .then(() => {
+          listarOrigenes();
+          notification('Origen creado', 'Se ha creado el origen correctamente', 'success', 'modalCrearIncidencia');
+          inputRefOrigen.current.value = "";
+          setOrigen(initialOrigen);
+        }).catch(err => {
+            console.log(err);
+            notification('Error al crear', 'No se pudo crear el origen', 'error', 'modalCrearIncidencia');
+        })
+}
+
   return (
     <>
-
       <Button leftIcon={<AddIcon />} size="sm" onClick={handleClickOpenCreate} colorScheme={'facebook'} _focus={{ boxShadow: "none" }}>
         NUEVA INCIDENCIA
       </Button>
@@ -272,39 +485,136 @@ const IncidenciaAgregar = () => {
         id="modalCrearIncidencia"
         isOpen={openCreate}
         onClose={handleCloseModal}
-        size={'5xl'}
+        size={'full'}
       >
         <ModalOverlay />
-
-        <form onSubmit={crearIncidencia}>
           <ModalContent>
-            <ModalHeader>CREAR NUEVA INCIDENCIA</ModalHeader>
+            <ModalHeader>CREAR NUEVA INCIDENCIA PARA UN USUARIO</ModalHeader>
             <ModalCloseButton _focus={{ boxShadow: "none" }} />
-            <ModalBody pb={6}>
-              <FormControl isRequired>
-                <FormLabel>ORIGEN</FormLabel>
-                <Select
-                  placeholder="--------- SELECCIONE UN ORIGEN -----------"
-                  onChange={handleChangeOrigen}
-                  options={origenData.map(origen => ({
-                    value: origen.idOrigen,
-                    label: origen.origen
-                  }))}
-                  isSearchable
-                  isClearable
-                />
-              </FormControl>
+            <ModalBody>
+              <Stack direction={['column', 'column', 'row', 'row']} spacing={2} mb={2} justify="space-between" >
+                <Text fontWeight={'semibold'}>USUARIO QUIEN NOTIFICÓ</Text>
+                <RadioGroup onChange={handleChangeUserRadio} value={radioUserValue}>
+                  <Stack direction='row'>
+                    <Radio size='md' value='mismo' _focus={{ boxShadow: "none" }} defaultChecked={true}>EL MISMO USUARIO QUIEN REPORTÓ</Radio>
+                    <Radio size='md' value='otro' _focus={{ boxShadow: "none" }}>OTRO USUARIO</Radio>
+                  </Stack>
+                </RadioGroup>
+              </Stack>
 
-              <RadioGroup onChange={handleChangeRadio} value={radioValue} defaultValue={'apellido'} mt={4}>
+              <Stack direction={'column'} spacing={2} mt={2} hidden={radioUserValue === 'mismo'} >
+                <Tabs variant="enclosed-colored" w="full" size={'md'}>
+                  <TabList textAlign="center" justifyContent="center">
+                    <Tab _focus={{ boxShadow: "none" }} defaultChecked={true}>BUSQUEDA POR APELLIDOS</Tab>
+                    <Tab _focus={{ boxShadow: "none" }}>BUSQUEDA POR DNI</Tab>
+                  </TabList>
+                  <TabPanels>
+                    <TabPanel>
+                      <HStack spacing={10} mt={2}>
+                        <FormControl zIndex={0}>
+                          <FormLabel>BUSQUEDA POR APELLIDO DEL USUARIO CON PROBLEMAS</FormLabel>
+                          <InputGroup>
+                            <InputRightElement
+                              children={
+                                <IconButton
+                                  colorScheme='facebook'
+                                  onClick={handleSearchApellido1}
+                                  icon={<SearchIcon />}
+                                  _focus={{ boxShadow: "none" }}
+                                  disabled={usuarioApellido1 === null || usuarioApellido1.length < 3}
+                                />
+                              }
+                            />
+                            <Input placeholder="INGRESE EL APELLIDO" ref={inputRefApellido1} textTransform={'uppercase'} onChange={e => { setUsuarioApellido1(e.target.value.toUpperCase()) }} />
+                          </InputGroup>
+                        </FormControl>
+
+                        <Modal
+                          isOpen={openSearch1}
+                          onClose={handleCloseModalSearch1}
+                          size={'2xl'}
+                        >
+                          <ModalOverlay />
+                          <ModalContent>
+                            <ModalHeader>LISTA DE USUARIOS CON EL APELLIDO BUSCADO</ModalHeader>
+                            <ModalCloseButton _focus={{ boxShadow: "none" }} onClick={handleCloseModalSearch1} />
+                            <ModalBody pb={6}>
+                              <FormControl>
+                                <FormLabel>LISTA DE USUARIOS</FormLabel>
+                                <Select
+                                  placeholder=" SELECCIONE UN USUARIO "
+                                  onChange={handleChangeUsuario1}
+                                  options={usuarioListData1?.map(usuario => ({
+                                    value: usuario.idpersona,
+                                    label: usuario.apellido + ', ' + usuario.nombre
+                                  }))}
+                                  isSearchable
+                                  isClearable
+                                />
+                              </FormControl>
+                            </ModalBody>
+                            <ModalFooter>
+                              <Button onClick={handleCloseModalSearch1} disabled={indiceUsuario1 === null} colorScheme="facebook">ACEPTAR</Button>
+                            </ModalFooter>
+                          </ModalContent>
+                        </Modal>
+
+                        <FormControl isRequired>
+                          <FormLabel>NOMBRE DEL USUARIO</FormLabel>
+                          <Input placeholder='NOMBRES APELLIDOS' value={usuarioDataNombre1 ? usuarioDataNombre1 : ''} readOnly />
+                        </FormControl>
+                      </HStack>
+                    </TabPanel>
+                    <TabPanel>
+                      <HStack spacing={10} mt={2}>
+                        <FormControl zIndex={0}>
+                          <FormLabel>BUSQUEDA POR DNI</FormLabel>
+                          <InputGroup >
+                            <InputRightElement
+                              children={
+                                <IconButton
+                                  colorScheme='facebook'
+                                  onClick={handleSearchDNI1}
+                                  icon={<SearchIcon />}
+                                  _focus={{ boxShadow: "none" }}
+                                  disabled={usuarioNotificaDNI === '' || usuarioNotificaDNI.length < 8 || usuarioNotificaDNI.length > 8}
+                                />
+                              }
+                            />
+                            <Input placeholder="DIGITE EL DNI" ref={inputRefDNI1} onChange={e => { setUsuarioNotificaDNI(e.target.value) }} />
+                          </InputGroup>
+                        </FormControl>
+                        <FormControl isRequired>
+                          <FormLabel>NOMBRE DEL USUARIO QUIEN NOTIFICÓ</FormLabel>
+                          <Input placeholder='NOMBRES APELLIDOS' value={dataNombresNotifico ? dataNombresNotifico : ''} readOnly />
+                        </FormControl>
+                      </HStack>
+                    </TabPanel>
+                  </TabPanels>
+                </Tabs>
+                {/* <RadioGroup onChange={handleChangeRadio} value={radioValue} mt={2}>
                 <Stack direction='row'>
                   <Radio size='md' value='apellido' _focus={{ boxShadow: "none" }} defaultChecked={true}>BUSQUEDA POR APELLIDO</Radio>
                   <Radio size='md' value='dni' _focus={{ boxShadow: "none" }}>BUSQUEDA POR DNI</Radio>
                 </Stack>
-              </RadioGroup>
+              </RadioGroup> */}
+              </Stack>
 
-              <HStack spacing={2} mt={2} mb={2} hidden = { radioValue === 'apellido' } >
-                <FormControl isRequired = { radioValue === 'dni' } zIndex={0}>
-                  <FormLabel>BUSQUEDA DE USUARIO POR DNI</FormLabel>
+              <Divider borderWidth="1px" borderColor={'#0078ff'} />
+
+              <HStack spacing={2} mt={2} mb={2} justify="space-between">
+                <Text fontWeight={'semibold'}>USUARIO QUIEN TIENE EL PROBLEMA</Text>
+                <RadioGroup onChange={handleChangeRadio} value={radioValue} mt={2}>
+                  <Stack direction='row'>
+                    <Radio size='md' value='apellido' _focus={{ boxShadow: "none" }} defaultChecked={true}>BUSCAR POR APELLIDO</Radio>
+                    <Radio size='md' value='dni' _focus={{ boxShadow: "none" }}>BUSCAR POR DNI</Radio>
+                  </Stack>
+                </RadioGroup>
+              </HStack>
+
+              <HStack spacing={10} mt={2} hidden={radioValue === 'apellido'} >
+                <FormControl isRequired={radioValue === 'dni'} zIndex={0}>
+                  <FormLabel>BUSQUEDA POR DNI</FormLabel>
                   <InputGroup >
                     <InputRightElement
                       children={
@@ -313,21 +623,22 @@ const IncidenciaAgregar = () => {
                           onClick={handleSearchDNI}
                           icon={<SearchIcon />}
                           _focus={{ boxShadow: "none" }}
+                          disabled={usuarioDNI === '' || usuarioDNI.length < 8 || usuarioDNI.length > 8}
                         />
                       }
                     />
-                    <Input placeholder="DIGITE EL DNI" onChange={e => { setUsuarioDNI(e.target.value) }} />
+                    <Input placeholder="DIGITE EL DNI" ref={inputRefDNI} onChange={e => { setUsuarioDNI(e.target.value) }} />
                   </InputGroup>
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel>NOMBRE DEL USUARIO</FormLabel>
-                  <Input value={usuarioData.nombre + ' ' + usuarioData.apellido} isDisabled />
+                  <Input placeholder='NOMBRES APELLIDOS' value={dataNombres ? dataNombres : ''} readOnly />
                 </FormControl>
               </HStack>
 
-              <HStack spacing={2} mt={2} mb={2} hidden = { radioValue === 'dni' }>
-                <FormControl isRequired = { radioValue === 'apellido' } zIndex={0}>
-                  <FormLabel>BUSQUEDA POR APELLIDO DEL USUARIO</FormLabel>
+              <HStack spacing={10} mt={2} hidden={radioValue === 'dni'}>
+                <FormControl isRequired={radioValue === 'apellido'} zIndex={0}>
+                  <FormLabel>BUSQUEDA POR APELLIDOS</FormLabel>
                   <InputGroup>
                     <InputRightElement
                       children={
@@ -336,11 +647,11 @@ const IncidenciaAgregar = () => {
                           onClick={handleSearchApellido}
                           icon={<SearchIcon />}
                           _focus={{ boxShadow: "none" }}
-                          disabled = { usuarioApellido === null || usuarioApellido.length < 3 }
+                          disabled={usuarioApellido === null || usuarioApellido.length < 3}
                         />
                       }
                     />
-                    <Input placeholder="INGRESE EL APELLIDO"  textTransform={'uppercase'} onChange={e => { setUsuarioApellido(e.target.value.toUpperCase()) }} />
+                    <Input placeholder="INGRESE EL APELLIDO" ref={inputRefApellido} textTransform={'uppercase'} onChange={e => { setUsuarioApellido(e.target.value.toUpperCase()) }} />
                   </InputGroup>
                 </FormControl>
 
@@ -373,10 +684,10 @@ const IncidenciaAgregar = () => {
                     </ModalFooter>
                   </ModalContent>
                 </Modal>
-                
+
                 <FormControl isRequired>
                   <FormLabel>NOMBRE DEL USUARIO</FormLabel>
-                  <Input defaultValue={usuarioDataNombre ? usuarioDataNombre : ''} isDisabled />
+                  <Input placeholder='NOMBRES APELLIDOS' value={usuarioDataNombre ? usuarioDataNombre : ''} readOnly />
                 </FormControl>
               </HStack>
 
@@ -400,49 +711,153 @@ const IncidenciaAgregar = () => {
                   </Tbody>
                 </Table>
               </TableContainer>
-              <FormControl isRequired mt={4}>
-                <FormLabel>MOTIVO</FormLabel>
-                <Select
-                  placeholder="--------- SELECCIONE UN MOTIVO -----------"
-                  onChange={handleChangeMotivo}
-                  options={motivoData.map(motivo => ({
-                    value: motivo.idMotivo,
-                    label: motivo.motivo
-                  }))}
-                  isSearchable
-                  isClearable
-                  required
-                />
-              </FormControl>
-              <FormControl mt={4} isRequired>
+              <Divider mt={2} borderWidth="1px" borderColor={'#0078ff'} />
+              <HStack spacing={10} mt={2}>
+                <FormControl>
+                  <HStack mb={1} justify="space-between">
+                    <Text fontWeight={'semibold'}>ORIGEN</Text>
+                    <Popover placement='left'>
+                      <PopoverTrigger>
+                        <Button size='xs' leftIcon={<AddIcon />} _focus={{ boxShadow: "none" }} colorScheme="messenger">
+                          NUEVO
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent _focus={{ boxShadow: "none" }}>
+                        <PopoverArrow />
+                        <PopoverCloseButton _focus={{ boxShadow: "none" }} />
+                        <PopoverHeader>AGREGAR NUEVO</PopoverHeader>
+                        <PopoverBody>
+                          <FormControl>
+                            <FormLabel>ORIGEN</FormLabel>
+                            <Input
+                              textTransform={'uppercase'}
+                              placeholder="ORIGEN INCIDENCIA"
+                              ref={inputRefOrigen}
+                              type="text"
+                              fontSize={'xs'}
+                              onChange={(e) => { setOrigen({ ...dataOrigen, origen: e.target.value.toUpperCase() }) }}
+                            />
+                          </FormControl>
+                        </PopoverBody>
+                        <PopoverFooter flex="1" justifyContent="right">
+                          <ButtonGroup size="sm" w="full">
+                            <Button
+                              onClick={() => saveOrigen()}
+                              autoFocus
+                              disabled={dataOrigen.origen === "" ? true : false}
+                              colorScheme="green"
+                              _focus={{ boxShadow: "none" }}
+                            >GUARDAR</Button>
+                          </ButtonGroup>
+                        </PopoverFooter>
+                      </PopoverContent>
+                    </Popover>
+                  </HStack>
+                  <Select
+                    placeholder="SELECCIONE UN ORIGEN"
+                    onChange={handleChangeOrigen}
+                    options={origenes.map(origen => ({
+                      value: origen.idOrigen,
+                      label: origen.origen
+                    }))}
+                    isSearchable
+                  />
+                </FormControl>
+                <FormControl mt={2}>
+                  <HStack mb={1} justify="space-between">
+                    <Text fontWeight={'semibold'}>MOTIVO</Text>
+                    <Popover placement='left'>
+                      <PopoverTrigger>
+                        <Button size='xs' leftIcon={<AddIcon />} _focus={{ boxShadow: "none" }} colorScheme="messenger">
+                          NUEVO
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent _focus={{ boxShadow: "none" }}>
+                        <PopoverArrow />
+                        <PopoverCloseButton _focus={{ boxShadow: "none" }} />
+                        <PopoverHeader>AGREGAR NUEVO</PopoverHeader>
+                        <PopoverBody>
+                          <FormControl>
+                            <FormLabel>MOTIVO</FormLabel>
+                            <Input
+                              textTransform={'uppercase'}
+                              placeholder="MOTIVO INCIDENCIA"
+                              type={'text'}
+                              fontSize={'xs'}
+                              ref={inputRefMotivo}
+                              onChange={(e) => { setMotivo({ ...dataMotivo, motivo: (e.target.value).toUpperCase() }) }}
+                            />
+                          </FormControl>
+                        </PopoverBody>
+                        <PopoverFooter flex="1" justifyContent="right">
+                          <ButtonGroup size="sm" w="full">
+                            <Button
+                              onClick={() => saveMotivo()}
+                              autoFocus
+                              disabled={dataMotivo.motivo === "" ? true : false}
+                              colorScheme="green"
+                              _focus={{ boxShadow: "none" }}
+                            >GUARDAR</Button>
+                          </ButtonGroup>
+                        </PopoverFooter>
+                      </PopoverContent>
+                    </Popover>
+                  </HStack>
+                  <Select
+                    placeholder="SELECCIONE UN MOTIVO "
+                    onChange={handleChangeMotivo}
+                    options={motivos.map(motivo => ({
+                      value: motivo.idMotivo,
+                      label: motivo.motivo
+                    }))}
+                    isSearchable
+                    isClearable
+                    required
+                  />
+                </FormControl>
+              </HStack>
+              <FormControl mt={2} isRequired>
                 <FormLabel>DESCRIPCIÓN</FormLabel>
-                <Textarea
-                  onChange={e => {
+                <ReactQuill
+                  theme="snow"
+                  formats={formats}
+                  modules={modules}
+                  style={{
+                    textTransform: 'uppercase',
+                    textAlignLast: 'center'
+                  }}
+                  placeholder="Aqui describe la incidencia"
+                  onChange={(e) => {
                     setIndiceIncidencia({
                       ...indiceIncidencia,
-                      descripcion: e.target.value.toUpperCase(),
+                      descripcion: e.valueOf(),
                     });
                   }}
-                  placeholder='Aqui describe la incidencia'
-                  textTransform={'uppercase'}
-                  size='sm'
                 />
-              </FormControl>              
+              </FormControl>
+              <FormControl mt={2}>
+                <FormLabel>ARCHIVO(opcional)</FormLabel>
+                <Input
+                  type='file'
+                  onChange={handleSubmitFile}
+                  accept="image/*, .pdf, .doc, .docx, .xls, .xlsx, .ppt, .pptx, .txt"
+                />
+              </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button 
-                disabled={indiceMotivo === null ? true : false || indiceOrigen === null ? true : false || radioValue === 'apellido' ? indiceUsuario === null ? true : false : false } 
-                type={'submit'} 
-                colorScheme={'facebook'} 
-                autoFocus mr={3} 
-                _focus={{ boxShadow: "none"}}
-                >
+              <Button
+                disabled={indiceMotivo === null ? true : false || indiceOrigen === null ? true : false || radioValue === 'apellido' ? indiceUsuario === null ? true : false : false}
+                type={'submit'}
+                colorScheme={'facebook'}
+                autoFocus mr={3}
+                _focus={{ boxShadow: "none" }}
+                onClick={() => { crearIncidencia() }}
+              >
                 GUARDAR
               </Button>
               <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
-        </form>
       </Modal>
     </>
   );

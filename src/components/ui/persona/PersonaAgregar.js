@@ -19,7 +19,6 @@ import {
 
 import { AddIcon } from '@chakra-ui/icons';
 
-// import actions
 import { createPersona } from '../../../actions/persona';
 
 import { FaFingerprint } from 'react-icons/fa';
@@ -30,7 +29,7 @@ import React, { useState } from 'react';
 import { store } from '../../../store/store';
 import { notification } from '../../../helpers/alert';
 
-const PersonaAgregar = props => {
+const PersonaAgregar = () => {
   const [openCreate, setOpenCreate] = React.useState(false);
   const dispatch = useDispatch();
 
@@ -38,7 +37,9 @@ const PersonaAgregar = props => {
 
   const PerfilUsuarioDefault = dataPerfil.filter(perfil =>
     perfil.perfil === 'USUARIO COMUN'
-  )
+  );
+
+  const [estadoInput, setEstadoInput] = useState(false);
 
   const initialPersona = {
     nombre: '',
@@ -48,48 +49,55 @@ const PersonaAgregar = props => {
     password: '',
     correo: '',
     celular: '',
+    anexo: '',
+    telefono: '',
     fecha: '',
     sexo: '',
     activo: '',
     perfilPersona: {
-      idPerfilPersona: null,
+      idPerfilPersona: '',
     },
   };
 
-  const [persona, setPersona] = useState(initialPersona);
+  const [persona, setPersona] = useState({
+    nombre: '',
+    apellido: '',
+    usuario: '',
+    dni: '',
+    password: '',
+    correo: '',
+    celular: '',
+    anexo: '',
+    telefono: '',
+    fecha: '',
+    sexo: '',
+    activo: '',
+    perfilPersona: {
+      idPerfilPersona: '',
+    },
+  });
 
-  const [estadoInput, setEstadoInput] = useState(false);
-
-  const savePersona = e => {
+  const savePersona = (e) => {
     e.preventDefault();
-    const {
-      nombre,
-      apellido,
-      usuario,
-      dni,
-      password,
-      correo,
-      celular,
-      fecha,
-      sexo,
-      activo,
-      perfilPersona,
-    } = persona;
-
+    var dataPersona = {
+      nombre: persona.nombre,
+      apellido: persona.apellido,
+      usuario: persona.usuario,
+      dni: persona.dni,
+      password: persona.password,
+      correo: persona.correo,
+      celular: persona.celular,
+      anexo: persona.anexo,
+      telefono: persona.telefono,
+      fecha: persona.fecha,
+      sexo: persona.sexo !== '' ? persona.sexo : 'M',
+      activo: persona.activo,
+      perfilPersona: {
+        idPerfilPersona: persona.perfilPersona.idPerfilPersona !== '' ? Number(persona.perfilPersona) : PerfilUsuarioDefault[0].idPerfilPersona,
+      },
+    }
     dispatch(
-      createPersona({
-        nombre,
-        apellido,
-        usuario,
-        dni,
-        password,
-        correo,
-        celular,
-        fecha,
-        sexo,
-        activo,
-        perfilPersona,
-      })
+      createPersona(dataPersona)
     )
       .then(() => {
         handleCloseModal(true);
@@ -111,8 +119,8 @@ const PersonaAgregar = props => {
   };
 
   /** MÉTODO PARA REALIZAR LA CONSULTA A LA API DE LA RENIEC */
-  
-  const consultaReniecDNI = async() => {
+
+  const consultaReniecDNI = async () => {
     try {
       const respuesta = await fetch("http://172.28.206.57:8080/SIJ/Reniec/" + persona.dni, { method: 'POST' });
       if (respuesta.status === 200 || respuesta.status === 201) {
@@ -124,10 +132,11 @@ const PersonaAgregar = props => {
           fecha: body[28].split('/').reverse().join('-'),
           sexo: body[17] === 'MASCULINO' ? 'M' : 'F',
         });
+        setEstadoInput(true);
       } else if (respuesta.status === 404) {
         notification('Persona no encontrada', 'Persona con ese DNI no existe', 'error');
       }
-       else {
+      else {
         notification('Error', 'Error al consultar DNI', 'error');
       }
     } catch (error) {
@@ -146,7 +155,7 @@ const PersonaAgregar = props => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'4xl'}
+        size={'5xl'}
         id="modalOrganoAsignacion"
       >
         <ModalOverlay />
@@ -156,25 +165,25 @@ const PersonaAgregar = props => {
             <ModalCloseButton _focus={{ boxShadow: "none" }} />
             <ModalBody pb={2}>
               <InputGroup size='md'>
-                 <Input
-                    onChange={e =>
-                      setPersona({ ...persona, dni: e.target.value })
-                    }
-                    placeholder="DNI"
-                    type={'text'}
-                    isRequired
-                  />
+                <Input
+                  onChange={e =>
+                    setPersona({ ...persona, dni: e.target.value })
+                  }
+                  placeholder="DNI"
+                  type={'text'}
+                  isRequired
+                />
                 <InputRightElement width='8.5rem'>
-                  <Button 
-                    rightIcon={<FaFingerprint />} 
-                    colorScheme="facebook" 
-                    variant="solid" 
-                    h='1.85rem' 
-                    size='sm' 
-                    onClick={consultaReniecDNI} 
-                    disabled={persona.dni === '' || persona.dni.length !== 8 }
+                  <Button
+                    rightIcon={<FaFingerprint />}
+                    colorScheme="facebook"
+                    variant="solid"
+                    h='1.85rem'
+                    size='sm'
+                    onClick={consultaReniecDNI}
+                    disabled={persona.dni === '' || persona.dni.length !== 8}
                     _focus={{ boxShadow: "none" }}
-                    >
+                  >
                     CONSULTAR
                   </Button>
                 </InputRightElement>
@@ -187,10 +196,10 @@ const PersonaAgregar = props => {
                     onChange={e =>
                       setPersona({ ...persona, nombre: (e.target.value).toUpperCase() })
                     }
-                    placeholder="Nombres"
+                    placeholder="NOMBRES"
                     textTransform={'uppercase'}
                     type={'text'}
-                    disabled = {estadoInput}
+                    readOnly={estadoInput}
                   />
                 </FormControl>
                 <FormControl isRequired>
@@ -200,10 +209,10 @@ const PersonaAgregar = props => {
                       setPersona({ ...persona, apellido: (e.target.value).toUpperCase() })
                     }
                     defaultValue={persona.apellido}
-                    placeholder="Apellidos"
+                    placeholder="APELLIDOS"
                     textTransform={'uppercase'}
                     type={'text'}
-                    disabled = {estadoInput}
+                    readOnly={estadoInput}
                   />
                 </FormControl>
               </HStack>
@@ -219,65 +228,86 @@ const PersonaAgregar = props => {
                       });
                     }}
                     type={'text'}
-                    placeholder="Usuario"
+                    placeholder="USUARIO"
                   />
                 </FormControl>
 
                 <FormControl isRequired>
-                  <FormLabel>PASSWORD</FormLabel>
+                  <FormLabel>CONTRASEÑA</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, password: e.target.value })
                     }
                     type={'password'}
-                    placeholder="Contraseña(min 6 caracteres)"
-                    autoComplete='off'                    
+                    // defaultValue = { persona.password = '123456' }
+                    placeholder="MIN 6 CARACTERES"
+                    autoComplete='off'
                   />
                 </FormControl>
               </HStack>
               <HStack spacing={'10px'} mt={'10px'}>
                 <FormControl>
+                  <FormLabel>NRO CELULAR</FormLabel>
+                  <Input
+                    type={'text'}
+                    placeholder="NRO DE CELULAR"
+                    onChange={e =>
+                      setPersona({ ...persona, celular: e.target.value })
+                    }
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>ANEXO</FormLabel>
+                  <Input
+                    onChange={e =>
+                      setPersona({ ...persona, anexo: e.target.value })
+                    }
+                    type={'text'}
+                    placeholder="ANEXO"
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>TELEFONO</FormLabel>
+                  <Input
+                    type={'text'}
+                    placeholder="NRO DE TELEFONO"
+                    onChange={e =>
+                      setPersona({ ...persona, telefono: e.target.value })
+                    }
+                  />
+                </FormControl>
+              </HStack>
+
+              <HStack spacing={'10px'} mt={'10px'}>
+              <FormControl>
                   <FormLabel>CORREO</FormLabel>
                   <Input
                     onChange={e =>
                       setPersona({ ...persona, correo: e.target.value })
                     }
                     type={'email'}
-                    placeholder="Correo"
+                    placeholder="CORREO"
                   />
                 </FormControl>
                 <FormControl>
-                  <FormLabel>NRO CELULAR</FormLabel>
-                  <Input
-                    type={'text'}
-                    placeholder="INGRESE SU # DE CELULAR"
-                    onChange={e =>
-                      setPersona({ ...persona, celular: e.target.value })
-                    }
-                  />
-                </FormControl>
-              </HStack>
-
-              <HStack spacing={'10px'} mt={'10px'}>
-                <FormControl isRequired>
                   <FormLabel>FECHA DE NACIMIENTO</FormLabel>
                   <Input
                     defaultValue={persona ? persona.fecha : ''}
                     onChange={e =>
                       setPersona({ ...persona, fecha: e.target.value })
                     }
-                    disabled = {estadoInput}
+                    readOnly={estadoInput}
                     type={'date'}
                   />
                 </FormControl>
                 <FormControl>
                   <FormLabel>SEXO</FormLabel>
                   <Select
-                    value={persona ? persona.sexo : ''}
+                    value={persona.sexo ? persona.sexo : ''}
                     onChange={e => {
                       setPersona({ ...persona, sexo: e.target.value });
                     }}
-                    // disabled = {estadoInput}
+                    disabled={estadoInput}
                   >
                     <option value="M">MASCULINO</option>
                     <option value="F">FEMENINO</option>
@@ -301,10 +331,10 @@ const PersonaAgregar = props => {
                   <FormLabel>PERFIL PERSONA</FormLabel>
                   <Select
                     isRequired
-                    defaultValue={persona.perfilPersona = PerfilUsuarioDefault[0].idPerfilPersona}
-                    onChange={e =>
-                      setPersona({ ...persona, perfilPersona: e.target.value })
-                    }
+                    defaultValue={(persona.perfilPersona ? PerfilUsuarioDefault[0].idPerfilPersona : '')}
+                    onChange={e => {
+                      setPersona({ ...persona, perfilPersona: e.target.value });
+                    }}
                   >
                     {dataPerfil.map((item, idx) => (
                       <option value={item.idPerfilPersona} key={idx}>

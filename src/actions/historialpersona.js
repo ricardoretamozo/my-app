@@ -1,9 +1,9 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
 
-export const fetchHistorialPersona = async id => {
+export const fetchHistorialPersona = async (id) => {
   const response = await fetchToken('historialpersonas/persona/' + id);
-  if (response.status === 200) {
+  if (response.status === 200 || response.status === 201) {
     const body = await response.json();
     var HistorialPersona = {};
 
@@ -20,12 +20,13 @@ export const fetchHistorialPersona = async id => {
     };
 
     return HistorialPersona;
+
   } else {
     return false;
   }
 };
 
-export const createHistorialPersona = data => {
+export const createHistorialPersona = (data) => {
   return async dispatch => {
     const response = await fetchToken(
       `historialpersonas/save`,
@@ -38,22 +39,14 @@ export const createHistorialPersona = data => {
         iniciaCargo: data.iniciaCargo,
         terminaCargo: data.terminaCargo,
         activo: data.activo,
-        fecha: data.fecha,
-        ip: data.ip,
       },
       'POST'
     );
 
-    const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
-      notification(
-        'Historial registrado correctamente.',
-        body.message,
-        'success'
-      );
+      notification('Historial registrado correctamente.', 'El historial Ha sido registrado correctamente', 'success');
     } else {
-      notification('No se pudo registrar el Historial', '', 'error');
+      notification('Error de registro Historial', 'No se pudo registrar el Historial', 'error');
       // dispatch(fetchHistorialPersona)
     }
   };

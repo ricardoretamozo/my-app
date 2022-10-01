@@ -4,16 +4,6 @@ import {
   Box,
   Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -21,7 +11,6 @@ import {
   AlertDialogFooter,
   AlertDialog,
   Switch,
-  Select,
   Text,
   HStack,
   Badge,
@@ -32,71 +21,18 @@ import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
-import {
-  deleteCargo,
-  updateCargo,
-} from '../../../actions/cargo';
+import { deleteCargo } from '../../../actions/cargo';
 
 import CargoAgregar from './CargoAgregar';
+import { BsArrowDown } from 'react-icons/bs';
+import { CargoEditar } from './CargoEditar';
 
 export default function TableCargo() {
-  const [openedit, setOpenEdit] = React.useState(false);
-  const [opendelete, setOpenDelete] = React.useState(false);
-  const dispatch = useDispatch();
-  // const perfil_persona = useSelector(state => state.perfilPersona);
 
   const bgStatus = useColorModeValue("gray.400", "#1a202c");
   const colorStatus = useColorModeValue("white", "gray.400");
 
   const data = store.getState().cargo.rows;
-
-  const [indice, setIndice] = useState({
-    idCargo: null,
-    cargo: "",
-    activo: "",
-  });
-
-  const handleClickOpenEdit = index => {
-    setIndice(index);
-    setOpenEdit(true);
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const handleDeleteCargo = () => {
-    dispatch(deleteCargo(indice))
-      .then(() => {
-        handleCloseDelete(true);
-        console.log('Cargo eliminado');
-      })
-      .catch(e => {
-        console.log(e);
-        handleCloseDelete(true);
-      });
-  };
-
-  const actualizarCargo = e => {
-    e.preventDefault();
-    dispatch(updateCargo(indice))
-      .then(() => {
-        handleCloseEdit(true);
-        console.log('Sede actualizado');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const handleClickOpenDelete = index => {
-    setIndice(index);
-    setOpenDelete(true);
-  };
-
-  const handleCloseDelete = () => {
-    setOpenDelete(false);
-  };
 
   const columns = [
     {
@@ -118,9 +54,9 @@ export default function TableCargo() {
             textAlign={'center'}
             borderRadius={'md'}
             fontSize={'10px'}
-        >
-          {row.activo === "S" ? "Activo" : "Inactivo"}
-        </Badge>
+          >
+            {row.activo === "S" ? "Activo" : "Inactivo"}
+          </Badge>
         </div>
       ),
       center: true,
@@ -130,99 +66,8 @@ export default function TableCargo() {
       sortable: false,
       cell: row => (
         <div>
-          <Switch
-            colorScheme={'red'}
-            mr={2}
-            isChecked={row.activo === 'S'}
-            onChange={() => handleClickOpenDelete(row.idCargo)}
-          />
-          <Button
-            onClick={() => handleClickOpenEdit(row)}
-            size={'xs'}
-            colorScheme={'facebook'}
-            _focus={{ boxShadow: "none" }}
-          >
-            EDITAR
-          </Button>
-          <AlertDialog isOpen={opendelete} onClose={handleCloseDelete}>
-            <AlertDialogOverlay>
-              <AlertDialogContent>
-                <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                  {row.activo === 'S' ? <Text>ESTA SEGURO DE ANULAR?</Text> : <Text>ESTÁ SEGURO DE ACTIVAR?</Text>}
-                </AlertDialogHeader>
-
-                <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
-
-                <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
-                  <Button
-                    onClick={() => handleDeleteCargo(row.idCargo)}
-                    colorScheme="red"
-                    ml={3}
-                    _focus={{ boxShadow: "none" }}
-                  >
-                    SI
-                  </Button>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialogOverlay>
-          </AlertDialog>
-
-          {/* ----------------------MODAL PARA EDITAR LA TABLA----------------------- */}
-
-          <Modal isOpen={openedit} onClose={handleCloseEdit} size={'xl'}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader display={'flex'} justifyContent={'center'}>
-                EDITAR CARGO
-              </ModalHeader>
-              <ModalCloseButton _focus={{ boxShadow: "none" }}/>
-              <ModalBody pb={6}>
-                <FormControl>
-                  <Input
-                    value={indice ? indice.idCargo : ''}
-                    disabled={true}
-                    type="text"
-                    hidden={true}
-                  />
-                </FormControl>
-                <FormControl>
-                  <FormLabel>CARGO</FormLabel>
-                  <Input
-                    defaultValue={indice ? indice.cargo : ''}
-                    type="text"
-                    textTransform={'uppercase'}
-                    onChange={e =>
-                      setIndice({ ...indice, cargo: e.target.value.toUpperCase() })
-                    }
-                  />
-                </FormControl>
-                <FormControl mt={4}>
-                  <FormLabel>ESTADO</FormLabel>
-                  <Select
-                    defaultValue={indice ? indice.activo : ''}
-                    onChange={e =>
-                      setIndice({ ...indice, activo: e.target.value })
-                    }
-                  >
-                    <option value="S">ACTIVO</option>
-                    <option value="N">INACTIVO</option>
-                  </Select>
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  onClick={e => actualizarCargo(e)}
-                  colorScheme="green"
-                  mr={3}
-                  _focus={{ boxShadow: "none" }}
-                >
-                  ACTUALIZAR
-                </Button>
-                <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+          <ModalEliminarCargo row={row} />
+          <CargoEditar row={row} />
         </div>
       ),
       center: true,
@@ -249,7 +94,7 @@ export default function TableCargo() {
       text: '#FFF',
     },
     divider: {
-      default: '#FFF opacity 92%' ,
+      default: '#FFF opacity 92%',
     },
   });
 
@@ -261,27 +106,99 @@ export default function TableCargo() {
       boxShadow={'md'}
       bg={useColorModeValue('white', 'gray.900')}
     >
-    <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
-          <Box>
-            <Text fontSize='lg' fontWeight='600'>
-              TABLA DE CARGOS
-            </Text>
-          </Box>
-          <Box>
-            <CargoAgregar/>
-          </Box>
+      <HStack spacing='24px' width={'100%'} justifyContent={'space-between'} verticalAlign={'center'} p={4}>
+        <Box>
+          <Text fontSize='lg' fontWeight='600'>
+            TABLA DE CARGOS
+          </Text>
+        </Box>
+        <Box>
+          <CargoAgregar />
+        </Box>
       </HStack>
       <DataTableExtensions {...tableData}>
         <DataTable
           columns={columns}
           data={data}
-          defaultSortAsc={false}
-          theme={useColorModeValue('default', 'solarized')}  
+          sortIcon={<BsArrowDown />}
+          theme={useColorModeValue('default', 'solarized')}
           pagination
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 15, 20, 30]}
           ignoreRowClick={true}
           responsive={true}
+          fixedHeader
+          fixedHeaderScrollHeight="550px"
         />
       </DataTableExtensions>
     </Box>
   );
+}
+
+// MODAL DE ELIMINAR CARGO
+
+const ModalEliminarCargo = ({ row }) => {
+  const [opendelete, setOpenDelete] = React.useState(false);
+  const dispatch = useDispatch();
+
+  const [indice, setIndice] = useState({
+    idCargo: null,
+    cargo: "",
+    activo: "",
+  });
+
+  const handleDeleteCargo = () => {
+    dispatch(deleteCargo(indice))
+      .then(() => {
+        handleCloseDelete(true);
+        console.log('Cargo eliminado');
+      })
+      .catch(e => {
+        console.log(e);
+        handleCloseDelete(true);
+      });
+  };
+
+  const handleClickOpenDelete = index => {
+    setIndice(index);
+    setOpenDelete(true);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+  };
+
+  return (
+    <>
+      <Switch
+        colorScheme={'red'}
+        mr={2}
+        isChecked={row.activo === 'S'}
+        onChange={() => handleClickOpenDelete(row.idCargo)}
+      />
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size="2xl">
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              {row.activo === 'S' ? <Text>ESTA SEGURO DE ANULAR?</Text> : <Text>ESTÁ SEGURO DE ACTIVAR?</Text>}
+            </AlertDialogHeader>
+
+            <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button
+                onClick={() => handleDeleteCargo(row.idCargo)}
+                colorScheme="red"
+                ml={3}
+                _focus={{ boxShadow: "none" }}
+              >
+                SI
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
+  )
 }

@@ -12,17 +12,17 @@ export const PerfilPersona = () => {
   const fetchData= async ()=> {
     await perfilPersona().then((res)=>{
       dispatch(getPerfilPersona(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
     if(store.getState().perfilPersona.rows.length <= 0){
       fetchData();
     }
-    //fetchData();
   });
 
-  //
   return (
     <>
       <Sidebar componente={Tables} />

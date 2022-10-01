@@ -38,7 +38,6 @@ const Profile = () => {
 
     const obtenerMisDatos = async () => {
         await fetchHistorialPersona(identificador).then(historial => {
-            console.log(historial);
             setDatosUsuario(historial?.persona);
             setDatosPerfilUsuario(historial?.persona.perfilPersona);
             setSedeUsuario(historial?.oficina.organo.sede);

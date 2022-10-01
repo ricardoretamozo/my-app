@@ -15,11 +15,12 @@ export const IncidenciaSoporte = () => {
   const fetchIncidenciaSoporteData = async ()=> {
     await fetchIncidenciaSoporte(identificador).then((res)=>{
       dispatch(getIncidenciasAsignadasSoporte(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().incidenciasAsignadasSoporte.checking){
       fetchIncidenciaSoporteData();
     }
@@ -28,11 +29,12 @@ export const IncidenciaSoporte = () => {
   const fetchDataId = async ()=> {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
+
   useEffect(() => {
-    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }

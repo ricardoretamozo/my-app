@@ -15,14 +15,15 @@ export const PublicRoute = ({
         !isAuthenticated ? (
           <Component {...props} />
         ) : (
-        (rol == '[COORDINADOR INFORMATICO]') ? (
+        (rol === '[COORDINADOR INFORMATICO]') ? (
+          <Redirect exact to="/dashboard/incidencias" />
+        ) : (rol === '[ASISTENTE INFORMATICO]') ? (
           <Redirect to="/dashboard/incidencias"/>
-        ) : (rol == '[ASISTENTE INFORMATICO]') ? (
-          <Redirect to="/dashboard/incidencias"/>
-        ) : (rol == '[SOPORTE TECNICO]') ? (
+        ) : (rol === '[SOPORTE TECNICO]') ? (
           <Redirect to="/dashboard/soporte/incidencias" />
-        ) : (
-          <Redirect to="/usuario" />
+        ) : (          
+          // <NavLink to="/usuario" />
+          <Redirect exact to="/usuario" from='/dashboard/usuario/incidencias'  />
         ))
       }
     />

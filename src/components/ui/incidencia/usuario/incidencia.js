@@ -14,29 +14,30 @@ export const IncidenciaUsuario = () => {
   const fetchData = async ()=> {
     await fetchIncidencias().then((res)=>{
       dispatch(getIncidencia(res));
+    }).catch((err)=>{
+      console.log("Acceso no autorizado " + err);
     });
     
   }
-  useEffect(() => {
-    
+
+  useEffect(() => {    
     if(store.getState().incidencia.checking){
       fetchData();
-    }
-    
+    }    
   });
 
   const fetchDataId = async ()=> {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
     
   }
   useEffect(() => {
-    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
-
   });
 
   //

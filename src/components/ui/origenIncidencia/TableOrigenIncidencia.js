@@ -4,16 +4,6 @@ import {
   Box,
   Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -25,7 +15,6 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 
-import { AiTwotoneEdit } from 'react-icons/ai';
 import { RiDeleteBackLine } from 'react-icons/ri';
 
 import { store } from '../../../store/store';
@@ -33,9 +22,11 @@ import { store } from '../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 
-import { deleteOrigen, updateOrigen } from '../../../actions/origenIncidencia';
+import { deleteOrigen } from '../../../actions/origenIncidencia';
 
-import OrigenAgregar from './OrigenAgregar';
+import OrigenAgregar from './OrigenIncidenciaAgregar';
+import { BsArrowDown } from 'react-icons/bs';
+import { OrigenIncidenciaEditar } from './OrigenIncidenciaEditar';
 
 export default function TableOrigen() {
 
@@ -46,7 +37,6 @@ export default function TableOrigen() {
       name: 'ORIGEN',
       selector: row => row.origen,
       sortable: true,
-      wrap: true,
     },
     {
       name: 'ACCIONES',
@@ -54,14 +44,13 @@ export default function TableOrigen() {
       cell: row => (
         <div>
 
-          <ModalOrigenEditar row={row} />
+          <OrigenIncidenciaEditar row={row} />
 
           <ModalOrigenEliminar row={row} />
 
         </div>
       ),
       center: true,
-      wrap: true,
     },
   ];
 
@@ -117,105 +106,19 @@ export default function TableOrigen() {
         <DataTable
           columns={columns}
           data={data}
-          defaultSortAsc={false}
+          sortIcon={<BsArrowDown />}
           theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
-          paginationPerPage={8}
-          paginationRowsPerPageOptions={[8, 15, 20, 30]}
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 15, 20, 30]}
+          fixedHeader
+          fixedHeaderScrollHeight="550px"
         />
       </DataTableExtensions>
     </Box>
   );
-}
-
-
-const ModalOrigenEditar = ({ row }) => {
-
-  const [openedit, setOpenEdit] = React.useState(false);
-  const dispatch = useDispatch();
-
-  const [indice, setIndice] = useState({
-    idOrigen: null,
-    origen: '',
-  });
-
-  const handleClickOpenEdit = index => {
-    setIndice(index);
-    setOpenEdit(true);
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const handleClickUpdate = e => {
-    e.preventDefault();
-    dispatch(updateOrigen(indice))
-      .then(() => {
-        handleCloseEdit(true);
-        console.log('Origen actualizado');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  return (
-    <>
-      <IconButton
-        icon={<AiTwotoneEdit />}
-        variant={'outline'}
-        colorScheme={'facebook'}
-        onClick={() => handleClickOpenEdit(row)}
-        fontSize={'22px'}
-        size={'sm'}
-        _focus={{ boxShadow: "none" }}
-      />
-      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            EDITAR EL ORIGEN DE LA INCIDENCIA
-          </ModalHeader>
-          <ModalCloseButton _focus={{ boxShadow: "none" }} />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                value={indice ? indice.idOrigen : ''}
-                disabled={true}
-                type="text"
-                hidden={true}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>ORIGEN</FormLabel>
-              <Input
-                defaultValue={indice ? indice.origen : ''}
-                textTransform={'uppercase'}
-                type="text"
-                onChange={e =>
-                  setIndice({ ...indice, origen: e.target.value.toUpperCase() })
-                }
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={e => handleClickUpdate(e)}
-              colorScheme="green"
-              mr={3}
-              _focus={{ boxShadow: "none" }}
-            >
-              ACTUALIZAR
-            </Button>
-            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  )
 }
 
 const ModalOrigenEliminar = ({ row }) => {
@@ -263,7 +166,7 @@ const ModalOrigenEliminar = ({ row }) => {
         ml={2}
         _focus={{ boxShadow: "none" }}
       />
-      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'2xl'}>
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">

@@ -10,7 +10,6 @@ import {
   ModalCloseButton,
   FormControl,
   FormLabel,
-  Textarea,
   IconButton,
   AlertDialogBody,
   AlertDialogHeader,
@@ -19,6 +18,7 @@ import {
   AlertDialogFooter,
   AlertDialog,
   AlertDialogCloseButton,
+  Input,
 } from '@chakra-ui/react';
 
 import { CheckIcon } from '@chakra-ui/icons';
@@ -26,6 +26,10 @@ import { CheckIcon } from '@chakra-ui/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { createSolucionIncidencia, fetchIncidenciaSoporte } from '../../../../actions/incidencia';
 import { getIncidenciasAsignadasSoporte } from './incidencia';
+
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { formats, modules } from '../../../../helpers/quillConfig';
 
 const IncidenciaAtender = (props) => {
   const [openCreate, setOpenCreate] = useState(false);
@@ -40,11 +44,14 @@ const IncidenciaAtender = (props) => {
     }
   })
 
+  const [incidenciaArchivos, setIncidenciaArchivos] = useState(null);
+
   const handleClickOpenModal = () => {
     setOpenCreate(true);
   };
 
   const handleCloseModal = () => {
+    indice.descripcion = '';
     setOpenCreate(false);
   };
 
@@ -67,6 +74,7 @@ const IncidenciaAtender = (props) => {
     var detallesSolucion = {
       descripcion: indice.descripcion,
       incidencia: indice.incidencia.idIncidencia,
+      archivo: incidenciaArchivos
     }
     dispatch(createSolucionIncidencia(detallesSolucion)).then(() => {
       fetchDataIncidencias();
@@ -78,6 +86,10 @@ const IncidenciaAtender = (props) => {
     });
   };
 
+  const handleSubmitFile = (e) => {
+    setIncidenciaArchivos(e.target.files[0]);
+  }
+
   return (
     <>
       <IconButton
@@ -85,8 +97,8 @@ const IncidenciaAtender = (props) => {
         variant={'solid'}
         colorScheme={'green'}
         onClick={() => handleClickOpenModal(props.rowId)}
-        fontSize={'22px'}
         size={'sm'}
+        fontSize={'20px'}
         ml={1}
         _focus={{ boxShadow: "none" }}
       />
@@ -95,7 +107,7 @@ const IncidenciaAtender = (props) => {
         isOpen={openCreate}
         onClose={handleCloseModal}
         closeOnOverlayClick={true}
-        size={'4xl'}
+        size={'5xl'}
       >
         <ModalOverlay />
         <form onSubmit={handleClickOpenAlert}>
@@ -106,22 +118,28 @@ const IncidenciaAtender = (props) => {
             <ModalBody pb={6}>              
               <FormControl mt={4} isRequired>
               <FormLabel>DESCRIPCIÓN DE LA ATENCIÓN</FormLabel>
-              <Textarea
-                onChange={e => {
-                  setIndice({
-                    ...indice,
-                    descripcion: e.target.value.toUpperCase(),
-                  });
+              <ReactQuill
+                theme="snow"
+                style={{
+                  textTransform: 'uppercase',
+                  textAlignLast: 'center'
                 }}
-                placeholder='DESCRIBE TODO LOS DETALLES DE LA ATENCIÓN BRINDADA A ESTA INCIDENCIA'
-                textTransform={'uppercase'}
-                rows={4}
-                required
-            />
+                modules={modules}
+                formats={formats}
+                onChange={(e) => setIndice({ ...indice, descripcion: e.valueOf() })}
+              />
             </FormControl>
+            <FormControl mt={4}>
+                <FormLabel>SUBIR ARCHIVO(opcional)</FormLabel>
+                <Input 
+                  type='file'
+                  onChange={e => handleSubmitFile(e)}
+                  name='archivo'
+                />
+              </FormControl>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'green'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
+              <Button disabled={indice.descripcion.length < 5 || indice.descripcion === ''} type={'submit'} colorScheme={'green'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
                 GUARDAR
               </Button>
               <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>

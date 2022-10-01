@@ -22,9 +22,9 @@ export const createCorreo = data => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
-      notification('Correo enviado correctamente.', body.message, 'success');
+      notification('Correo enviado correctamente.', '', 'success');
     } else {
-      notification('No se pudo enviar el Correo', body.error, 'error');
+      notification('No se pudo enviar el Correo', '', 'error');
     }
   };
 };

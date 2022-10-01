@@ -27,6 +27,7 @@ const MotivoAgregar = () => {
     }
 
     const handleCloseModal = () => {
+        dataMotivo.motivo = "";
         setOpenCreate(false);
     };
 
@@ -62,7 +63,7 @@ const MotivoAgregar = () => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>AGREGAR NUEVO MOTIVO PARA LA INCIDENCIA</ModalHeader>
-                    <ModalCloseButton _focus={{ boxShadow: "none" }}/>
+                    <ModalCloseButton _focus={{ boxShadow: "none" }} />
                     <ModalBody pb={6}>
                         <FormControl>
                             <FormLabel>Motivo</FormLabel>
@@ -75,7 +76,13 @@ const MotivoAgregar = () => {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button onClick={() => saveMotivo()} colorScheme={'facebook'} autoFocus mr={3} _focus={{ boxShadow: "none" }}>
+                        <Button 
+                            onClick={() => saveMotivo()} 
+                            colorScheme={'facebook'} 
+                            autoFocus mr={3} 
+                            _focus={{ boxShadow: "none" }}
+                            disabled = { dataMotivo.motivo === "" ? true : false }
+                        >
                             GUARDAR
                         </Button>
                         <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>

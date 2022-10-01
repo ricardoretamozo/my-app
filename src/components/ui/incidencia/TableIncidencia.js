@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
@@ -10,11 +10,23 @@ import {
   chakra,
   Flex,
   IconButton,
+  Button,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from '@chakra-ui/react';
 
 import { store } from '../../../store/store';
 
-import DataTable, { createTheme } from 'react-data-table-component';
+import DataTable, { createTheme } from 'react-data-table-component-with-filter';
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import Moment from 'moment';
@@ -22,26 +34,91 @@ import Moment from 'moment';
 import IncidenciaDetalles from './IncidenciaDetalles';
 import IncidenciaAgregar from './IncidenciaAgregar';
 import { RepeatIcon } from '@chakra-ui/icons';
-import { fetchIncidencias } from '../../../actions/incidencia';
+import { fetchIncidencias, resetEstadoIncidencia } from '../../../actions/incidencia';
 import { getIncidencias } from './incidencia';
+import { BsArrowDown } from 'react-icons/bs';
+import { MdSettingsBackupRestore } from 'react-icons/md';
+import { FaFilter } from 'react-icons/fa';
+import { AiFillFilter } from 'react-icons/ai';
 
 export default function TableIncidencia() {
+  const [openAlert, setOpenAlert] = useState(false);
   const { identificador } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
   const data = store.getState().incidencia.rows;
-  const incidenciasPendientes = data.filter(row => row.historialIncidencia.estadoIncidencia === 'P');
-  const incidenciasEnTramite = data.filter(row => row.historialIncidencia.estadoIncidencia === 'T');
-  const incidenciasAtendidas = data.filter(row => row.historialIncidencia.estadoIncidencia === 'A');
 
-  const fetchDataIncidencias = async ()=> {
-    await fetchIncidencias().then((res)=>{
+  const [tableRowsData, setTableRowsData] = useState(data);
+
+  //Contadores de incidencia
+  const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+  const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
+  const ContadorAtendidas = data.filter(row => row.historialIncidencia.filter(atendida => atendida.estadoIncidencia === "A" && atendida.estado === "A").length > 0);
+
+  const [indiceIncidencia, setIndiceIncidencia] = useState([]);
+  const [indiceIncidenciaPersonaAsignada, setIncidenciaPersonaAsignada] = useState(null);
+  const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
+
+  const fetchDataIncidencias = async () => {
+    await fetchIncidencias().then((res) => {
       dispatch(getIncidencias(res));
     });
   }
 
   const refreshTable = () => {
     fetchDataIncidencias();
+  }
+
+  const handleClickCloseAlert = () => {
+    setOpenAlert(false);
+  }
+
+  const handleClickOpenAlert = (index) => {
+    setIndiceIncidencia(index);
+    setIncidenciaPersonaAsignada(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A"));
+    setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A")[0].persona_notifica.idpersona);
+    setOpenAlert(true);
+  }
+
+  const ResetAsignacionIncidencia = () => {
+    var incidencia = {
+      idIncidencia: indiceIncidencia.idIncidencia,
+      historialIncidencia: [{
+        persona_registro: {
+          idpersona: Number(identificador)
+        },
+        persona_asignado: {
+          idpersona: indiceIncidenciaPersonaAsignada[0]?.persona_asignado.idpersona,
+        },
+        persona_notifica: {
+          idpersona: incidenciaPersonaNotifica ? incidenciaPersonaNotifica : Number(identificador),
+        }
+      }]
+    }
+    dispatch(resetEstadoIncidencia(incidencia))
+      .then(() => {
+        setOpenAlert(false);
+        fetchDataIncidencias();
+      }).catch((error) => {
+        console.log(error);
+      })
+  }
+
+  // filtros por estado
+
+  const handleClickFilterPendientes = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterTramite = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "T" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterAtendidas = async () => {
+    const dataFilter = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "A" && pendiente.estado === "A").length > 0);
+    setTableRowsData(dataFilter);
   }
 
   const columns = [
@@ -62,57 +139,109 @@ export default function TableIncidencia() {
     },
     {
       name: 'TÉCNICO ASIGNADO',
-      // selector: row => row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido,
-      selector: row => row.historialIncidencia.persona_asignado !== null ? row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido : 'NO ASIGNADO',
       sortable: true,
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <Text key={row.idIncidencia}>
+            {historial[0]?.persona_asignado === null ? "NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido}
+          </Text>
+        )
+      }
     },
     {
       name: 'IP',
-      selector: row => row.historialIncidencia.ip,
+      // selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.ip : ''),
       sortable: true,
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <Text key={row.idIncidencia}>
+            {historial[0]?.ip}
+          </Text>
+        )
+      }
     },
     {
       name: 'ESTADO',
-      selector: row => row.historialIncidencia.estadoIncidencia,
+      selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
+      // selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
-      cell: row => (
-        <div>
-          <Badge
-            bg={row.historialIncidencia.estadoIncidencia === 'P' ? 'red.500' : row.historialIncidencia.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-            color={'white'}
-            p="3px 10px"
-            w={24}
-            textAlign={'center'}
-            borderRadius={'md'}
-            fontSize={'10px'}
-          >
-            {row.historialIncidencia.estadoIncidencia === 'P' ? 'PENDIENTE' : row.historialIncidencia.estadoIncidencia === 'T' ? 'EN TRAMITE' : 'ATENTIDO'}
-          </Badge>
-        </div>
-      ),
+      cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          <div>
+            <Badge
+              bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
+              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
+              color={'white'}
+              p="3px 10px"
+              w={24}
+              textAlign={'center'}
+              borderRadius={'md'}
+              fontSize={'10px'}
+            >
+              {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
+            </Badge>
+          </div>
+        )
+      },
       center: true,
     },
     {
       name: 'ACCIONES',
       sortable: false,
       cell: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
           <div>
             <IncidenciaDetalles
               rowId={row.idIncidencia}
               identificador={identificador}
             />
+            {historial[0]?.estadoIncidencia === 'A' ? (
+              <IconButton
+                icon={<MdSettingsBackupRestore size={20} />}
+                colorScheme={'red'}
+                ml={2}
+                onClick={() => handleClickOpenAlert(row)}
+                size={'sm'}
+                fontSize={'20px'}
+                _focus={{ boxShadow: 'none' }}
+              />
+            ) : null}
+
+            <AlertDialog isOpen={openAlert} onClose={handleClickCloseAlert} size={'3xl'}>
+              <AlertDialogOverlay>
+                <AlertDialogContent>
+                  <AlertDialogHeader fontSize="xl" fontWeight="bold">
+                    ¿ESTÁ SEGURO DE ACTUALIZAR AL ESTADO INICIAL DE LA INCIDENCIA?
+                  </AlertDialogHeader>
+                  <AlertDialogCloseButton _focus={{ boxShadow: "none" }} />
+                  <AlertDialogBody>
+                    ¿CONFIRMAR LA ACCIÓN?
+                  </AlertDialogBody>
+                  <AlertDialogFooter>
+                    <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
+                    <Button
+                      colorScheme="facebook"
+                      ml={3}
+                      _focus={{ boxShadow: "none" }}
+                      onClick={() => ResetAsignacionIncidencia()}
+                    >
+                      CONFIRMAR
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialogOverlay>
+            </AlertDialog>
+
           </div>
         );
       },
-      center: true,
+      wrap: true,
     },
   ];
-
-  const tableData = {
-    columns,
-    data,
-  };
 
   // CREANDO UN TEMA PARA LA TABLA
 
@@ -176,7 +305,7 @@ export default function TableIncidencia() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasPendientes.length}
+                {ContadorPendientes.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -212,7 +341,7 @@ export default function TableIncidencia() {
                 color="gray.200"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasEnTramite.length}
+                {ContadorTramite.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -248,7 +377,7 @@ export default function TableIncidencia() {
                 color="white"
                 _dark={{ color: "gray.200" }}
               >
-                {incidenciasAtendidas.length}
+                {ContadorAtendidas.length}
               </chakra.span>
             </Flex>
           </Box>
@@ -299,7 +428,7 @@ export default function TableIncidencia() {
         paddingBottom={8}
       >
         <HStack
-          spacing="24px"
+          spacing="20px"
           width={'100%'}
           justifyContent={'space-between'}
           verticalAlign={'center'}
@@ -311,25 +440,52 @@ export default function TableIncidencia() {
             </Text>
           </Box>
           <Box>
+            <Menu size={'xs'}>
+              <MenuButton as={'menu'} style={{ cursor: 'pointer'}}>
+                <HStack spacing={2}>
+                  <Text fontSize="sm" fontWeight="600">
+                    FILTRAR POR ESTADO
+                  </Text>
+                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                </HStack>
+              </MenuButton>
+              <MenuList zIndex={2}>
+                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+              </MenuList>
+            </Menu>
+          </Box>
+          <Box>
             <IconButton
-              size={'sm'} mr={2} 
-              icon={<RepeatIcon boxSize={4} />} 
+              size={'sm'} mr={2}
+              icon={<RepeatIcon boxSize={4} />}
               colorScheme={'facebook'}
               _focus={{ boxShadow: "none" }}
               onClick={refreshTable} />
             <IncidenciaAgregar />
           </Box>
         </HStack>
-        <DataTableExtensions {...tableData}>
+        <DataTableExtensions data={tableRowsData} columns={columns}>
           <DataTable
-            defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
+            sortIcon={<BsArrowDown />}
             responsive={true}
-            paginationPerPage={5}
             noDataComponent="No hay datos para mostrar refresca la página"
-            paginationRowsPerPageOptions={[5, 15, 20, 30]}
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[10, 15, 20, 30]}
+            fixedHeader
+            fixedHeaderScrollHeight="550px"
+            paginationComponentOptions={{
+              rowsPerPageText: 'Filas por página:',
+              rangeSeparatorText: 'de',
+              selectAllRowsItem: true,
+              selectAllRowsItemText: 'Todos',
+            }}
+            key={ tableRowsData.map((item) => { return item.idIncidencia }) }
           />
         </DataTableExtensions>
       </Box>

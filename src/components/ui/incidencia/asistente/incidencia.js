@@ -16,10 +16,12 @@ export const IncidenciaAsistenteAsignados = () => {
   const fetchIncidenciasAsignadasData = async ()=> {
     await fetchIncidenciasAsignadas().then((res)=>{
       dispatch(getIncidenciaAsignadas(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
-  useEffect(() => {
-    
+  
+  useEffect(() => {    
     if(store.getState().incidenciasAsignadas.checking){
       fetchIncidenciasAsignadasData();
     }
@@ -29,32 +31,31 @@ export const IncidenciaAsistenteAsignados = () => {
   const fetchDataId = async ()=> {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
     
   }
+  
   useEffect(() => {
-    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
-    //fetchData();
   });
 
   //  FETCH PARA TECNICOS DISPONIBLES
 
-  const fetchDataTecnicoDisponible = async ()=> {
-    
+  const fetchDataTecnicoDisponible = async ()=> {    
     await fetchTecnicosDisponibles().then((res)=>{
       dispatch(getTecnicosDisponibles(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
-  useEffect(() => {
-    
+  useEffect(() => {    
     if(store.getState().tecnicoDisponible.checking){
       fetchDataTecnicoDisponible();
     }
-    //fetchData();
   });
 
   //
@@ -74,8 +75,11 @@ export const IncidenciaAsistenteNoAsignados = () => {
   const fetchIncidenciasNoAsignadasData = async ()=> {
     await fetchIncidenciasNoAsignadas().then((res)=>{
       dispatch(getIncidenciaNoAsignadas(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
+
   useEffect(() => {
     if(store.getState().incidenciasNoAsignadas.checking){
       fetchIncidenciasNoAsignadasData();
@@ -85,11 +89,12 @@ export const IncidenciaAsistenteNoAsignados = () => {
   const fetchDataId = async ()=> {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
 
-  useEffect(() => {
-    
+  useEffect(() => {    
     if(store.getState().incidenciaId.checking){
       fetchDataId();
     }
@@ -100,15 +105,16 @@ export const IncidenciaAsistenteNoAsignados = () => {
   const fetchDataTecnicoDisponible = async ()=> {
     await fetchTecnicosDisponibles().then((res)=>{
       dispatch(getTecnicosDisponibles(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
     
   }
+
   useEffect(() => {
-    
     if(store.getState().tecnicoDisponible.checking){
       fetchDataTecnicoDisponible();
     }
-    //fetchData();
   });
 
   //

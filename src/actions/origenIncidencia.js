@@ -12,14 +12,24 @@ export const createOrigen = data => {
         'POST'
       );
   
-      const body = await response.json();
-  
       if (response.status === 200 || response.status === 201) {
         dispatch(getOrigen(await loadOrigen()));
-        notification('Origen registrado correctamente.', body.message, 'success');
+        notification('Origen registrado', 'Origen ha sido registrado correctamente.', 'success');
       } else {
-        notification('No se pudo registrar el Origen', body.error, 'error');
+        notification('Error de registro', 'No se pudo registrar el Origen', 'error');
       }
+    };
+  };
+
+  export const createOrigen1 = data => {
+    return async dispatch => {
+      const response = await fetchToken(
+        `origenincidencia`,
+        {
+          origen: data.origen,
+        },
+        'POST'
+      );
     };
   };
   
@@ -54,13 +64,11 @@ export const createOrigen = data => {
         'PUT'
       );
   
-      const body = await response.json();
-  
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         dispatch(getOrigen(await loadOrigen()));
-        notification('Origen actualizado correctamente', body.message, 'success');
+        notification('Origen actualizado', 'Origen ha sido actualizado correctamente.', 'success');
       } else {
-        notification('No se pudo actualizar el Origen', body.error, 'error');
+        notification('Error al actualizar', 'No se pudo actualizar el origen de incidencia', 'error');
       }
     };
   };
@@ -71,12 +79,12 @@ export const createOrigen = data => {
     return async dispatch => {
       const response = await fetchToken(`origenincidencia/${id}`, '', 'DELETE');
   
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         dispatch(getOrigen(await loadOrigen()));
-        notification('Origen eliminado correctamente', "", 'success');
+        notification('Origen eliminado', 'Origen ha sido eliminado correctamente', 'success');
   
       } else {
-        notification('No se pudo eliminar el Origen', "", 'error');
+        notification('Error al actualizar', 'No se pudo eliminar el origen', 'error');
       }
     };
   };

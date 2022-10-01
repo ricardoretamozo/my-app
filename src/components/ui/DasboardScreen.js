@@ -18,8 +18,10 @@ import { Motivo } from './motivoIncidencia/motivo';
 import { IncidenciaSoporte } from './incidencia/soporte/incidencia';
 import { OrigenIncidencia } from './origenIncidencia/origen';
 import { Reportes } from './home/reportes/reportes';
-import { ReporteIncidencia } from './home/reportes/incidencia/index'
+import { ReporteIncidencia, IncidenciaSegundoReporte, IncidenciaTercerReporte } from './home/reportes/incidencia/index'
 import { perfil } from './perfil/index';
+import { Ftp } from './ftp/ftp';
+import { IncidenciaConocimiento } from './incidencia/conocimiento/incidencia';
 
 export const DasboardScreen = () => {
   //
@@ -108,13 +110,33 @@ export const DasboardScreen = () => {
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
-          exact path="/dashboard/reportes/incidencias"
+          exact path="/dashboard/reportes/incidencias-one"
           component={ReporteIncidencia}
+          isAuthenticated={!!access_token}
+        />
+         <PrivateRoute
+          exact path="/dashboard/reportes/incidencias-two"
+          component={IncidenciaSegundoReporte}
+          isAuthenticated={!!access_token}
+        />
+         <PrivateRoute
+          exact path="/dashboard/reportes/incidencias-three"
+          component={IncidenciaTercerReporte}
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
           exact path="/dashboard/mi-perfil"
           component={perfil}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/ftp"
+          component={Ftp}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/tabla-conocimiento"
+          component={IncidenciaConocimiento}
           isAuthenticated={!!access_token}
         />
       </Switch>

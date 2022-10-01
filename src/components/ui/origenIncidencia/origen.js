@@ -4,26 +4,26 @@ import { store } from '../../../store/store';
 import Sidebar from '../base/Sidebar';
 import { fetchOrigen } from '../../../actions/origenIncidencia';
 import { types } from '../../../types/types';
-import TableOrigen from './TableOrigen';
+import TableOrigen from './TableOrigenIncidencia';
 
 export const OrigenIncidencia = () => {
+
   const dispatch = useDispatch();
 
   const fetchData= async ()=> {
     await fetchOrigen().then((res)=>{
       dispatch(getOrigen(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
 
-  useEffect(() => {
-    
+  useEffect(() => {    
     if(store.getState().origenIncidencia.checking){
       fetchData();
     }
-    //fetchData();
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableOrigen} />

@@ -4,16 +4,6 @@ import {
   Box,
   Button,
   useColorModeValue,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  FormControl,
-  FormLabel,
-  Input,
   AlertDialogBody,
   AlertDialogHeader,
   AlertDialogContent,
@@ -25,7 +15,6 @@ import {
   IconButton,
 } from '@chakra-ui/react';
 
-import { AiTwotoneEdit } from 'react-icons/ai';
 import { RiDeleteBackLine } from 'react-icons/ri';
 
 import { store } from '../../../store/store';
@@ -33,9 +22,11 @@ import { store } from '../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
 import DataTableExtensions from 'react-data-table-component-extensions';
 
-import { deleteMotivo, updateMotivo } from '../../../actions/motivo';
+import { deleteMotivo } from '../../../actions/motivo';
 
 import MotivoAgregar from './MotivoAgregar';
+import { BsArrowDown } from 'react-icons/bs';
+import { MotivoEditar } from './MotivoEditar';
 
 export default function TableMotivo() {
 
@@ -54,9 +45,9 @@ export default function TableMotivo() {
       cell: row => (
         <div>
 
-          <ModalMotivoEditar row = { row } />
+          <MotivoEditar row={row} />
 
-          <ModalMotivoEliminar row = { row } />
+          <ModalMotivoEliminar row={row} />
 
         </div>
       ),
@@ -117,110 +108,23 @@ export default function TableMotivo() {
         <DataTable
           columns={columns}
           data={data}
-          defaultSortAsc={false}
+          sortIcon={<BsArrowDown />}
           theme={useColorModeValue('default', 'solarized')}
           pagination
           ignoreRowClick={true}
           responsive={true}
-          paginationPerPage={8}
-          paginationRowsPerPageOptions={[8, 15, 20, 30]}
+          paginationPerPage={10}
+          paginationRowsPerPageOptions={[10, 15, 20, 30]}
+          fixedHeader
+          fixedHeaderScrollHeight="550px"
         />
       </DataTableExtensions>
     </Box>
   );
 }
 
-// Modal Editar Motivo
-
-const ModalMotivoEditar = ({ row }) => {
-
-  const [openedit, setOpenEdit] = useState(false);
-  const dispatch = useDispatch();
-
-  const [indice, setIndice] = useState({
-    idMotivo: null,
-    motivo: '',
-  });
-
-  const handleClickOpenEdit = index => {
-    setIndice(index);
-    setOpenEdit(true);
-  };
-
-  const handleCloseEdit = () => {
-    setOpenEdit(false);
-  };
-
-  const handleUpdateMotivo = e => {
-    e.preventDefault();
-    dispatch(updateMotivo(indice))
-      .then(() => {
-        handleCloseEdit(true);
-        console.log('Motivo actualizado');
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  return (
-    <>
-      <IconButton
-          icon={<AiTwotoneEdit />}
-          variant={'outline'}
-          colorScheme={'facebook'}
-          onClick={() => handleClickOpenEdit(row)}
-          fontSize={'22px'}
-          size={'sm'}
-          _focus={{ boxShadow: "none" }}
-        />
-      <Modal isOpen={openedit} onClose={handleCloseEdit} size={'2xl'}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>
-            EDITAR EL MOTIVO DE LA INCIDENCIA
-          </ModalHeader>
-          <ModalCloseButton _focus={{ boxShadow: "none" }} />
-          <ModalBody pb={6}>
-            <FormControl>
-              <Input
-                value={indice ? indice.idMotivo : ''}
-                disabled={true}
-                type="text"
-                hidden={true}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel>MOTIVO</FormLabel>
-              <Input
-                defaultValue={indice ? indice.motivo : ''}
-                textTransform={'uppercase'}
-                type="text"
-                onChange={e =>
-                  setIndice({ ...indice, motivo: e.target.value.toUpperCase() })
-                }
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              onClick={e => handleUpdateMotivo(e)}
-              colorScheme="green"
-              mr={3}
-              _focus={{ boxShadow: "none" }}
-            >
-              ACTUALIZAR
-            </Button>
-            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
-  )
-
-}
-
 // Modal Eliminar Motivo
+
 const ModalMotivoEliminar = ({ row }) => {
 
   const [opendelete, setOpenDelete] = useState(false);
@@ -235,7 +139,6 @@ const ModalMotivoEliminar = ({ row }) => {
     dispatch(deleteMotivo(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Motivo eliminado');
       })
       .catch(e => {
         console.log(e);
@@ -264,11 +167,11 @@ const ModalMotivoEliminar = ({ row }) => {
         _focus={{ boxShadow: "none" }}
       />
 
-      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'xl'}>
+      <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size={'2xl'}>
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-                <Text>¿ESTÁ SEGURO DE ELIMINAR EL MOTIVO?</Text>
+              <Text>¿ESTÁ SEGURO DE ELIMINAR EL MOTIVO?</Text>
             </AlertDialogHeader>
 
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>

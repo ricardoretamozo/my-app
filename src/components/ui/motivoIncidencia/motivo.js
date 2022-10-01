@@ -7,20 +7,21 @@ import { types } from '../../../types/types';
 import TableMotivo from './TableMotivo';
 
 export const Motivo = () => {
+  
   const dispatch = useDispatch();
 
   const fetchData= async ()=> {
     await fetchMotivos().then((res)=>{
       dispatch(getMotivo(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
 
   useEffect(() => {
-    
     if(store.getState().motivo.checking){
       fetchData();
     }
-    //fetchData();
   });
 
   //

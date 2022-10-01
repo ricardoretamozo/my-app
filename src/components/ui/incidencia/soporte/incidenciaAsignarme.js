@@ -17,20 +17,22 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchIncidenciaSoporte, asignarIncidencia } from '../../../../actions/incidencia';
 import { getIncidenciasAsignadasSoporte } from './incidencia';
 
-const IncidenciaAsignarme = (props) => {
+const IncidenciaAsignarme = ({rowData}) => {
 
     const [openAlert, setOpenAlert] = useState(false);
     const { identificador } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     const [idIncidencia, setIndiceIncidencia] = useState(null);
+    const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
 
     const handleClickCloseAlert = () => {
         setOpenAlert(false);
     }
 
     const handleClickOpenAlert = (index) => {
-        setIndiceIncidencia(index);
+        setIndiceIncidencia(index.idIncidencia);
+        setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A")[0].persona_notifica.idpersona);
         setOpenAlert(true);
     }
 
@@ -43,14 +45,17 @@ const IncidenciaAsignarme = (props) => {
     const AsignarmeIncidencia = () => {
         var incidencia = {
           idIncidencia: idIncidencia,
-          historialIncidencia: {
+          historialIncidencia: [{
             persona_registro: {
               idpersona: Number(identificador)
             },
             persona_asignado: {
               idpersona: Number(identificador),
+            },
+            persona_notifica: {
+                idpersona: incidenciaPersonaNotifica ? incidenciaPersonaNotifica : identificador,
             }
-          }
+          }]
         }
         dispatch(asignarIncidencia(incidencia))
           .then(() => {
@@ -67,7 +72,7 @@ const IncidenciaAsignarme = (props) => {
                 icon={<VscAdd />}
                 variant={'solid'}
                 colorScheme={'facebook'}
-                onClick={() => handleClickOpenAlert(props.rowId)}
+                onClick={() => handleClickOpenAlert(rowData)}
                 fontSize='20px'
                 size={'sm'}
                 ml={1}

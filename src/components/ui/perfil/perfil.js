@@ -45,12 +45,14 @@ const UserProfile = () => {
         password2: '',
     };
 
+    console.log(datosUsuario)
+
     const obtenerMisDatos = async () => {
         await fetchUsuarioId(identificador).then((datos) => {
-            setDatosUsuario(datos);
-            setPerfilPersona(datos.perfilPersona);
+            setDatosUsuario(datos.data);
+            setPerfilPersona(datos.data.perfilPersona);
         }).catch(error => {
-            console.log(error);
+            console.log('Error al obtener los datos del usuario: ', error);
         })
     }
 

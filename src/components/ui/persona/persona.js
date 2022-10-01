@@ -13,25 +13,26 @@ export const Persona = () => {
   const fetchData= async ()=> {
     await personaList().then((res)=>{
       dispatch(getPersona(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
   }
 
   const fetchDataPersonaOrgano = async () => {
     await fetchPersonaOrgano().then((res)=>{
       dispatch(getPersonaOrgano(res));
+    }).catch((err)=>{
+      console.log("WARN " + err);
     });
-    
   }
 
   useEffect(() => {
-    // console.log(store.getState().personaList);
     if(store.getState().persona.checking){
       fetchData();
     }
     if(store.getState().personaOrgano.rows.length <= 0){
       fetchDataPersonaOrgano();
     }
-    //fetchData();
   });
 
   //

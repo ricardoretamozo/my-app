@@ -459,7 +459,7 @@ export default function TableIncidenciaSoporte() {
           width={'100%'}
           justifyContent={'space-between'}
           verticalAlign={'center'}
-          p={4}
+          px={4}
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">

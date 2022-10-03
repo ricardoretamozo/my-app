@@ -16,12 +16,14 @@ import Select from 'react-select';
 import { SearchIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Moment from 'moment';
 import { timerNotification } from '../../../../../helpers/alert';
-import ChartReporteOne from './ChartReporteOne';
-import { Filtering } from './ReportOne';
-import { fetchReporteTecnicos, fetchReporteUsuario } from '../../../../../actions/reporte';
-import { UsuarioReporte } from './ReportTwo';
+import { fetchReporteUsuario } from '../../../../../actions/reporte';
+import ReporteUsuarios  from './ReporteUsuarios';
 import ChartReporteUsuarios from './ChartReporteUsuarios';
 import { NavLink } from 'react-router-dom';
+
+import { FaFileCsv, FaFilePdf } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import { CSVLink } from "react-csv";
 
 export default function SegundoReporte() {
 
@@ -65,11 +67,49 @@ export default function SegundoReporte() {
           idSede: value[i].value,
         });
       }
-      setSelectedSedeId(sede);
+      if(sede.length > 0){
+        setSelectedSedeId(sede);
+      }else{
+        setSelectedSedeId(null);
+      }
     } else {
       setSelectedSedeId(null);
     }
   }
+
+  const handleExportPDF = () => {
+    timerNotification('EXPORTANDO PDF...', 'info', 2000);
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(10);
+
+    const title = "REPORTE DE TICKETS CREADOS POR CADA USUARIO";
+    const headers = [["USUARIO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"]];
+
+    const data = reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]);
+
+    let content = {
+      startY: 50,
+      head: headers,
+      body: data,
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("ReporteUsuario.pdf")
+  }
+
+  const csvReport = {
+    headers: ["USUARIO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"],
+    data: reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]),
+    filename: 'ReporteUsuario.csv',
+    separator: ';',
+  };
 
   return (
     <>
@@ -143,27 +183,45 @@ export default function SegundoReporte() {
           </FormControl>
         </HStack>
         <HStack w={'100%'} px={4} spacing="24px" justifyContent={'space-between'}>
-          <FormControl>
-            <ButtonGroup size='sm' isAttached>
-              <Button
-                size="sm"
-                variant='solid'
-                pointerEvents="none"
-                px="5"
-                disabled={selectedSedeId === null}
+          <Button
+              colorScheme="blue"
+              borderRadius={'none'}
+              leftIcon={<SearchIcon fontSize={'20px'} />}
+              onClick={() => BuscarFiltros()}
+              disabled={selectedSedeId === null}
+              _focus={{ boxShadow: "none" }}
               >
                 BUSCAR REGISTROS
-              </Button>
-              <IconButton
-                onClick={() => BuscarFiltros()}
+          </Button>
+          <ButtonGroup>
+            <Button
+              borderRadius={'none'}
+              variant='solid'
+              colorScheme={'red'}
+              leftIcon={<FaFilePdf fontSize={'20px'} />}
+              pointerEvents={reportes.length === 0 ? "none" : "true"}
+              disabled={reportes.length === 0}
+              onClick={() => handleExportPDF()}
+              px="5"
+              _focus={{ boxShadow: "none" }}>
+              EXPORTAR PDF
+            </Button>
+
+            <CSVLink {...csvReport}>
+              <Button
                 variant='solid'
-                icon={<SearchIcon />}
-                colorScheme="facebook"
-                _focus={{ boxShadow: "none" }}
-                disabled={selectedSedeId === null}
-              />
-            </ButtonGroup>
-          </FormControl>
+                colorScheme={'green'}
+                borderRadius={'none'}
+                leftIcon={<FaFileCsv fontSize={'20px'} />}
+                pointerEvents={reportes.length === 0 ? "none" : "true"}
+                disabled={reportes.length === 0}
+                px="5"
+                onClick={() => timerNotification('EXPORTANDO CSV...', 'info', 2000)}
+                _focus={{ boxShadow: "none" }}>
+                EXPORTAR CSV
+              </Button>
+            </CSVLink>
+          </ButtonGroup>
         </HStack>
 
         <HStack
@@ -174,16 +232,16 @@ export default function SegundoReporte() {
         >
           <Tabs isFitted variant='enclosed' colorScheme='green' w={'100%'}>
             <TabList mb='1em'>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 DATOS 📅
               </Tab>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 GRAFICOS 📊
               </Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                <UsuarioReporte
+                <ReporteUsuarios
                   reportes={reportes}
                   nombreTecnicos={nombreTecnicos}
                   totalReportes={totalReportes}

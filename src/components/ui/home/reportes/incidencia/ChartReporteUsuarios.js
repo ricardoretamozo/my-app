@@ -9,11 +9,6 @@ require('highcharts/modules/histogram-bellcurve')(Highcharts);
 
 const ChartReporteUsuarios = ({ reportes, serieReporte, nombreTecnicos, totalReportes }) => {
 
-  // SUMAR
-
-  // console.log(nombreTecnicos);
-  // console.log(totalReportes);
-
   function Promedio(myArray) {
     var i = 0, summ = 0, ArrayLen = myArray.length;
     while (i < ArrayLen) {
@@ -38,15 +33,8 @@ const ChartReporteUsuarios = ({ reportes, serieReporte, nombreTecnicos, totalRep
     }
   ]
 
-  // console.log(nombreTecnicos)
-
-//   var nombreUsuario = nombreTecnicos.filter(item => item.length < 5)
-
-//   console.log(nombreUsuario)
-
   var pendientes = data.map(item => item.pendientes)
 
-  //console.log(serieReporte)
 
   const options = {
     title: {
@@ -342,7 +330,7 @@ const ChartReporteUsuarios = ({ reportes, serieReporte, nombreTecnicos, totalRep
 
   return (
     <>
-      <SimpleGrid columns={[1, 1, 2]} spacing='40px'>
+      <SimpleGrid columns={1} spacing='40px'>
         <Box height='100%' borderRadius="xs" boxShadow={'md'} p={2}>
           <HighchartsReact highcharts={Highcharts} options={BellcurveOptions} />
         </Box>

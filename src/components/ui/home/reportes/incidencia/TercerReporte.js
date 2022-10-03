@@ -17,10 +17,13 @@ import { SearchIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Moment from 'moment';
 import { timerNotification } from '../../../../../helpers/alert';
 import ChartReporteOne from './ChartReporteOne';
-import { Filtering } from './ReportOne';
 import { fetchReporteTecnicos, fetchReporteTiempo } from '../../../../../actions/reporte';
-import { TiempoReporte } from './ReportThree';
+import ReporteTiempos from './ReporteTiempos';
 import { NavLink } from 'react-router-dom';
+
+import { FaFileCsv, FaFilePdf } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import { CSVLink } from "react-csv";
 
 export default function TercerReporte() {
 
@@ -64,11 +67,67 @@ export default function TercerReporte() {
             idSede: value[i].value,
           });
       }
-      setSelectedSedeId(sede);
+      if (sede.length > 0) {
+        setSelectedSedeId(sede);
+      }else{
+        setSelectedSedeId(null);
+      }
     } else {
       setSelectedSedeId(null);
     }
   }
+
+  const handleExportPDF = () => {
+    timerNotification('EXPORTANDO PDF...', 'info', 2000);
+    const unit = "pt";
+    const size = "A3"; // Use A1, A2, A3 or A4
+    const orientation = "landscape"; // portrait or landscape
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(10);
+
+    const title = "REPORTE DE TICKETS CREADOS POR CADA USUARIO";
+    const headers = [["USUARIO COMUN", "SOPORTE TECNICO", "FECHA DE REGISTRO", "TIEMPO TRANSCURRIDO", "INCIDENCIA EN TRAMITE", "TIEMPO TRANSCURRIDO", "INCIDENCIA ATENDIDA"]];
+
+    const data = reportes.map(elt => 
+      [
+        elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido, 
+        elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido, 
+        elt.registroPendiente === null ? '' : Moment(elt.registroPendiente).format('DD/MM/YYYY HH:mm:ss'),
+        elt.tiempoTranscurridoPendiente, 
+        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("DD/MM/YYYY - HH:mm:ss"),
+        elt.tiempoTranscurridoTramitado, 
+        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("DD/MM/YYYY - HH:mm:ss"),
+      ]);
+
+    let content = {
+      startY: 50,
+      head: headers,
+      body: data,
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("ReporteUsuario.pdf")
+  }
+
+  const csvReport = {
+    headers: ["USUARIO COMUN", "SOPORTE TECNICO", "FECHA DE REGISTRO", "TIEMPO TRANSCURRIDO", "INCIDENCIA EN TRAMITE", "TIEMPO TRANSCURRIDO", "INCIDENCIA ATENDIDA"],
+    data: reportes.map(elt => 
+      [
+        elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido, 
+        elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido, 
+        elt.registroPendiente === null ? '' : Moment(elt.registroPendiente).format('DD/MM/YYYY HH:mm:ss'),
+        elt.tiempoTranscurridoPendiente, 
+        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("DD/MM/YYYY - HH:mm:ss"),
+        elt.tiempoTranscurridoTramitado, 
+        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("DD/MM/YYYY - HH:mm:ss"),
+      ]),
+    filename: 'ReporteUsuario.csv',
+    separator: ';',
+  };
 
   return (
     <>
@@ -142,27 +201,45 @@ export default function TercerReporte() {
           </FormControl>
         </HStack>
         <HStack w={'100%'} px={4} spacing="24px" justifyContent={'space-between'}>
-          <FormControl>
-            <ButtonGroup size='sm' isAttached>
-              <Button
-                size="sm"
-                variant='solid'
-                pointerEvents="none"
-                px="5"
-                disabled={selectedSedeId === null}
+        <Button
+              colorScheme="blue"
+              borderRadius={'none'}
+              leftIcon={<SearchIcon fontSize={'20px'} />}
+              onClick={() => BuscarFiltros()}
+              disabled={selectedSedeId === null}
+              _focus={{ boxShadow: "none" }}
               >
                 BUSCAR REGISTROS
-              </Button>
-              <IconButton
-                onClick={() => BuscarFiltros()}
+          </Button>
+          <ButtonGroup>
+            <Button
+              borderRadius={'none'}
+              variant='solid'
+              colorScheme={'red'}
+              leftIcon={<FaFilePdf fontSize={'20px'} />}
+              pointerEvents={reportes.length === 0 ? "none" : "true"}
+              disabled={reportes.length === 0}
+              onClick={() => handleExportPDF()}
+              px="5"
+              _focus={{ boxShadow: "none" }}>
+              EXPORTAR PDF
+            </Button>
+
+            <CSVLink {...csvReport}>
+              <Button
                 variant='solid'
-                icon={<SearchIcon />}
-                colorScheme="facebook"
-                _focus={{ boxShadow: "none" }}
-                disabled={selectedSedeId === null}
-              />
-            </ButtonGroup>
-          </FormControl>
+                colorScheme={'green'}
+                borderRadius={'none'}
+                leftIcon={<FaFileCsv fontSize={'20px'} />}
+                pointerEvents={reportes.length === 0 ? "none" : "true"}
+                disabled={reportes.length === 0}
+                px="5"
+                onClick={() => timerNotification('EXPORTANDO CSV...', 'info', 2000)}
+                _focus={{ boxShadow: "none" }}>
+                EXPORTAR CSV
+              </Button>
+            </CSVLink>
+          </ButtonGroup>
         </HStack>
 
         <HStack
@@ -173,16 +250,16 @@ export default function TercerReporte() {
         >
           <Tabs isFitted variant='enclosed' colorScheme='green' w={'100%'}>
             <TabList mb='1em'>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 DATOS 📅
               </Tab>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 GRAFICOS 📊
               </Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                <TiempoReporte
+                <ReporteTiempos
                   reportes={reportes}
                   nombreTecnicos={nombreTecnicos}
                   totalReportes={totalReportes}

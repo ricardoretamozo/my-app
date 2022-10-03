@@ -22,6 +22,7 @@ import { ReporteIncidencia, IncidenciaSegundoReporte, IncidenciaTercerReporte } 
 import { perfil } from './perfil/index';
 import { Ftp } from './ftp/ftp';
 import { IncidenciaConocimiento } from './incidencia/conocimiento/incidencia';
+import { CorreoCredencial } from './correoCredencial/correoCredencial';
 
 export const DasboardScreen = () => {
   //
@@ -137,6 +138,11 @@ export const DasboardScreen = () => {
         <PrivateRoute
           exact path="/dashboard/tabla-conocimiento"
           component={IncidenciaConocimiento}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/correo-credencial"
+          component={CorreoCredencial}
           isAuthenticated={!!access_token}
         />
       </Switch>

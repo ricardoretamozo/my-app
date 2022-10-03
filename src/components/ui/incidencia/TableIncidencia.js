@@ -425,14 +425,14 @@ export default function TableIncidencia() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
-        paddingBottom={8}
+        paddingBottom={4}
       >
         <HStack
           spacing="20px"
           width={'100%'}
           justifyContent={'space-between'}
           verticalAlign={'center'}
-          p={4}
+          px={4}
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">

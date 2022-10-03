@@ -24,4 +24,5 @@ export const types = {
     eventLoadedCorreoEnviado: '[event] Events loaded Correo Enviado',
     eventLoadedOrigenIncidencia: '[event] Events loaded Origen Incidencia',
     eventLoadedFtp: '[event] Events loaded Ftp',
+    eventLoadedCorreoCredencial: '[event] Events loaded Correo Credencial',
 }

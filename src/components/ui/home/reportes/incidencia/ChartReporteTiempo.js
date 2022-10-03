@@ -9,11 +9,6 @@ require('highcharts/modules/histogram-bellcurve')(Highcharts);
 
 const ChartReporteTiempo = ({ reportes, serieReporte, nombreTecnicos, totalReportes }) => {
 
-  // SUMAR
-
-  console.log(nombreTecnicos);
-  console.log(totalReportes);
-
   function Promedio(myArray) {
     var i = 0, summ = 0, ArrayLen = myArray.length;
     while (i < ArrayLen) {
@@ -29,11 +24,6 @@ const ChartReporteTiempo = ({ reportes, serieReporte, nombreTecnicos, totalRepor
   var tramitadas = data.map(item => item.tramitadas)
   var total = data.map(item => item.total)
 
-  console.log(pendientes)
-  console.log(tramitadas)
-  console.log(atendidas)
-  console.log(total)
-
   const datos = [
     {
       name: data.map(item => item.usuario?.nombre),
@@ -43,10 +33,7 @@ const ChartReporteTiempo = ({ reportes, serieReporte, nombreTecnicos, totalRepor
     }
   ]
 
-  console.log(datos)
-
   var pendientes = data.map(item => item.pendientes)
-  console.log(Promedio(pendientes))
 
   //console.log(serieReporte)
 

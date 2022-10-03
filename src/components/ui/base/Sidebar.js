@@ -83,6 +83,7 @@ const LinkItemsCoordinadorInformatico = [
   { name: 'TABLA DE CONOCIMIENTO', icon: FaBrain, ruta: '/dashboard/tabla-conocimiento' },
   { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
   { name: 'FTP', icon: FaBox, ruta: '/dashboard/ftp' },
+  { name: 'CORREO CREDENCIAL', icon: FaBox, ruta: '/dashboard/correo-credencial' },
 ];
 
 const LinkItemsAsistenteInformatico = [
@@ -100,6 +101,7 @@ const LinkItemsAsistenteInformatico = [
   { name: 'TABLA DE CONOCIMIENTO', icon: FaBrain, ruta: '/dashboard/tabla-conocimiento' },
   { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
   { name: 'FTP', icon: FaBox, ruta: '/dashboard/ftp' },
+  { name: 'CORREO CREDENCIAL', icon: FaBox, ruta: '/dashboard/correo-credencial' },
 ];
 
 const LinkItemsSoporteTecnico = [
@@ -169,12 +171,8 @@ const SidebarContent = ({ onClose, ...rest }) => {
           <CloseButton ml={2} display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} _focus={{ boxShadow: "none" }} />
         </Flex>
         <Flex alignItems="center" justifyContent="center" mr={1} mb={2}>
-          {/* <Avatar size="md" p={1} name={usuario?.rol} /> */}
-            <Image src={logoPJA} borderRadius="md" boxSize="50px"/>
+            <Image src={logoPJA} borderRadius="md" boxSize="30px"/>
         </Flex>
-        {/* <Flex alignItems="center" justifyContent="center" mr={2} mb={4}>
-          <Text fontSize={'x-small'} color="#999999" fontWeight='semibold'>Sistema de Incidencias - CSJ - Arequipa</Text>
-        </Flex> */}
         
         {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 
           LinkItemsCoordinadorInformatico.map((link, index) => (
@@ -224,7 +222,7 @@ const NavItem = ({ icon, children, ...rest }) => {
         role="group"
         cursor="pointer"
         textDecoration={'none'}
-        height={"44px"}
+        height={"42px"}
         fontSize={'xs'}
         {...rest}
       >

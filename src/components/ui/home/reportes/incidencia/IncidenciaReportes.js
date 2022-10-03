@@ -17,30 +17,25 @@ import { SearchIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Moment from 'moment';
 import { timerNotification } from '../../../../../helpers/alert';
 import ChartReporteOne from './ChartReporteOne';
-import { Filtering } from './ReportOne';
+import ReporteTecnicos from './ReporteTecnicos';
 import { fetchReporteTecnicos } from '../../../../../actions/reporte';
 
 import { NavLink } from 'react-router-dom';
+import { FaFileCsv, FaFilePdf } from 'react-icons/fa';
+import jsPDF from 'jspdf';
+import { CSVLink } from "react-csv";
 
 export default function IncidenciaReportes() {
 
-  // const data = store.getState().origenIncidencia.rows;
   const sedesData = store.getState().sede.rows;
 
   const [selectedSedeId, setSelectedSedeId] = useState(null);
   const [selectedFechaIncio, setSelectedFechaInicio] = useState(null);
   const [selectedFechaFinal, setSelectedFechaFinal] = useState(null);
 
-  //2022-09-13 02:23:17.253000
-  //2022-09-13T02:23:17.253-05:00
-  // 2022-09-13T09:01:09
-  //2022-09-13 08:24:38
-
-  //2022-09-13T08:29
-
   const fechaInicio = Moment().startOf('month').format('yyyy-MM-DDTHH:mm:ss');
   const fechaActual = Moment(new Date()).format('yyyy-MM-DDTHH:mm:ss');
-  const fechaActualizada = Moment(fechaActual).add(5 , 'hours').format('yyyy-MM-DDTHH:mm:ss');
+  const fechaActualizada = Moment(fechaActual).add(5, 'hours').format('yyyy-MM-DDTHH:mm:ss');
 
   const [reportes, setReportes] = useState([]);
   const [nombreTecnicos, setNombreTecnicos] = useState([]);
@@ -63,24 +58,60 @@ export default function IncidenciaReportes() {
       setNombreTecnicos(nombreTecnicos);
       setTotalReportes(totalReportes);
     })
-    timerNotification('Buscando Registros...', 'info', 2000);
+    timerNotification('BUSCANDO REGISTROS...', 'info', 2000);
   }
 
   const handleChangeSede = (value) => {
     if (value !== null) {
       var sede = [];
-      for (let i=0; i<value.length; i++) {
+      for (let i = 0; i < value.length; i++) {
         sede.push({
-            idSede: value[i].value,
-          });
+          idSede: value[i].value,
+        });
       }
-      setSelectedSedeId(sede);
+      if (sede.length > 0) {
+        setSelectedSedeId(sede);
+      } else {
+        setSelectedSedeId(null);
+      }    
     } else {
       setSelectedSedeId(null);
     }
   }
 
-  console.log(reportes);
+  const handleExportPDF = () => {
+    timerNotification('EXPORTANDO PDF...', 'info', 2000);
+    const unit = "pt";
+    const size = "A4"; // Use A1, A2, A3 or A4
+    const orientation = "portrait"; // portrait or landscape
+
+    const marginLeft = 40;
+    const doc = new jsPDF(orientation, unit, size);
+
+    doc.setFontSize(10);
+
+    const title = "REPORTE DE TICKETS HÁCIA UN SOPORTE TECNICO";
+    const headers = [["TECNICO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"]];
+
+    const data = reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]);
+
+    let content = {
+      startY: 50,
+      head: headers,
+      body: data,
+    };
+
+    doc.text(title, marginLeft, 40);
+    doc.autoTable(content);
+    doc.save("ReporteTecnico.pdf")
+  }
+
+  const csvReport = {
+    headers: ["TECNICO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"],
+    data: reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]),
+    filename: 'ReporteTecnico.csv',
+    separator: ';',
+  };
 
   return (
     <>
@@ -91,7 +122,7 @@ export default function IncidenciaReportes() {
         boxShadow={'xs'}
         bg={useColorModeValue('white', 'gray.900')}
       >
-        <Box px="4" mt="6">
+        <Box px="4" mt="4">
           <Box d="flex" alignItems="baseline">
             <Breadcrumb spacing='8px' separator={<ChevronRightIcon color='gray.500' />}>
               <BreadcrumbItem>
@@ -101,7 +132,7 @@ export default function IncidenciaReportes() {
               </BreadcrumbItem>
 
               <BreadcrumbLink as={NavLink} to="/dashboard/reportes/incidencias-one" _hover={{ textDecoration: 'none' }}>
-                  <Button size="xs" variant="unstyled" color="black">REPORTES DE INCIDENCIAS POR SOPORTE</Button>
+                <Button size="xs" variant="unstyled" color="black">REPORTES DE INCIDENCIAS POR SOPORTE</Button>
               </BreadcrumbLink>
             </Breadcrumb>
           </Box>
@@ -111,7 +142,7 @@ export default function IncidenciaReportes() {
           width={'100%'}
           justifyContent={'space-between'}
           px={4}
-          mt={6}
+          mt={2}
           mb={4}
           fontSize={'xs'}
         >
@@ -153,28 +184,54 @@ export default function IncidenciaReportes() {
             />
           </FormControl>
         </HStack>
-        <HStack w={'100%'} px={4} spacing="24px" justifyContent={'space-between'}>
-          <FormControl>
-            <ButtonGroup size='sm' isAttached>
+        <HStack
+          spacing="24px"
+          width={'100%'}
+          justifyContent={'space-between'}
+          px={4}
+          mt={2}
+          mb={4}
+          fontSize={'xs'}
+        >
+          <Button
+            colorScheme="blue"
+            borderRadius={'none'}
+            leftIcon={<SearchIcon fontSize={'20px'} />}
+            onClick={() => BuscarFiltros()}
+            disabled={selectedSedeId === null}
+            _focus={{ boxShadow: "none" }}
+            >
+              BUSCAR REGISTROS
+          </Button>
+          <ButtonGroup>
+            <Button
+              borderRadius={'none'}
+              variant='solid'
+              colorScheme={'red'}
+              leftIcon={<FaFilePdf fontSize={'20px'} />}
+              pointerEvents={reportes.length === 0 ? "none" : "true"}
+              disabled={reportes.length === 0}
+              onClick={() => handleExportPDF()}
+              px="5"
+              _focus={{ boxShadow: "none" }}>
+              EXPORTAR PDF
+            </Button>
+
+            <CSVLink {...csvReport}>
               <Button
-                size="sm"
                 variant='solid'
-                pointerEvents="none"
+                colorScheme={'green'}
+                borderRadius={'none'}
+                leftIcon={<FaFileCsv fontSize={'20px'} />}
+                pointerEvents={reportes.length === 0 ? "none" : "true"}
+                disabled={reportes.length === 0}
                 px="5"
-                disabled={selectedSedeId === null}
-              >
-                BUSCAR REGISTROS
+                onClick={() => timerNotification('EXPORTANDO CSV...', 'info', 2000)}
+                _focus={{ boxShadow: "none" }}>
+                EXPORTAR CSV
               </Button>
-              <IconButton
-                onClick={() => BuscarFiltros()}
-                variant='solid'
-                icon={<SearchIcon />}
-                colorScheme="facebook"
-                _focus={{ boxShadow: "none" }}
-                disabled={selectedSedeId === null}
-              />
-            </ButtonGroup>
-          </FormControl>
+            </CSVLink>
+          </ButtonGroup>
         </HStack>
 
         <HStack
@@ -185,16 +242,16 @@ export default function IncidenciaReportes() {
         >
           <Tabs isFitted variant='enclosed' colorScheme='green' w={'100%'}>
             <TabList mb='1em'>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 DATOS 📅
               </Tab>
-              <Tab _focus={{ boxShadow: "none" }}>
+              <Tab _focus={{ boxShadow: "none" }} borderRadius="none">
                 GRAFICOS 📊
               </Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                <Filtering
+                <ReporteTecnicos
                   reportes={reportes}
                   nombreTecnicos={nombreTecnicos}
                   totalReportes={totalReportes}
@@ -213,4 +270,4 @@ export default function IncidenciaReportes() {
       </Box>
     </>
   );
-}
+};

@@ -44,9 +44,9 @@ export const createHistorialPersona = (data) => {
     );
 
     if (response.status === 200 || response.status === 201) {
-      notification('Historial registrado correctamente.', 'El historial Ha sido registrado correctamente', 'success');
+      notification('Datos registrados correctamente.', 'Sus Datos ha sido registrado correctamente', 'success');
     } else {
-      notification('Error de registro Historial', 'No se pudo registrar el Historial', 'error');
+      notification('Error de registro sus Datos', 'No se pudo registrar sus Datos', 'error');
       // dispatch(fetchHistorialPersona)
     }
   };

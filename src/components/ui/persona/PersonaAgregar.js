@@ -15,11 +15,12 @@ import {
   Select,
   HStack,
   InputRightElement,
+  Progress,
 } from '@chakra-ui/react';
 
 import { AddIcon } from '@chakra-ui/icons';
 
-import { createPersona } from '../../../actions/persona';
+import { consultaReniec, createPersona } from '../../../actions/persona';
 
 import { FaFingerprint } from 'react-icons/fa';
 
@@ -40,6 +41,7 @@ const PersonaAgregar = () => {
   );
 
   const [estadoInput, setEstadoInput] = useState(false);
+  const [progress , setProgress] = useState(false);
 
   const initialPersona = {
     nombre: '',
@@ -96,14 +98,11 @@ const PersonaAgregar = () => {
         idPerfilPersona: persona.perfilPersona.idPerfilPersona !== '' ? Number(persona.perfilPersona) : PerfilUsuarioDefault[0].idPerfilPersona,
       },
     }
-    dispatch(
-      createPersona(dataPersona)
-    )
+    dispatch(createPersona(dataPersona))
       .then(() => {
         handleCloseModal(true);
       })
       .catch(error => {
-        console.log('No se pudo crear la Persona!', { variant: 'error' });
         console.log(error);
       });
   };
@@ -116,32 +115,33 @@ const PersonaAgregar = () => {
     setOpenCreate(false);
     setPersona(initialPersona);
     setEstadoInput(false);
+    setProgress(false);
   };
 
   /** MÉTODO PARA REALIZAR LA CONSULTA A LA API DE LA RENIEC */
 
   const consultaReniecDNI = async () => {
+    setProgress(true);
     try {
-      const respuesta = await fetch("http://172.28.206.57:8080/SIJ/Reniec/" + persona.dni, { method: 'POST' });
-      if (respuesta.status === 200 || respuesta.status === 201) {
-        const body = await respuesta.json();
-        setPersona({
-          ...persona,
-          nombre: body[5],
-          apellido: body[2] + ' ' + body[3],
-          fecha: body[28].split('/').reverse().join('-'),
-          sexo: body[17] === 'MASCULINO' ? 'M' : 'F',
-        });
-        setEstadoInput(true);
-      } else if (respuesta.status === 404) {
-        notification('Persona no encontrada', 'Persona con ese DNI no existe', 'error');
-      }
-      else {
-        notification('Error', 'Error al consultar DNI', 'error');
-      }
-    } catch (error) {
-      console.log(error);
-      notification('Error al consultar el DNI', 'No se logró realizar la consulta', 'error', 'modalOrganoAsignacion');
+        const respuesta = await consultaReniec(persona.dni);
+        if (!respuesta) {
+          notification('Persona no encontrada', 'Persona con ese DNI no existe', 'error', 'modalOrganoAsignacion');
+        }else{
+          const body = await respuesta.data;
+          setPersona({
+            ...persona,
+            nombre: body[5],
+            apellido: body[2] + ' ' + body[3],
+            fecha: body[28].split('/').reverse().join('-'),
+            sexo: body[17] === 'MASCULINO' ? 'M' : 'F',
+          });
+          setEstadoInput(true);
+          setProgress(false);
+        }
+    }
+    catch {
+      notification('Error de consulta', 'No se logró realizar la consulta correctamente', 'error', 'modalOrganoAsignacion');
+      setProgress(false);
     }
   }
 
@@ -164,6 +164,8 @@ const PersonaAgregar = () => {
             <ModalHeader>AGREGAR NUEVO USUARIO</ModalHeader>
             <ModalCloseButton _focus={{ boxShadow: "none" }} />
             <ModalBody pb={2}>
+              <Progress size="xs" value={progress} colorScheme="messenger" hidden={ progress === false } isIndeterminate = { progress === true } mb={2} />
+
               <InputGroup size='md'>
                 <Input
                   onChange={e =>

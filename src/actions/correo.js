@@ -36,9 +36,8 @@ export const correoLeido = (id) => {
     const response = await fetchToken(
       `correo/leido/`+ id,'', 'PUT');
     if (response.status === 200) {
-      console.log('correo leido')     
     } else {
-      console.log('error', response.status)
+      // console.log('error', response.status)
     }
   };
 };

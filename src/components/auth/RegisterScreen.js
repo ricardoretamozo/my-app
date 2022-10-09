@@ -20,13 +20,8 @@ import {
   PopoverCloseButton,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter,
-  PopoverClose,
   useDisclosure,
-  FormControl,
-  FormLabel,
-  Input,
-  FormHelperText,
+  Center,
 } from '@chakra-ui/react';
 
 import {
@@ -43,8 +38,8 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import Moment from 'moment';
 import { notification, timerNotification } from '../../helpers/alert';
-import { HiOutlinePlusCircle } from 'react-icons/hi';
 import { QuestionIcon } from '@chakra-ui/icons';
+import { consultaReniec } from '../../actions/persona';
 
 export const RegisterScreen = () => {
   const titleColor = useColorModeValue('#c53030', 'red.700');
@@ -78,30 +73,33 @@ export const RegisterScreen = () => {
   }
 
   const StartDni = async (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
-    await fetch(`http://172.28.206.57:8080/SIJ/Reniec/${numeroDocumento}`, { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-        var fechax = Moment(new Date(stringToDate(data[28], "dd/MM/yyyy", "/"))).format('yyyy-MM-DD')
-        if ((data[0] === numeroDocumento) && (data[1] === codigoVerificacion) && (fechax === fechaNacimiento)) {
+      try {
+        const response = await consultaReniec(numeroDocumento);
+
+        var fechax = Moment(new Date(stringToDate(response.data[28], "dd/MM/yyyy", "/"))).format('yyyy-MM-DD');
+        if ((response.data[0] === numeroDocumento) && (response.data[1] === codigoVerificacion) && (fechax === fechaNacimiento)) {
           timerNotification('Validacion correcta');
           dispatch(validadorUsuario({
-            dni: data[0],
-            numeroVerificacion: data[1],
-            nombre: data[5],
-            apellidos: data[2] + ' ' + data[3],
-            fechaNacimiento: data[28],
-            sexo: data[17]
+            dni: response.data[0],
+            numeroVerificacion: response.data[1],
+            nombre: response.data[5],
+            apellidos: response.data[2] + ' ' + response.data[3],
+            fechaNacimiento: response.data[28],
+            sexo: response.data[17]
           }))
           history.push('/auth/register/validate');
-        } else {
+        }else{
           history.push('/auth/register');
-          notification('Los datos no coinciden, error de validacion', '', 'error');
+          notification('Los datos no coinciden', 'Error de validacion intente de nuevo', 'error');
         }
+      } catch (error) {
+        // console.log(error)
+        notification('Error de validacion', 'Error de validacion intente de nuevo', 'error');
       }
-      ).catch((error) => {
-        console.log(error)
-      })
+      
   }
+
+
 
   const HandleValidatorUser = () => {
     validadorUsuarioCreado(validadorDni.dni)
@@ -114,36 +112,11 @@ export const RegisterScreen = () => {
           ))
         } else {
           history.push('/auth/register');
-          console.log('ingreso 2')
         }
       }).catch(err => {
-        console.log(err);
+        // console.log(err);
         history.push('/auth/register');
       })
-    // StartDni(
-    //   validadorDni.dni,
-    //   validadorDni.codigoVerificacion,
-    //   validadorDni.fechaNacimiento
-    // ).then(() => {
-    //   // history('/auth/register/validate');
-    //   validadorUsuarioCreado(validadorDni.dni)
-    //     .then((res) => {
-    //       console.log(res)
-    //       history('/auth/register');
-    //       // history('/auth/register/validate');
-    //       console.log('ingreso 1')
-    //     })
-    //     .catch((e) => {
-    //       console.log(e)
-    //       history('/auth/register/validate');
-    //       console.log('ingreso 2')
-    //       // history('/auth/register');
-    //     })
-    //   }).catch(() => {
-    //     history('/auth/register');
-    //     console.log('ingreso 3')
-    //     // history('/auth/register');
-    //   })
   };
 
   // Validacion con formik
@@ -156,16 +129,25 @@ export const RegisterScreen = () => {
 
   return (
     <>
+      <Box flex={"1"} bg="red.700" borderBottomRadius="3xl" boxShadow={'xl'}>
+        <Center py={4}>
+          <Text color="#999999" fontSize={["md", "xl", "2xl", "3xl"]} fontWeight="extrabold" textAlign="center" verticalAlign={'center'}>
+            SISTEMA DE INCIDENCIAS CORTE SUPERIOR DE JUSTICIA - AREQUIPA
+          </Text>
+        </Center>
+      </Box>
       <Flex
         direction="column"
         alignSelf="center"
         justifySelf="center"
         overflow="hidden"
+        h={"100%"}
+        w={"100%"}
       >
         <Box
           position="absolute"
-          minH={{ base: '70vh', md: '60vh' }}
-          w={{ md: 'calc(100vw - 50px)' }}
+          h={"100vh"}
+          w={"100%"}
           borderRadius={{ md: 'md' }}
           left="0"
           right="0"
@@ -175,128 +157,113 @@ export const RegisterScreen = () => {
           bgImg={BgSignUp}
           top="0"
           bgSize="cover"
-          mx={{ md: 'auto' }}
-          mt={{ md: '14px' }}
         >
         </Box>
-        <Flex
-          direction="column"
-          textAlign="center"
-          justifyContent="center"
-          align="center"
-          mt="2rem"
-          mb="30px"
-        >
-          <Text mx={5} fontSize={{ base: 'xl', sm: '1xl', md: '2xl', lg: '3xl' }} color="#9a1413" fontWeight="bold">
-            Sistema de incidencias Corte Superior de Justicia de Arequipa
-          </Text>
-        </Flex>
-        <Flex alignItems="center" justifyContent="center" mb="5px">
-          <Stack
-            flexDir="column"
-            mb="2"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor={bgCard}
-            boxShadow={'md'}
-            px={'3rem'}
-            py={'2.5rem'}
-            borderRadius="lg"
-            rounded="lg"
-            borderTop="6px solid"
-            borderColor={titleColor}
-          >
-            <Box p={2} boxShadow="md" borderRadius="md">
-              <Image boxSize='50px' objectFit='cover' src={DNI} />
-            </Box>
-            <Text
-              fontSize="xl"
-              color={titleColor}
-              fontWeight="bold"
-              textAlign="center"
-              mb={'20px'}
+        <Flex alignItems="center" justifyContent="center" h={"100%"} w={'100%'} mt={"40px"}>
+            <Stack
+              flexDir="column"
+              mb="2"
+              justifyContent="center"
+              alignItems="center"
+              backgroundColor={bgCard}
+              boxShadow={'md'}
+              px={'4rem'}
+              py={'3rem'}
+              rounded="xl"
+              borderTop="8px solid"
+              borderColor={titleColor}
             >
-              VALIDAR DNI
-            </Text>
-            <Box minW={{ base: "90%", md: "350px" }}>
-              <Formik
-                initialValues={validadorDni}
-                validationSchema={validationSchema}
-                onSubmit={HandleValidatorUser}
+              <Box p={2} boxShadow="md" borderRadius="md">
+                <Image boxSize='50px' objectFit='cover' src={DNI} />
+              </Box>
+              <Text
+                fontSize="xl"
+                color={titleColor}
+                fontWeight="extrabold"
+                textAlign="center"
+                mb={'20px'}
               >
-                {({ handleSubmit }) => (
-                  <form onSubmit={handleSubmit}>
-                    <VStack spacing={1} align="flex-start" mt={2}>
-                      <InputControl
-                        name={'dni'}
-                        label={'DNI'}
-                        inputProps={{ type: "text", placeholder: "INGRESE SU DNI" }}
-                        onChange={e => {
-                          setDni({ ...validadorDni, dni: e.target.value });
-                        }}
-                      />
-                      <InputControl
-                        name={'codigoVerificacion'}
-                        label={<Flex justify="space-between">
-                          <Text>CODIGO DE VERIFICACIÓN</Text>
-                          <PopoverForm />
-                        </Flex>}
-                        inputProps={{ type: "text", placeholder: "CÓDIGO DE VERIFICACIÓN" }}
-                        onChange={e => {
-                          setDni({
-                            ...validadorDni,
-                            codigoVerificacion: e.target.value,
-                          });
-                        }}
-                      />
-                      <InputControl
-                        name={'fechaNacimiento'}
-                        inputProps={{ type: "date" }}
-                        label={'FECHA DE NACIMIENTO'}
-                        onChange={e => {
-                          setDni({
-                            ...validadorDni,
-                            fechaNacimiento: e.target.value.toString(),
-                          });
-                        }}
-                      />
-                      <HStack w={'100%'}>
-                        <Button
-                          bg="red.500"
-                          fontSize="10px"
-                          color="white"
-                          fontWeight="bold"
-                          w="100%"
-                          mt={'10px'}
-                          _hover={{
-                            bg: 'red.600',
+                VALIDAR DNI
+              </Text>
+              <Box minW={{ base: "90%", md: "360px" }}>
+                <Formik
+                  initialValues={validadorDni}
+                  validationSchema={validationSchema}
+                  onSubmit={HandleValidatorUser}
+                >
+                  {({ handleSubmit }) => (
+                    <form onSubmit={handleSubmit}>
+                      <VStack spacing={1} align="flex-start" mt={2}>
+                        <InputControl
+                          name={'dni'}
+                          label={'DNI'}
+                          inputProps={{ type: "text", placeholder: "INGRESE SU DNI", _focus: { boxShadow: "none" } }}
+                          onChange={e => {
+                            setDni({ ...validadorDni, dni: e.target.value });
                           }}
-                          type="submit"
-                          _focus={{ boxShadow: "none" }}
-                        >
-                          VALIDAR
-                        </Button>
-                      </HStack>
-                      <Flex justifyContent={'center'} w={'100%'} textAlign={'center'}>
-                        <Text color={textColor} fontWeight="medium">
-                          Ya tienes una cuenta creada?
-                          <LinkB
-                            color={titleColor}
-                            as="span"
-                            ms="5px"
-                            href="#"
-                            fontWeight="bold"
+                        />
+                        <InputControl
+                          name={'codigoVerificacion'}
+                          label={<Flex justify="space-between">
+                            <Text>CODIGO DE VERIFICACIÓN</Text>
+                            <PopoverForm />
+                          </Flex>}
+                          inputProps={{ type: "text", placeholder: "CÓDIGO DE VERIFICACIÓN", _focus: { boxShadow: "none" } }}
+                          onChange={e => {
+                            setDni({
+                              ...validadorDni,
+                              codigoVerificacion: e.target.value,
+                            });
+                          }}
+                        />
+                        <InputControl
+                          name={'fechaNacimiento'}
+                          inputProps={{ type: "date", _focus: { boxShadow: "none" } }}
+                          label={'FECHA DE NACIMIENTO'}
+                          onChange={e => {
+                            setDni({
+                              ...validadorDni,
+                              fechaNacimiento: e.target.value.toString(),
+                            });
+                          }}
+                        />
+                        <HStack w={'100%'}>
+                          <Button
+                            bg="red.500"
+                            fontSize="16px"
+                            color="white"
+                            fontWeight="extrabold"
+                            w="100%"
+                            mt={'10px'}
+                            _hover={{
+                              bg: 'red.600',
+                            }}
+                            type="submit"
+                            _focus={{ boxShadow: "none" }}
                           >
-                            <LinkA to={'/auth/login'}>Login</LinkA>
-                          </LinkB>
-                        </Text>
-                      </Flex>
-                    </VStack>
-                  </form>
-                )}
-              </Formik>
-            </Box>
-          </Stack>
+                            VALIDAR
+                          </Button>
+                        </HStack>
+                        <Flex justifyContent={'center'} w={'100%'} fontSize={'14px'} textAlign={'center'}>
+                          <Text color={textColor} mt={1}>
+                            ¿YA TIENES UNA CUENTA?
+                            <LinkB
+                              color={titleColor}
+                              as="span"
+                              ms="5px"
+                              href="#"
+                              fontWeight="extrabold"
+                            >
+                              <LinkA to={'/auth/login'}>LOGIN</LinkA>
+                            </LinkB>
+                          </Text>
+                        </Flex>
+                      </VStack>
+                    </form>
+                  )}
+                </Formik>
+              </Box>
+            </Stack>
         </Flex>
       </Flex>
     </>

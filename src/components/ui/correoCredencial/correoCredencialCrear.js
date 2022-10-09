@@ -51,7 +51,7 @@ const CorreoCredencialAgregar = () => {
             .then(() => {
                 handleCloseModal(true);
             }).catch(err => {
-                console.log(err);
+                // console.log(err);
                 handleCloseModal(true);
             })
     }

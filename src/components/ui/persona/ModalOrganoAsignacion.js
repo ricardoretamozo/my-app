@@ -64,7 +64,7 @@ export default function ModalOrganoAsignacion(props) {
   };
 
   //Cambiar opciones select organo
-  const handleChangeSede = value => {
+  const handleChangeSede = (value) => {
     if (value !== null) {
       setorganoSelect(
         organoData.filter(indice => indice.sede.idSede === value.value).map(organo => ({
@@ -79,8 +79,7 @@ export default function ModalOrganoAsignacion(props) {
     }
   };
   //setear organo
-  const handleChangeOrgano = value => {
-    console.log(value)
+  const handleChangeOrgano = (value) => {
     if (value !== null) {
       setorganoNombre(value.value);
     } else {
@@ -145,7 +144,6 @@ export default function ModalOrganoAsignacion(props) {
 
       })
       .catch(err => {
-        console.log(err.message);
         setorganoNombre(null);
         selectInputRef.current.clearValue();
         setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);

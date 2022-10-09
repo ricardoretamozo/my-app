@@ -13,7 +13,7 @@ export const PerfilPersona = () => {
     await perfilPersona().then((res)=>{
       dispatch(getPerfilPersona(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

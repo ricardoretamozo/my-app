@@ -7,116 +7,15 @@ require("highcharts/modules/exporting.js")(Highcharts);
 require("highcharts/modules/export-data.js")(Highcharts);
 require('highcharts/modules/histogram-bellcurve')(Highcharts);
 
-const ChartReporteOne = ({ reportes, serieReporte, nombreTecnicos, totalReportes }) => {
-
-  function Promedio(myArray) {
-    var i = 0, summ = 0, ArrayLen = myArray.length;
-    while (i < ArrayLen) {
-      summ = summ + myArray[i++];
-    }
-    return summ / ArrayLen;
-  }
+const ChartReporteOne = ({ reportes, nombreTecnicos }) => {
 
   const data = reportes
-  console.log(reportes)
   var pendientes = data.map(item => item.pendientes)
   var atendidas = data.map(item => item.atendidas)
   var tramitadas = data.map(item => item.tramitadas)
   var total = data.map(item => item.total)
 
-  const datos = [
-    {
-      name: data.map(item => item.usuario?.nombre),
-      data: [
-        pendientes, atendidas, tramitadas, total
-      ]
-    }
-  ]
-
   var pendientes = data.map(item => item.pendientes)
-
-  const options = {
-    title: {
-      text: 'INCIDENCIAS DE CADA TÉCNICO'
-    },
-    subtitle: {
-      text: 'CANTIDAD DE ESTADO DE INCIDENCIAS DE CADA TÉCNICO'
-    },
-    yAxis: {
-      title: {
-        text: 'Incidencias'
-      },
-    },
-    tooltip: {
-      split: true,
-      valueSuffix: ' ' + 'INCIDENCIAS'
-    },
-    series: data.map(item => {
-      return {
-        name: item.usuario?.nombre,
-        data: [item.pendientes, item.atendidas, item.tramitadas, item.total]
-      }
-    }),
-    exporting: {
-      showTable: false
-    },
-  }
-
-  const options2 = {
-    chart: {
-      plotBackgroundColor: null,
-      plotBorderWidth: 0,
-      plotShadow: false
-  },
-  title: {
-      text: 'Browser<br>shares<br>January<br>2022',
-      align: 'center',
-      verticalAlign: 'middle',
-      y: 60
-  },
-  tooltip: {
-      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-  },
-  accessibility: {
-      point: {
-          valueSuffix: '%'
-      }
-  },
-  plotOptions: {
-      pie: {
-          dataLabels: {
-              enabled: true,
-              distance: -50,
-              style: {
-                  fontWeight: 'bold',
-                  color: 'white'
-              }
-          },
-          startAngle: -90,
-          endAngle: 90,
-          center: ['50%', '75%'],
-          size: '110%'
-      }
-  },
-  series: [{
-      type: 'pie',
-      name: 'Browser share',
-      innerSize: '50%',
-      data: [
-          ['Pendietes', 73.86],
-          ['En Trámite', 11.97],
-          ['Atendidos', 5.52],
-          ['Total', 2.98],
-          {
-              name: 'Other',
-              y: 3.77,
-              dataLabels: {
-                  enabled: false
-              }
-          }
-      ]
-  }]
-  }
 
   const BellcurveOptions = {
     title: {
@@ -329,7 +228,7 @@ const ChartReporteOne = ({ reportes, serieReporte, nombreTecnicos, totalReportes
 
   return (
     <>
-      <SimpleGrid columns={[1, 1, 2]} spacing='40px'>
+      <SimpleGrid columns={1} spacing='40px'>
         <Box height='100%' borderRadius="xs" boxShadow={'md'} p={2}>
           <HighchartsReact highcharts={Highcharts} options={BellcurveOptions} />
         </Box>
@@ -345,12 +244,6 @@ const ChartReporteOne = ({ reportes, serieReporte, nombreTecnicos, totalReportes
         <Box height='100%' borderRadius="xs" boxShadow={'md'} p={2}>
           <HighchartsReact highcharts={Highcharts} options={AreaOptions} />
         </Box>
-        {/* <Box height='100%' borderRadius="xs" boxShadow={'md'} p={2}>
-          <HighchartsReact highcharts={Highcharts} options={promedio} />
-        </Box> */}
-        {/* <Box height='100%' borderRadius="xs" boxShadow={'md'} p={2}>
-          <HighchartsReact highcharts={Highcharts} options={options2} />
-        </Box> */}
       </SimpleGrid>
     </>
   )

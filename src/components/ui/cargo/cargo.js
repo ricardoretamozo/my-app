@@ -13,7 +13,7 @@ export const Cargo = () => {
     await fetchCargos().then((res)=>{
       dispatch(getCargo(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

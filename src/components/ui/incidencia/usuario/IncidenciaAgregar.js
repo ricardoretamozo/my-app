@@ -120,7 +120,7 @@ const IncidenciaAgregar = () => {
     await fetchIncidenciasPersonas(identificador).then((res) => {
       dispatch(getIncidenciaId(res));
     }).catch((err) => {
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

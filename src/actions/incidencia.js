@@ -6,9 +6,7 @@ import { getIncidenciaNoAsignadas, getIncidenciaAsignadas } from '../components/
 // CREATE PERSONA
 
 export const createIncidencia = (data) => {
-  console.log(data.historialIncidencia[0].persona_asignado)
   return async dispatch => {
-    // var incidencia;
     var formData = new FormData();
 
     if (data.historialIncidencia[0].persona_asignado !== undefined){
@@ -20,20 +18,6 @@ export const createIncidencia = (data) => {
       formData.append('historialIncidencia[0].persona_registro.idpersona', data.historialIncidencia[0].persona_registro.idpersona);
       formData.append('historialIncidencia[0].persona_asignado.idpersona', data.historialIncidencia[0].persona_asignado.idpersona);
       formData.append('historialIncidencia[0].persona_notifica.idpersona', data.historialIncidencia[0].persona_notifica.idpersona);
-      //  incidencia = {
-      //   descripcion: data.descripcion,
-      //   persona: { idpersona: data.persona.idpersona },
-      //   motivo: { idMotivo: data.motivo.idMotivo },
-      //   origen: { idOrigen: data.origen.idOrigen },
-      //   historialIncidencia: [{
-      //     persona_registro: {
-      //       idpersona: data.historialIncidencia[0].persona_registro.idpersona
-      //     },
-      //     persona_asignado: {
-      //       idpersona: data.historialIncidencia[0].persona_asignado.idpersona
-      //     },
-      //   }]
-      // }
     } else {
       formData.append('archivo', data.archivo);
       formData.append('descripcion', data.descripcion);
@@ -42,17 +26,6 @@ export const createIncidencia = (data) => {
       formData.append('origen', data.origen.idOrigen);
       formData.append('historialIncidencia[0].persona_registro.idpersona', data.historialIncidencia[0].persona_registro.idpersona);
       formData.append('historialIncidencia[0].persona_notifica.idpersona', data.historialIncidencia[0].persona_notifica.idpersona);
-      // incidencia = {
-      //   descripcion: data.descripcion,
-      //   persona: { idpersona: data.persona.idpersona },
-      //   motivo: { idMotivo: data.motivo.idMotivo },
-      //   origen: { idOrigen: data.origen.idOrigen },
-      //   historialIncidencia: [{
-      //     persona_registro: {
-      //       idpersona: data.historialIncidencia[0].persona_registro.idpersona
-      //     },
-      //   }]
-      // }
     }
     const response = await fetchIncidencia(`incidencias/usuariocomun`, formData, 'POST');
     if (response.status === 200 || response.status === 201) {
@@ -60,7 +33,6 @@ export const createIncidencia = (data) => {
       dispatch(getIncidenciaNoAsignadas(await fetchIncidenciasNoAsignadas()));
       dispatch(getIncidencias(await fetchIncidencias()));
       notification('Incidencia Creada', 'La incidencia ha sido creada correctamente', 'success');
-      // notification((data.historialIncidencia.estado !== true ? 'Incidencia Creada, Asignada a un Técnico' : 'Incidencia Creada, Revisar si fue asignado a un Técnico'), '', 'success');
     } else {
       notification('Error de Registro', 'No se pudo registrar la Incidencia', 'error');
     }
@@ -208,32 +180,6 @@ export const incidenciaEnTramite = (data) => {
     }
   };
 };
-
-
-// export const fetchIncidencias = async () => {
-//   const response = await fetchToken('incidencias');
-//   const body = await response.json();
-//   console.log(body)
-//   const Incidencia = {};
-//   const data = [];
-
-//   body.map(incidencia => {
-//     data.push({
-//       idIncidencia: incidencia.idIncidencia,
-//       descripcion: incidencia.descripcion,
-//       fecha: incidencia.fecha,
-//       persona: incidencia.persona,
-//       oficina: incidencia.oficina,
-//       motivo: incidencia.motivo,
-//       origen: incidencia.origen,
-//       historialIncidencia: incidencia.historialIncidencia,
-//       descripcionIncidencia: incidencia.descripcionIncidencia ? incidencia.descripcionIncidencia : null,
-//     });
-//   });
-//   Incidencia.data = data;
-//   console.log(Incidencia)
-//   return Incidencia;
-// };
 
 export const fetchIncidencias = async () => {
   const response = await fetchToken('incidencias');
@@ -395,7 +341,7 @@ export const fetchViewArchivo = async (filename) => {
     const extensionType = await response.url;
     var datos = [];
     if(extensionType.includes(".pdf")){
-      console.log("es pdf")
+      
       const blob = await response.blob();
       const blobURL = new Blob([blob], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(blobURL);
@@ -410,7 +356,6 @@ export const fetchViewArchivo = async (filename) => {
       return datos;
 
     }else if(extensionType.includes(".png")){
-      console.log("es png")
       const blob = await response.blob();
       const blobURL = new Blob([blob], { type: 'application/png' });
       const fileURL = URL.createObjectURL(blobURL);
@@ -423,7 +368,6 @@ export const fetchViewArchivo = async (filename) => {
 
       return datos
     } else if (extensionType.includes(".jpg")) {
-      console.log("es jpg")
       const blob = await response.blob();
       const blobURL = new Blob([blob], { type: 'application/jpg' });
       const fileURL = URL.createObjectURL(blobURL);
@@ -436,7 +380,6 @@ export const fetchViewArchivo = async (filename) => {
 
       return datos
     } else if (extensionType.includes(".jpeg")) {
-      console.log("es jpeg")
       const blob = await response.blob();
       const blobURL = new Blob([blob], { type: 'application/jpeg' });
       const fileURL = URL.createObjectURL(blobURL);
@@ -449,7 +392,6 @@ export const fetchViewArchivo = async (filename) => {
 
       return datos
     } else if(extensionType.includes(".docx")){
-      console.log("es docx")
       const blob = await response.blob();
       const blobURL = new Blob([blob], { type: 'application/docx' });
       const fileURL = URL.createObjectURL(blobURL);
@@ -467,24 +409,9 @@ export const fetchViewArchivo = async (filename) => {
     return datos;
 
   } else {
-    console.log("error")
-    return null;
+        return null;
   }
 }
-
-// GET INDICENCIAS ARCHIVO FTP POR INCIDENCIA
-
-// export const fetchIncidenciaArchivo = async () => {
-//   const response = await fetchToken(`incidencias/archivo/listAll`);
-//   if (!response.ok) {
-//     throw Error(response.statusText);
-//   } else {
-//     const body = await response.json();
-//     const IncidenciaArchivo = {};
-//     IncidenciaArchivo.data = body;
-//     return IncidenciaArchivo;
-//   }
-// }
 
 // LISTAR SOLUCIONES DE LA INCIDENCIA
 
@@ -552,7 +479,7 @@ export const fetchTecnicosDisponibles = async () => {
   const data = [];
   body.forEach(tecnico => {
     data.push({
-      idHistorialPersona: tecnico.idHistorialPersona,
+      idEstadoTecnico: tecnico.idEstadoTecnico,
       persona: tecnico.persona,
       estado: tecnico.activo,
     });

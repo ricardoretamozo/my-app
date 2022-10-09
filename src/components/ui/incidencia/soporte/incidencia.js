@@ -16,7 +16,7 @@ export const IncidenciaSoporte = () => {
     await fetchIncidenciaSoporte(identificador).then((res)=>{
       dispatch(getIncidenciasAsignadasSoporte(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -30,7 +30,7 @@ export const IncidenciaSoporte = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

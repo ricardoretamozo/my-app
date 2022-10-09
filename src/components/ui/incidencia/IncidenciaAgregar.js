@@ -195,7 +195,7 @@ const IncidenciaAgregar = () => {
     await fetchIncidenciaSoporte(identificador).then((res) => {
       dispatch(getIncidenciasAsignadasSoporte(res));
     }).catch((err) => {
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -488,10 +488,10 @@ const saveOrigen = () => {
         size={'full'}
       >
         <ModalOverlay />
-          <ModalContent>
+          <ModalContent borderRadius={'none'}>
             <ModalHeader>CREAR NUEVA INCIDENCIA PARA UN USUARIO</ModalHeader>
             <ModalCloseButton _focus={{ boxShadow: "none" }} />
-            <ModalBody>
+            <ModalBody borderRadius={'none'}>
               <Stack direction={['column', 'column', 'row', 'row']} spacing={2} mb={2} justify="space-between" >
                 <Text fontWeight={'semibold'}>USUARIO QUIEN NOTIFICÓ</Text>
                 <RadioGroup onChange={handleChangeUserRadio} value={radioUserValue}>
@@ -844,7 +844,7 @@ const saveOrigen = () => {
                 />
               </FormControl>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter borderRadius={'none'}>
               <Button
                 disabled={indiceMotivo === null ? true : false || indiceOrigen === null ? true : false || radioValue === 'apellido' ? indiceUsuario === null ? true : false : false}
                 type={'submit'}

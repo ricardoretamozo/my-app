@@ -13,7 +13,7 @@ export const Ftp = () => {
     await fetchListFtp().then((res)=>{
       dispatch(getFtp(res));
     }).catch((err)=>{
-      console.log(err);
+      // console.log(err);
     });
   }
 

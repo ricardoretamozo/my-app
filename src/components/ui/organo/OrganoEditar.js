@@ -50,8 +50,6 @@ export const OrganoEditar = ({ row }) => {
         dispatch(updateOrgano(indice))
           .then(() => {
             handleCloseEdit(true);
-            console.log('Sede actualizado');
-            console.log(indice);
           })
           .catch(e => {
             console.log(e);

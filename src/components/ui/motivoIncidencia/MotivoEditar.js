@@ -42,7 +42,6 @@ export const MotivoEditar = ({ row }) => {
         dispatch(updateMotivo(indice))
             .then(() => {
                 handleCloseEdit(true);
-                console.log('Motivo actualizado');
             })
             .catch(e => {
                 console.log(e);

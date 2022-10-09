@@ -151,10 +151,9 @@ const ModalEliminarCargo = ({ row }) => {
     dispatch(deleteCargo(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Cargo eliminado');
       })
       .catch(e => {
-        console.log(e);
+        // console.log(e);
         handleCloseDelete(true);
       });
   };

@@ -112,11 +112,9 @@ export const OficinaEditar = ({ row }) => {
 
     // Select
     const handleChange = (value) => {
-        console.log(value);
         if (value == null) {
         } else {
             var organo = organoInfo.filter(indice => indice.sede.idSede === value.value);
-            console.log(organo);
             setoptionsOrgano(
                 organo.map(organo => ({
                     value: organo.idOrgano,
@@ -126,7 +124,6 @@ export const OficinaEditar = ({ row }) => {
             );
             setoptionsOrganoindex(0);
         }
-        console.log(organoSelect);
     };
 
     // edit organo

@@ -19,10 +19,8 @@ import Select from 'react-select';
 import { useDispatch } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
 import { createHistorialPersona } from '../../actions/historialpersona';
-import { useHistory } from 'react-router-dom';
 
 const ModalHistorialUsuario = (props) => {
-  const history = useHistory();
   const dispatch = useDispatch();
   const selectInputRefSede = useRef();
   const selectInputRef = useRef();
@@ -202,7 +200,6 @@ const ModalHistorialUsuario = (props) => {
           indiceHistorial.oficina.idOficina != null ||
           indiceHistorial.cargo.idCargo != null
           ) {
-          console.log("editado")
           dispatch(props.handleClick());
         }
       } else {
@@ -213,10 +210,10 @@ const ModalHistorialUsuario = (props) => {
           dispatch(props.handleClick());
         }
       }
-      dispatch(props.listarHistorialPersona());
+      dispatch(props.listarHistorialPersona())
     }).catch((e) => {
-      console.error("Error de guardar historial" + e)
-      history.push('/dashboard/usuario')
+      console.error(e)
+      //dispatch(props.handleClick());
     });
     props.cerrar();
   };
@@ -240,7 +237,7 @@ const ModalHistorialUsuario = (props) => {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader textAlign="center" fontWeight={'bold'} mt={2}>ACTUALIZAR INFORMACIÓN</ModalHeader>
+          <ModalHeader textAlign="center" fontWeight={'bold'} mt={2}>DATOS DE INFORMACIÓN</ModalHeader>
           <ModalCloseButton _focus={{ boxShadow: "none" }}/>
           <ModalBody pb={5} mt={5}>
             <FormControl>

@@ -14,7 +14,7 @@ export const Persona = () => {
     await personaList().then((res)=>{
       dispatch(getPersona(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -22,7 +22,7 @@ export const Persona = () => {
     await fetchPersonaOrgano().then((res)=>{
       dispatch(getPersonaOrgano(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

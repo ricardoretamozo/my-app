@@ -1,12 +1,9 @@
 import { fetchToken } from '../helpers/fetch';
-import { notification } from '../helpers/alert';
 
 
 // ACTUALIZAR EL ESTADO DE LA INCIDENCIA EN TRÁMITE
 
 export const fetchReporteTecnicos = async(datos) => {
-
-    console.log(datos)
     
     const response = await fetchToken(`reporte/incidencia/tecnico`,
     {
@@ -16,24 +13,11 @@ export const fetchReporteTecnicos = async(datos) => {
     }, 'POST');
     
     const body = await response.json();
-
-    const ReporteTecnico = {};
-    const data = [];
-
-    body.forEach(x => {
-        data.push({
-        usuario: x.usuario,
-        pendientes: x.pendientes,
-        tramitadas: x.tramitadas,
-        atendidas: x.atendidas,
-        total: x.total,
-        });
-    });
-
-    ReporteTecnico.data = data;
-
-    return ReporteTecnico;
-
+    if (!response.ok) {
+        throw new Error(body.error);
+    }else{
+        return body;
+    }
   };
 
   export const fetchReporteUsuario = async(datos) => {
@@ -66,8 +50,6 @@ export const fetchReporteTecnicos = async(datos) => {
   };
 
   export const fetchReporteTiempo = async(datos) => {
-
-    console.log(datos)
     
     const response = await fetchToken(`reporte/incidencia/tiempo`,
     {

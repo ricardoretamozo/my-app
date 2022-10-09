@@ -52,7 +52,6 @@ const OrganoAgregar = () => {
   const saveOrgano = () => {
     dispatch(createOrgano({ organo, sede, activo }))
       .then(() => {
-        console.log(dataOrgano);
         handleCloseModal(true);
       })
       .catch(err => {

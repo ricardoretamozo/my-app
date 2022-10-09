@@ -16,7 +16,7 @@ import Select from 'react-select';
 import { SearchIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Moment from 'moment';
 import { timerNotification } from '../../../../../helpers/alert';
-import ChartReporteOne from './ChartReporteOne';
+import ChartReporteTiempo from './ChartReporteTiempo';
 import { fetchReporteTecnicos, fetchReporteTiempo } from '../../../../../actions/reporte';
 import ReporteTiempos from './ReporteTiempos';
 import { NavLink } from 'react-router-dom';
@@ -56,7 +56,7 @@ export default function TercerReporte() {
         // setTotalReportes(reportes.map(item => item?.total));
       })
 
-    timerNotification('Buscando Registros Tercer Reporte...', 'info', 2000);
+    timerNotification('BUSCANDO REGISTROS DE TIEMPOS...', 'info', 2000);
   }
 
   const handleChangeSede = (value) => {
@@ -266,11 +266,10 @@ export default function TercerReporte() {
                 />
               </TabPanel>
               <TabPanel>
-                {/* <ChartReporteOne
+                <ChartReporteTiempo
                   reportes={reportes}
                   nombreTecnicos={nombreTecnicos}
-                  totalReportes={totalReportes}
-                /> */}
+                />
               </TabPanel>
             </TabPanels>
           </Tabs>

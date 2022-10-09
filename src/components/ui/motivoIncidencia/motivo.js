@@ -14,7 +14,7 @@ export const Motivo = () => {
     await fetchMotivos().then((res)=>{
       dispatch(getMotivo(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

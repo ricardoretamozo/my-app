@@ -41,7 +41,6 @@ export const OrigenIncidenciaEditar = ({ row }) => {
         dispatch(updateOrigen(indice))
             .then(() => {
                 handleCloseEdit(true);
-                console.log('Origen actualizado');
             })
             .catch(e => {
                 console.log(e);

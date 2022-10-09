@@ -106,7 +106,7 @@ export default function HistorialUsuario() {
     if (selectCodicional === true) {
       setOpenCreate(true);
     } else if (selectCodicional === false) {
-      history.push('/dashboard/usuario/incidencias');
+      history.push("/dashboard/usuario/incidencias");
     }
   };
 
@@ -118,19 +118,18 @@ export default function HistorialUsuario() {
     }
   }
 
-  function Next() {
+  const Next = () => {
     history.push("/dashboard/usuario/incidencias");
   }
 
   function Back() {
-    history.push("/dashboard/usuario");
+    history.push("/usuario");
   }
 
   const handleCloseModal = () => {
     setOpenCreate(false);
     obtenerHistorialPersona();
     obtenerOficina();
-    obtenerCargo();
   };
 
   useEffect(() => {
@@ -143,7 +142,7 @@ export default function HistorialUsuario() {
     if (historialpersona == null) {
       obtenerHistorialPersona();
     } else {
-      console.log('no');
+      //console.log('no');
     }
 
   }, []);
@@ -169,12 +168,14 @@ export default function HistorialUsuario() {
     }
     dispatch(updatePersona(dataPersona))
       .then(() => {
-        console.log(indice);
+       //console.log(indice);
       })
       .catch(e => {
         console.log(e);
       });
   };
+
+  console.log(persona?.correo)
 
   const inputRefPassword = useRef(null);
   const inputRefCorreo = useRef(null);
@@ -188,7 +189,7 @@ export default function HistorialUsuario() {
     } else {
       setOpenSelect(false);
       inputRefPassword.current.value = "";
-      inputRefCorreo.current.value = persona?.correo === "" ? "@pj.gob.pe" : persona?.correo;
+      inputRefCorreo.current.value = persona?.correo === '' ? "@pj.gob.pe" : persona?.correo;
       inputRefCelular.current.value = persona?.celular;
       inputRefTelefono.current.value = persona?.telefono;
       inputRefAnexo.current.value = persona?.anexo;
@@ -207,39 +208,6 @@ export default function HistorialUsuario() {
         align={'center'}
         bg={'white'}
       >
-        {/* <Stack direction={'column'} w={'full'} h={'full'} boxShadow={'base'} borderColor="gray.100" borderWidth="1px" bg="gray.50" borderRadius="lg" p={4}>
-          <Box flex="1" w="100%" textAlign="center" justify="center" alignItems="center">
-              <Text fontWeight={'bold'} mb="2">{historialpersona === null
-                    ? 'USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO'
-                    : 'QUIERES CAMBIAR SEDE, ORGANO, OFICINA Ó CARGO?'}
-              </Text>
-            <HStack flex="1" alignItems="center" justify="center">
-                <Select
-                  w="sm"
-                  value={selectCodicional ? selectCodicional : false}
-                  isDisabled={historialpersona === null ? true : false}
-                  onChange={(e) => handleOpenSelect(e)}
-                  
-                  // onChange={e => {
-                  //   setSelectCodicional(e.target.value === 'true' ? true : false);
-                  // }}
-                >
-                  <option value={true}>SI</option>
-                  <option value={false}>NO</option>
-                </Select>
-            </HStack>
-            <ModalHistorialUsuario
-              cerrar={handleCloseModal}
-              abrir={openCreate}
-              oficina={null}
-              cargo={null}
-              idPersona={identificador}
-              listarHistorialPersona={obtenerHistorialPersona}
-              handleClick={Next}
-              editar={oficina ? true : false}
-            />
-          </Box>
-        </Stack> */}
         <VStack spacing={4} w={'100%'} h={'full'} color="white" bg="gray.700" pb={4} py={5} boxShadow="base" borderRadius={'lg'}>
         <Box flex="1" w="100%" textAlign="center" justify="center" alignItems="center" py={2}>
               <Text fontWeight={'bold'} mb="2">{historialpersona === null
@@ -254,10 +222,6 @@ export default function HistorialUsuario() {
                   value={selectCodicional ? selectCodicional : false}
                   isDisabled={historialpersona === null ? true : false}
                   onChange={(e) => handleOpenSelect(e)}
-                  
-                  // onChange={e => {
-                  //   setSelectCodicional(e.target.value === 'true' ? true : false);
-                  // }}
                 >
                   <option value={true}>SI</option>
                   <option value={false}>NO</option>
@@ -297,16 +261,6 @@ export default function HistorialUsuario() {
           
           <Box flex="1" mt={4} mb={4} w={'100%'}>
             <SimpleGrid columns={[1, 1, 2, 4]} spacing={1} textAlign="center">
-            {/* <FormControl>
-                    <FormLabel fontSize={'sm'}>CORREO</FormLabel>
-                    <Input
-                      type="email"
-                      ref={inputRefCorreo}
-                      defaultValue={persona?.correo === "" ? "@pj.gob.pe" : persona?.correo}
-                      readOnly={openSelect === false ? true : false}
-                      onChange={e => setIndice({ ...indice, correo: e.target.value })}
-                    />
-                  </FormControl> */}
               <Box>
                 <Text color={'gray.100'} fontWeight="bold">SEDE</Text>
                 <Text color={'gray.200'} fontWeight="light">{oficina ? oficina.organo?.sede.sede : ''}</Text>
@@ -326,11 +280,12 @@ export default function HistorialUsuario() {
             </SimpleGrid>
           </Box>
         </VStack>
-        <Stack spacing={4} direction={'column'} w={'full'} h={'full'} boxShadow="base" borderColor="gray.100" borderWidth="1px" bg="gray.50" borderRadius="lg" p={4} py={10}>
+        <Stack spacing={2} direction={'column'} w={'full'} h={'full'} boxShadow="base" borderColor="gray.100" borderWidth="1px" bg="gray.50" borderRadius="lg" p={4} py={6}>
           {historialpersona !== null ? (
             <>
               <Box flex="1" w="100%" textAlign="center" justifyItems="center" alignItems="center" alignContent="center">
-                <Text fontWeight="bold" mb={2}>DESEA ACTUALIZAR SUS DATOS DE CONTACTO?</Text>
+                <Text fontWeight="extrabold" fontSize={'14px'} color='red.500'>¡ES MUY IMPORTANTE QUE SUS DATOS ESTÉN ACTUALIZADOS!!!</Text>
+                <Text fontWeight="bold" mb={2}>¿DESEA ACTUALIZAR SUS DATOS DE CONTACTO?</Text>
                 <HStack flex="1" alignItems="center" justify="center">
                   <Select
                     w="sm"
@@ -349,7 +304,7 @@ export default function HistorialUsuario() {
                     <Input
                       type="email"
                       ref={inputRefCorreo}
-                      defaultValue={persona?.correo === "" ? "@pj.gob.pe" : persona?.correo}
+                      defaultValue={(persona?.correo === null || persona?.correo === undefined) ? "@pj.gob.pe" : persona?.correo}
                       readOnly={openSelect === false ? true : false}
                       onChange={e => setIndice({ ...indice, correo: e.target.value })}
                     />

@@ -13,7 +13,7 @@ export const CorreoCredencial = () => {
     await fetchListCorreoCredencial().then((res)=>{
       dispatch(getCorreoCredencial(res));
     }).catch((err)=>{
-      console.log(err);
+      // console.log(err);
     });
   }
 

@@ -38,7 +38,7 @@ export const fetchListCorreoCredencial = async () => {
             return CorreoCredencial;
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 };
 

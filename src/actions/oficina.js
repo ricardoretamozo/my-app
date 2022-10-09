@@ -89,16 +89,11 @@ export const updateOficina = data => {
     idOrgano = {
       idOrgano: Number(data.organo.idOrgano),
     };
-    console.log(data.organo.idOrgano);
-    console.log('ingreso');
   } else {
     idOrgano = {
       idOrgano: Number(data.organo),
     };
   }
-
-  console.log(data.organo);
-  console.log(idOrgano);
 
   return async dispatch => {
     const response = await fetchToken(

@@ -15,7 +15,7 @@ export const IncidenciaUsuario = () => {
     await fetchIncidencias().then((res)=>{
       dispatch(getIncidencia(res));
     }).catch((err)=>{
-      console.log("Acceso no autorizado " + err);
+      // console.log("Acceso no autorizado " + err);
     });
     
   }
@@ -30,7 +30,7 @@ export const IncidenciaUsuario = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
     
   }

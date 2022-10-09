@@ -13,7 +13,7 @@ export const Oficina = () => {
     await fetchOficinas().then((res)=>{
       dispatch(getOficina(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

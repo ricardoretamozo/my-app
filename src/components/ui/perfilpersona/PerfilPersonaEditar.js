@@ -45,7 +45,6 @@ export const PerfilPersonaEditar = ({ row }) => {
         dispatch(updatePerfilPersona(indice))
             .then(() => {
                 handleCloseEdit(true);
-                console.log('perfilPersona actualizado');
             })
             .catch(e => {
                 console.log(e);

@@ -163,7 +163,6 @@ const ModalPerfilPersonaEliminar = ({ row }) => {
     dispatch(deletePerfilPersona(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('perfilPersona eliminado');
       })
       .catch(e => {
         console.log(e);

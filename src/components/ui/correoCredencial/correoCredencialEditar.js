@@ -55,7 +55,7 @@ export const CorreoCredencialEditar = ({ row }) => {
                 handleCloseEdit(true);
             })
             .catch(e => {
-                console.log(e);
+                // console.log(e);
             });
     };
 

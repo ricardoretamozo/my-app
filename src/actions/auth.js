@@ -5,8 +5,6 @@ import {
   fetchToken,
 } from '../helpers/fetch';
 import { types } from '../types/types';
-import { useHistory } from 'react-router-dom';
-import Moment from 'moment';
 
 export const startLogin = (dni, password) => {
   return async dispatch => {
@@ -37,7 +35,7 @@ export const startLogin = (dni, password) => {
         );
         timerNotification('Inicio de Sesion Exitoso!');
       } else {
-        notification('Error al Inciar Sesión', 'Credenciales Inválidas', 'error');
+        notification('Error al Iniciar Sesión', 'Credenciales Inválidas', 'error');
       }
     } catch (error) {
       if (error.message === 'Failed to fetch') {
@@ -57,58 +55,6 @@ export const LogOut = () => {
     );
     timerNotification('Cerrando de Sesion!');
     window.location.reload();
-  }
-}
-
-// export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
-//   return async( dispatch ) =>{
-//     const response = await fetchServicioDni(`dni?numeroDocumento=${ numeroDocumento }&codigoVerificacion=${ codigoVerificacion }&fechaNacimiento=${ fechaNacimiento }`);
-//     const body = await response.json();
-//     // console.log(body[0]);
-//     if (!!body[0]) {
-//       timerNotification('Validacion correcta');
-//       dispatch(validadorUsuario(body[0]));
-//     } else {
-//       notification('ERROR DE VALIDACIÓN', 'Los datos ingresados nos son validos', 'error');
-//       Error();
-//     }
-//   }
-// }
-
-export const StartDni = (numeroDocumento, codigoVerificacion, fechaNacimiento) => {
-  return async (dispatch) => {
-    await fetch(`http://172.28.206.57:8080/SIJ/Reniec/${numeroDocumento}`, { method: 'POST' })
-      .then(res => res.json())
-      .then(data => {
-        const stringToDate = (_date, _format, _delimiter) => {
-          var formatLowerCase = _format.toLowerCase();
-          var formatItems = formatLowerCase.split(_delimiter);
-          var dateItems = _date.split(_delimiter);
-          var monthIndex = formatItems.indexOf("mm");
-          var dayIndex = formatItems.indexOf("dd");
-          var yearIndex = formatItems.indexOf("yyyy");
-          var month = parseInt(dateItems[monthIndex]);
-          month -= 1;
-          var formatedDate = new Date(dateItems[yearIndex], month, dateItems[dayIndex]);
-          return formatedDate;
-        }
-        var fechax = Moment(new Date(stringToDate(data[28], "dd/MM/yyyy", "/"))).format('yyyy-MM-DD')
-        if ((data[0] === numeroDocumento) && (data[1] === codigoVerificacion) && (fechax === fechaNacimiento)) {
-          timerNotification('Validacion correcta');
-          dispatch(validadorUsuario({
-            dni: data[0],
-            nombres: data[5],
-            apellidos: data[3] + ' ' + data[4],
-            fechaNacimiento: data[28],
-            sexo: data[17],
-          })).then(() => {
-            Sigte()
-          })
-        } else {
-          notification('Error los datos ingresados nos son validos', '', 'error');
-          Error();
-        }
-      });
   }
 }
 
@@ -164,16 +110,6 @@ const login = user => ({
 const logout = () => ({
   type: types.logout,
 });
-
-const Error = () => {
-  const history = useHistory();
-  return history.push('/auth/register');
-}
-
-const Sigte = () => {
-  const history = useHistory();
-  return history.push('/auth/register/validate');
-}
 
 export const validadorUsuario = usuario => ({
   type: types.eventLoadedUsuarioValidadorDni,

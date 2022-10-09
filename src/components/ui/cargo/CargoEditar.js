@@ -43,10 +43,9 @@ export const CargoEditar = ({ row }) => {
         dispatch(updateCargo(indice))
           .then(() => {
             handleCloseEdit(true);
-            console.log('Sede actualizado');
           })
           .catch(e => {
-            console.log(e);
+            // console.log(e);
           });
       };
 

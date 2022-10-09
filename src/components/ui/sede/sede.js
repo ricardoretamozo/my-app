@@ -13,7 +13,7 @@ export const Sede = () => {
     await fetchSedes().then((res)=>{
       dispatch(getSede(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Switch,
   Redirect,
 } from 'react-router-dom';
@@ -56,7 +56,7 @@ export const AppRouter = () => {
       fetchSedes().then(res => {
         dispatch(getSede(res))
       }).catch((err)=>{
-        console.log("warn " + err);
+        // console.log("warn " + err);
       });
     }
   });
@@ -68,7 +68,7 @@ export const AppRouter = () => {
       fetchOrganos().then(res => {
         dispatch(getOrgano(res));
       }).catch((err)=>{
-        console.log("warn " + err);
+        // console.log("warn " + err);
       });
     }
   });
@@ -79,7 +79,7 @@ export const AppRouter = () => {
     await fetchOficinas().then(res => {
       dispatch(getOficina(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -97,7 +97,7 @@ export const AppRouter = () => {
       fetchCargos().then((res) => {
         dispatch(getCargo(res));
       }).catch((err) => {
-        console.log("warn " + err);
+        // console.log("warn " + err);
       });
     }
   });
@@ -109,7 +109,7 @@ export const AppRouter = () => {
       perfilPersona().then(res => {
         dispatch(getPerfilPersona(res));
       }).catch((err) => {
-        console.log("warn " + err);
+        // console.log("warn " + err);
       });
     }
   });
@@ -123,7 +123,7 @@ export const AppRouter = () => {
       fetchMotivos().then((res) => {
         dispatch(getMotivo(res))
       }).catch((err) => {
-        console.log("warn " + err);
+        // console.log("warn " + err);
       });
     }
   });
@@ -134,7 +134,7 @@ export const AppRouter = () => {
     await fetchIncidenciasPersonas(identificador).then((res) => {
       dispatch(getIncidenciaId(res));
     }).catch((err) => {
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     })
   }
 
@@ -150,7 +150,7 @@ export const AppRouter = () => {
     await personaList().then((res) => {
       dispatch(getPersona(res));
     }).catch((err) => {
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -167,7 +167,7 @@ export const AppRouter = () => {
       fetchOrigen().then((res) => {
         dispatch(getOrigen(res))
       }).catch((err) => {
-        console.log("WARN " + err);
+        // console.log("WARN " + err);
       });
     }
   });
@@ -295,7 +295,7 @@ export const AppRouter = () => {
           />
           <PrivateRoute
             exact
-            path="/dashboard/reportes"
+            path="/dashboard/reportes/*"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />

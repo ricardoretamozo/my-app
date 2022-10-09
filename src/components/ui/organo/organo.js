@@ -13,7 +13,7 @@ export const Organo = () => {
     await fetchOrganos().then((res)=>{
       dispatch(getOrgano(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

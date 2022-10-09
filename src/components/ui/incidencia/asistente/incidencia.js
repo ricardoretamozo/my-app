@@ -17,7 +17,7 @@ export const IncidenciaAsistenteAsignados = () => {
     await fetchIncidenciasAsignadas().then((res)=>{
       dispatch(getIncidenciaAsignadas(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
   
@@ -32,7 +32,7 @@ export const IncidenciaAsistenteAsignados = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
     
   }
@@ -49,7 +49,7 @@ export const IncidenciaAsistenteAsignados = () => {
     await fetchTecnicosDisponibles().then((res)=>{
       dispatch(getTecnicosDisponibles(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
   useEffect(() => {    
@@ -76,7 +76,7 @@ export const IncidenciaAsistenteNoAsignados = () => {
     await fetchIncidenciasNoAsignadas().then((res)=>{
       dispatch(getIncidenciaNoAsignadas(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -90,7 +90,7 @@ export const IncidenciaAsistenteNoAsignados = () => {
     await fetchIncidenciasPersonas(identificador).then((res)=>{
       dispatch(getIncidenciaId(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 
@@ -106,7 +106,7 @@ export const IncidenciaAsistenteNoAsignados = () => {
     await fetchTecnicosDisponibles().then((res)=>{
       dispatch(getTecnicosDisponibles(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
     
   }

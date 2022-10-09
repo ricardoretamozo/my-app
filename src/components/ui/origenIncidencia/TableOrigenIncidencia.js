@@ -136,7 +136,6 @@ const ModalOrigenEliminar = ({ row }) => {
     dispatch(deleteOrigen(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Origen eliminado');
       })
       .catch(e => {
         console.log(e);

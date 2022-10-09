@@ -14,7 +14,7 @@ export const OrigenIncidencia = () => {
     await fetchOrigen().then((res)=>{
       dispatch(getOrigen(res));
     }).catch((err)=>{
-      console.log("WARN " + err);
+      // console.log("WARN " + err);
     });
   }
 

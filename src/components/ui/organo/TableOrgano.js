@@ -160,7 +160,6 @@ const ModalEliminarOrgano = ({ row }) => {
     dispatch(deleteOrgano(x))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Sede eliminado');
       })
       .catch(e => {
         console.log(e);

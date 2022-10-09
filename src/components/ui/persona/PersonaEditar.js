@@ -62,7 +62,6 @@ const PersonaEditar = ({ row }) => {
       dispatch(updatePersona(indice))
         .then(() => {
           handleCloseEdit(true);
-          console.log(indice);
         })
         .catch(e => {
           console.log(e);

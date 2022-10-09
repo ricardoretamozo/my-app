@@ -29,7 +29,6 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
   Link,
-  Image,
 } from '@chakra-ui/react';
 
 import {
@@ -64,9 +63,6 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { store } from '../../../store/store';
 import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
-
-// import logoPJ from '../../../assets/img/logo_pj.png';
-import logoPJA from '../../../assets/img/logopja.svg';
 
 const LinkItemsCoordinadorInformatico = [
   { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/home' },
@@ -164,14 +160,11 @@ const SidebarContent = ({ onClose, ...rest }) => {
         h="full"
         {...rest}
       >
-        <Flex mt={4} mb={2} alignItems="center" justifyContent="center" mr={2}>
+        <Flex mt={4} mb={4} alignItems="center" justifyContent="center" mr={2}>
           <Text fontSize="2xl" color={'#999999'} fontWeight="bold">
             <span style={{ 'color': '#B40001' }}>SERVICE</span> DESk
           </Text>
           <CloseButton ml={2} display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} _focus={{ boxShadow: "none" }} />
-        </Flex>
-        <Flex alignItems="center" justifyContent="center" mr={1} mb={2}>
-            <Image src={logoPJA} borderRadius="md" boxSize="30px"/>
         </Flex>
         
         {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 

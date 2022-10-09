@@ -94,7 +94,6 @@ export default function CorreoCrear() {
   };
 
   const handleChangeDestinatario = value => {
-    console.log(value);
     setIndiceCorreo({
       ...indiceCorreo,
       to: { idpersona: value.value },

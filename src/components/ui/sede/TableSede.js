@@ -184,7 +184,6 @@ const ModalSedeEditar = ({ row }) => {
     dispatch(updateSede(indice))
       .then(() => {
         handleCloseEdit(true);
-        console.log('Sede actualizado');
       })
       .catch(e => {
         console.log(e);
@@ -293,7 +292,6 @@ const ModalSedeEliminar = ({ row }) => {
     dispatch(deleteSede(indice))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Sede eliminado');
       })
       .catch(e => {
         console.log(e);

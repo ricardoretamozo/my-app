@@ -45,14 +45,12 @@ const UserProfile = () => {
         password2: '',
     };
 
-    console.log(datosUsuario)
-
     const obtenerMisDatos = async () => {
         await fetchUsuarioId(identificador).then((datos) => {
             setDatosUsuario(datos.data);
             setPerfilPersona(datos.data.perfilPersona);
         }).catch(error => {
-            console.log('Error al obtener los datos del usuario: ', error);
+            // console.log('Error al obtener los datos del usuario: ', error);
         })
     }
 
@@ -77,7 +75,7 @@ const UserProfile = () => {
         }
         dispatch(updatePersona(usuarioData))
         .then(() => {
-            console.log('constraseña actualizada');
+            obtenerMisDatos();
         }).catch(error => {
             console.log(error);
         })

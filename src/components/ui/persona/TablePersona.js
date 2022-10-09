@@ -98,7 +98,6 @@ export default function TablePersona() {
     dispatch(deletePersona(x))
       .then(() => {
         handleCloseDelete(true);
-        console.log('Persona eliminado');
       })
       .catch(e => {
         console.log(e);

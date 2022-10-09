@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link as LinkA } from 'react-router-dom';
 // Chakra imports
@@ -15,15 +15,11 @@ import {
   Stack,
   HStack,
   VStack,
-  Avatar,
-  Image
+  Image,
+  Center
 } from '@chakra-ui/react';
-
-import { ImUserPlus } from "react-icons/im";
 import registerImg from '../../assets/img/register.png';
-
 import { InputControl } from "formik-chakra-ui";
-
 import { notification } from '../../helpers/alert';
 
 // Assets
@@ -36,7 +32,6 @@ import * as Yup from 'yup';
 
 export const RegisterValidateScreen = () => {
   const titleColor = useColorModeValue('#c53030', 'red.700');
-  const textColor = useColorModeValue('gray.700', 'white');
   const bgColor = useColorModeValue('white', 'gray.800');
   const dispatch = useDispatch();
 
@@ -61,13 +56,12 @@ export const RegisterValidateScreen = () => {
 
   const onSubmit = () => {
     if (
-      dataUsuario.password1 != dataUsuario.password2 &&
-      dataUsuario.password1 != '' &&
-      dataUsuario.password2 != ''
+      dataUsuario.password1 !== dataUsuario.password2 &&
+      dataUsuario.password1 !== '' &&
+      dataUsuario.password2 !== ''
     ) {
       notification('Error', 'Las contraseñas no coinciden', 'error');
     } else {
-      console.log(data);
       var usuario = {
         nombre: data.nombre,
         apellido: data.apellidos,
@@ -93,16 +87,25 @@ export const RegisterValidateScreen = () => {
 
   return (
     <>
+      <Box flex={"1"} bg="red.700" borderBottomRadius="3xl" boxShadow={'xl'}>
+        <Center py={4}>
+          <Text color="#999999" fontSize={["md", "xl", "2xl", "3xl"]} fontWeight="extrabold" textAlign="center" verticalAlign={'center'}>
+            SISTEMA DE INCIDENCIAS CORTE SUPERIOR DE JUSTICIA - AREQUIPA
+          </Text>
+        </Center>
+      </Box>
       <Flex
         direction="column"
         alignSelf="center"
         justifySelf="center"
         overflow="hidden"
+        h={"100%"}
+        w={"100%"}
       >
         <Box
           position="absolute"
-          minH={{ base: '70vh', md: '60vh' }}
-          w={{ md: 'calc(100vw - 50px)' }}
+          h={"100vh"}
+          w={"100%"}
           borderRadius={{ md: 'md' }}
           left="0"
           right="0"
@@ -112,35 +115,19 @@ export const RegisterValidateScreen = () => {
           top="0"
           bgImage={BgSignUp}
           bgSize="cover"
-          mx={{ md: 'auto' }}
-          mt={{ md: '14px' }}
-        >
+        />
 
-        </Box>
-        <Flex
-          textAlign="center"
-          justifyContent="center"
-          align="center"
-          mt="3rem"
-          mb="30px"
-        >
-          <Text fontSize={{ base: 'xl', sm: '2xl', md: '2xl', lg: '3xl' }} textTransform="uppercase" color="#9a1413" fontWeight="bold">
-            Sistema de incidencias Corte Superior de Justicia de Arequipa
-          </Text>
-        </Flex>
-        <Flex alignItems="center" justifyContent="center" mb="10px" mt="10px">
+        <Flex alignItems="center" justifyContent="center" h={"100%"} w={'100%'} mt="40px">
           <Stack
             flexDir="column"
-            mb="2"
             justifyContent="center"
             alignItems="center"
             backgroundColor={bgColor}
             boxShadow={'md'}
-            px={'3rem'}
+            px={'4rem'}
             py={'2rem'}
-            borderRadius="lg"
-            rounded="lg"
-            borderTop="6px solid"
+            rounded="xl"
+            borderTop="10px solid"
             borderColor={titleColor}
           >
             <Box p={2} boxShadow="md" borderRadius="md">
@@ -149,13 +136,13 @@ export const RegisterValidateScreen = () => {
             <Text
               fontSize="xl"
               color={titleColor}
-              fontWeight="bold"
+              fontWeight="extrabold"
               textAlign="center"
               mb="20px"
             >
-              Registro de usuario
+              REGISTRO DE USUARIO
             </Text>
-            <Box minW={{ base: "90%", md: "340px" }}>
+            <Box minW={{ base: "90%", md: "360px" }}>
               <Formik
                 initialValues={initialUsuario}
                 onSubmit={onSubmit}
@@ -168,7 +155,7 @@ export const RegisterValidateScreen = () => {
                         <HStack>
                           <FormControl>
                             <FormLabel fontSize="sm" fontWeight="normal">
-                              Documento de identificación
+                              DOCUMENTO DE IDENTIFICACIÓN
                             </FormLabel>
                             <Input
                               fontSize="sm"
@@ -187,7 +174,7 @@ export const RegisterValidateScreen = () => {
                         <HStack>
                           <FormControl>
                             <FormLabel fontSize="sm" fontWeight="normal">
-                              Nombres
+                              NOMBRES
                             </FormLabel>
                             <Input
                               fontSize="sm"
@@ -199,7 +186,7 @@ export const RegisterValidateScreen = () => {
                           </FormControl>
                           <FormControl>
                             <FormLabel fontSize="sm" fontWeight="normal">
-                              Apellidos
+                              APELLIDOS
                             </FormLabel>
                             <Input
                               fontSize="sm"
@@ -215,16 +202,16 @@ export const RegisterValidateScreen = () => {
                           <InputControl
                             name={'password1'}
                             inputProps={{ type: "password" }}
-                            label="Password"
+                            label="PASSWORD"
                             onChange={e => { setUsuario({ ...dataUsuario, password1: e.target.value }) }}
                           />
                           <InputControl
                             name={'password2'}
                             inputProps={{
-                              type:
-                                "password"
+                              type: "password",
+                              fontWeight: 'normal'
                             }}
-                            label="Password confirmación"
+                            label="CONFIRME SU PASSWORD"
                             onChange={e => { setUsuario({ ...dataUsuario, password2: e.target.value }) }}
                           />
                         </HStack>
@@ -234,28 +221,35 @@ export const RegisterValidateScreen = () => {
                               type="submit"
                               bg="red.500"
                               color="white"
-                              fontWeight="bold"
+                              fontWeight="extrabold"
                               w="100%"
                               mb={2}
                               _hover={{
                                 bg: 'red.600',
                               }}
+                              _focus={{ boxShadow: "none" }}
+                              disabled={
+                                dataUsuario.password1 !== dataUsuario.password2 ||
+                                  dataUsuario.password1.length < 6 ||
+                                  dataUsuario.password2.length < 6 ? true : false
+                              }
                             >
                               REGISTRARSE
                             </Button>
                           </FormControl>
                         </HStack>
-                        <Flex justifyContent={'center'}>
-                          <Button
-                            type="submit"
-                            w="100%"
-                            colorScheme="gray"
-                            fontWeight="bold"
-                            _focus={{ boxShadow: "none" }}
-                          >
-                            <LinkA to={'/auth/register'}>REGRESAR</LinkA>
-                          </Button>
-                        </Flex>
+                        <LinkA to={'/auth/register'}>
+                          <Flex justifyContent={'center'} w="100%">
+                            <Button
+                              w="100%"
+                              colorScheme="gray"
+                              fontWeight="extrabold"
+                              _focus={{ boxShadow: "none" }}
+                            >
+                              REGRESAR
+                            </Button>
+                          </Flex>
+                        </LinkA>
                       </VStack>
                     </Stack>
                   </form>

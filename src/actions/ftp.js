@@ -5,7 +5,6 @@ import { getFtp } from '../components/ui/ftp/ftp';
 // CREATE SEDE
 
 export const createFtp = (data) => {
-    console.log(data)
     return async dispatch => {
         const response = await fetchToken(
             `ftp`,
@@ -42,7 +41,7 @@ export const fetchListFtp = async () => {
             return Ftp;
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 };
 
@@ -58,7 +57,7 @@ export const fetchFtp = async (id) => {
             return Ftp;
         }
     } catch (error) {
-        console.log(error);
+        // console.log(error);
     }
 };
 

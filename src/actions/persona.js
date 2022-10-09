@@ -29,13 +29,11 @@ export const createPersona = (data) => {
       'POST'
     );
 
-    const body = await response.json();
-
     if (response.status === 200 || response.status === 201) {
       dispatch(getPersona(await loadPersona()));
-      notification('Usuario registrado correctamente.', body.message, 'success');
+      notification('Usuario registrado correctamente.', 'Se logró registrar satisfactoriamente', 'success');
     } else {
-      notification('No se pudo registrar al Usuario', body.error, 'error');
+      notification('No se pudo registrar el Usuario', 'Revisa si los datos son correctos', 'error');
     }
   };
 };
@@ -59,12 +57,11 @@ export const createPersonaRegister = data => {
       },
       'POST'
     );
-    const body = await response.json();
     if (response.status === 200 || response.status === 201) {
       dispatch(startLogin(data.dni, data.password));
-      notification('Usuario registrado correctamente.', body.message, 'success');
+      notification('Usuario registrado correctamente.', 'Se logró registrar satisfactoriamente', 'success');
     } else {
-      notification('No se pudo registrar el Usuario', body.mensaje, 'error');
+      notification('No se pudo registrar el Usuario', 'Revisa si los datos son correctos', 'error');
     }
   };
 };
@@ -147,25 +144,29 @@ export const fetchUsuarioId = async (id) => {
 export const deletePersona = id => {
   return async dispatch => {
     const response = await fetchToken(`personas/${id}`, '', 'DELETE');
-    const body = await response.json();
 
     if (response.status === 200) {
       dispatch(getPersona(await loadPersona()));
-      notification('Persona actualizado correctamente', body.message, 'success');
+      notification('Persona actualizado correctamente', 'Se logró eliminar correctamente', 'success');
     } else {
-      notification('No se pudo eliminar la Persona', body.detalles, 'error');
+      notification('No se pudo eliminar la Persona', 'No se logró eliminar correctamente', 'error');
     }
   };
 };
 
 // Consulta API reniec para obtener datos de persona
 
-// export const consultaReniec = (dni) => {
-//   return async dispatch => {
-//     const response = await fetchServicioReniec(`SIJ/Reniec/${dni}`);
-//     const body = await response.json();
-//   }
-// }
+export const consultaReniec = async (dni) => {
+    const response = await fetchToken(`reniec/${dni}`);
+    if (!response.ok) {
+      throw new Error(response.status);
+    } else {
+        const data = await response.json();
+        const Persona = {};
+        Persona.data = data;
+        return Persona;
+    }
+}
 
 // Busqueda de usuarios por apellido
 export const buscarPersonaApellido = async (apellido) => {

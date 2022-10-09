@@ -38,7 +38,7 @@ export const fetchCargos = async () => {
       return Cargo;
     }
   } catch (error) {
-    console.log("WARN " + error);
+    // console.log("WARN " + error);
   }
 };
 
@@ -54,7 +54,7 @@ export const fetchCargo = async (id) => {
       return Cargo;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };
 
@@ -110,6 +110,6 @@ export const loadCargo = async () => {
       return Cargo;
     }
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 };

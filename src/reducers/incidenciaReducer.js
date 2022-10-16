@@ -5,6 +5,22 @@ const initialState = {
     checking: true  
 }
 
+export const misIncidenciasReducer = ( state = initialState, action ) => {
+
+    switch (action.type) {
+        case types.eventLoadedMisIncidencias:
+            return {
+                ...state,                
+                rows: [...action.payload.data],
+                checking: false,
+            }
+
+        default:
+            return state;
+    }
+
+}
+
 export const incidenciaReducer = ( state = initialState, action ) => {
 
     switch (action.type) {

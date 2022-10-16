@@ -21,7 +21,7 @@ import { fetchDescargarArchivo, fetchViewArchivo } from '../../../../actions/inc
 import { CloseIcon, DownloadIcon } from '@chakra-ui/icons';
 import { MdOpenInNew } from 'react-icons/md';
 
-const AtencionViewFileConocimiento = ({ rowData, typeFile }) => {
+const AtencionViewFile = ({ rowData, typeFile, setProgressTrue, setProgressFalse }) => {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
@@ -29,13 +29,16 @@ const AtencionViewFileConocimiento = ({ rowData, typeFile }) => {
 
     const handleClickOpenModalFile = () => {
         setOpen(true);
+        setProgressFalse();
     }
 
     const handleCloseModalFile = () => {
         setOpen(false);
+        setProgressFalse();
     }
 
     const FetchViewFile = () => {
+        setProgressTrue();
         var datos = {
             carpeta: rowData.carpeta,
             archivo: rowData.file,
@@ -88,12 +91,12 @@ const AtencionViewFileConocimiento = ({ rowData, typeFile }) => {
                 _focus={{ boxShadow: 'none' }}>
                 VER ARCHIVO DE LA ATENCIÓN
             </Button>
-            <Modal isOpen={open} onClose={handleCloseModalFile} size="5xl">
+            <Modal isOpen={open} onClose={handleCloseModalFile} size="6xl">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader textAlign={'center'} fontWeight="bold">VISUALIZANDO EL ARCHIVO</ModalHeader>
                     <ModalCloseButton _focus={{ boxShadow: "none" }} />
-                    <ModalBody maxH={'80%'}>
+                    <ModalBody maxH={'80vh'}>
                         {
                             fileData?.filename?.includes(".pdf") ? (
                                 <iframe title={fileData?.filename} src={fileData?.link} width="100%" height="500vh" />
@@ -105,7 +108,7 @@ const AtencionViewFileConocimiento = ({ rowData, typeFile }) => {
                                     </Stack>
                                 </>
                             ) : fileData?.filename?.includes(".png") || fileData?.filename?.includes(".jpg") || fileData?.filename?.includes(".jpeg") ? (
-                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} w="full">
+                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} w="full" borderRadius={'lg'} borderWidth="1px">
                                     <Image src={fileData?.link} alt={fileData?.filename} maxBlockSize={'70vh'}/>
                                 </Box>
                             ) : (
@@ -188,4 +191,4 @@ const AtencionViewFileConocimiento = ({ rowData, typeFile }) => {
     )
 }
 
-export default AtencionViewFileConocimiento;
+export default AtencionViewFile;

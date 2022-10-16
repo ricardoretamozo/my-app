@@ -33,10 +33,8 @@ const CFaLock = chakra(FaLock);
 
 export const LoginScreen = () => {
   // Chakra color mode
-  const primaryColor = useColorModeValue('#c53030', 'red.700');
-  const textColor = useColorModeValue('black.400', 'white');
-  const bgCard = useColorModeValue("gray.50", "gray.800");
-  const buttonColor = useColorModeValue("red", "red");
+  const primaryColor = useColorModeValue('#c53030', '#c53030');
+  const bgCard = useColorModeValue("gray.50", "gray.50");
 
   const dispatch = useDispatch();
 
@@ -105,46 +103,50 @@ export const LoginScreen = () => {
             <Box maxW={{ base: "275px", md: "360px" }} borderRadius="md" boxShadow="base" mb={2}>
               <Image py={2} px={2} src={logoPJA} alt="Service Desk" />
             </Box>
-            <Text ms="4px" color={textColor} fontWeight="extrabold" fontSize="14px" textAlign={'center'}
+            <Text ms="4px" color={'gray.700'} fontWeight="extrabold" fontSize="14px" textAlign={'center'}
             >INGRESE SU DNI Y SU CONTRASEÑA
             </Text>
             <Box minW={{ base: "90%", md: "360px" }}>
               <form onSubmit={handleLogin}>
-                <Stack spacing={4}>
+                <Stack spacing={4} color="gray.700">
                   <FormControl mt={2} isRequired>
-                    <InputGroup>
+                    <InputGroup borderColor="gray.300">
                       <InputLeftElement
                         pointerEvents="none"
-                        children={<CFaUserAlt color="gray.400" />}
+                        children={<CFaUserAlt color="gray.500" />}
                       />
                       <Input
-                        type="text"
+                        type="number"
                         placeholder="DNI"
+                        color={'black'}
                         name="username"
                         value={username}
                         onChange={handleInputChange}
                         _focus={{ boxShadow: "none" }}
+                        _hover={{ borderColor: 'gray.400'}}
                       />
                     </InputGroup>
                   </FormControl>
                   <FormControl isRequired>
-                    <InputGroup>
+                    <InputGroup borderColor="gray.300">
                       <InputLeftElement
                         pointerEvents="none"
                         color="gray.300"
-                        children={<CFaLock color="gray.400" />}
+                        children={<CFaLock color="gray.500" />}
                       />
                       <Input
                         type={showPassword ? "text" : "password"}
                         placeholder="CONTRASEÑA"
+                        color="black"
                         name="password"
                         autoComplete='off'
                         value={password}
                         onChange={handleInputChange}
                         _focus={{ boxShadow: "none" }}
+                        _hover={{ borderColor: 'gray.400'}}
                       />
                       <InputRightElement width="4.5rem">
-                        <Button h="1.75rem" size="sm" onClick={handleShowClick} _focus={{ boxShadow: "none" }}>
+                        <Button h="1.75rem" color={'white'} bg="red.600" _hover={{ bg: 'red.700'}} size="sm" onClick={handleShowClick} _focus={{ boxShadow: "none" }}>
                           {showPassword ? <Icon as={ViewIcon} /> : <Icon as={ViewOffIcon} />}
                         </Button>
                       </InputRightElement>
@@ -154,10 +156,11 @@ export const LoginScreen = () => {
                     borderRadius={'md'}
                     type="submit"
                     variant="solid"
-                    colorScheme={buttonColor}
+                    bg="red.600"
+                    color="white"
                     width="full"
                     _hover={{
-                      bg: 'red.600',
+                      bg: 'red.700',
                     }}
                     fontWeight="extrabold"
                     _focus={{ boxShadow: "none" }}
@@ -167,7 +170,7 @@ export const LoginScreen = () => {
                 </Stack>
               </form>
             </Box>
-            <Box fontSize={'14px'}>
+            <Box fontSize={'14px'} color="gray.600">
               ¿NO TIENES UNA CUENTA?{" "}
               <LinkChackra color={primaryColor} as={Link} ms="5px" fontWeight="extrabold" to="/auth/register">
                 CREAR CUENTA

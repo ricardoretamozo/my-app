@@ -95,7 +95,7 @@ export const OrigenIncidenciaEditar = ({ row }) => {
                         >
                             ACTUALIZAR
                         </Button>
-                        <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                        <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

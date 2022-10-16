@@ -36,18 +36,21 @@ export default function TableOficina() {
 
   const columns = [
     {
-      name: 'OFICINA',
-      selector: row => row.oficina,
-      sortable: true,
-    },
-    {
       name: 'SEDE',
       selector: row => row.organo.sede.sede,
+      cellExport: row => row.organo.sede.sede,
       sortable: true,
     },
     {
       name: 'ORGANO',
       selector: row => row.organo.organo,
+      cellExport: row => row.organo.organo,
+      sortable: true,
+    },
+    {
+      name: 'OFICINA',
+      selector: row => row.oficina,
+      cellExport: row => row.oficina,
       sortable: true,
     },
     {
@@ -58,19 +61,20 @@ export default function TableOficina() {
         return (
           <div>
             <Badge
-              bg={row.activo === 'S' ? 'green.400' : bgStatus}
+              bg={row.activo === 'S' ? 'green.500' : bgStatus}
               color={row.activo === 'S' ? 'white' : colorStatus}
-              p="3px 10px"
-              w={20}
+              py="4px"
+              w={"100px"}
               textAlign={'center'}
               borderRadius={'md'}
-              fontSize={'10px'}
+              fontSize={'12px'}
             >
-              {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+              {row.activo === 'S' ? 'ACTIVO' : 'ANULADO'}
             </Badge>
           </div>
         );
       },
+      cellExport: row => (row.activo === 'S' ? 'ACTIVO' : 'ANULADO'),
       center: true,
     },
     {
@@ -84,6 +88,7 @@ export default function TableOficina() {
           </div>
         );
       },
+      export: false,
       center: true,
     },
   ];
@@ -136,7 +141,7 @@ export default function TableOficina() {
           <OficinaAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}
@@ -206,7 +211,7 @@ const ModalEliminarOficina = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteOficina(oficinaid)}
                 colorScheme="red"

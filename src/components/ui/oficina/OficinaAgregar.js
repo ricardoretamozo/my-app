@@ -51,7 +51,7 @@ const OficinaAgregar = () => {
 
   const [dataOficina, setOficina] = useState(initialOficina);
   const [organoSelect, setorganoSelect] = useState([
-    { idOrgano: 0, organo: 'Seleccione una Sede' },
+    { idOrgano: 0, organo: 'SELECCIONE UNA SEDE' },
   ]);
   const [organoNombre, setorganoNombre] = useState(null);
 
@@ -59,7 +59,7 @@ const OficinaAgregar = () => {
 
   const handleChange = value => {
     if (value === null) {
-      setorganoSelect([{ idOrgano: 0, organo: 'Seleccione una Sede' }]);
+      setorganoSelect([{ idOrgano: 0, organo: 'SELECCIONE UNA SEDE' }]);
     } else {
       setorganoSelect(
         organoInfo.filter(indice => indice.sede.idSede === value.value)
@@ -111,6 +111,7 @@ const OficinaAgregar = () => {
                   value: sede.idSede,
                   label: sede.sede,
                 }))}
+                placeholder="SELECCIONE UNA SEDE"
               />
             </FormControl>
             <FormControl mt={4} isRequired={true}>
@@ -126,6 +127,7 @@ const OficinaAgregar = () => {
                   value: organo.idOrgano,
                   label: organo.organo,
                 }))}
+                placeholder="SELECCIONE UN ORGANO"
               />
             </FormControl>
             <FormControl mt={4}>
@@ -167,7 +169,7 @@ const OficinaAgregar = () => {
             >
               GUARDAR
             </Button>
-            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

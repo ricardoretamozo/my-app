@@ -22,6 +22,7 @@ import {
   PopoverHeader,
   PopoverBody,
   Portal,
+  Progress,
 } from '@chakra-ui/react';
 import { store } from '../../../../store/store';
 import DataTable, { createTheme } from 'react-data-table-component';
@@ -36,8 +37,8 @@ import { getIncidenciaId } from '../incidencia';
 import { AiFillFileText, AiFillFilter } from 'react-icons/ai';
 import { FaFilter } from 'react-icons/fa';
 import IncidenciaDetalles from '../IncidenciaDetalles';
-import AtencionViewFileConocimiento from '../conocimiento/AtencionViewFile';
-import IncidenciaViewFileConocimiento from '../conocimiento/IncidenciaViewFile';
+import AtencionViewFile from '../conocimiento/AtencionViewFile';
+import IncidenciaViewFile from '../conocimiento/IncidenciaViewFile';
 
 // import parse from 'html-react-parser';
 
@@ -50,6 +51,7 @@ export default function TableIncidencia() {
   const data = store.getState().incidenciaId.rows;
 
   const [tableRowsData, setTableRowsData] = useState(data);
+  const [progress, setProgress] = useState(false);
 
   const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
   const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
@@ -84,32 +86,45 @@ export default function TableIncidencia() {
     setTableRowsData(dataFilter);
   }
 
+  const changeSetProgressTrue = () => {
+    setProgress(true);
+  }
+
+  const changeSetProgressFalse = () => {
+    setProgress(false);
+  }
+
   const columns = [
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
+      cellExport: row => row.motivo.motivo,
       sortable: true,
     },
     {
       name: 'ORIGEN',
       selector: row => row.origen.origen,
+      cellExport: row => row.origen.origen,
       sortable: true,
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
+      cellExport: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
       sortable: true,
     },
     {
       name: 'TÉCNICO ASIGNADO',
-      // selector: row => row.historialIncidencia.persona_asignado == null ? "NO ASIGNADO" : row.historialIncidencia.persona_asignado.nombre + " " + row.historialIncidencia.persona_asignado.apellido,
       sortable: true,
-      cell: row => {
+      wrap: true,
+      selector: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (historial[0]?.persona_asignado === null ? "NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido)
+      },
+      cellExport: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
-          <Text>
-            {historial[0]?.persona_asignado === null ? "NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido}
-          </Text>
+          historial[0]?.persona_asignado === null ? "INCIDENCIA NO ASIGNADA A TÉCNICO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido
         )
       },
     },
@@ -123,17 +138,22 @@ export default function TableIncidencia() {
           <div>
             <Badge
               bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
               color={'white'}
-              p="3px 10px"
-              w={24}
+              py="4px"
+              w={"100px"}
               textAlign={'center'}
               borderRadius={'md'}
-              fontSize={'10px'}
+              fontSize={'12px'}
             >
               {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
             </Badge>
           </div>
+        )
+      },
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'
         )
       },
       center: true,
@@ -169,16 +189,20 @@ export default function TableIncidencia() {
                     <PopoverBody>
                       <Stack direction={'column'} spacing={4} alignItems="start">
                         {archivoUsuario !== null ? (
-                          <IncidenciaViewFileConocimiento
+                          <IncidenciaViewFile
                             rowData={row?.incidenciaArchivos}
                             typeFile={archivoUsuario?.file}
+                            setProgressTrue={() => changeSetProgressTrue()}
+                            setProgressFalse={() => changeSetProgressFalse()}
                           />
                         ) : null}
 
                         {archivoTecnico !== null ? (
-                          <AtencionViewFileConocimiento
+                          <AtencionViewFile
                             rowData={row.descripcionIncidencia?.incidenciaArchivos}
                             typeFile={archivoTecnico?.file}
+                            setProgressTrue={() => changeSetProgressTrue()}
+                            setProgressFalse={() => changeSetProgressFalse()}
                           />
                         ) : null}
                       </Stack>
@@ -190,7 +214,8 @@ export default function TableIncidencia() {
           </div>
         )
       },
-      wrap : true,
+      export: false,
+      wrap: true,
     }
   ];
 
@@ -376,7 +401,7 @@ export default function TableIncidencia() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
-        paddingBottom={8}
+        paddingBottom={4}
         zIndex={0}
       >
         <HStack
@@ -385,6 +410,7 @@ export default function TableIncidencia() {
           justifyContent={'space-between'}
           verticalAlign={'center'}
           px={4}
+          mt={4}
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">
@@ -392,40 +418,45 @@ export default function TableIncidencia() {
             </Text>
           </Box>
           <Box>
-            <Menu size={'xs'}>
-              <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
-                <HStack spacing={2}>
-                  <Text fontSize="sm" fontWeight="600">
-                    FILTRAR POR ESTADO
-                  </Text>
-                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
-                </HStack>
-              </MenuButton>
-              <MenuList zIndex={2}>
-                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
-                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
-                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
-                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
-          <Box>
-            <IconButton
-              size={'sm'} mr={2}
-              icon={<RepeatIcon boxSize={4} />}
-              colorScheme={'facebook'}
-              _focus={{ boxShadow: "none" }}
-              onClick={refreshTable} />
-            <IncidenciaAgregar />
+            <Stack direction={'row'} spacing={4}>
+              <IconButton
+                size={'sm'}
+                icon={<RepeatIcon boxSize={4} />}
+                colorScheme={'facebook'}
+                _focus={{ boxShadow: "none" }}
+                onClick={refreshTable} />
+              <Menu size={'xs'}>
+                <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                  <HStack spacing={2}>
+                    <Text fontSize="sm" fontWeight="semibold">
+                      FILTRAR POR ESTADO
+                    </Text>
+                    <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                  </HStack>
+                </MenuButton>
+                <MenuList zIndex={2} fontSize="sm">
+                  <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                  <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                  <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                  <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+                </MenuList>
+              </Menu>
+              <IncidenciaAgregar />
+            </Stack>
           </Box>
         </HStack>
-        <DataTableExtensions columns={columns} data={tableRowsData}>
+        <Progress mt={2} size="xs" value={progress} colorScheme="purple" hidden={progress === false} isIndeterminate={progress === true} mb={2} />
+        <DataTableExtensions columns={columns} data={tableRowsData} print={false}>
           <DataTable
             defaultSortAsc={false}
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
-            noDataComponent="No hay datos para mostrar refresca la página"
+            noDataComponent={
+              <Text fontSize="sm" textAlign="center" color="gray.600">
+                NO HAY DATOS PARA MOSTRAR, REFRESCAR LA TABLA
+              </Text>
+            }
             paginationPerPage={10}
             responsive={true}
             paginationRowsPerPageOptions={[10, 15, 20, 30]}

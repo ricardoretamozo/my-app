@@ -5,21 +5,27 @@ import Sidebar from '../base/Sidebar';
 import { fetchOrganos } from '../../../actions/organo'; 
 import { types } from '../../../types/types';
 import TableOrgano from './TableOrgano';
+import { fetchSedes } from '../../../actions/sede';
 
 export const Organo = () => {
   const dispatch = useDispatch();
 
-  const fetchData= async ()=> {
-    await fetchOrganos().then((res)=>{
-      dispatch(getOrgano(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
+  const fetchDataOrganos = async () => {
+    const response = await fetchOrganos();
+    dispatch(getOrganos(response));
+  }
+
+  const fetchDataSede = async () => {
+    const response = await fetchSedes();
+    dispatch(getSede(response));
   }
 
   useEffect(() => {
     if(store.getState().organo.checking){
-      fetchData();
+      fetchDataOrganos();
+    }
+    if(store.getState().sede.checking){
+      fetchDataSede();
     }
   });
 
@@ -30,7 +36,12 @@ export const Organo = () => {
   );
 };
 
-export const getOrgano = organo =>({
+export const getOrganos = organo =>({
   type: types.eventLoadedOrgano,
   payload: organo
+});
+
+export const getSede = sede =>({
+  type: types.eventLoadedSede,
+  payload: sede
 });

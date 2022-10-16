@@ -1,6 +1,6 @@
 import { fetchToken } from '../helpers/fetch';
 import { notification } from '../helpers/alert';
-import { getOrgano } from '../components/ui/organo/organo';
+import { getOrganos } from '../components/ui/organo/organo';
 
 // CREATE ORGANO
 
@@ -17,7 +17,7 @@ export const createOrgano = data => {
     );
 
     if (response.status === 200 || response.status === 201) {
-      dispatch(getOrgano(await loadOrgano()));
+      dispatch(getOrganos(await loadOrgano()));
       notification('Organo registrado', 'Organo se ha registrado correctamente.', 'success');
     } else {
       notification('Error al registrar', 'No se pudo registrar el organo', 'error');
@@ -27,36 +27,26 @@ export const createOrgano = data => {
 
 export const fetchOrganos = async () => {
   const response = await fetchToken('organos');
-  const body = await response.json();
-  const Organo = {};
-  const data = [];
-
-  body.forEach(organo => {
-    data.push({
-      idOrgano: organo.idOrgano,
-      sede: organo.sede,
-      organo: organo.organo,
-      activo: organo.activo,
-    });
-  });
-  Organo.data = data;
-  return Organo;
+  if(!response.ok){
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const Organos = {};
+    Organos.data = data;
+    return Organos;
+  }
 };
 
 export const fetchOrgano = async (id) => {
   const response = await fetchToken('organos/listall/' + id);
-  const body = await response.json();
-  const Organo = {};
-  const data = [];
-
-    data.push({
-      idOrgano: body.idOrgano,
-      sede: body.sede,
-      organo: body.organo,
-      activo: body.activo,
-    });
-  Organo.data = data;
-  return Organo;
+  if(!response.ok){
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const Organo = {};
+    Organo.data = data;
+    return Organo;
+  }
 };
 
 // ACTUALIZAR ORGANO
@@ -85,7 +75,7 @@ export const updateOrgano = data => {
     );
 
     if (response.status === 200) {
-      dispatch(getOrgano(await loadOrgano()));
+      dispatch(getOrganos(await loadOrgano()));
       notification('Organo actualizado', 'Organo actualizado correctamente', 'success');
     } else {
       notification('Error al actualizar', 'No se pudo actualizar el Organo', 'error');
@@ -100,7 +90,7 @@ export const deleteOrgano = id => {
     const response = await fetchToken(`organos/${id}`, '', 'DELETE');
 
     if (response.status === 200) {
-      dispatch(getOrgano(await loadOrgano()));
+      dispatch(getOrganos(await loadOrgano()));
       notification('Organo actualizado', 'Organo se ha actualizado el estado correctamente', 'success');
     } else {
       notification('Error al eliminar', 'No se pudo eliminar el Organo', 'error');
@@ -112,18 +102,12 @@ export const deleteOrgano = id => {
 
 export const loadOrgano = async () => {
   const response = await fetchToken('organos');
-  const body = await response.json();
-  const Organo = {};
-  const data = [];
-
-  body.forEach(organo => {
-    data.push({
-      idOrgano: organo.idOrgano,
-      sede: organo.sede,
-      organo: organo.organo,
-      activo: organo.activo,
-    });
-  });
-  Organo.data = data;
-  return Organo;
+  if(!response.ok){
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const Organos = {};
+    Organos.data = data;
+    return Organos;
+  }
 };

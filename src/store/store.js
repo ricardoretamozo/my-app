@@ -9,7 +9,14 @@ import { sedeReducer } from "../reducers/sedeReducer";
 import { personaReducer } from "../reducers/personaReducer";
 import { cargoReducer } from "../reducers/cargoReducer";
 import { validadorUsuarioReducer } from "../reducers/validadorUsuario";
-import { incidenciaReducer, incidenciaIdReducer, incidenciasAsignadasReducer, incidenciasNoAsignadasReducer, incidenciasAsignadasSoporteReducer } from "../reducers/incidenciaReducer";
+import { 
+    misIncidenciasReducer,
+    incidenciaReducer, 
+    incidenciaIdReducer, 
+    incidenciasAsignadasReducer, 
+    incidenciasNoAsignadasReducer, 
+    incidenciasAsignadasSoporteReducer 
+} from "../reducers/incidenciaReducer";
 import { motivoReducer } from "../reducers/motivoReducer";
 import { personaOrganoReducer } from "../reducers/personaOrganoReducer";
 import { tecnicoDisponibleReducer } from "../reducers/tecnicoReducer";
@@ -43,6 +50,7 @@ const reducers = combineReducers({
     origenIncidencia: origenIncidenciaReducer,
     ftp: ftpReducer,
     correoCredencial: correoCredencialReducer,
+    misIncidencias: misIncidenciasReducer,
 });
 
 export const store = createStore( 

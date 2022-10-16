@@ -20,7 +20,8 @@ export const startLogin = (dni, password) => {
         // set user info
         localStorage.setItem('access_token', body.access_token);
         localStorage.setItem('refresh_token', body.refresh_token);
-        localStorage.setItem('name', body.name);
+        localStorage.setItem('nombres', body.nombres);
+        localStorage.setItem('apellidos', body.apellidos);
         localStorage.setItem('rol', body.rol);
         localStorage.setItem('identificador', body.identificador);
 
@@ -28,12 +29,13 @@ export const startLogin = (dni, password) => {
           login({
             access_token: body.access_token,
             refresh_token: body.refresh_token,
-            name: body.name,
+            nombres: body.nombres,
+            apellidos: body.apellidos,
             rol: body.rol,
             identificador: body.identificador,
           })
         );
-        timerNotification('Inicio de Sesion Exitoso!');
+        timerNotification('INICICIANDO SESIÓN!!!');
       } else {
         notification('Error al Iniciar Sesión', 'Credenciales Inválidas', 'error');
       }
@@ -49,11 +51,10 @@ export const startLogin = (dni, password) => {
 
 export const LogOut = () => {
   return async dispatch => {
+    timerNotification('CERRANDO SESIÓN!!!');
     localStorage.clear();
-    dispatch(
-      logout()
-    );
-    timerNotification('Cerrando de Sesion!');
+    localStorage.setItem('chakra-ui-color-mode', 'light');
+    dispatch(logout());
     window.location.reload();
   }
 }
@@ -73,31 +74,37 @@ export const validadorUsuarioCreado = async (dni) => {
 }
 
 export const startChecking = () => {
-  return async dispatch => {
-    const response = await fetchWithToken('refreshtoken');
-    const body = await response.json();
-
-    if (response.status === 200 || response.status === 201) {
-      // set user info
-      localStorage.setItem('access_token', body.access_token);
-      localStorage.setItem('refresh_token', body.refresh_token);
-      localStorage.setItem('name', body.name);
-      localStorage.setItem('rol', body.rol);
-      localStorage.setItem('identificador', body.identificador);
-
-      dispatch(
-        login({
-          access_token: body.access_token,
-          refresh_token: body.refresh_token,
-          name: body.name,
-          rol: body.rol,
-          identificador: body.identificador,
-        })
-      );
-    } else {
-      dispatch(checkingFinish());
-    }
-  };
+  try {
+    return async dispatch => {
+      const response = await fetchWithToken('refreshtoken');
+      const body = await response.json();
+  
+      if (response.status === 200 || response.status === 201) {
+        // set user info
+        localStorage.setItem('access_token', body.access_token);
+        localStorage.setItem('refresh_token', body.refresh_token);
+        localStorage.setItem('nombres', body.nombres);
+        localStorage.setItem('apellidos', body.apellidos);
+        localStorage.setItem('rol', body.rol);
+        localStorage.setItem('identificador', body.identificador);
+  
+        dispatch(
+          login({
+            access_token: body.access_token,
+            refresh_token: body.refresh_token,
+            nombres: body.nombres,
+            apellidos: body.apellidos,
+            rol: body.rol,
+            identificador: body.identificador,
+          })
+        );
+      } else {
+        dispatch(checkingFinish());
+      }
+    };
+  } catch (error) {
+    // console.log("NO SE REALIZÓ LA PETICIÓN CORRECTAMENTE");
+  }
 };
 
 const checkingFinish = () => ({ type: types.authCheckingFinish });

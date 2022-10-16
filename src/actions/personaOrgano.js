@@ -21,7 +21,7 @@ export const createPersonaOrgano = (idpersona, idOrgano) => {
   };
 };
 
-export const fetchPersonaOrgano = async id => {
+export const fetchPersonaOrgano = async (id) => {
   const response = await fetchToken('personaorganos/persona/' + id);
   const body = await response.json();
   const PersonaOrgano = {};
@@ -40,7 +40,7 @@ export const fetchPersonaOrgano = async id => {
   return PersonaOrgano;
 };
 
-export const deletePersonaOrgano = id => {
+export const deletePersonaOrgano = (id) => {
   return async dispatch => {
     const response = await fetchToken(`personaorganos/${id}`, '', 'DELETE');
 
@@ -52,7 +52,7 @@ export const deletePersonaOrgano = id => {
   };
 };
 
-export const loadPersonaOrgano = async id => {
+export const loadPersonaOrgano = async (id) => {
   const response = await fetchToken('personaorganos/persona/' + id);
   const body = await response.json();
   const PersonaOrgano = {};

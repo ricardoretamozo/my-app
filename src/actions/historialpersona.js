@@ -3,25 +3,15 @@ import { notification } from '../helpers/alert';
 
 export const fetchHistorialPersona = async (id) => {
   const response = await fetchToken('historialpersonas/persona/' + id);
-  if (response.status === 200 || response.status === 201) {
-    const body = await response.json();
-    var HistorialPersona = {};
-
-    HistorialPersona = {
-      idHistorialPersona: body.idHistorialPersona,
-      persona: body.persona,
-      cargo: body.cargo,
-      oficina: body.oficina,
-      iniciaCargo: body.iniciaCargo,
-      terminaCargo: body.terminaCargo,
-      activo: body.activo,
-      fecha: body.fecha,
-      ip: body.ip,
-    };
-
+  if(!response.ok){
+    // throw new Error(response.statusText);
+  }else if(response.status === 200 || response.status === 201){
+    const data = await response.json();
+    const HistorialPersona = {};
+    HistorialPersona.data = data;
     return HistorialPersona;
-
-  } else {
+  }else{
+    notification('Error al cargar Datos', 'No se pudo cargar el historial', 'error');
     return false;
   }
 };
@@ -44,10 +34,9 @@ export const createHistorialPersona = (data) => {
     );
 
     if (response.status === 200 || response.status === 201) {
-      notification('Datos registrados correctamente.', 'Sus Datos ha sido registrado correctamente', 'success');
+      notification('Datos registrados correctamente.', 'Sus Datos ha sido registrado correctamente', 'success', 'modalOrganoAsignacion');
     } else {
-      notification('Error de registro sus Datos', 'No se pudo registrar sus Datos', 'error');
-      // dispatch(fetchHistorialPersona)
+      notification('Error de registro sus Datos', 'No se pudo registrar sus Datos', 'error', 'modalOrganoAsignacion');
     }
   };
 };

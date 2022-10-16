@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { store } from '../../../store/store';
 
-import DataTable, { createTheme } from 'react-data-table-component';
+import DataTable, { createTheme } from "react-data-table-component";
 import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 
@@ -38,24 +38,26 @@ export default function TableCargo() {
     {
       name: 'CARGO',
       selector: row => row.cargo,
+      cellExport: row => row.cargo,
       sortable: true,
     },
     {
       name: 'ESTADO',
       selector: row => row.activo,
+      cellExport: row => (row.activo === 'S' ? 'ACTIVO' : 'ANULADO'),
       sortable: true,
       cell: row => (
         <div>
           <Badge
-            bg={row.activo === "S" ? "green.400" : bgStatus}
+            bg={row.activo === "S" ? "green.500" : bgStatus}
             color={row.activo === "S" ? "white" : colorStatus}
-            p="3px 10px"
-            w={20}
+            py="4px"
+            w={"100px"}
             textAlign={'center'}
             borderRadius={'md'}
-            fontSize={'10px'}
+            fontSize={'12px'}
           >
-            {row.activo === "S" ? "Activo" : "Inactivo"}
+            {row.activo === "S" ? "ACTIVO" : "ANULADO"}
           </Badge>
         </div>
       ),
@@ -71,6 +73,7 @@ export default function TableCargo() {
         </div>
       ),
       center: true,
+      export: false,
     },
   ];
 
@@ -116,10 +119,8 @@ export default function TableCargo() {
           <CargoAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
-          columns={columns}
-          data={data}
           sortIcon={<BsArrowDown />}
           theme={useColorModeValue('default', 'solarized')}
           pagination
@@ -185,7 +186,7 @@ const ModalEliminarCargo = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteCargo(row.idCargo)}
                 colorScheme="red"

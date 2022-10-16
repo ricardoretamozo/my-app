@@ -36,6 +36,7 @@ export default function TableOrigen() {
     {
       name: 'ORIGEN',
       selector: row => row.origen,
+      cellExport: row => row.origen,
       sortable: true,
     },
     {
@@ -51,6 +52,7 @@ export default function TableOrigen() {
         </div>
       ),
       center: true,
+      export: false,
     },
   ];
 
@@ -102,7 +104,7 @@ export default function TableOrigen() {
           <OrigenAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}
@@ -175,7 +177,7 @@ const ModalOrigenEliminar = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleClickDelete(row.idOrigen)}
                 colorScheme="red"

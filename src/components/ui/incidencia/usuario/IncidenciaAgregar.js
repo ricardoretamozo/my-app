@@ -74,15 +74,10 @@ const IncidenciaAgregar = () => {
   const [radioValue, setRadioValue] = useState('apellido');
   const [usuarioApellido, setUsuarioApellido] = useState('');
   const [usuarioListData, setUsuarioListData] = useState([]);
-  // const [usuarioData, setUsuarioData] = useState([]);
   const [usuarioNotificaDNI, setUsuarioNotificaDNI] = useState('');
   const [usuarioNotificaId, setUsuarioNotificaId] = useState(null);
   const [dataNombresNotifica, setDataNombresNotifica] = useState('');
   const [usuarioDataNombre, setUsuarioDataNombre] = useState(null);
-  // const [usuarioSede, setUsuarioSede] = useState(null);
-  // const [usuarioOrgano, setUsuarioOrgano] = useState(null);
-  // const [usuarioOficina, setUsuarioOficina] = useState(null);
-  // const [usuarioCargo, setUsuarioCargo] = useState(null);
   const [indiceUsuario, setIndiceUsuario] = useState(null);
 
   const [openModal, setOpenModal] = useState(false);
@@ -184,7 +179,7 @@ const IncidenciaAgregar = () => {
         // setUsuarioOficina(historial.oficina.oficina)
         // setUsuarioCargo(historial.cargo.cargo)
       }).catch(() => {
-        notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'error', 'modalCrearIncidencia');
+        notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'info', 'modalCrearIncidencia');
         handleResetValues();
       });
       // setUsuarioData(res);
@@ -215,8 +210,8 @@ const IncidenciaAgregar = () => {
 
   const seleccionarUsuario = async (usuario) => {
     await fetchHistorialPersona(usuario).then(historial => {
-      setUsuarioDataNombre(historial.persona.nombre + ' ' + historial.persona.apellido);
-      setUsuarioNotificaId(historial.persona.idpersona);
+      setUsuarioDataNombre(historial?.data.persona.nombre + ' ' + historial.data.persona.apellido);
+      setUsuarioNotificaId(historial?.data.persona.idpersona);
       // setUsuarioNotificaData(historial.persona);
       // setUsuarioSede(historial.oficina.organo.sede.sede)
       // setUsuarioOrgano(historial.oficina.organo.organo)
@@ -273,9 +268,9 @@ const IncidenciaAgregar = () => {
           <ModalCloseButton _focus={{ boxShadow: "none" }} />
           <ModalBody pb={6}>
             <FormControl isRequired>
-              <FormLabel>MOTIVO</FormLabel>
+              <FormLabel fontWeight="bold">MOTIVO</FormLabel>
               <Select
-                placeholder="--------- SELECCIONE UN MOTIVO -----------"
+                placeholder="SELECCIONAR UN MOTIVO"
                 onChange={handleChangeMotivo}
                 options={motivoData.map(motivo => ({
                   value: motivo.idMotivo,
@@ -287,7 +282,7 @@ const IncidenciaAgregar = () => {
             <Stack direction={['column', 'column', 'row', 'row']} spacing={2} mb={2} mt={2} justify="space-between" >
               <Text fontWeight={'semibold'}>USUARIO QUIEN REPORTÓ</Text>
               <RadioGroup onChange={handleChangeUserRadio} value={radioUserValue}>
-                <Stack direction='row'>
+                <Stack direction='row'  fontWeight="bold">
                   <Radio size='md' value='mismo' _focus={{ boxShadow: "none" }} defaultChecked={true}>MI PERSONA</Radio>
                   <Radio size='md' value='otro' _focus={{ boxShadow: "none" }}>OTRO USUARIO</Radio>
                 </Stack>
@@ -297,14 +292,14 @@ const IncidenciaAgregar = () => {
             <Stack direction={'column'} spacing={2} mt={2} hidden={radioUserValue === 'mismo'} >
               <Tabs variant="enclosed-colored" w="full" size={'md'}>
                 <TabList textAlign="center" justifyContent="center">
-                  <Tab value="2" _focus={{ boxShadow: "none" }} defaultChecked>BUSQUEDA POR APELLIDOS</Tab>
-                  <Tab _focus={{ boxShadow: "none" }}>BUSQUEDA POR DNI</Tab>
+                  <Tab value="2" _focus={{ boxShadow: "none" }} defaultChecked  fontWeight="bold">BUSQUEDA POR APELLIDOS</Tab>
+                  <Tab _focus={{ boxShadow: "none" }} fontWeight="bold">BUSQUEDA POR DNI</Tab>
                 </TabList>
                 <TabPanels>
                   <TabPanel>
                     <HStack spacing={2} mt={2}>
                       <FormControl isRequired={radioValue === 'apellido'} zIndex={0}>
-                        <FormLabel>BUSQUEDA POR APELLIDOS AL USUARIO QUIEN REPORTÓ</FormLabel>
+                        <FormLabel fontWeight="bold">BUSQUEDA POR APELLIDOS AL USUARIO QUIEN REPORTÓ</FormLabel>
                         <InputGroup>
                           <InputRightElement
                             children={
@@ -332,9 +327,9 @@ const IncidenciaAgregar = () => {
                           <ModalCloseButton _focus={{ boxShadow: "none" }} onClick={handleCloseModalSearch} />
                           <ModalBody pb={6}>
                             <FormControl>
-                              <FormLabel>LISTA DE USUARIOS</FormLabel>
+                              <FormLabel fontWeight="bold">LISTA DE USUARIOS</FormLabel>
                               <Select
-                                placeholder=" SELECCIONE UN USUARIO "
+                                placeholder="SELECCIONE UN USUARIO"
                                 onChange={handleChangeUsuario}
                                 options={usuarioListData?.map(usuario => ({
                                   value: usuario.idpersona,
@@ -352,7 +347,7 @@ const IncidenciaAgregar = () => {
                       </Modal>
 
                       <FormControl isRequired>
-                        <FormLabel>NOMBRE DEL USUARIO QUIEN REPORTÓ</FormLabel>
+                        <FormLabel fontWeight="bold">NOMBRE DEL USUARIO QUIEN REPORTÓ</FormLabel>
                         <Input placeholder='NOMBRES APELLIDOS' value={usuarioDataNombre ? usuarioDataNombre : ''} readOnly />
                       </FormControl>
                     </HStack>
@@ -360,7 +355,7 @@ const IncidenciaAgregar = () => {
                   <TabPanel>
                     <Stack direction={['column', 'column', 'row', 'row']} spacing={2} mb={2} mt={2} justify="space-between">
                       <FormControl isRequired={radioUserValue === 'otro'} zIndex={0}>
-                        <FormLabel>BUSQUEDA POR DNI AL USUARIO QUIEN REPORTÓ</FormLabel>
+                        <FormLabel fontWeight="bold">BUSQUEDA POR DNI AL USUARIO QUIEN REPORTÓ</FormLabel>
                         <InputGroup>
                           <InputRightElement
                             children={
@@ -377,7 +372,7 @@ const IncidenciaAgregar = () => {
                         </InputGroup>
                       </FormControl>
                       <FormControl isRequired>
-                        <FormLabel>NOMBRE DEL USUARIO QUIEN REPORTÓ</FormLabel>
+                        <FormLabel fontWeight="bold">NOMBRE DEL USUARIO QUIEN REPORTÓ</FormLabel>
                         <Input placeholder='NOMBRES APELLIDOS' value={dataNombresNotifica ? dataNombresNotifica : ''} readOnly />
                       </FormControl>
                     </Stack>
@@ -389,7 +384,7 @@ const IncidenciaAgregar = () => {
             {/* ----------------- */}
 
             <FormControl>
-              <FormLabel>DESCRIPCIÓN</FormLabel>
+              <FormLabel fontWeight="bold">DESCRIPCIÓN DE LA INCIDENCIA</FormLabel>
               <ReactQuill
                 theme="snow"
                 modules={modules}
@@ -397,18 +392,17 @@ const IncidenciaAgregar = () => {
                 placeholder="Aqui describe la incidencia"
                 style={{
                   textTransform: 'uppercase',
-                  textAlignLast: 'center'
                 }}
                 onChange={(e) => {
                   setIndiceIncidencia({
                     ...indiceIncidencia,
-                    descripcion: e.valueOf(),
+                    descripcion: e.valueOf().toUpperCase(),
                   });
                 }}
               />
             </FormControl>
-            <FormControl>
-              <FormLabel>SUBIR ARCHIVO(opcional)</FormLabel>
+            <FormControl mt={2}>
+              <FormLabel fontWeight="bold">SUBIR ARCHIVO(opcional)</FormLabel>
               <InputGroup size='md'>
                 <Input
                   type='file'
@@ -445,7 +439,7 @@ const IncidenciaAgregar = () => {
             >
               GUARDAR
             </Button>
-            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

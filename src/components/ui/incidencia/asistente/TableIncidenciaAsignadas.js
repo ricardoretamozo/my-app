@@ -50,13 +50,14 @@ import { fetchIncidenciasAsignadas, reAsignarIncidencia } from '../../../../acti
 import { RiUserShared2Line } from 'react-icons/ri';
 import { FaFilter, FaHistory } from 'react-icons/fa';
 import { AiFillFilter } from 'react-icons/ai';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { getIncidenciaAsignadas } from './incidencia';
 
 export default function TableIncidenciaAsignados() {
   const dispatch = useDispatch();
   const { identificador } = useSelector(state => state.auth);
 
   const data = store.getState().incidenciasAsignadas.rows;
-  const tecnicosData = store.getState().tecnicoDisponible.rows;
 
   const [tableRowsData, setTableRowsData] = useState(data);
 
@@ -64,57 +65,6 @@ export default function TableIncidenciaAsignados() {
   const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
   const ContadorTramite = data.filter(row => row.historialIncidencia.filter(tramite => tramite.estadoIncidencia === "T" && tramite.estado === "A").length > 0);
   const ContadorAtendidas = data.filter(row => row.historialIncidencia.filter(atendida => atendida.estadoIncidencia === "A" && atendida.estado === "A").length > 0);
-
-  const [openModal, setOpenModal] = useState(false);
-  const [idIncidencia, setIndiceIncidencia] = useState(null);
-  const [indiceTecnico, setIndiceTecnico] = useState(null);
-  const [indiceIdPersona, setIndiceIdPersona] = useState(null);
-  const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
-
-  // filtrar tecnicos que no se repitan en la lista de tecnicos para asignar
-  const tecnicoFilter = tecnicosData.filter(p => p.persona.idpersona !== indiceIdPersona);
-
-  const ReAsignacionIncidencia = (e) => {
-    e.preventDefault();
-    var incidencia = {
-      idIncidencia: idIncidencia,
-      historialIncidencia: [{
-        persona_registro: {
-          idpersona: Number(identificador)
-        },
-        persona_asignado: {
-          idpersona: indiceTecnico,
-        },
-        persona_notifica: {
-          idpersona: incidenciaPersonaNotifica ? incidenciaPersonaNotifica : Number(identificador),
-        }
-      }]
-    }
-    dispatch(reAsignarIncidencia(incidencia))
-      .then(() => {
-        setOpenModal(false);
-      }).catch((error) => {
-        console.log(error);
-      })
-  }
-
-  const handleClickOpenModal = (index) => {
-    var idPersona = index.historialIncidencia.filter(p => p.estado === 'A');
-    setIndiceIdPersona(idPersona[0].persona_asignado.idpersona);
-    setIndiceIncidencia(index.idIncidencia);
-    setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A")[0]?.persona_notifica.idpersona);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setIndiceTecnico(null)
-    setIndiceIdPersona(null);
-    setOpenModal(false);
-  }
-
-  const handleChangeTecnico = value => {
-    setIndiceTecnico(value.value);
-  };
 
   // filtros por estado
 
@@ -134,8 +84,8 @@ export default function TableIncidenciaAsignados() {
   }
 
   const fetchDataId = async () => {
-    await fetchIncidenciasAsignadas().then(() => {
-      setTableRowsData(store.getState().incidenciasAsignadas.rows);
+    await fetchIncidenciasAsignadas().then((res) => {
+      dispatch(getIncidenciaAsignadas(res));
     });
   }
 
@@ -147,72 +97,78 @@ export default function TableIncidenciaAsignados() {
     {
       name: 'USUARIO',
       selector: row => row.persona.nombre + ' ' + row.persona.apellido,
+      cellExport: row => row.persona.nombre + ' ' + row.persona.apellido,
       sortable: true,
+      wrap: true,
     },
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
+      cellExport: row => row.motivo.motivo,
       sortable: true,
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
+      cellExport: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
       sortable: true,
     },
     {
       name: 'TÉCNICO ASIGNADO',
-      // selector: row => row.historialIncidencia.map(row => row.estado === 'A'? row.persona_asignado !== null ? row.persona_asignado.nombre + ' ' + row.persona_asignado.apellido : 'NO ASIGNADO' : ''),
-      // selector: row => row.historialIncidencia.persona_asignado.nombre + ' ' + row.historialIncidencia.persona_asignado.apellido,
+      wrap: true,
       sortable: true,
-      cell: row => {
+      selector: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
-          <Text>
-            {historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido}
-          </Text>
+          historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido
+        )
+      },
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido
         )
       }
     },
     {
       name: 'IP',
-      // selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.ip : ''),
-      // selector: row => row.historialIncidencia.ip,
       sortable: true,
-      cell: row => {
+      selector: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
-        return (
-          <Text>
-            {historial[0].ip}
-          </Text>
-        )
-      }
+        return (historial[0]?.ip)
+      },
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (historial[0]?.ip)
+      },
     },
     {
       name: 'ESTADO',
       selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
-      // selector: row => row.historialIncidencia.filter(e => e.estado === 'A' ? e.estadoIncidencia : ''),
-      // selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
+      center: true,
       cell: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
-          <div>
             <Badge
               bg={historial[0].estadoIncidencia === 'P' ? 'red.500' : historial[0].estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
               color={'white'}
-              p="3px 10px"
-              w={24}
+              py="4px"
+              w={"100px"}
               textAlign={'center'}
               borderRadius={'md'}
-              fontSize={'10px'}
+              fontSize={'12px'}
             >
               {historial[0].estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0].estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
             </Badge>
-          </div>
         )
       },
-      center: true,
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0].estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0].estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'
+        )
+      },
     },
     {
       name: 'ACCIONES',
@@ -227,14 +183,8 @@ export default function TableIncidenciaAsignados() {
               identificador={identificador}
             />
             {historial[0].estadoIncidencia !== 'A' ? (
-              <IconButton
-                icon={<RiUserShared2Line />}
-                colorScheme={'teal'}
-                onClick={() => handleClickOpenModal(row)}
-                fontSize='20px'
-                size={'sm'}
-                ml={1}
-                _focus={{ boxShadow: "none" }}
+              <ModalReAsignarTecnico
+                row={row}
               />
             ) : null}
             {historialTecnico.length > 0 && historial[0].estadoIncidencia !== 'A' ? (
@@ -252,67 +202,32 @@ export default function TableIncidenciaAsignados() {
                 <Portal>
                   <PopoverContent _focus={{ boxShadow: "none" }}>
                     <PopoverArrow />
-                    <PopoverHeader>
+                    <PopoverHeader bg="gray.700" color="white" borderTopRadius="md">
                       <Text fontSize={'12px'} textAlign='center' fontWeight={'semibold'}>ÚLTIMOS DE TÉCNICOS ASIGNADOS</Text>
                     </PopoverHeader>
-                    <PopoverCloseButton _focus={{ boxShadow: "none" }} />
+                    <PopoverCloseButton _focus={{ boxShadow: "none" }} color="white" />
                     <PopoverBody>
                       <Stack direction={'column'} spacing={2}>
                         {historialTecnico.map((row, index) => (
                           <Stack direction={['column', 'row']} textAlign={['center', 'justify']} key={index} alignItems='baseline' w='full' spacing={1}>
                             <Avatar size={'xs'} name={row.persona_asignado?.nombre + ' ' + row.persona_asignado?.apellido} />
                             <HStack justifyContent='space-between' w={'full'}>
-                              <Text fontSize={'10px'}>{row.persona_asignado?.nombre + ' ' + row.persona_asignado?.apellido}</Text>
-                              <Text fontSize={'9px'}>{Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss").trimEnd()}</Text>
+                              <Text fontSize={'9px'}>{row.persona_asignado?.nombre + ' ' + row.persona_asignado?.apellido}</Text>
+                              <Text fontSize={'9px'}>{Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss").trimEnd()}</Text>
                             </HStack>
                           </Stack>
                         ))}
                       </Stack>
                     </PopoverBody>
-                    {/* <PopoverFooter>This is the footer</PopoverFooter> */}
                   </PopoverContent>
                 </Portal>
               </Popover>
             ) : null}
-
-            <Modal
-              isOpen={openModal}
-              onClose={handleCloseModal}
-              size={'2xl'}
-            >
-              <ModalOverlay />
-              <form onSubmit={ReAsignacionIncidencia}>
-                <ModalContent>
-                  <ModalHeader>RE-ASIGNAR A OTRO SOPORTE TÉCNICO</ModalHeader>
-                  <ModalCloseButton _focus={{ boxShadow: "none" }} />
-                  <ModalBody pb={6}>
-                    <FormControl isRequired>
-                      <FormLabel>SOPORTES TÉCNICOS</FormLabel>
-                      <Select
-                        placeholder="--------- ELIGE UN SOPORTE TECNICO -----------"
-                        onChange={handleChangeTecnico}
-                        options={tecnicoFilter.map(tecnico => ({
-                          value: tecnico.persona.idpersona,
-                          label: tecnico.persona.nombre + ' ' + tecnico.persona.apellido
-                        }))}
-                        isSearchable
-                      />
-                    </FormControl>
-                  </ModalBody>
-                  <ModalFooter>
-                    <Button disabled={indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
-                      RE-ASIGNAR
-                    </Button>
-                    <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
-                  </ModalFooter>
-                </ModalContent>
-              </form>
-            </Modal>
           </div>
         );
       },
+      export: false,
       width: '140px',
-      wrap: true,
     },
   ];
 
@@ -498,13 +413,14 @@ export default function TableIncidenciaAsignados() {
         overflow="hidden"
         boxShadow={'md'}
         bg={useColorModeValue('white', 'gray.900')}
-        paddingBottom={8}
+        paddingBottom={4}
       >
         <HStack
           spacing="24px"
           width={'100%'}
           justifyContent={'space-between'}
           verticalAlign={'center'}
+          pt={4}
           px={4}
         >
           <Box>
@@ -513,35 +429,45 @@ export default function TableIncidenciaAsignados() {
             </Text>
           </Box>
           <Box>
-            <Menu size={'xs'}>
-              <MenuButton as={'menu'} style={{ cursor: 'pointer'}}>
-                <HStack spacing={2}>
-                  <Text fontSize="sm" fontWeight="600">
-                    FILTRAR POR ESTADO
-                  </Text>
-                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
-                </HStack>
-              </MenuButton>
-              <MenuList zIndex={2}>
-                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
-                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
-                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
-                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
-              </MenuList>
-            </Menu>
+            <Stack direction={'row'} spacing={1}>
+              <IconButton
+                size={'sm'} mr={2}
+                icon={<RepeatIcon boxSize={4} />}
+                colorScheme={'facebook'}
+                _focus={{ boxShadow: "none" }}
+                onClick={refreshTable} />
+              <Menu size={'xs'}>
+                <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                  <HStack spacing={2}>
+                    <Text fontSize="sm" fontWeight={'semibold'}>
+                      FILTRAR POR ESTADO
+                    </Text>
+                    <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                  </HStack>
+                </MenuButton>
+                <MenuList zIndex={2} fontSize="sm">
+                  <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                  <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                  <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                  <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+                </MenuList>
+              </Menu>
+            </Stack>
+
           </Box>
-          {/* <Box>
-            <IncidenciaAgregar />
-          </Box> */}
         </HStack>
-        <DataTableExtensions columns={columns} data={tableRowsData}>
+        <DataTableExtensions columns={columns} data={tableRowsData} print={false}>
           <DataTable
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
             responsive={true}
             paginationPerPage={10}
-            noDataComponent="No hay datos para mostrar refresca la página"
+            noDataComponent={
+              <Text fontSize="sm" textAlign="center" color="gray.600">
+                  NO HAY DATOS PARA MOSTRAR, REFRESCAR LA TABLA
+              </Text>
+            }
             paginationRowsPerPageOptions={[10, 15, 20, 30]}
             fixedHeader
             fixedHeaderScrollHeight="550px"
@@ -551,10 +477,118 @@ export default function TableIncidenciaAsignados() {
               selectAllRowsItem: true,
               selectAllRowsItemText: 'Todos',
             }}
-            key={ tableRowsData.map((item) => { return item.idIncidencia }) }
+            key={tableRowsData.map((item) => { return item.idIncidencia })}
           />
         </DataTableExtensions>
       </Box>
     </>
   );
+}
+
+
+export const ModalReAsignarTecnico = ({ row, refreshData }) => {
+  const [openModal, setOpenModal] = useState(false);
+  const dispatch = useDispatch();
+  const { identificador } = useSelector(state => state.auth);
+  const tecnicosData = store.getState().tecnicoDisponible.rows;
+
+  const [idIncidencia, setIndiceIncidencia] = useState(null);
+  const [indiceTecnico, setIndiceTecnico] = useState(null);
+  const [indiceIdPersona, setIndiceIdPersona] = useState(null);
+  const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
+
+
+  // filtrar tecnicos que no se repitan en la lista de tecnicos para asignar
+  const tecnicoFilter = tecnicosData.filter(p => p.persona.idpersona !== indiceIdPersona);
+
+  const handleClickOpenModal = (index) => {
+    var idPersona = index.historialIncidencia.filter(p => p.estado === 'A');
+    setIndiceIdPersona(idPersona[0].persona_asignado.idpersona);
+    setIndiceIncidencia(index.idIncidencia);
+    setIncidenciaPersonaNotifica(index.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A")[0]?.persona_notifica.idpersona);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setIndiceTecnico(null)
+    setIndiceIdPersona(null);
+    setOpenModal(false);
+  }
+
+  const handleChangeTecnico = (value) => {
+    setIndiceTecnico(value.value);
+  };
+
+  const ReAsignacionIncidencia = (e) => {
+    e.preventDefault();
+    var incidencia = {
+      idIncidencia: idIncidencia,
+      historialIncidencia: [{
+        persona_registro: {
+          idpersona: Number(identificador)
+        },
+        persona_asignado: {
+          idpersona: indiceTecnico,
+        },
+        persona_notifica: {
+          idpersona: incidenciaPersonaNotifica ? incidenciaPersonaNotifica : Number(identificador),
+        }
+      }]
+    }
+    dispatch(reAsignarIncidencia(incidencia))
+      .then(() => {
+        setOpenModal(false);
+        refreshData();
+      }).catch((error) => {
+        console.log(error);
+      })
+  }
+
+  return (
+    <>
+      <IconButton
+        icon={<RiUserShared2Line />}
+        colorScheme={'teal'}
+        onClick={() => handleClickOpenModal(row)}
+        fontSize='20px'
+        size={'sm'}
+        ml={1}
+        _focus={{ boxShadow: "none" }}
+      />
+
+      <Modal
+        isOpen={openModal}
+        onClose={handleCloseModal}
+        size={'2xl'}
+      >
+        <ModalOverlay />
+        <form onSubmit={ReAsignacionIncidencia}>
+          <ModalContent>
+            <ModalHeader>RE-ASIGNAR A OTRO USUARIO LA INCIDENCIA</ModalHeader>
+            <ModalCloseButton _focus={{ boxShadow: "none" }} />
+            <ModalBody pb={6}>
+              <FormControl isRequired>
+                <FormLabel>LISTA DE USUARIOS PARA RE-ASIGNAR</FormLabel>
+                <Select
+                  placeholder="SELECCIONE UN USUARIO PARA RE-ASIGNAR"
+                  onChange={handleChangeTecnico}
+                  options={tecnicoFilter.map(tecnico => ({
+                    value: tecnico.persona.idpersona,
+                    label: tecnico.persona.nombre + ' ' + tecnico.persona.apellido
+                  }))}
+                  isSearchable
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button disabled={indiceTecnico === null ? true : false} colorScheme="facebook" _focus={{ boxShadow: "none" }} mr={3} type={'submit'}>
+                RE-ASIGNAR
+              </Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
+            </ModalFooter>
+          </ModalContent>
+        </form>
+      </Modal>
+    </>
+  )
 }

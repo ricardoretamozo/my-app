@@ -12,165 +12,22 @@ import { RegisterValidateScreen } from '../components/auth/RegisterValidateScree
 import { DasboardScreen } from '../components/ui/DasboardScreen';
 import HistorialUsuario from '../components/historialUsuario/HistorialUsuario';
 
-import { fetchSedes } from '../actions/sede';
-import { fetchOrganos } from '../actions/organo';
-import { getSede } from '../components/ui/sede/sede';
-import { getOrgano } from '../components/ui/organo/organo';
-import { perfilPersona } from '../actions/perfilPersona';
-import { getPerfilPersona } from '../components/ui/perfilpersona/perfilPersona';
-import { fetchOficinas } from '../actions/oficina';
-import { getOficina } from '../components/ui/oficina/oficina';
-import { fetchCargos } from '../actions/cargo';
-import { getCargo } from '../components/ui/cargo/cargo';
-import { fetchMotivos } from '../actions/motivo';
-import { getMotivo } from '../components/ui/motivoIncidencia/motivo';
-import { fetchIncidenciasPersonas } from '../actions/incidencia';
-import { getIncidenciaId } from '../components/ui/incidencia/incidencia';
-import { personaList } from '../actions/persona';
-import { getPersona } from '../components/ui/persona/persona';
-
 import { startChecking } from '../actions/auth';
 import { PublicRoute } from './PublicRoute';
 import { PrivateRoute } from './PrivateRoute';
-import { store } from '../store/store';
-import { fetchOrigen } from '../actions/origenIncidencia';
-import { getOrigen } from '../components/ui/origenIncidencia/origen';
 
 export const AppRouter = () => {
   const dispatch = useDispatch();
-  // console.log(useSelector(state => state));
   const { access_token } = useSelector(state => state.auth);
   const { rol } = useSelector(state => state.auth);
-  const { identificador } = useSelector(state => state.auth);
 
   useSelector(state => state);
 
   useEffect(() => {
-    dispatch(startChecking());
-  }, [dispatch]);
-
-  // SEDES
-
-  useEffect(() => {
-    if (store.getState().sede.checking) {
-      fetchSedes().then(res => {
-        dispatch(getSede(res))
-      }).catch((err)=>{
-        // console.log("warn " + err);
-      });
+    if (!access_token) {
+      dispatch(startChecking());
     }
-  });
-
-  // ORGANOS
-
-  useEffect(() => {
-    if (store.getState().organo.checking) {
-      fetchOrganos().then(res => {
-        dispatch(getOrgano(res));
-      }).catch((err)=>{
-        // console.log("warn " + err);
-      });
-    }
-  });
-
-  // OFICINAS
-
-  const FetchDataOficinas = async () => {
-    await fetchOficinas().then(res => {
-      dispatch(getOficina(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
-  }
-
-  useEffect(() => {
-    if (store.getState().oficina.checking) {
-      FetchDataOficinas();
-    }
-  });
-
-  // CARGOS
-
-  useEffect(() => {
-
-    if (store.getState().cargo.checking) {
-      fetchCargos().then((res) => {
-        dispatch(getCargo(res));
-      }).catch((err) => {
-        // console.log("warn " + err);
-      });
-    }
-  });
-
-  // PERFIL PERSONA
-
-  useEffect(() => {
-    if (store.getState().perfilPersona.checking) {
-      perfilPersona().then(res => {
-        dispatch(getPerfilPersona(res));
-      }).catch((err) => {
-        // console.log("warn " + err);
-      });
-    }
-  });
-
-
-
-  // MOTIVOS
-
-  useEffect(() => {
-    if (store.getState().motivo.checking) {
-      fetchMotivos().then((res) => {
-        dispatch(getMotivo(res))
-      }).catch((err) => {
-        // console.log("warn " + err);
-      });
-    }
-  });
-
-  // INCIDENCIAS POR CADA USUARIO
-
-  const DataFetchIncidenciasPersonas = async () => {
-    await fetchIncidenciasPersonas(identificador).then((res) => {
-      dispatch(getIncidenciaId(res));
-    }).catch((err) => {
-      // console.log("WARN " + err);
-    })
-  }
-
-  useEffect(() => {
-    if (store.getState().incidenciaId.checking) {
-      DataFetchIncidenciasPersonas()
-    }
-  });
-
-  //PERSONAS
-
-  const DataFetchPersonas = async () => {
-    await personaList().then((res) => {
-      dispatch(getPersona(res));
-    }).catch((err) => {
-      // console.log("WARN " + err);
-    });
-  }
-
-  useEffect(() => {
-    if (store.getState().persona.checking) {
-      DataFetchPersonas()
-    }
-  });
-
-  // ORIGEN INCIDENCIAS
-
-  useEffect(() => {
-    if (store.getState().origenIncidencia.checking) {
-      fetchOrigen().then((res) => {
-        dispatch(getOrigen(res))
-      }).catch((err) => {
-        // console.log("WARN " + err);
-      });
-    }
-  });
+  }, [dispatch, access_token]);
 
   return (
     <Router>
@@ -196,6 +53,18 @@ export const AppRouter = () => {
             component={RegisterValidateScreen}
             isAuthenticated={!!access_token}
             rol={rol}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/soporte-tecnico/home"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/usuario/home"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
           />
           <PrivateRoute
             exact
@@ -242,6 +111,12 @@ export const AppRouter = () => {
           <PrivateRoute
             exact
             path="/dashboard/cargos"
+            component={DasboardScreen}
+            isAuthenticated={!!access_token}
+          />
+          <PrivateRoute
+            exact
+            path="/dashboard/mis-incidencias"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
@@ -295,23 +170,23 @@ export const AppRouter = () => {
           />
           <PrivateRoute
             exact
-            path="/dashboard/reportes/*"
+            path="/dashboard/reportes/**"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
             exact
-            path="/dashboard/reportes/incidencias-one"
+            path="/dashboard/reportes/incidencias-por-tecnico"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
-            path="/dashboard/reportes/incidencias-two"
+            path="/dashboard/reportes/incidencias-por-usuario"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
           <PrivateRoute
-            path="/dashboard/reportes/incidencias-three"
+            path="/dashboard/reportes/incidencias-por-tiempos"
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
@@ -335,7 +210,21 @@ export const AppRouter = () => {
             component={DasboardScreen}
             isAuthenticated={!!access_token}
           />
-          <Redirect to="/dashboard/incidencias" />
+          {
+              rol === '[COORDINADOR INFORMATICO]' || rol === '[ASISTENTE INFORMATICO]'
+              ?
+              <Redirect exact to="/dashboard/home" />
+              :
+              rol === '[SOPORTE TECNICO]'
+              ? 
+              <Redirect exact to="/dashboard/soporte-tecnico/home" />
+              : 
+              rol === '[USUARIO COMUN]'
+              ? 
+              <Redirect exact to="/dashboard/usuario/home" />
+              : 
+              <Redirect exact to="/dashboard/usuario/home" />
+          }
         </Switch>
       </div>
     </Router>

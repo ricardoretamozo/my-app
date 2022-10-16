@@ -7,7 +7,7 @@ require("highcharts/modules/exporting.js")(Highcharts);
 require("highcharts/modules/export-data.js")(Highcharts);
 require('highcharts/modules/histogram-bellcurve')(Highcharts);
 
-const ChartReporteUsuarios = ({ reportes, nombreTecnicos }) => {
+const ChartReporteUsuarios = ({ reportes, nombreUsuarios }) => {
 
   const data = reportes
 
@@ -65,7 +65,7 @@ const ChartReporteUsuarios = ({ reportes, nombreTecnicos }) => {
       text: 'Source: <a href="#">Más Detalles</a>'
     },
     xAxis: {
-      categories: 'nombreTecnicos',
+      categories: nombreUsuarios,
     },
     yAxis: {
       min: 0,
@@ -188,7 +188,7 @@ const ChartReporteUsuarios = ({ reportes, nombreTecnicos }) => {
       text: 'Source: <a href="#">Más Detalles</a>'
     },
     xAxis: {
-      categories: nombreTecnicos
+      categories: nombreUsuarios
     },
     yAxis: {
       min: 0,

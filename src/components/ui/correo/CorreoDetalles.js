@@ -64,11 +64,11 @@ const CorreoDetalles = props => {
   const obtenerCorreodetalle = async () => {
     handleClickOpenCreate();
     await fetchCorreoDetalles(props.rowId).then(correo => {
-        setDetalleCorreo(correo);
-        setCorreoDestinatario(correo.to);
-        setCorreoRemitente(correo.from);
-        setCorreoPerfilDestinatario(correo.to.perfilPersona);
-        setCorreoPerfilRemitente(correo.from.perfilPersona);
+        setDetalleCorreo(correo.data);
+        setCorreoDestinatario(correo.data.to);
+        setCorreoRemitente(correo.data.from);
+        setCorreoPerfilDestinatario(correo.data.to.perfilPersona);
+        setCorreoPerfilRemitente(correo.data.from.perfilPersona);
     });
   };
 

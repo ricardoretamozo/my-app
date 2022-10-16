@@ -59,7 +59,7 @@ const OrganoAgregar = () => {
       });
   };
 
-  const handleChangeSede = value => {
+  const handleChangeSede = (value) => {
     setOrgano({
       ...dataOrgano,
       sede: { idSede: value.value, sede: value.label },
@@ -93,6 +93,7 @@ const OrganoAgregar = () => {
               <FormLabel>SEDE</FormLabel>
               <Select
                 // defaultValue={indice ? indice.sede.idSede : ''}
+                placeholder="SELECCIONE UNA SEDE"
                 onChange={handleChangeSede}
                 options={sedeData.map(sede => ({
                   value: sede.idSede,
@@ -140,7 +141,7 @@ const OrganoAgregar = () => {
             >
               GUARDAR
             </Button>
-            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

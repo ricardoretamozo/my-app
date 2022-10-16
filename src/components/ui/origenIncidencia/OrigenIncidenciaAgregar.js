@@ -85,7 +85,7 @@ const OrigenAgregar = () => {
                         >
                             GUARDAR
                         </Button>
-                        <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                        <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                     </ModalFooter>
                 </ModalContent>
             </Modal>

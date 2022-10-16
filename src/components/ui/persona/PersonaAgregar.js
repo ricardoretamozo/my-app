@@ -333,7 +333,7 @@ const PersonaAgregar = () => {
                   <FormLabel>PERFIL PERSONA</FormLabel>
                   <Select
                     isRequired
-                    defaultValue={(persona.perfilPersona ? PerfilUsuarioDefault[0].idPerfilPersona : '')}
+                    defaultValue={(persona.perfilPersona ? PerfilUsuarioDefault[0]?.idPerfilPersona : '')}
                     onChange={e => {
                       setPersona({ ...persona, perfilPersona: e.target.value });
                     }}
@@ -348,10 +348,16 @@ const PersonaAgregar = () => {
               </HStack>
             </ModalBody>
             <ModalFooter>
-              <Button type={'submit'} colorScheme={'facebook'} mr={3} _focus={{ boxShadow: "none" }}>
+              <Button 
+                type={'submit'} 
+                colorScheme={'facebook'} 
+                mr={3} 
+                _focus={{ boxShadow: "none" }}
+                disabled={persona.password === '' || persona.password.length < 6}
+                >
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
         </form>

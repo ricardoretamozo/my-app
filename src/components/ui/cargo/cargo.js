@@ -9,17 +9,14 @@ import TableCargo from './TableCargo';
 export const Cargo = () => {
   const dispatch = useDispatch();
 
-  const fetchData= async ()=> {
-    await fetchCargos().then((res)=>{
-      dispatch(getCargo(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
+  const fetchDataCargos = async ()=> {
+    const response = await fetchCargos();
+    dispatch(getCargos(response));
   }
 
   useEffect(() => {
     if(store.getState().cargo.checking){
-      fetchData();
+      fetchDataCargos();
     }
   });
 
@@ -30,7 +27,7 @@ export const Cargo = () => {
   );
 };
 
-export const getCargo = cargo =>({
+export const getCargos = cargo =>({
   type: types.eventLoadedCargo,
   payload: cargo
 });

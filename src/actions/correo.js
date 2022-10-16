@@ -22,9 +22,9 @@ export const createCorreo = data => {
     const body = await response.json();
 
     if (response.status === 200 || response.status === 201) {
-      notification('Correo enviado correctamente.', '', 'success');
+      notification('Correo enviado correctamente.', 'El correo enviado correctamente.', 'success');
     } else {
-      notification('No se pudo enviar el Correo', '', 'error');
+      notification('Error de envio', 'No se pudo enviar el Correo', 'error');
     }
   };
 };
@@ -47,56 +47,36 @@ export const correoLeido = (id) => {
 
 export const fetchCorreoRecibido = async (id) => {
   const response = await fetchToken('correo/listall/' + id + '/persona/to');
-  const body = await response.json();
-  var CorreoRecibido = {};
-  const data = [];
-
-  body.forEach(correoRecibido => {
-    data.push({
-      idCorreo: correoRecibido.idCorreo,
-      to: correoRecibido.to,
-      from: correoRecibido.from,
-      asunto: correoRecibido.asunto,
-      mensaje: correoRecibido.mensaje,
-      activo: correoRecibido.activo,
-      fecha: correoRecibido.fecha,
-    });
-  });
-  CorreoRecibido.data = data;
-  return CorreoRecibido;
+  if(!response.ok) {
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const CorreoRecibido = {};
+    CorreoRecibido.data = data;
+    return CorreoRecibido;
+  }
 };
 
 export const fetchCorreoEnviado = async (id) => {
   const response = await fetchToken('correo/listall/' + id + '/persona/from');
-  const body = await response.json();
-  var CorreoEnviado = {};
-  const data = [];
-  body.forEach(correoEnviado => {
-    data.push({
-      idCorreo: correoEnviado.idCorreo,
-      to: correoEnviado.to,
-      from: correoEnviado.from,
-      asunto: correoEnviado.asunto,
-      mensaje: correoEnviado.mensaje,
-      activo: correoEnviado.activo,
-      fecha: correoEnviado.fecha,
-    });
-  });
-  CorreoEnviado.data = data;
-  return CorreoEnviado;
+  if(!response.ok) {
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const CorreoEnviado = {};
+    CorreoEnviado.data = data;
+    return CorreoEnviado;
+  }
 };
 
 export const fetchCorreoDetalles = async (id) => {
   const response = await fetchToken('correo/listall/' + id);
-  const body = await response.json();
-  const CorreoDetalle = {
-    idCorreo: body.idCorreo,
-    to: body.to,
-    from: body.from,
-    asunto: body.asunto,
-    mensaje: body.mensaje,
-    activo: body.activo,
-    fecha: body.fecha,
+  if(!response.ok) {
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const CorreoDetalles = {};
+    CorreoDetalles.data = data;
+    return CorreoDetalles;
   }
-  return CorreoDetalle;
 }

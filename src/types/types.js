@@ -12,6 +12,7 @@ export const types = {
     eventLoadedCargo: '[event] Events loaded Cargos',
     eventLoadedUsuarioValidadorDni: '[event] Events loaded UsuarioValidadorDni',
     eventOrganoId: '[event] OrganoId',
+    eventLoadedMisIncidencias: '[event] Events loaded Mis Incidencias',
     eventLoadedIncidencia: '[event] Events loaded Incidencia',
     eventLoadedIncidenciaId: '[event] Events loaded IncidenciaId',
     eventLoadedIncidenciasAsignadas: '[event] Events loaded Incidencias Asignadas',

@@ -37,18 +37,14 @@ export const createOrigen = data => {
   
   export const fetchOrigen = async () => {
     const response = await fetchToken('origenincidencia/listAll');
-    const body = await response.json();
-    const Origen = {};
-    const data = [];
-  
-    body.forEach(origen => {
-      data.push({
-        idOrigen: origen.idOrigen,
-        origen: origen.origen,
-      });
-    });
-    Origen.data = data;
-    return Origen;
+    if(!response.ok) {
+      throw new Error(response.statusText);
+    }else{
+      const data = await response.json();
+      const Origen = {};
+      Origen.data = data;
+      return Origen;
+    }
   };
   
   //  UPDATE ORIGEN
@@ -93,17 +89,13 @@ export const createOrigen = data => {
   
   export const loadOrigen = async () => {
     const response = await fetchToken('origenincidencia/listAll');
-    const body = await response.json();
-    const Origen = {};
-    const data = [];
-  
-    body.forEach(origen => {
-      data.push({
-        idOrigen: origen.idOrigen,
-        origen: origen.origen,
-      });
-    });
-    Origen.data = data;
-    return Origen;
+    if(!response.ok) {
+      throw new Error(response.statusText);
+    }else{
+      const data = await response.json();
+      const Origen = {};
+      Origen.data = data;
+      return Origen;
+    }
   };
   

@@ -9,17 +9,14 @@ import TableSede from './TableSede';
 export const Sede = () => {
   const dispatch = useDispatch();
 
-  const fetchData= async ()=> {
-    await fetchSedes().then((res)=>{
-      dispatch(getSede(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
+  const fetchDataSede = async () => {
+    const response = await fetchSedes();
+    dispatch(getSede(response));
   }
 
   useEffect(() => {
     if(store.getState().sede.checking){
-      fetchData();
+      fetchDataSede();
     }
   });
 

@@ -42,25 +42,21 @@ export const createMotivo1 = (data) => {
   };
 };
 
-// LIST CARGO
+// LIST MOTIVO
 
 export const fetchMotivos = async () => {
   const response = await fetchToken('motivos');
-  const body = await response.json();
-  const Motivo = {};
-  const data = [];
-
-  body.forEach(motivo => {
-    data.push({
-      idMotivo: motivo.idMotivo,
-      motivo: motivo.motivo,
-    });
-  });
-  Motivo.data = data;
-  return Motivo;
+  if(!response.ok) {
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const Motivos = {};
+    Motivos.data = data;
+    return Motivos;
+  }
 };
 
-//  UPDATE SEDE
+//  UPDATE MOTIVO
 
 export const updateMotivo = data => {
   return async dispatch => {
@@ -101,16 +97,12 @@ export const deleteMotivo = (id) => {
 
 export const loadMotivo = async () => {
   const response = await fetchToken('motivos');
-  const body = await response.json();
-  const Motivo = {};
-  const data = [];
-
-  body.forEach(motivo => {
-    data.push({
-      idMotivo: motivo.idMotivo,
-      motivo: motivo.motivo,
-    });
-  });
-  Motivo.data = data;
-  return Motivo;
+  if(!response.ok) {
+    throw new Error(response.statusText);
+  }else{
+    const data = await response.json();
+    const Motivos = {};
+    Motivos.data = data;
+    return Motivos;
+  }
 };

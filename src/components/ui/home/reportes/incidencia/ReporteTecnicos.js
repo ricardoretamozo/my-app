@@ -63,11 +63,11 @@ export default function ReporteTecnicos({ reportes }) {
 	});
   
 	return (
-		<DataTableExtensions columns={columns} data={reportes}>
+		<DataTableExtensions columns={columns} data={reportes} print={false}>
  			<DataTable
 				pagination
 				persistTableHead
-				paginationPerPage={5}
+				paginationPerPage={10}
 				paginationRowsPerPageOptions={[10, 15, 20, 30]}
 				theme={useColorModeValue('default', 'solarized')}
 				responsive={true}

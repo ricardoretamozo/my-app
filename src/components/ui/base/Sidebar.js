@@ -35,11 +35,10 @@ import {
   FiMenu,
   FiBell,
   FiMail,
-  FiChevronDown,
-  FiLogOut,
+  FiChevronsDown,
 } from 'react-icons/fi';
 
-import {  
+import {
   FaBox,
   FaBuilding,
   FaExclamationCircle,
@@ -49,12 +48,12 @@ import {
   FaTachometerAlt,
   FaUserAlt,
   FaUsers,
-  FaBrain
+  FaBrain,
+  FaUserCircle
 } from 'react-icons/fa';
 
 import { ImCheckboxChecked, ImCheckboxUnchecked } from 'react-icons/im';
 import { HiViewBoards } from 'react-icons/hi';
-import { FaUser } from 'react-icons/fa';
 
 import { NavLink } from 'react-router-dom';
 
@@ -63,10 +62,13 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { store } from '../../../store/store';
 import { LogOut } from '../../../actions/auth';
 import { useDispatch } from 'react-redux';
+import { RiLogoutBoxRFill } from 'react-icons/ri';
+import { AiFillSetting } from 'react-icons/ai';
 
 const LinkItemsCoordinadorInformatico = [
   { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/home' },
-  { name: 'INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/mis-incidencias' },
+  { name: 'TODAS LAS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
   { name: 'INCIDENCIAS ASIGNADAS', icon: ImCheckboxChecked, ruta: '/dashboard/incidencias-asignadas' },
   { name: 'INCIDENCIAS NO ASIG.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
   { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
@@ -84,7 +86,8 @@ const LinkItemsCoordinadorInformatico = [
 
 const LinkItemsAsistenteInformatico = [
   { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/home' },
-  { name: 'INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/mis-incidencias' },
+  { name: 'TODAS LAS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/incidencias' },
   { name: 'INCIDENCIAS ASIGNADAS', icon: ImCheckboxChecked, ruta: '/dashboard/incidencias-asignadas' },
   { name: 'INCIDENCIAS NO ASIG.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
   { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
@@ -101,8 +104,12 @@ const LinkItemsAsistenteInformatico = [
 ];
 
 const LinkItemsSoporteTecnico = [
-  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/soporte/incidencias'},
+  { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/soporte-tecnico/home' },
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/soporte/incidencias' },
   { name: 'INCIDENCIAS NO ASIGN.', icon: ImCheckboxUnchecked, ruta: '/dashboard/incidencias-no-asignadas' },
+  { name: 'SEDE', icon: FaMapMarkedAlt, ruta: '/dashboard/sedes' },
+  { name: 'ÓRGANOS', icon: FaMap, ruta: '/dashboard/organos' },
+  { name: 'OFICINAS', icon: FaBuilding, ruta: '/dashboard/oficinas' },
   { name: 'MOTIVO INCIDENCIA', icon: FaQuestionCircle, ruta: '/dashboard/motivos' },
   { name: 'ORIGEN INCIDENCIA', icon: FaExclamationCircle, ruta: '/dashboard/origen-incidencia' },
   { name: 'CARGOS', icon: FaBox, ruta: '/dashboard/cargos' },
@@ -110,7 +117,8 @@ const LinkItemsSoporteTecnico = [
 ];
 
 const LinkItemsUsuarioComun = [
-  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/usuario/incidencias'},
+  { name: 'INICIO', icon: FaTachometerAlt, ruta: '/dashboard/usuario/home' },
+  { name: 'MIS INCIDENCIAS', icon: HiViewBoards, ruta: '/dashboard/usuario/incidencias' },
 ];
 
 export default function SidebarWithHeader({ componente: Component }) {
@@ -160,14 +168,14 @@ const SidebarContent = ({ onClose, ...rest }) => {
         h="full"
         {...rest}
       >
-        <Flex mt={4} mb={4} alignItems="center" justifyContent="center" mr={2}>
+        <Flex mt={4} mb={3} alignItems="center" justifyContent="center" mr={2}>
           <Text fontSize="2xl" color={'#999999'} fontWeight="bold">
             <span style={{ 'color': '#B40001' }}>SERVICE</span> DESk
           </Text>
           <CloseButton ml={2} display={{ base: 'flex', md: 'flex', lg: 'none' }} onClick={onClose} _focus={{ boxShadow: "none" }} />
         </Flex>
-        
-        {usuario.rol === '[COORDINADOR INFORMATICO]' ? ( 
+
+        {usuario?.rol === '[COORDINADOR INFORMATICO]' ? (
           LinkItemsCoordinadorInformatico.map((link, index) => (
             <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
               <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
@@ -175,29 +183,29 @@ const SidebarContent = ({ onClose, ...rest }) => {
               </NavItem>
             </Link>
           ))
-        ) : usuario.rol === '[ASISTENTE INFORMATICO]' ?  (
+        ) : usuario?.rol === '[ASISTENTE INFORMATICO]' ? (
           LinkItemsAsistenteInformatico.map((link, index) => (
-              <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
-                <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
-                  {link.name}
-                </NavItem>
-              </Link>
-            ))
-          ) : usuario.rol === '[SOPORTE TECNICO]' ?  (
-            LinkItemsSoporteTecnico.map((link, index) => (
-                <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
-                  <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
-                    {link.name}
-                  </NavItem>
-                </Link>
-              )) 
-          ) : LinkItemsUsuarioComun.map((link, index) => (
             <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
               <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
                 {link.name}
               </NavItem>
             </Link>
-          )) 
+          ))
+        ) : usuario?.rol === '[SOPORTE TECNICO]' ? (
+          LinkItemsSoporteTecnico.map((link, index) => (
+            <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
+              <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
+                {link.name}
+              </NavItem>
+            </Link>
+          ))
+        ) : LinkItemsUsuarioComun.map((link, index) => (
+          <Link as={NavLink} to={link.ruta} key={index} _activeLink={{ color: 'red.600' }} _hover={{ textDecoration: 'none' }}>
+            <NavItem icon={link.icon} _hover={{ color: 'white', bg: 'red.600' }}>
+              {link.name}
+            </NavItem>
+          </Link>
+        ))
         }
       </Box>
     </>
@@ -205,44 +213,43 @@ const SidebarContent = ({ onClose, ...rest }) => {
 };
 
 const NavItem = ({ icon, children, ...rest }) => {
-  
+
   return (
-      <Flex
-        align="center"
-        p={3}
-        mx={2}
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        textDecoration={'none'}
-        height={"42px"}
-        fontSize={'xs'}
-        {...rest}
-      >
-        {icon && (
-          <Icon
-            mr="2"
-            fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
+    <Flex
+      align="center"
+      p={3}
+      mx={2}
+      borderRadius="lg"
+      role="group"
+      cursor="pointer"
+      textDecoration={'none'}
+      height={"40px"}
+      fontSize={'xs'}
+      {...rest}
+    >
+      {icon && (
+        <Icon
+          mr="2"
+          fontSize="16"
+          _groupHover={{
+            color: 'white',
+          }}
+          as={icon}
+        />
+      )}
+      {children}
+    </Flex>
   );
 };
 
 const MobileNav = ({ onOpen, ...rest }) => {
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  const { colorMode, toggleColorMode } = useColorMode('light');
   const usuario = store.getState().auth;
 
   return (
     <Flex
       as="header"
-      // ml={{ base: 4, md: 4, lg: 60 }}
       ml={['4', '4', '4', '60']}
       mr={['4', '4', '4', '4']}
       px={4}
@@ -261,6 +268,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
         variant="outline"
         aria-label="open menu"
         icon={<FiMenu />}
+        _focus={{ boxShadow: "none" }}
       />
 
       <Text
@@ -272,7 +280,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
         SERVICE DESk
       </Text>
 
-      <HStack spacing={{ base: '2', md: '2', lg: '2' }}>        
+      <HStack spacing={{ base: '2', md: '2', lg: '2' }}>
         <Link as={NavLink} to="/dashboard/correos">
           <IconButton
             size="lg"
@@ -289,7 +297,7 @@ const MobileNav = ({ onOpen, ...rest }) => {
           icon={<FiBell />}
           _focus={{ boxShadow: "none" }}
         />
-        <IconButton 
+        <IconButton
           size="lg"
           variant="ghost"
           icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -307,9 +315,17 @@ const MobileNav = ({ onOpen, ...rest }) => {
                 <Avatar
                   size={'sm'}
                   color={'white'}
-                  bg={usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600' : usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600' : usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600' : 'gray.600'}
-                  name={usuario?.name}
-                  // src={'https://avatars.dicebear.com/img/favicon.svg'}
+                  fontWeight={'black'}
+                  bg={
+                    usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600'
+                      :
+                      usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600'
+                        :
+                        usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600'
+                          :
+                          'gray.600'
+                  }
+                  name={usuario?.nombres + ' ' + usuario?.apellidos}
                 />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
@@ -317,44 +333,45 @@ const MobileNav = ({ onOpen, ...rest }) => {
                   spacing="1px"
                   ml="2"
                 >
-                  <Text fontSize="sm">{usuario.name}</Text>
+                  <Text fontSize="sm" fontWeight={'semibold'}>{usuario?.nombres + ' ' + usuario?.apellidos}</Text>
                   <Text fontSize="xs" color="gray.600">
-                    {usuario.rol}
+                    {usuario?.rol}
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>
-                  <FiChevronDown />
+                  <FiChevronsDown ml={2}/>
                 </Box>
               </HStack>
             </MenuButton>
-            <MenuList 
+            <MenuList
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}
               alignItems={'center'}
               bgSize={'md'}
               zIndex="50"
-              >
-                <Center>
-                  <Avatar
-                    size={'lg'}
-                    color={'white'}
-                    fontWeight={'bold'}
-                    bg={usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600' : usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600' : usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600' : 'gray.600'}
-                    name={usuario?.name}
-                    // src={'https://avatars.dicebear.com/img/favicon.svg'}
-                  />
-                </Center>
-                <Center>
-                  <VStack mt="2">
-                    <Text fontSize="sm" mx={8}>{usuario.name}</Text>
-                    <Text fontSize="xs" color="gray.600">{usuario.rol}</Text>
-                  </VStack>
-                </Center>
-                <MenuDivider />
-                <Link as={NavLink} to="/dashboard/mi-perfil" _hover={{ textDecoration: 'none' }}>
-                  <MenuItem icon={<FaUser />}>Mi Perfil</MenuItem>
-                </Link>
-                <ModalCerrarSesion />
+            >
+              <Center>
+                <Avatar
+                  size={'lg'}
+                  color={'white'}
+                  fontWeight={'black'}
+                  bg={usuario?.rol === "[COORDINADOR INFORMATICO]" ? 'red.600' : usuario?.rol === "[ASISTENTE INFORMATICO]" ? 'blue.600' : usuario?.rol === "[SOPORTE TECNICO]" ? 'green.600' : 'gray.600'}
+                  name={usuario?.nombres + ' ' + usuario?.apellidos}
+                />
+              </Center>
+              <Center>
+                <VStack mt="2" mb="2">
+                  <Text fontSize="sm" mx={8} fontWeight="semibold">{usuario?.nombres + ' ' + usuario?.apellidos}</Text>
+                  <Text fontSize="xs" color="gray.600">{usuario?.rol}</Text>
+                </VStack>
+              </Center>
+              <MenuDivider />
+              <Link as={NavLink} to="/dashboard/mi-perfil" _hover={{ textDecoration: 'none' }}>
+                <MenuItem icon={<FaUserCircle size={20}/>}>Mi Perfil</MenuItem>
+                <MenuItem icon={<AiFillSetting size={20}/>} mr={10}>Configuraciones</MenuItem>
+              </Link>
+              <MenuDivider />
+              <ModalCerrarSesion />
             </MenuList>
           </Menu>
         </Flex>
@@ -375,14 +392,15 @@ const ModalCerrarSesion = () => {
     setOpenModal(false);
   }
 
-  const handleLogout = e => {
+  const handleLogout = (e) => {
     e.preventDefault();
+    localStorage.setItem('chakra-ui-color-mode', 'light');
     dispatch(LogOut());
   };
-  
-  return(
+
+  return (
     <>
-      <MenuItem onClick={handleOpenModal} icon={<FiLogOut />}>CERRAR SESIÓN</MenuItem>
+      <MenuItem onClick={handleOpenModal} icon={<RiLogoutBoxRFill size={20} />}>Cerrar Sesión</MenuItem>
       <AlertDialog
         motionPreset='slideInBottom'
         onClose={handleCloseModal}
@@ -392,15 +410,15 @@ const ModalCerrarSesion = () => {
         <AlertDialogOverlay />
         <AlertDialogContent>
           <AlertDialogHeader>CERRAR SESIÓN</AlertDialogHeader>
-          <AlertDialogCloseButton _focus={{ boxShadow: 'none' }}/>
+          <AlertDialogCloseButton _focus={{ boxShadow: 'none' }} />
           <AlertDialogBody>
             ¿ESTÁS SEGURO DE CERRAR SESIÓN?
           </AlertDialogBody>
           <AlertDialogFooter>
-            <Button onClick={handleCloseModal}>
+            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>
               NO
             </Button>
-            <Button colorScheme='red' ml={3} onClick={handleLogout}>
+            <Button colorScheme='red' ml={3} onClick={handleLogout} _focus={{ boxShadow: "none" }}>
               SI
             </Button>
           </AlertDialogFooter>

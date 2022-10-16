@@ -92,7 +92,7 @@ const IncidenciaAsignarme = ({rowData}) => {
                                 ¿CONFIRMAR LA ACCIÓN?
                         </AlertDialogBody>
                         <AlertDialogFooter>
-                            <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
+                            <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                             <Button
                                 colorScheme="facebook"
                                 ml={3}

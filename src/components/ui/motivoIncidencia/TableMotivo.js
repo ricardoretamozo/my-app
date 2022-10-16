@@ -36,6 +36,7 @@ export default function TableMotivo() {
     {
       name: 'MOTIVO',
       selector: row => row.motivo,
+      cellExport: row => row.motivo,
       sortable: true,
       wrap: true,
     },
@@ -52,6 +53,7 @@ export default function TableMotivo() {
         </div>
       ),
       center: true,
+      export: false,
       wrap: true,
     },
   ];
@@ -104,10 +106,8 @@ export default function TableMotivo() {
           <MotivoAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
-          columns={columns}
-          data={data}
           sortIcon={<BsArrowDown />}
           theme={useColorModeValue('default', 'solarized')}
           pagination
@@ -177,7 +177,7 @@ const ModalMotivoEliminar = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteMotivo(row.idMotivo)}
                 colorScheme="red"

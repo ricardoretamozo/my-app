@@ -50,11 +50,13 @@ export default function TableSede() {
     {
       name: 'SEDE',
       selector: row => row.sede,
+      cellExport: row => row.sede,
       sortable: true,
     },
     {
       name: 'DIRECCIÓN',
       selector: row => row.direccion,
+      cellExport: row => row.direccion,
       sortable: true,
     },
     {
@@ -64,18 +66,19 @@ export default function TableSede() {
       cell: row => (
         <div>
           <Badge
-            bg={row.activo === 'S' ? 'green.400' : bgStatus}
+            bg={row.activo === 'S' ? 'green.500' : bgStatus}
             color={row.activo === 'S' ? 'white' : colorStatus}
-            p="3px 10px"
-            w={20}
+            py="4px"
+            w={"100px"}
             textAlign={'center'}
             borderRadius={'md'}
-            fontSize={'10px'}
+            fontSize={'12px'}
           >
-            {row.activo === 'S' ? 'Activo' : 'Inactivo'}
+            {row.activo === 'S' ? 'ACTIVO' : 'ANULADO'}
           </Badge>
         </div>
       ),
+      cellExport: row => (row.activo === 'S' ? 'ACTIVO' : 'ANULADO'),
       center: true,
     },
     {
@@ -88,6 +91,7 @@ export default function TableSede() {
         </div>
       ),
       center: true,
+      export: false,
     },
   ];
 
@@ -139,7 +143,7 @@ export default function TableSede() {
           <SedeAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}
@@ -262,7 +266,7 @@ const ModalSedeEditar = ({ row }) => {
             >
               ACTUALIZAR
             </Button>
-            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+            <Button onClick={handleCloseEdit} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -329,7 +333,7 @@ const ModalSedeEliminar = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteSede(row.idSede)}
                 colorScheme="red"

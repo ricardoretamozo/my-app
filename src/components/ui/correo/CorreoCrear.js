@@ -20,6 +20,8 @@ import { createCorreo } from '../../../actions/correo';
 import { store } from '../../../store/store';
 import { fetchCorreoEnviado, fetchCorreoRecibido } from "../../../actions/correo";
 import { getCorreosRecibidos, getCorreosEnviados } from "./index";
+import ReactQuill from "react-quill";
+import { formats, modules } from "../../../helpers/quillConfig";
 
 export default function CorreoCrear() {
   const bg = useColorModeValue('white', 'gray.800');
@@ -116,7 +118,7 @@ export default function CorreoCrear() {
                   onChange={handleChangeDestinatario}
                   options={personaData.map(persona => ({
                     value: persona.idpersona,
-                    label: persona.nombre,
+                    label: persona.nombre + ' ' + persona.apellido,
                   }))}
                   isClearable={true}
                   isSearchable
@@ -136,18 +138,21 @@ export default function CorreoCrear() {
                 />
               </FormControl>
               <FormControl isRequired>
-                <Textarea
-                  onChange={e =>
+
+                <ReactQuill
+                  theme="snow"
+                  formats={formats}
+                  modules={modules}
+                  style={{
+                    textTransform: 'uppercase',
+                  }}
+                  placeholder="Mensaje"
+                  onChange={(e) =>
                     setIndiceCorreo({
                       ...indiceCorreo,
-                      mensaje: e.target.value.toUpperCase(),
+                      mensaje: e.valueOf().toUpperCase(),
                     })
                   }
-                  placeholder="Escribe el Mensaje..."
-                  textTransform={'uppercase'}
-                  variant={'flushed'}
-                  rows={7}
-                  isRequired
                 />
               </FormControl>
               <FormControl>

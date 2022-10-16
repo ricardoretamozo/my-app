@@ -36,31 +36,34 @@ export default function TableOrgano() {
 
   const columns = [
     {
-      name: 'ORGANO',
-      selector: row => row.organo,
+      name: 'SEDE',
+      selector: row => row.sede.sede,
+      cellExport: row => row.sede.sede,
       sortable: true,
     },
     {
-      name: 'SEDE',
-      selector: row => row.sede.sede,
+      name: 'ORGANO',
+      selector: row => row.organo,
+      cellExport: row => row.organo,
       sortable: true,
     },
     {
       name: 'ESTADO',
       selector: row => row.activo,
+      cellExport: row => (row.activo === 'S' ? 'ACTIVO' : 'ANULADO'),
       sortable: true,
       cell: row => (
         <div>
           <Badge
-            bg={row.activo === 'S' ? 'green.400' : bgStatus}
+            bg={row.activo === 'S' ? 'green.500' : bgStatus}
             color={row.activo === 'S' ? 'white' : colorStatus}
-            p="3px 10px"
-            w={20}
+            py="4px"
+            w={"100px"}
             textAlign={'center'}
             borderRadius={'md'}
-            fontSize={'10px'}
+            fontSize={'12px'}
           >
-            {row.activo === 'S' ? 'ACTIVO' : 'INACTIVO'}
+            {row.activo === 'S' ? 'ACTIVO' : 'ANULADO'}
           </Badge>
         </div>
       ),
@@ -78,6 +81,7 @@ export default function TableOrgano() {
         );
       },
       center: true,
+      export: false,
     },
   ];
 
@@ -129,7 +133,7 @@ export default function TableOrgano() {
           <OrganoAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}
@@ -198,7 +202,7 @@ const ModalEliminarOrgano = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteOrgano(organoid)}
                 colorScheme="red"

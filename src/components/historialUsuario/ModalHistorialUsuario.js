@@ -19,13 +19,55 @@ import Select from 'react-select';
 import { useDispatch } from 'react-redux';
 import React, { useState, useEffect, useRef } from 'react';
 import { createHistorialPersona } from '../../actions/historialpersona';
+import { getSede } from '../ui/sede/sede';
+import { fetchSedes } from '../../actions/sede';
+import { getOrganos } from '../ui/organo/organo';
+import { fetchOrganos } from '../../actions/organo';
+import { getOficinas } from '../ui/oficina/oficina';
+import { fetchOficinas } from '../../actions/oficina';
+import { fetchCargos } from '../../actions/cargo';
+import { getCargos } from '../ui/cargo/cargo';
 
 const ModalHistorialUsuario = (props) => {
   const dispatch = useDispatch();
   const selectInputRefSede = useRef();
   const selectInputRef = useRef();
   const selectOficinaRef = useRef();
+
+  const fetchDataSedes = async () => {
+    const response = await fetchSedes();
+    dispatch(getSede(response));
+  }
+
+  const fetchDataOrganos = async () => {
+    const response = await fetchOrganos();
+    dispatch(getOrganos(response));
+  }
+
+  const fetchDataOficinas = async () => {
+    const response = await fetchOficinas();
+    dispatch(getOficinas(response));
+  }
+
+  const fetchDataCargos = async () => {
+    const response = await fetchCargos();
+    dispatch(getCargos(response));
+  }
   
+  useEffect(() => {
+    if(store.getState().sede.checking){
+      fetchDataSedes();
+    }
+    if(store.getState().organo.checking){
+      fetchDataOrganos();
+    }
+    if(store.getState().oficina.checking){
+      fetchDataOficinas();
+    }
+    if(store.getState().cargo.checking){
+      fetchDataCargos();
+    }
+  },[]);
 
   const sedeData = store.getState().sede.rows;
   const organoData = store.getState().organo.rows;
@@ -305,7 +347,7 @@ const ModalHistorialUsuario = (props) => {
             >
               GUARDAR
             </Button>
-            <Button onClick={cerrarModal} colorScheme="red" _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+            <Button onClick={cerrarModal} colorScheme="red" _focus={{ boxShadow: "none" }} variant="outline">CANCELAR</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

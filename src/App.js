@@ -4,11 +4,12 @@ import { AppRouter } from './routers/AppRouter';
 import { store } from './store/store';
 // 1. import `ChakraProvider` component
 import { ChakraProvider } from '@chakra-ui/react';
+import theme from './helpers/theme';
 
 function App() {
   return (
     <Provider store={store}>
-      <ChakraProvider>
+      <ChakraProvider theme={theme}>
         <AppRouter />
       </ChakraProvider>
     </Provider>

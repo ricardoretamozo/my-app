@@ -38,21 +38,25 @@ export default function TableFtp() {
     {
       name: '#',
       selector: row => row.id,
+      cellExport: row => row.id,
       sortable: true,
     },
     {
       name: 'USUARIO',
       selector: row => row.usuario,
+      cellExport: row => row.usuario,
       sortable: true,
     },
     {
       name: 'IP',
       selector: row => row.ip,
+      cellExport: row => row.ip,
       sortable: true,
     },
     {
       name: 'DESCRIPCIÓN',
       selector: row => row.descripcion,
+      cellExport: row => row.descripcion,
       sortable: true,
     },
     {
@@ -62,18 +66,19 @@ export default function TableFtp() {
       cell: row => (
         <div>
           <Badge
-            bg={row.estado === "S" ? "green.400" : bgStatus}
+            bg={row.estado === "S" ? "green.500" : bgStatus}
             color={row.estado === "S" ? "white" : colorStatus}
-            p="3px 10px"
-            w={20}
+            py="4px"
+            w={"100px"}
             textAlign={'center'}
             borderRadius={'md'}
-            fontSize={'10px'}
+            fontSize={'12px'}
           >
-            {row.estado === "S" ? "Activo" : "Inactivo"}
+            {row.estado === "S" ? "ACTIVO" : "ANULADO"}
           </Badge>
         </div>
       ),
+      cellExport: row => (row.estado === "S" ? "ACTIVO" : "ANULADO"),
       center: true,
     },
     {
@@ -85,6 +90,7 @@ export default function TableFtp() {
           <FtpEditar row={row} />
         </div>
       ),
+      export: false,
       center: true,
     },
   ];
@@ -131,7 +137,7 @@ export default function TableFtp() {
           <FtpAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}
@@ -196,7 +202,7 @@ const ModalEliminarFtp = ({ row }) => {
             <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+              <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
               <Button
                 onClick={() => handleDeleteFtp(row.id)}
                 colorScheme="red"

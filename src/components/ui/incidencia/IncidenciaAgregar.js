@@ -211,7 +211,7 @@ const IncidenciaAgregar = () => {
         idOrigen: indiceOrigen,
       },
       descripcion: indiceIncidencia.descripcion,
-      historialIncidencia: usuario.rol === '[SOPORTE TECNICO]' ? [{
+      historialIncidencia: usuario?.rol === '[SOPORTE TECNICO]' ? [{
         persona_registro: {
           idpersona: identificador,
         },
@@ -244,10 +244,10 @@ const IncidenciaAgregar = () => {
   const buscarPorDni = async () => {
     await buscarUsuarioDni(usuarioDNI).then((res) => {
       fetchHistorialPersona(res.idpersona).then(historial => {
-        setUsuarioSede(historial.oficina.organo.sede.sede)
-        setUsuarioOrgano(historial.oficina.organo.organo)
-        setUsuarioOficina(historial.oficina.oficina)
-        setUsuarioCargo(historial.cargo.cargo)
+        setUsuarioSede(historial.data.oficina.organo.sede.sede)
+        setUsuarioOrgano(historial.data.oficina.organo.organo)
+        setUsuarioOficina(historial.data.oficina.oficina)
+        setUsuarioCargo(historial.data.cargo.cargo)
       }).catch(() => {
         notification('Historial no encontrado', 'El usuario no pertenece a ningun sede, organo, sede', 'error', 'modalCrearIncidencia');
         handleResetValues();
@@ -263,7 +263,6 @@ const IncidenciaAgregar = () => {
 
   const buscarPorDni1 = async () => {
     await buscarUsuarioDni(usuarioNotificaDNI).then((res) => {
-      // setUsuarioNotificaData(res);
       setUsuarioNotificaId(res.idpersona);
       setDataNombresNotifico(res.nombre + ' ' + res.apellido);
     }).catch(() => {
@@ -304,31 +303,25 @@ const IncidenciaAgregar = () => {
     })
   }
 
-  const seleccionarUsuario = async (usuario) => {
-    await fetchHistorialPersona(usuario).then(historial => {
-      setUsuarioDataNombre(historial.persona.nombre + ' ' + historial.persona.apellido);
-      setUsuarioNotificaData(historial.persona);
-      setUsuarioSede(historial.oficina.organo.sede.sede)
-      setUsuarioOrgano(historial.oficina.organo.organo)
-      setUsuarioOficina(historial.oficina.oficina)
-      setUsuarioCargo(historial.cargo.cargo)
+  const seleccionarUsuario = async (user) => {
+    await fetchHistorialPersona(user).then(historial => {
+      console.log(historial);
+      setUsuarioDataNombre(historial.data.persona.nombre + ' ' + historial.data.persona.apellido);
+      setUsuarioNotificaData(historial.data.persona);
+      setUsuarioSede(historial.data.oficina.organo.sede.sede)
+      setUsuarioOrgano(historial.data.oficina.organo.organo)
+      setUsuarioOficina(historial.data.oficina.oficina)
+      setUsuarioCargo(historial.data.cargo.cargo)
     }).catch(() => {
       setOpenSearchUsuarios(false);
-      notification('Error al Seleccionar', 'No se puede crear incidencia para este usuario, no tiene asignado a ninguna sede, organo, oficina', 'info', 'modalCrearIncidencia');
+      notification('Error al Seleccionar', 'No se puede crear incidencia para este user, no tiene asignado a ninguna sede, organo, oficina', 'info', 'modalCrearIncidencia');
       handleResetValues();
     })
   }
 
-  const seleccionarUsuario1 = async (usuario) => {
-    await fetchHistorialPersona(usuario).then(historial => {
-      setUsuarioDataNombre1(historial.persona.nombre + ' ' + historial.persona.apellido);
-      setUsuarioNotificaData(historial.persona);
-      setUsuarioNotificaId(historial.persona.idpersona);
-    }).catch(() => {
-      setOpenSearchUsuarios1(false);
-      notification('Error al Seleccionar', 'No se puede crear incidencia para este usuario, no tiene asignado a ninguna sede, organo, oficina', 'info', 'modalCrearIncidencia');
-      handleResetValues();
-    })
+  const seleccionarUsuario1 = async (user) => {
+    setUsuarioDataNombre1(user.label);
+    setUsuarioNotificaId(user.value);
   }
 
   const handleSearchDNI = () => {
@@ -373,7 +366,7 @@ const IncidenciaAgregar = () => {
     if (value === null) {
       return "SELECCIONE UN USUARIO"
     } else {
-      seleccionarUsuario1(value.value);
+      seleccionarUsuario1(value);
       setIndiceUsuario1(value.value);
     }
   }
@@ -512,7 +505,7 @@ const saveOrigen = () => {
                     <TabPanel>
                       <HStack spacing={10} mt={2}>
                         <FormControl zIndex={0}>
-                          <FormLabel>BUSQUEDA POR APELLIDO DEL USUARIO CON PROBLEMAS</FormLabel>
+                          <FormLabel>BUSQUEDA POR APELLIDO DEL USUARIO QUIEN NOTIFICÓ</FormLabel>
                           <InputGroup>
                             <InputRightElement
                               children={
@@ -560,7 +553,7 @@ const saveOrigen = () => {
                         </Modal>
 
                         <FormControl isRequired>
-                          <FormLabel>NOMBRE DEL USUARIO</FormLabel>
+                          <FormLabel>NOMBRE DEL USUARIO QUIEN NOTIFICÓ</FormLabel>
                           <Input placeholder='NOMBRES APELLIDOS' value={usuarioDataNombre1 ? usuarioDataNombre1 : ''} readOnly />
                         </FormControl>
                       </HStack>
@@ -631,7 +624,7 @@ const saveOrigen = () => {
                   </InputGroup>
                 </FormControl>
                 <FormControl isRequired>
-                  <FormLabel>NOMBRE DEL USUARIO</FormLabel>
+                  <FormLabel>NOMBRE DEL USUARIO QUIEN TIENE EL PROBLEMA</FormLabel>
                   <Input placeholder='NOMBRES APELLIDOS' value={dataNombres ? dataNombres : ''} readOnly />
                 </FormControl>
               </HStack>
@@ -824,13 +817,12 @@ const saveOrigen = () => {
                   modules={modules}
                   style={{
                     textTransform: 'uppercase',
-                    textAlignLast: 'center'
                   }}
                   placeholder="Aqui describe la incidencia"
                   onChange={(e) => {
                     setIndiceIncidencia({
                       ...indiceIncidencia,
-                      descripcion: e.valueOf(),
+                      descripcion: e.valueOf().toUpperCase(),
                     });
                   }}
                 />
@@ -855,7 +847,7 @@ const saveOrigen = () => {
               >
                 GUARDAR
               </Button>
-              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
+              <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
             </ModalFooter>
           </ModalContent>
       </Modal>

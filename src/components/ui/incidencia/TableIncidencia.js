@@ -22,6 +22,16 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Popover,
+  PopoverTrigger,
+  Stack,
+  PopoverContent,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverHeader,
+  PopoverBody,
+  Portal,
+  Progress,
 } from '@chakra-ui/react';
 
 import { store } from '../../../store/store';
@@ -31,6 +41,9 @@ import DataTableExtensions from 'react-data-table-component-extensions';
 import 'react-data-table-component-extensions/dist/index.css';
 import Moment from 'moment';
 
+import AtencionViewFileConocimiento from './conocimiento/AtencionViewFile';
+import IncidenciaViewFileConocimiento from './conocimiento/IncidenciaViewFile';
+
 import IncidenciaDetalles from './IncidenciaDetalles';
 import IncidenciaAgregar from './IncidenciaAgregar';
 import { RepeatIcon } from '@chakra-ui/icons';
@@ -39,10 +52,12 @@ import { getIncidencias } from './incidencia';
 import { BsArrowDown } from 'react-icons/bs';
 import { MdSettingsBackupRestore } from 'react-icons/md';
 import { FaFilter } from 'react-icons/fa';
-import { AiFillFilter } from 'react-icons/ai';
+import { AiFillFileText, AiFillFilter } from 'react-icons/ai';
 
 export default function TableIncidencia() {
+
   const [openAlert, setOpenAlert] = useState(false);
+  const [progress, setProgress] = useState(false);
   const { identificador } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
@@ -60,9 +75,8 @@ export default function TableIncidencia() {
   const [incidenciaPersonaNotifica, setIncidenciaPersonaNotifica] = useState(null);
 
   const fetchDataIncidencias = async () => {
-    await fetchIncidencias().then((res) => {
-      dispatch(getIncidencias(res));
-    });
+    const response = await fetchIncidencias();
+    dispatch(getIncidencias(response));
   }
 
   const refreshTable = () => {
@@ -71,6 +85,14 @@ export default function TableIncidencia() {
 
   const handleClickCloseAlert = () => {
     setOpenAlert(false);
+  }
+
+  const changeSetProgressTrue = () => {
+    setProgress(true);
+  }
+
+  const changeSetProgressFalse = () => {
+    setProgress(false);
   }
 
   const handleClickOpenAlert = (index) => {
@@ -125,47 +147,58 @@ export default function TableIncidencia() {
     {
       name: 'USUARIO',
       selector: row => row.persona.nombre + ' ' + row.persona.apellido,
+      cellExport: row => row.persona.nombre + ' ' + row.persona.apellido,
       sortable: true,
+      wrap: true,
     },
     {
       name: 'MOTIVO',
       selector: row => row.motivo.motivo,
+      cellExport: row => row.motivo.motivo,
       sortable: true,
     },
     {
       name: 'FECHA Y HORA',
-      selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
+      selector: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
+      cellExport: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
       sortable: true,
     },
     {
       name: 'TÉCNICO ASIGNADO',
+      wrap: true,
       sortable: true,
-      cell: row => {
+      selector: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
-          <Text key={row.idIncidencia}>
-            {historial[0]?.persona_asignado === null ? "NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido}
-          </Text>
+          historial[0]?.persona_asignado === null ? "TÉCNICO NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido
         )
-      }
+      },
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0]?.persona_asignado === null ? "TÉCNICO NO ASIGNADO" : historial[0]?.persona_asignado.nombre + ' ' + historial[0]?.persona_asignado.apellido
+        )
+      },
     },
     {
       name: 'IP',
-      // selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.ip : ''),
-      sortable: true,
-      cell: row => {
+      selector: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
         return (
-          <Text key={row.idIncidencia}>
-            {historial[0]?.ip}
-          </Text>
+          historial[0]?.ip
+        )
+      },
+      sortable: true,
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0]?.ip
         )
       }
     },
     {
       name: 'ESTADO',
       selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
-      // selector: row => row.historialIncidencia.estadoIncidencia,
       sortable: true,
       cell: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
@@ -173,17 +206,22 @@ export default function TableIncidencia() {
           <div>
             <Badge
               bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-              // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
               color={'white'}
-              p="3px 10px"
-              w={24}
+              py="4px"
+              w={"100px"}
               textAlign={'center'}
               borderRadius={'md'}
-              fontSize={'10px'}
+              fontSize={'12px'}
             >
               {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
             </Badge>
           </div>
+        )
+      },
+      cellExport: row => {
+        var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        return (
+          historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'
         )
       },
       center: true,
@@ -193,17 +231,62 @@ export default function TableIncidencia() {
       sortable: false,
       cell: row => {
         var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+        let archivoTecnico = row.descripcionIncidencia?.incidenciaArchivos?.usuario === "T" ? row.descripcionIncidencia.incidenciaArchivos : null;
+        let archivoUsuario = row.incidenciaArchivos?.usuario === "R" ? row.incidenciaArchivos : null;
         return (
           <div>
             <IncidenciaDetalles
               rowId={row.idIncidencia}
               identificador={identificador}
             />
+            {archivoTecnico === null && archivoUsuario === null ? null : (
+              <Popover placement='left'>
+                <PopoverTrigger>
+                  <IconButton
+                    size="sm"
+                    colorScheme="purple"
+                    icon={<AiFillFileText />}
+                    ml={1}
+                    fontSize={'20px'}
+                    _focus={{ boxShadow: 'none' }}
+                  />
+                </PopoverTrigger>
+                <Portal>
+                  <PopoverContent _focus={{ boxShadow: 'none' }}>
+                    <PopoverArrow />
+                    <PopoverCloseButton _focus={{ boxShadow: 'none' }} />
+                    <PopoverHeader>VISUALIZAR ARCHIVO</PopoverHeader>
+                    <PopoverBody>
+                      <Stack direction={'column'} spacing={4} alignItems="start">
+                        {archivoUsuario !== null ? (
+                          <IncidenciaViewFileConocimiento
+                            rowData={row?.incidenciaArchivos}
+                            typeFile={archivoUsuario?.file}
+                            setProgressTrue={() => changeSetProgressTrue()}
+                            setProgressFalse={() => changeSetProgressFalse()}
+                          />
+                        ) : null}
+
+                        {archivoTecnico !== null ? (
+                          <AtencionViewFileConocimiento
+                            rowData={row.descripcionIncidencia?.incidenciaArchivos}
+                            typeFile={archivoTecnico?.file}
+                            setProgressTrue={() => changeSetProgressTrue()}
+                            setProgressFalse={() => changeSetProgressFalse()}
+                          />
+                        ) : null}
+                      </Stack>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Portal>
+              </Popover>
+            )}
+
             {historial[0]?.estadoIncidencia === 'A' ? (
               <IconButton
                 icon={<MdSettingsBackupRestore size={20} />}
                 colorScheme={'red'}
-                ml={2}
+                ml={1}
                 onClick={() => handleClickOpenAlert(row)}
                 size={'sm'}
                 fontSize={'20px'}
@@ -211,7 +294,7 @@ export default function TableIncidencia() {
               />
             ) : null}
 
-            <AlertDialog isOpen={openAlert} onClose={handleClickCloseAlert} size={'3xl'}>
+            <AlertDialog isOpen={openAlert} onClose={handleClickCloseAlert} size={'5xl'}>
               <AlertDialogOverlay>
                 <AlertDialogContent>
                   <AlertDialogHeader fontSize="xl" fontWeight="bold">
@@ -222,7 +305,7 @@ export default function TableIncidencia() {
                     ¿CONFIRMAR LA ACCIÓN?
                   </AlertDialogBody>
                   <AlertDialogFooter>
-                    <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red">CANCELAR</Button>
+                    <Button onClick={handleClickCloseAlert} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                     <Button
                       colorScheme="facebook"
                       ml={3}
@@ -235,11 +318,11 @@ export default function TableIncidencia() {
                 </AlertDialogContent>
               </AlertDialogOverlay>
             </AlertDialog>
-
           </div>
         );
       },
-      wrap: true,
+      export: false,
+      width: '140px',
     },
   ];
 
@@ -433,48 +516,54 @@ export default function TableIncidencia() {
           justifyContent={'space-between'}
           verticalAlign={'center'}
           px={4}
+          mt={4}
         >
           <Box>
             <Text fontSize="lg" fontWeight="600">
-              TABLA DE INCIDENCIAS
+              TABLA DE TODAS LAS INCIDENCIAS
             </Text>
           </Box>
           <Box>
-            <Menu size={'xs'}>
-              <MenuButton as={'menu'} style={{ cursor: 'pointer'}}>
-                <HStack spacing={2}>
-                  <Text fontSize="sm" fontWeight="600">
-                    FILTRAR POR ESTADO
-                  </Text>
-                  <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
-                </HStack>
-              </MenuButton>
-              <MenuList zIndex={2}>
-                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
-                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
-                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
-                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
-              </MenuList>
-            </Menu>
-          </Box>
-          <Box>
-            <IconButton
-              size={'sm'} mr={2}
-              icon={<RepeatIcon boxSize={4} />}
-              colorScheme={'facebook'}
-              _focus={{ boxShadow: "none" }}
-              onClick={refreshTable} />
-            <IncidenciaAgregar />
+            <Stack direction={'row'} spacing={4}>
+              <IconButton
+                size={'sm'}
+                icon={<RepeatIcon boxSize={4} />}
+                colorScheme={'facebook'}
+                _focus={{ boxShadow: "none" }}
+                onClick={refreshTable} />
+              <Menu size={'xs'}>
+                <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                  <HStack spacing={2}>
+                    <Text fontSize="sm" fontWeight={'semibold'}>
+                      FILTRAR POR ESTADO
+                    </Text>
+                    <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                  </HStack>
+                </MenuButton>
+                <MenuList zIndex={2} fontSize="sm">
+                  <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                  <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                  <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                  <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+                </MenuList>
+              </Menu>
+              <IncidenciaAgregar />
+            </Stack>
           </Box>
         </HStack>
-        <DataTableExtensions data={tableRowsData} columns={columns}>
+        <Progress mt={2} size="xs" value={progress} colorScheme="purple" hidden={progress === false} isIndeterminate={progress === true} mb={2} />
+        <DataTableExtensions data={tableRowsData} columns={columns} print={false}>
           <DataTable
             theme={useColorModeValue('default', 'solarized')}
             pagination
             ignoreRowClick={true}
             sortIcon={<BsArrowDown />}
             responsive={true}
-            noDataComponent="No hay datos para mostrar refresca la página"
+            noDataComponent={
+              <Text fontSize="sm" textAlign="center" color="gray.600">
+                  NO HAY DATOS PARA MOSTRAR, REFRESCAR LA TABLA
+              </Text>
+            }
             paginationPerPage={10}
             paginationRowsPerPageOptions={[10, 15, 20, 30]}
             fixedHeader
@@ -485,7 +574,7 @@ export default function TableIncidencia() {
               selectAllRowsItem: true,
               selectAllRowsItemText: 'Todos',
             }}
-            key={ tableRowsData.map((item) => { return item.idIncidencia }) }
+            key={tableRowsData.map((item) => { return item.idIncidencia })}
           />
         </DataTableExtensions>
       </Box>

@@ -182,7 +182,7 @@ export default function ModalOrganoAsignacion(props) {
               <FormControl>
                 <FormLabel>SEDE</FormLabel>
                 <Select
-                  placeholder="Seleccione una Sede"
+                  placeholder="SELECCIONE UNA SEDE"
                   required
                   onChange={handleChangeSede}
                   isRequired
@@ -266,7 +266,7 @@ export default function ModalOrganoAsignacion(props) {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={closeModal} colorScheme="red" _focus={{ boxShadow: "none" }}>
+            <Button onClick={closeModal} colorScheme="red" _focus={{ boxShadow: "none" }} variant="outline">
               CANCELAR
             </Button>
           </ModalFooter>

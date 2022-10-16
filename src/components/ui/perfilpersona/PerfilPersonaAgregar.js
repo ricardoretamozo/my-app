@@ -99,7 +99,7 @@ const PerfilPersonaAgregar = () => {
                             <Button type={'submit'} onClick={() => savePerfil()} colorScheme={'facebook'} mr={3} _focus={{ boxShadow: "none" }}>
                                 GUARDAR
                             </Button>
-                            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                            <Button onClick={handleCloseModal} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                         </ModalFooter>
                     </ModalContent>
                 </form>

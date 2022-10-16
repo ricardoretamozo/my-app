@@ -55,6 +55,7 @@ const IncidenciaDetalles = (props) => {
   const [incidenciaPersonaReporta, setIncidenciaPersonaReporta] = useState([]);
   const [incidenciaPerfilPersonaAsignado, setIncidenciaPerfilPersonaAsignado] = useState([]);
   const [incidenciaUsuarioCargo, setIncidenciaUsuarioCargo] = useState('');
+  const [incidenciaPersonaNotificaPerfil, setIncidenciaPersonaNotificaPerfil] = useState([]);
 
   const obtenerIncideciadetalle = async () => {
     await fetchIncidenciaDetalles(props.rowId).then(incidencia => {
@@ -69,15 +70,11 @@ const IncidenciaDetalles = (props) => {
       setIncidenciaSede(incidencia.data.oficina.organo.sede);
       setIncidenciaPersona(incidencia.data.persona);
       setIncidenciaPerfilPersona(incidencia.data.persona.perfilPersona);
-      setIncidenciaPersonaReporta(incidenciaHistorialFilter.map(persona => persona.persona_notifica));
+      setIncidenciaPersonaReporta(incidenciaHistorialFilter.map(persona => persona?.persona_notifica));
+      setIncidenciaPersonaNotificaPerfil(incidenciaHistorialFilter.map(persona => persona?.persona_notifica?.perfilPersona));
       fetchHistorialPersona(incidencia.data.persona.idpersona).then(historial => {
-        setIncidenciaUsuarioCargo(historial.cargo.cargo);
+        setIncidenciaUsuarioCargo(historial?.data.cargo.cargo);
       })
-      // fetchDetallesIncidenciaAtendida(incidencia.data.idIncidencia).then((atendida) => {
-      //   setDetalleIncidenciaAtendida(atendida);
-      // }).catch((error) => {
-      //   console.log(error);
-      // });
       if (incidenciaHistorialFilter.persona_asignado === null) {
         setIncidenciaPersonaAsignado(null);
       } else {
@@ -129,7 +126,7 @@ const IncidenciaDetalles = (props) => {
                   <Text fontSize={'14px'} fontWeight={'bold'}>
                     FECHA Y HORA
                   </Text>
-                  <Text fontSize={'13px'}>{Moment(detalleIncidencia.fecha).format("DD/MM/YYYY - HH:mm:ss")}</Text>
+                  <Text fontSize={'13px'}>{Moment(detalleIncidencia.fecha).format("yyyy-MM-DD - HH:mm:ss")}</Text>
                 </Box>
                 <Box>
                   <Text fontSize={'14px'} fontWeight={'bold'}>
@@ -331,7 +328,7 @@ const IncidenciaDetalles = (props) => {
                     textAlign="center"
                     fontWeight={'bold'}
                   >
-                    DETALLES DEL USUARIO QUIEN REPORTÓ
+                    DETALLES DEL USUARIO QUIEN REPORTÓ O NOTIFICÓ
                   </Box>
                   <AccordionIcon />
                 </AccordionButton>
@@ -352,7 +349,7 @@ const IncidenciaDetalles = (props) => {
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>PERFIL PERSONA</Text>
-                        <Text>{incidenciaPerfilPersona.perfil}</Text>
+                        <Text>{incidenciaPersonaNotificaPerfil[0]?.perfil}</Text>
                       </Box>
                       <Box>
                         <Text fontWeight={'bold'}>NUMERO DE CELULAR</Text>
@@ -508,7 +505,7 @@ const IncidenciaDetalles = (props) => {
 
           </DrawerBody>
           <DrawerFooter>
-            <Button colorScheme={'facebook'} onClick={handleCloseModal}>
+            <Button colorScheme={'facebook'} onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>
               OK
             </Button>
           </DrawerFooter>

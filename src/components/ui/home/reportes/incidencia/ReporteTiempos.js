@@ -5,9 +5,22 @@ import 'react-data-table-component-extensions/dist/index.css';
 import { useColorModeValue } from '@chakra-ui/react';
 import "jspdf-autotable";
 
+import 'moment-precise-range-plugin';
 import Moment from 'moment';
+import moment from 'moment';
 
 export default function ReporteTiempos({ reportes }) {
+
+	const DiferenciaDosFechas = (fechaInicio, fechaFinal) => {
+		const fecha1 = moment(fechaInicio);
+		const fecha2 = moment(fechaFinal);
+		const diferencia = moment.preciseDiff(fecha1, fecha2, true);
+		const dias = diferencia['days'];
+		const horas = diferencia['hours'];
+		const minutos = diferencia['minutes'];
+		const segundos = diferencia['seconds'];
+		return dias + "d " + horas + "h " + minutos + "m " + segundos + "s";
+	}
   
 	const columns = [
 		{
@@ -18,110 +31,66 @@ export default function ReporteTiempos({ reportes }) {
 		},
 		{
 			name: 'USUARIO TÉCNICO',
-			selector: row => row.usuarioTecnico !== null ? row.usuarioTecnico?.nombre + ' ' + row.usuarioTecnico?.apellido : 'SIN ASIGNAR',
+			selector: row => row.usuarioTecnico !== null ? row.usuarioTecnico?.nombre + ' ' + row.usuarioTecnico?.apellido : 'SIN TÉCNICO ASIGNADO',
 			sortable: true,
-			cellExport: row => row.usuarioTecnico !== null ? row.usuarioTecnico?.nombre + ' ' + row.usuarioTecnico?.apellido : 'SIN ASIGNAR',
+			cellExport: row => row.usuarioTecnico !== null ? row.usuarioTecnico?.nombre + ' ' + row.usuarioTecnico?.apellido : 'SIN TÉCNICO ASIGNADO',
 		},
 		{
 			name: 'FECHA REGISTRO',
-			selector: row => Moment(row.registroPendiente).format("DD/MM/YYYY - HH:mm:ss"),
+			selector: row => Moment(row.registroPendiente).format("yyyy-MM-DD - HH:mm:ss"),
 			sortable: true,
-			cellExport: row => Moment(row.registroPendiente).format("DD/MM/YYYY - HH:mm:ss"),
-			center: true,
+			cellExport: row => Moment(row.registroPendiente).format("yyyy-MM-DD - HH:mm:ss"),
 		},
 		{
 			name: 'TRANSCURRIDO',
 			selector: row => row.tiempoTranscurridoPendiente ?? '',
-            sortable: true,
-			center: true,
+            sortable: true,			
+			right: true,
 			cell : row => {
 				var dateOne = Moment(row.registroPendiente, "YYYY-MM-DD HH:mm:ss");
 				var dateTwo = Moment(row.registroTramitado, "YYYY-MM-DD HH:mm:ss");
-				
-				var diffD = dateTwo.diff(dateOne, 'd');
-				var diffH = dateTwo.diff(dateOne, 'h').toString().slice(-2);
-				var diffM = dateTwo.diff(dateOne, 'm').toString().slice(-2);
-				var diffS = dateTwo.diff(dateOne, 's').toString().slice(-2);
 
 				if (row.tiempoTranscurridoPendiente  !== null){
 					return (
 						<div>
-							{diffD !== 0 ? diffD + 'd ' : ''}{diffH !== 0 ? diffH + 'h:' : ''}{diffM !== 0 ? diffM + 'm:' : ''}{diffS !== 0 ? diffS + 's' : ''}
+							{ DiferenciaDosFechas(dateOne, dateTwo) }
 						</div>
 					)
 				}
 			},
-			cellExport: row => {
-				var dateOne = Moment(row.registroPendiente, "YYYY-MM-DD HH:mm:ss");
-				var dateTwo = Moment(row.registroTramitado, "YYYY-MM-DD HH:mm:ss");
-				
-				var diffD = dateTwo.diff(dateOne, 'd');
-				var diffH = dateTwo.diff(dateOne, 'h').toString().slice(-2);
-				var diffM = dateTwo.diff(dateOne, 'm').toString().slice(-2);
-				var diffS = dateTwo.diff(dateOne, 's').toString().slice(-2);
-
-				if (row.tiempoTranscurridoPendiente  !== null){
-					return (
-						<div>
-							{diffD !== 0 ? diffD + 'd ' : ''}{diffH !== 0 ? diffH + 'h:' : ''}{diffM !== 0 ? diffM + 'm:' : ''}{diffS !== 0 ? diffS + 's' : ''}
-						</div>
-					)
-				}
-			},
+			cellExport: row => row.tiempoTranscurridoTramitado !== null ? DiferenciaDosFechas(row.registroPendiente, row.registroTramitado) : '',
 		},
 		{
 			name: 'EN TRÁMITE',
-            selector: row => row.registroTramitado !== null ? Moment(row.registroTramitado).format("DD/MM/YYYY - HH:mm:ss") : '',
+            selector: row => row.registroTramitado !== null ? Moment(row.registroTramitado).format("yyyy-MM-DD - HH:mm:ss") : '',
 			sortable: true,
-			center: true,
-			cellExport: row => row.registroTramitado !== null ? Moment(row.registroTramitado).format("DD/MM/YYYY - HH:mm:ss") : '',
+			cellExport: row => row.registroTramitado !== null ? Moment(row.registroTramitado).format("yyyy-MM-DD - HH:mm:ss") : '',
 		},
 		{
 			name: 'TRANSCURRIDO',
 			selector: row => row.tiempoTranscurridoTramitado ?? '',
 			cell: row => {
+
 				var dateOne = Moment(row.registroTramitado, "YYYY-MM-DD HH:mm:ss");
 				var dateTwo = Moment(row.registroAtendido, "YYYY-MM-DD HH:mm:ss");
-				
-				var diffD = dateTwo.diff(dateOne, 'd');
-				var diffH = dateTwo.diff(dateOne, 'h').toString().slice(-2);
-				var diffM = dateTwo.diff(dateOne, 'm').toString().slice(-2);
-				var diffS = dateTwo.diff(dateOne, 's').toString().slice(-2);
 
 				if (row.tiempoTranscurridoTramitado  !== null){
 					return (
 						<div>
-						     {diffD !== 0 ? diffD + 'd ' : ''}{diffH !== 0 ? diffH + 'h:' : ''}{diffM !== 0 ? diffM + 'm:' : ''}{diffS !== 0 ? diffS + 's' : ''}
+						     { DiferenciaDosFechas(dateOne, dateTwo) }
 						</div>
 					)
 				}
 			},
 			sortable: true,
-			center: true,
-			cellExport: row => {
-				var dateOne = Moment(row.registroTramitado, "YYYY-MM-DD HH:mm:ss");
-				var dateTwo = Moment(row.registroAtendido, "YYYY-MM-DD HH:mm:ss");
-				
-				var diffD = dateTwo.diff(dateOne, 'd');
-				var diffH = dateTwo.diff(dateOne, 'h').toString().slice(-2);
-				var diffM = dateTwo.diff(dateOne, 'm').toString().slice(-2);
-				var diffS = dateTwo.diff(dateOne, 's').toString().slice(-2);
-
-				if (row.tiempoTranscurridoTramitado  !== null){
-					return (
-						<div>
-						     {diffD !== 0 ? diffD + 'd ' : ''}{diffH !== 0 ? diffH + 'h:' : ''}{diffM !== 0 ? diffM + 'm:' : ''}{diffS !== 0 ? diffS + 's' : ''}
-						</div>
-					)
-				}
-			}
+			right: true,
+			cellExport: row => row.tiempoTranscurridoTramitado !== null ? DiferenciaDosFechas(row.registroTramitado, row.registroAtendido) : '',
 		},
         {
 			name: 'ATENDIDO',
-			selector: row => row.registroAtendido !== null ? Moment(row.registroAtendido).format("DD/MM/YYYY - HH:mm:ss") : '',
+			selector: row => row.registroAtendido !== null ? Moment(row.registroAtendido).format("yyyy-MM-DD - HH:mm:ss") : '',
 			sortable: true,
-			center: true,
-			cellExport: row => row.registroAtendido !== null ? Moment(row.registroAtendido).format("DD/MM/YYYY - HH:mm:ss") : '',
+			cellExport: row => row.registroAtendido !== null ? Moment(row.registroAtendido).format("yyyy-MM-DD - HH:mm:ss") : '',
 		},
 	];
 
@@ -145,11 +114,11 @@ export default function ReporteTiempos({ reportes }) {
 	});
   
 	return (
-		<DataTableExtensions columns={columns} data={reportes}>
+		<DataTableExtensions columns={columns} data={reportes} print={false}>
  			<DataTable
 				pagination
 				persistTableHead
-				paginationPerPage={5}
+				paginationPerPage={10}
 				paginationRowsPerPageOptions={[10, 15, 20, 30]}
 				theme={useColorModeValue('default', 'solarized')}
 				responsive={true}

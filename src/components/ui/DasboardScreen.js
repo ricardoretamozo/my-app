@@ -2,6 +2,9 @@ import React from 'react';
 import { Switch } from 'react-router-dom';
 
 import { home } from './home/home';
+import { HomeUsuarioComun } from './home/UsuarioComun/index';
+import { HomeSoporteTecnico } from './home/SoporteTecnico/index';
+import { MisIncidencias } from './incidencia/asistente/incidencia';
 import { Incidencia } from './incidencia/incidencia';
 import { IncidenciaUsuario } from './incidencia/usuario/incidencia';
 import { IncidenciaAsistenteNoAsignados, IncidenciaAsistenteAsignados } from './incidencia/asistente/incidencia';
@@ -36,6 +39,16 @@ export const DasboardScreen = () => {
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
+          exact path="/dashboard/soporte-tecnico/home"
+          component={HomeSoporteTecnico}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/usuario/home"
+          component={HomeUsuarioComun}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
           exact path="/dashboard/motivos"
           component={Motivo}
           isAuthenticated={!!access_token}
@@ -43,6 +56,11 @@ export const DasboardScreen = () => {
         <PrivateRoute
           exact path="/dashboard/incidencias"
           component={Incidencia}
+          isAuthenticated={!!access_token}
+        />
+        <PrivateRoute
+          exact path="/dashboard/mis-incidencias"
+          component={MisIncidencias}
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
@@ -111,17 +129,17 @@ export const DasboardScreen = () => {
           isAuthenticated={!!access_token}
         />
         <PrivateRoute
-          exact path="/dashboard/reportes/incidencias-one"
+          exact path="/dashboard/reportes/incidencias-por-tecnico"
           component={ReporteIncidencia}
           isAuthenticated={!!access_token}
         />
          <PrivateRoute
-          exact path="/dashboard/reportes/incidencias-two"
+          exact path="/dashboard/reportes/incidencias-por-usuario"
           component={IncidenciaSegundoReporte}
           isAuthenticated={!!access_token}
         />
          <PrivateRoute
-          exact path="/dashboard/reportes/incidencias-three"
+          exact path="/dashboard/reportes/incidencias-por-tiempos"
           component={IncidenciaTercerReporte}
           isAuthenticated={!!access_token}
         />

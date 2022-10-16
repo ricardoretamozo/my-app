@@ -290,9 +290,9 @@ const PopoverForm = () => {
         <PopoverContent p={5} _focus={{ boxShadow: "none" }} color='white' bg='gray.700' borderColor='blue.600'>
           <PopoverArrow bg='gray.700'/>
           <PopoverCloseButton _focus={{ boxShadow: "none" }} />
-          <PopoverHeader fontWeight="bold" fontSize={'sm'} textAlign="center">¿Donde está el código verificador de mi DNI?</PopoverHeader>
+          <PopoverHeader fontWeight="bold" fontSize={'sm'} textAlign="center">¿DONDE ENCONTRAR EL CÓDIGO DE VERIFICACIÓN DE MI DNI?</PopoverHeader>
           <PopoverBody>
-            <Text fontSize="xs" color="gray.500">
+            <Text fontSize="xs" color="gray.500" textTransform={'uppercase'} textAlign="justify">
               Este número se encuentra en la parte superior derecha de tu DNI, justo después del número de tu documento. Este dígito es antecedido por un guión (-).
             </Text>
             <Image src='https://www.consultadniperu.com/wp-content/uploads/2021/01/dni.png' mt={2} />

@@ -16,13 +16,18 @@ import {
   Badge,
   Tooltip,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Stack,
 } from '@chakra-ui/react';
 
 import {
   CheckCircleIcon,
   NotAllowedIcon,
 } from '@chakra-ui/icons';
-import { FaUserSecret } from 'react-icons/fa';
+import { FaFilter, FaUserSecret } from 'react-icons/fa';
 
 import { store } from '../../../store/store';
 
@@ -40,6 +45,8 @@ import ModalOrganoAsignacion from './ModalOrganoAsignacion';
 import { BsArrowDown } from 'react-icons/bs';
 
 import PersonaEditar from './PersonaEditar';
+import { AiFillFilter } from 'react-icons/ai';
+import ModalActualizarHistorial from './ModalActualizarHistorial';
 
 export default function TablePersona() {
   const [openModal, setOpenModal] = React.useState(false);
@@ -59,6 +66,8 @@ export default function TablePersona() {
   const colorStatus = useColorModeValue('white', 'gray.400');
 
   const data = store.getState().persona.rows;
+
+  const [tableRowsData, setTableRowsData] = useState(data);
 
   const [indice, setIndice] = useState({
     nombre: '',
@@ -80,7 +89,7 @@ export default function TablePersona() {
     idPersona: null,
   });
 
-  const handleClickOpenModal = index => {
+  const handleClickOpenModal = (index) => {
     fetchDataPersonaOrgano(index.idpersona);
     setIndice(index);
     setOpenModal(true);
@@ -88,13 +97,13 @@ export default function TablePersona() {
 
   const [personaOrganos, setPersonaOrganos] = useState([]);
 
-  const fetchDataPersonaOrgano = async idpersona => {
+  const fetchDataPersonaOrgano = async (idpersona) => {
     await fetchPersonaOrgano(idpersona).then(res => {
       setPersonaOrganos(res.data);
     });
   };
 
-  const handleDeletePersona = x => {
+  const handleDeletePersona = (x) => {
     dispatch(deletePersona(x))
       .then(() => {
         handleCloseDelete(true);
@@ -105,7 +114,7 @@ export default function TablePersona() {
       });
   };
 
-  const handleClickOpenDelete = index => {
+  const handleClickOpenDelete = (index) => {
     setPersonaid(index);
     setOpenDelete(true);
   };
@@ -114,32 +123,52 @@ export default function TablePersona() {
     setOpenDelete(false);
   };
 
+  const handleClickFilterCoodinador = async () => {
+    const dataFilter = data.filter(row => row.perfilPersona.perfil === "COORDINADOR INFORMATICO");
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterAsistente = async () => {
+    const dataFilter = data.filter(row => row.perfilPersona.perfil === "ASISTENTE INFORMATICO");
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterSoporte = async () => {
+    const dataFilter = data.filter(row => row.perfilPersona.perfil === "SOPORTE TECNICO");
+    setTableRowsData(dataFilter);
+  }
+
+  const handleClickFilterUsuario = async () => {
+    const dataFilter = data.filter(row => row.perfilPersona.perfil === "USUARIO COMUN");
+    setTableRowsData(dataFilter);
+  }
+
+  const refreshTable = () => {
+    setTableRowsData(data);
+  }
+
   const columns = [
     {
-      name: <b>#</b>,
+      name: "#",
       selector: row => row.idpersona,
+      cellExport: row => row.idpersona,
       sortable: true,
-
+      maxWidth: '50px',
     },
     {
-      name: <b>NOMBRE</b>,
-      selector: row => row.nombre,
+      name: "NOMBRES",
+      selector: row => row.nombre + " " + row.apellido,
+      cellExport: row => row.nombre + " " + row.apellido,
       sortable: true,
-
     },
     {
-      name: <b>APELLIDOS</b>,
-      selector: row => row.apellido,
-      sortable: true,
-
-    },
-    {
-      name: <b>PERFIL PERSONA</b>,
+      name: "PERFIL PERSONA",
       selector: row => row.perfilPersona.perfil,
+      cellExport: row => row.perfilPersona.perfil,
       sortable: true,
     },
     {
-      name: <b>ESTADO</b>,
+      name: "ESTADO",
       selector: row => row.activo,
       sortable: true,
       cell: row => (
@@ -151,11 +180,13 @@ export default function TablePersona() {
             color="black"
           >
             <Badge
-              bg={row.activo === 'S' ? 'green.400' : bgStatus}
+              bg={row.activo === 'S' ? 'green.500' : bgStatus}
               textColor={row.activo === 'S' ? 'white' : colorStatus}
               p={1}
               textAlign={'center'}
-              borderRadius={'lg'}
+              borderRadius={'md'}
+              py="4px"
+              w={"100px"}
             >
               {row.activo === 'S' ? (
                 <CheckCircleIcon boxSize={5} />
@@ -166,31 +197,30 @@ export default function TablePersona() {
           </Tooltip>
         </div>
       ),
+      cellExport: row => (row.activo === 'S' ? 'ACTIVO' : 'INACTIVO'),
       center: true,
     },
     {
-      name: <b>PERMISOS</b>,
+      name: "PERMISOS",
       sortable: true,
       cell: row => (
         <div>
           {row.perfilPersona.perfil === 'SOPORTE TECNICO' && row.activo === 'S' ? (
             <IconButton
               onClick={() => handleClickOpenModal(row)}
-              variant={'ghost'}
-              bgColor={'none'}
-              colorScheme="facebook"
-              icon={<FaUserSecret size={24} />}
-              h={8}
+              colorScheme="telegram"
+              size={'sm'}
+              icon={<FaUserSecret fontSize="20px"/>}
               _focus={{ boxShadow: "none" }}
             />
           ) : null}
         </div>
       ),
       center: true,
-      wrap: true,
+      export: false,
     },
     {
-      name: <b>ACCIONES</b>,
+      name: "ACCIONES",
       sortable: false,
       cell: row => (
         <div>
@@ -200,7 +230,14 @@ export default function TablePersona() {
             isChecked={row.activo === 'S'}
             onChange={() => handleClickOpenDelete(row.idpersona)}
           />
-          <PersonaEditar row = {row} />
+
+          <PersonaEditar row={row} />
+
+          {row?.perfilPersona?.perfil === 'USUARIO COMUN' && row.activo === 'S' ? (
+            
+            <ModalActualizarHistorial rowData = { row }/>
+
+          ) : null }
 
           <AlertDialog isOpen={opendelete} onClose={handleCloseDelete} size="2xl">
             <AlertDialogOverlay>
@@ -216,7 +253,7 @@ export default function TablePersona() {
                 <AlertDialogBody>CONFIRMO LA ACCIÓN</AlertDialogBody>
 
                 <AlertDialogFooter>
-                  <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }}>CANCELAR</Button>
+                  <Button onClick={handleCloseDelete} _focus={{ boxShadow: "none" }} colorScheme="red" variant="outline">CANCELAR</Button>
                   <Button
                     onClick={() => handleDeletePersona(personaid)}
                     colorScheme="red"
@@ -231,14 +268,10 @@ export default function TablePersona() {
           </AlertDialog>
         </div>
       ),
-      center: true,
+      export: false,
+      width: '150px',
     },
   ];
-
-  const tableData = {
-    columns,
-    data,
-  };
 
   // CREANDO UN TEMA PARA LA TABLA
 
@@ -290,13 +323,30 @@ export default function TablePersona() {
             </Text>
           </Box>
           <Box>
-            <PersonaAgregar />
+            <Stack direction={'row'} spacing={2}>
+              <PersonaAgregar />
+              <Menu>
+                <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                  <HStack spacing={2}>
+                    <Text fontSize="sm" fontWeight={'semibold'}>
+                      FILTRAR POR PERFIL
+                    </Text>
+                    <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                  </HStack>
+                </MenuButton>
+                <MenuList zIndex={2} fontSize="sm">
+                  <MenuItem onClick={handleClickFilterCoodinador} icon={<AiFillFilter color='#c53030' size={'20px'} />}>COORDINADOR INFORMATICO</MenuItem>
+                  <MenuItem onClick={handleClickFilterAsistente} icon={<AiFillFilter color='#2b6cb0' size={'20px'} />}>ASISTENTE INFORMATICO</MenuItem>
+                  <MenuItem onClick={handleClickFilterSoporte} icon={<AiFillFilter color='green' size={'20px'} />}>SOPORTE TECNICO</MenuItem>
+                  <MenuItem icon={<AiFillFilter color='gray' size={'20px'} />} onClick={handleClickFilterUsuario}>USUARIO COMUN</MenuItem>
+                  <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+                </MenuList>
+              </Menu>
+            </Stack>
           </Box>
         </HStack>
-        <DataTableExtensions {...tableData}>
+        <DataTableExtensions data={tableRowsData} columns={columns} print={false}>
           <DataTable
-            columns={columns}
-            data={data}
             sortIcon={<BsArrowDown />}
             theme={useColorModeValue('default', 'solarized')}
             pagination

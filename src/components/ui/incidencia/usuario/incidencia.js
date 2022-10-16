@@ -2,45 +2,42 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { store } from '../../../../store/store';
 import Sidebar from '../../base/Sidebar';
-import { fetchIncidencias, fetchIncidenciasPersonas } from '../../../../actions/incidencia'; 
+import { fetchIncidenciasPersonas } from '../../../../actions/incidencia'; 
 import { types } from '../../../../types/types';
 import TableIncidencia from './TableIncidencia';
+import { fetchMotivos } from '../../../../actions/motivo';
+import { fetchOrigen } from '../../../../actions/origenIncidencia';
 
 export const IncidenciaUsuario = () => {
   const dispatch = useDispatch();
 
   const { identificador } = useSelector(state => state.auth);
 
-  const fetchData = async ()=> {
-    await fetchIncidencias().then((res)=>{
-      dispatch(getIncidencia(res));
-    }).catch((err)=>{
-      // console.log("Acceso no autorizado " + err);
-    });
-    
+  const fetchDataMisIncidencias = async () => {
+    const response = await fetchIncidenciasPersonas(identificador);
+    dispatch(getIncidenciaId(response));    
   }
 
-  useEffect(() => {    
-    if(store.getState().incidencia.checking){
-      fetchData();
-    }    
-  });
-
-  const fetchDataId = async ()=> {
-    await fetchIncidenciasPersonas(identificador).then((res)=>{
-      dispatch(getIncidenciaId(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
-    
+  // fetch Motivos
+  const fetchDataMotivos = async () => {
+    const response = await fetchMotivos();
+    dispatch(getMotivos(response));    
   }
+
+  // fetch Origenes
+  const fetchDataOrigenes = async () => {
+    const response = await fetchOrigen();
+    dispatch(getOrigenes(response));
+  }
+
   useEffect(() => {
     if(store.getState().incidenciaId.checking){
-      fetchDataId();
+      fetchDataMisIncidencias();
+      fetchDataMotivos();
+      fetchDataOrigenes();
     }
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableIncidencia} />
@@ -48,12 +45,17 @@ export const IncidenciaUsuario = () => {
   );
 };
 
-export const getIncidencia = incidencia =>({
-  type: types.eventLoadedIncidencia,
-  payload: incidencia
-});
-
 export const getIncidenciaId = incidenciaId =>({
   type: types.eventLoadedIncidenciaId,
   payload: incidenciaId
+});
+
+export const getMotivos = motivo =>({
+  type: types.eventLoadedMotivo,
+  payload: motivo
+});
+
+export const getOrigenes = origen =>({
+  type: types.eventLoadedOrigenIncidencia,
+  payload: origen
 });

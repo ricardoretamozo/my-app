@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import { fetchOficina, fetchOficinas } from '../../actions/oficina';
 import { fetchHistorialPersona } from '../../actions/historialpersona';
 import { updatePersona } from '../../actions/persona';
-import { getOficina } from '../../components/ui/oficina/oficina';
+import { getOficinas } from '../../components/ui/oficina/oficina';
 import { fetchCargo } from '../../actions/cargo';
 import { LogOut } from '../../actions/auth';
 import { useDispatch } from 'react-redux';
@@ -33,7 +33,7 @@ import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle, IoIosArrowDropupCi
 
 export default function HistorialUsuario() {
   const dispatch = useDispatch();
-  const { name } = useSelector(state => state.auth);
+  const { nombres, apellidos } = useSelector(state => state.auth);
   const { identificador } = useSelector(state => state.auth);
   const history = useHistory();
   const [oficina, setOficina] = useState(null);
@@ -55,33 +55,32 @@ export default function HistorialUsuario() {
     },
   });
 
-  const fetchDataOficina = () => {
-    fetchOficinas().then(res => {
-      getOficina(res);
-    });
+  const fetchDataOficina = async () => {
+    const response = await fetchOficinas();
+    dispatch(getOficinas(response));
   };
 
   useEffect(() => {
-    if (store.getState().oficina.rows.length <= 0) {
+    if (store.getState().oficina.checking) {
       fetchDataOficina();
     }
-  });
+  }, []);
 
   const handleLogout = () => {
     dispatch(LogOut());
   };
 
-  const obtenerOficina = () => {
+  const obtenerOficina = async () => {
     if (historialpersona) {
-      fetchOficina(historialpersona.oficina.idOficina).then(res => {
+      await fetchOficina(historialpersona.oficina.idOficina).then(res => {
         setOficina(res);
       });
     }
   };
 
-  const obtenerCargo = () => {
+  const obtenerCargo = async () => {
     if (historialpersona) {
-      fetchCargo(historialpersona.cargo.idCargo).then(res => {
+      await fetchCargo(historialpersona.cargo.idCargo).then(res => {
         setCargo(res);
       });
     }
@@ -89,13 +88,13 @@ export default function HistorialUsuario() {
 
   const obtenerHistorialPersona = () => {
     fetchHistorialPersona(identificador).then(res => {
-      if (res !== false) {
+      if (res.data !== false) {
         setSelectCodicional(false);
         setOpenCreate(false);
         setHistorialPersona(res);
-        setCargo(res?.cargo);
-        setOficina(res?.oficina);
-        setPersona(res?.persona);
+        setCargo(res?.data.cargo);
+        setOficina(res?.data.oficina);
+        setPersona(res?.data.persona);
       } else {
         setSelectCodicional(true);
       }
@@ -106,7 +105,7 @@ export default function HistorialUsuario() {
     if (selectCodicional === true) {
       setOpenCreate(true);
     } else if (selectCodicional === false) {
-      history.push("/dashboard/usuario/incidencias");
+      history.push("/dashboard/usuario/home");
     }
   };
 
@@ -119,7 +118,7 @@ export default function HistorialUsuario() {
   }
 
   const Next = () => {
-    history.push("/dashboard/usuario/incidencias");
+    history.push("/dashboard/usuario/home");
   }
 
   function Back() {
@@ -129,7 +128,6 @@ export default function HistorialUsuario() {
   const handleCloseModal = () => {
     setOpenCreate(false);
     obtenerHistorialPersona();
-    obtenerOficina();
   };
 
   useEffect(() => {
@@ -168,14 +166,12 @@ export default function HistorialUsuario() {
     }
     dispatch(updatePersona(dataPersona))
       .then(() => {
-       //console.log(indice);
+        //console.log(indice);
       })
       .catch(e => {
         console.log(e);
       });
   };
-
-  console.log(persona?.correo)
 
   const inputRefPassword = useRef(null);
   const inputRefCorreo = useRef(null);
@@ -209,23 +205,23 @@ export default function HistorialUsuario() {
         bg={'white'}
       >
         <VStack spacing={4} w={'100%'} h={'full'} color="white" bg="gray.700" pb={4} py={5} boxShadow="base" borderRadius={'lg'}>
-        <Box flex="1" w="100%" textAlign="center" justify="center" alignItems="center" py={2}>
-              <Text fontWeight={'bold'} mb="2">{historialpersona === null
-                    ? 'ERES USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO'
-                    : 'DESEA ACTUALIZAR SU SEDE, ORGANO, OFICINA Ó CARGO?'}
-              </Text>
+          <Box flex="1" w="100%" textAlign="center" justify="center" alignItems="center" py={2}>
+            <Text fontWeight={'bold'} mb="2">{historialpersona === null
+              ? 'ERES USUARIO NUEVO, TIENES QUE AGREGAR NUEVO REGISTRO'
+              : 'DESEA ACTUALIZAR SU SEDE, ORGANO, OFICINA Ó CARGO?'}
+            </Text>
             <HStack flex="1" alignItems="center" justify="center">
-                <Select
-                  color={'gray.700'}
-                  bg={'gray.50'}
-                  w="sm"
-                  value={selectCodicional ? selectCodicional : false}
-                  isDisabled={historialpersona === null ? true : false}
-                  onChange={(e) => handleOpenSelect(e)}
-                >
-                  <option value={true}>SI</option>
-                  <option value={false}>NO</option>
-                </Select>
+              <Select
+                color={'gray.700'}
+                bg={'gray.50'}
+                w="sm"
+                value={selectCodicional ? selectCodicional : false}
+                isDisabled={historialpersona === null ? true : false}
+                onChange={(e) => handleOpenSelect(e)}
+              >
+                <option value={true}>SI</option>
+                <option value={false}>NO</option>
+              </Select>
             </HStack>
             <ModalHistorialUsuario
               cerrar={handleCloseModal}
@@ -246,7 +242,7 @@ export default function HistorialUsuario() {
                 color={'white'}
                 fontWeight={'bold'}
                 bg={'gray.600'}
-                name={historialpersona === null ? name : persona?.nombre + ' ' + persona?.apellido}
+                name={historialpersona === null ? nombres + ' ' + apellidos : persona?.nombre + ' ' + persona?.apellido}
               />
             </Center>
             <Heading
@@ -255,10 +251,10 @@ export default function HistorialUsuario() {
               color={useColorModeValue('gray.100', 'gray.800')}
               mt={2}
             >
-              {historialpersona === null ? name : persona?.nombre + ' ' + persona?.apellido}
+              {historialpersona === null ? nombres + ' ' + apellidos : persona?.nombre + ' ' + persona?.apellido}
             </Heading>
           </Box>
-          
+
           <Box flex="1" mt={4} mb={4} w={'100%'}>
             <SimpleGrid columns={[1, 1, 2, 4]} spacing={1} textAlign="center">
               <Box>
@@ -354,7 +350,7 @@ export default function HistorialUsuario() {
                     alignContent="center"
                     colorScheme={'facebook'}
                     hidden={openSelect === false}
-                    disabled={indice.password === '' || indice.password.length <= 6 ? true : false}
+                    disabled={indice.password.length < 6 ? true : false}
                     _focus={{ boxShadow: "none" }}
                     onClick={handleUpdatePersona}
                   >
@@ -393,7 +389,7 @@ export default function HistorialUsuario() {
             fontSize="sm"
             _hover={{ bg: 'gray.700' }}
             _focus={{ boxShadow: "none" }}
-            onClick={() => handleChangeSelect()}         
+            onClick={() => handleChangeSelect()}
           />
         </HStack>
       </Stack>

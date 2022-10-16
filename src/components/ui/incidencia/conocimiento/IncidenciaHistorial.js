@@ -63,7 +63,7 @@ export const IncidenciaHistorial = ({ rowData }) => {
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader w={'full'} flex="1" textAlign="center" fontWeight={'bold'}>MÁS DETALLES DE LA INCIDENCIA</ModalHeader>
-                    <ModalCloseButton _focus={{ boxShadow: "none" }}/>
+                    <ModalCloseButton _focus={{ boxShadow: "none" }} />
                     <ModalBody>
                         <Flex
                             bg="#edf3f8"
@@ -95,10 +95,10 @@ export const IncidenciaHistorial = ({ rowData }) => {
                                             color: "gray.400",
                                         }}
                                     >
-                                        {Moment(rowData.fecha).format('DD/MM/YYYY - HH:mm:ss')}
+                                        {Moment(rowData.fecha).format('yyyy-MM-DD - HH:mm:ss')}
                                     </chakra.span>
                                     <HStack alignItems={'baseline'}>
-                                        <Avatar size="xs" name={rowData.persona.nombre + ' ' + rowData.persona.apellido} />
+                                        <Avatar color="white" size="xs" name={rowData.persona.nombre + ' ' + rowData.persona.apellido} />
                                         <Text>{rowData.persona.nombre + ' ' + rowData.persona.apellido}</Text>
                                     </HStack>
                                 </Flex>
@@ -153,10 +153,10 @@ export const IncidenciaHistorial = ({ rowData }) => {
                                                                 </VStack>
                                                                 <Divider borderWidth="0.5px" borderColor={
                                                                     item?.estadoIncidencia === 'P'
-                                                                    ? 'red.600'
-                                                                    : item?.estadoIncidencia === 'T'
-                                                                        ? 'yellow.600'
-                                                                        : 'green.600'
+                                                                        ? 'red.600'
+                                                                        : item?.estadoIncidencia === 'T'
+                                                                            ? 'yellow.600'
+                                                                            : 'green.600'
                                                                 } orientation='vertical' />
                                                                 <TableContainer w="full">
                                                                     <Table size='sm' w="full" variant='striped' textAlign={'justify'}>
@@ -211,7 +211,7 @@ export const IncidenciaHistorial = ({ rowData }) => {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="red" mr={3} onClick={handleCloseModal}>
+                        <Button colorScheme="red" mr={3} onClick={handleCloseModal} _focus={{ boxShadow: "none" }}>
                             CERRAR
                         </Button>
                     </ModalFooter>

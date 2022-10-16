@@ -20,7 +20,7 @@ import { fetchDescargarArchivo, fetchViewArchivo } from '../../../../actions/inc
 import { CloseIcon, DownloadIcon } from '@chakra-ui/icons';
 import { MdOpenInNew } from 'react-icons/md';
 
-const IncidenciaViewFile = ({ rowData, typeFile }) => {
+const IncidenciaViewFileSoporte = ({ rowData, typeFile, setProgressTrue, setProgressFalse }) => {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
@@ -28,13 +28,16 @@ const IncidenciaViewFile = ({ rowData, typeFile }) => {
 
     const handleClickOpenModalFile = () => {
         setOpen(true);
+        setProgressFalse();
     }
 
     const handleCloseModalFile = () => {
         setOpen(false);
+        setProgressFalse();
     }
 
     const FetchViewFile = () => {
+        setProgressTrue();
         var datos = {
             carpeta: rowData.carpeta,
             archivo: rowData.file,
@@ -86,12 +89,12 @@ const IncidenciaViewFile = ({ rowData, typeFile }) => {
                 ml={1}
                 _focus={{ boxShadow: "none" }}
             />
-            <Modal isOpen={open} onClose={handleCloseModalFile} size="5xl">
+            <Modal isOpen={open} onClose={handleCloseModalFile} size="6xl">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader textAlign={'center'} fontWeight="bold">VISUALIZANDO EL ARCHIVO</ModalHeader>
                     <ModalCloseButton _focus={{ boxShadow: "none" }} />
-                    <ModalBody maxH={'80%'}>
+                    <ModalBody maxH="60vh">
                         {
                             fileData?.filename?.includes(".pdf") ? (
                                 <iframe title={fileData?.filename} src={fileData?.link} width="100%" height="500vh" />
@@ -103,8 +106,8 @@ const IncidenciaViewFile = ({ rowData, typeFile }) => {
                                     </Stack>
                                 </>
                             ) : fileData?.filename?.includes(".png") || fileData?.filename?.includes(".jpg") || fileData?.filename?.includes(".jpeg") ? (
-                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} w="full">
-                                    <Image src={fileData?.link} alt={fileData?.filename}/>
+                                <Box display={'flex'} justifyContent={'center'} alignItems={'center'} w="full" borderWidth="1px" borderRadius="lg">
+                                    <Image src={fileData?.link} alt={fileData?.filename} maxH="60vh"/>
                                 </Box>
                             ) : (
                                 <>
@@ -186,4 +189,4 @@ const IncidenciaViewFile = ({ rowData, typeFile }) => {
     )
 }
 
-export default IncidenciaViewFile;
+export default IncidenciaViewFileSoporte;

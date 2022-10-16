@@ -9,7 +9,7 @@ import {
     VStack,
   } from '@chakra-ui/react';
   
-  import { Link } from 'react-router-dom';
+  import { NavLink } from 'react-router-dom';
   
   import { ArrowForwardIcon } from '@chakra-ui/icons'
   
@@ -50,11 +50,11 @@ import {
                       >
                         POR TÉCNICOS
                       </chakra.span>
-                      <Link to='/dashboard/reportes/incidencias-one'>
+                      <NavLink to='/dashboard/reportes/incidencias-por-tecnico'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='red' variant='solid'>
                           INGRESAR
                         </Button>
-                      </Link>
+                      </NavLink>
                     </VStack>
                   </Box>
                 </Box>
@@ -84,11 +84,11 @@ import {
                       >
                         POR USUARIOS
                       </chakra.span>
-                      <Link to='/dashboard/reportes/incidencias-two'>
+                      <NavLink to='/dashboard/reportes/incidencias-por-usuario'>
                         <Button _focus={{ boxShadow: "none" }} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='green' variant='solid'>
                           INGRESAR
                         </Button>
-                      </Link>
+                      </NavLink>
                     </VStack>
                   </Box>
                 </Box>
@@ -118,11 +118,11 @@ import {
                       >
                         TIEMPO
                       </chakra.span>
-                      <Link to='/dashboard/reportes/incidencias-three'>
+                      <NavLink to='/dashboard/reportes/incidencias-por-tiempos'>
                         <Button _focus={{ boxShadow: "none" }} textAlign={'left'} rightIcon={<ArrowForwardIcon />} size={'xs'} _dark={{ color: "gray.200" }} colorScheme='blue' variant='solid'>
                           INGRESAR
                         </Button>
-                      </Link>
+                      </NavLink>
                     </VStack>
                 </Flex>
   

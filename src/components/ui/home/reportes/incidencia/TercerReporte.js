@@ -15,9 +15,11 @@ import { store } from '../../../../../store/store';
 import Select from 'react-select';
 import { SearchIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import Moment from 'moment';
+import 'moment-precise-range-plugin';
+import moment from 'moment';
 import { timerNotification } from '../../../../../helpers/alert';
 import ChartReporteTiempo from './ChartReporteTiempo';
-import { fetchReporteTecnicos, fetchReporteTiempo } from '../../../../../actions/reporte';
+import { fetchReporteTiempo } from '../../../../../actions/reporte';
 import ReporteTiempos from './ReporteTiempos';
 import { NavLink } from 'react-router-dom';
 
@@ -56,7 +58,7 @@ export default function TercerReporte() {
         // setTotalReportes(reportes.map(item => item?.total));
       })
 
-    timerNotification('BUSCANDO REGISTROS DE TIEMPOS...', 'info', 2000);
+    timerNotification('FILTRANDO REGISTROS DE TIEMPOS...', 'info', 2000);
   }
 
   const handleChangeSede = (value) => {
@@ -77,55 +79,71 @@ export default function TercerReporte() {
     }
   }
 
+  const DiferenciaDosFechas = (fechaInicio, fechaFinal) => {
+		const fecha1 = moment(fechaInicio);
+		const fecha2 = moment(fechaFinal);
+		const diferencia = moment.preciseDiff(fecha1, fecha2, true);
+		const dias = diferencia['days'];
+		const horas = diferencia['hours'];
+		const minutos = diferencia['minutes'];
+		const segundos = diferencia['seconds'];
+		return dias + "d " + horas + "h " + minutos + "m " + segundos + "s";
+	}
+
   const handleExportPDF = () => {
     timerNotification('EXPORTANDO PDF...', 'info', 2000);
     const unit = "pt";
     const size = "A3"; // Use A1, A2, A3 or A4
     const orientation = "landscape"; // portrait or landscape
-
-    const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
 
-    doc.setFontSize(10);
+    doc.setFontSize(11);
 
-    const title = "REPORTE DE TICKETS CREADOS POR CADA USUARIO";
-    const headers = [["USUARIO COMUN", "SOPORTE TECNICO", "FECHA DE REGISTRO", "TIEMPO TRANSCURRIDO", "INCIDENCIA EN TRAMITE", "TIEMPO TRANSCURRIDO", "INCIDENCIA ATENDIDA"]];
+    const title = "REPORTE DE INCIDENCIAS ATENDIDAS POR TECNICOS Y EL TIEMPO DE ATENCIÓN"
+    const headers = [["N°","USUARIO COMUN", "SOPORTE TECNICO", "FECHA DE REGISTRO", "TIEMPO TRANSCURRIDO", "INCIDENCIA EN TRAMITE", "TIEMPO TRANSCURRIDO", "INCIDENCIA ATENDIDA"]];
 
+    var contadorIncial = 0;
     const data = reportes.map(elt => 
       [
-        elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido, 
-        elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido, 
+        contadorIncial = contadorIncial + 1,
+        elt.usuarioComun !== null ? elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido : 'SIN USUARIO',
+        elt.usuarioTecnico !== null ? elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido : 'SIN TECNICO ASIGNADO', 
         elt.registroPendiente === null ? '' : Moment(elt.registroPendiente).format('DD/MM/YYYY HH:mm:ss'),
-        elt.tiempoTranscurridoPendiente, 
-        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("DD/MM/YYYY - HH:mm:ss"),
-        elt.tiempoTranscurridoTramitado, 
-        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("DD/MM/YYYY - HH:mm:ss"),
+        elt.tiempoTranscurridoPendiente !== null ? DiferenciaDosFechas(elt.registroPendiente, elt.registroTramitado) : '',
+        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("yyyy-MM-DD - HH:mm:ss"),
+        elt.tiempoTranscurridoTramitado !== null ? DiferenciaDosFechas(elt.registroTramitado, elt.registroAtendido) : '',
+        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("yyyy-MM-DD - HH:mm:ss"),
       ]);
 
     let content = {
-      startY: 50,
+      startY: 85,
       head: headers,
+      theme: 'grid',
       body: data,
     };
 
-    doc.text(title, marginLeft, 40);
+    doc.text(title, doc.internal.pageSize.getWidth() / 2, 30, null, 'center');
+    var img = new Image();
+    img.src = 'https://res.cloudinary.com/dx6ucne8o/image/upload/v1665597382/LOGO/csjar_buzabu.jpg';
+    doc.addImage(img, 'JPEG', 40, 15, 140, 55);
+    doc.text('CUANTO TIEMPO SE DEMORA CADA TÉCNICO EN ATENDER UNA INCIDENCIA', doc.internal.pageSize.getWidth() / 2, 60, null, 'center');
     doc.autoTable(content);
-    doc.save("ReporteUsuario.pdf")
+    doc.save("ReporteTiempos.pdf")
   }
 
   const csvReport = {
     headers: ["USUARIO COMUN", "SOPORTE TECNICO", "FECHA DE REGISTRO", "TIEMPO TRANSCURRIDO", "INCIDENCIA EN TRAMITE", "TIEMPO TRANSCURRIDO", "INCIDENCIA ATENDIDA"],
     data: reportes.map(elt => 
       [
-        elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido, 
-        elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido, 
+        elt.usuarioComun !== null ? elt.usuarioComun?.nombre + ' ' + elt.usuarioComun?.apellido : 'SIN USUARIO',
+        elt.usuarioTecnico !== null ? elt.usuarioTecnico?.nombre + ' ' + elt.usuarioTecnico?.apellido : 'SIN TECNICO ASIGNADO', 
         elt.registroPendiente === null ? '' : Moment(elt.registroPendiente).format('DD/MM/YYYY HH:mm:ss'),
-        elt.tiempoTranscurridoPendiente, 
-        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("DD/MM/YYYY - HH:mm:ss"),
-        elt.tiempoTranscurridoTramitado, 
-        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("DD/MM/YYYY - HH:mm:ss"),
+        elt.tiempoTranscurridoPendiente !== null ? DiferenciaDosFechas(elt.registroPendiente, elt.registroTramitado) : '', 
+        elt.registroTramitado === null ? '' : Moment(elt.registroTramitado).format("yyyy-MM-DD - HH:mm:ss"),
+        elt.tiempoTranscurridoTramitado !== null ? DiferenciaDosFechas(elt.registroTramitado, elt.registroAtendido) : '',
+        elt.registroAtendido === null ? '' : Moment(elt.registroAtendido).format("yyyy-MM-DD - HH:mm:ss"),
       ]),
-    filename: 'ReporteUsuario.csv',
+    filename: 'ReporteTiempos.csv',
     separator: ';',
   };
 
@@ -138,7 +156,7 @@ export default function TercerReporte() {
         boxShadow={'xs'}
         bg={useColorModeValue('white', 'gray.900')}
       >
-        <Box px="4" mt="6">
+        <Box px="4" mt="4">
           <Box d="flex" alignItems="baseline">
             <Breadcrumb spacing='8px' separator={<ChevronRightIcon color='gray.500' />}>
               <BreadcrumbItem>
@@ -147,7 +165,7 @@ export default function TercerReporte() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
 
-              <BreadcrumbLink as={NavLink} to="/dashboard/reportes/incidencias-three" _hover={{ textDecoration: 'none' }}>
+              <BreadcrumbLink as={NavLink} to="/dashboard/reportes/incidencias-por-tiempos" _hover={{ textDecoration: 'none' }}>
                   <Button size="xs" variant="unstyled" color="black">REPORTES DE INCIDENCIAS POR TIEMPO DE ATENCIÓN</Button>
               </BreadcrumbLink>
             </Breadcrumb>

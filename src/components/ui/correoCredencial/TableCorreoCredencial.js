@@ -39,16 +39,19 @@ export default function TableCorreoCredencial() {
     {
       name: '#',
       selector: row => row.idCorreoCredenciales,
+      cellExport: row => row.idCorreoCredenciales,
       sortable: true,
     },
     {
       name: 'CORREO',
       selector: row => row.correo,
+      cellExport: row => row.correo,
       sortable: true,
     },
     {
       name: 'PASSWORD',
       selector: row => row.password ? "********" : '',
+      cellExport: row => row.password ? "********" : '',
       sortable: true,
     },
     {
@@ -58,18 +61,19 @@ export default function TableCorreoCredencial() {
       cell: row => (
         <div>
           <Badge
-            bg={row.activo === "S" ? "green.400" : bgStatus}
+            bg={row.activo === "S" ? "green.500" : bgStatus}
             color={row.activo === "S" ? "white" : colorStatus}
-            p="3px 10px"
-            w={20}
+            py="4px"
+            w={"100px"}
             textAlign={'center'}
             borderRadius={'md'}
-            fontSize={'10px'}
+            fontSize={'12px'}
           >
-            {row.activo === "S" ? "ACTIVO" : "INACTIVO"}
+            {row.activo === "S" ? "ACTIVO" : "ANULADO"}
           </Badge>
         </div>
       ),
+      cellExport: row => row.activo === "S" ? "ACTIVO" : "ANULADO",
       center: true,
     },
     {
@@ -81,6 +85,7 @@ export default function TableCorreoCredencial() {
           <ModalEliminarCorreoCredencial row={row} />
         </div>
       ),
+      export: false,
       center: true,
     },
   ];
@@ -127,7 +132,7 @@ export default function TableCorreoCredencial() {
           <CorreoCredencialAgregar />
         </Box>
       </HStack>
-      <DataTableExtensions {...tableData}>
+      <DataTableExtensions {...tableData} print={false}>
         <DataTable
           columns={columns}
           data={data}

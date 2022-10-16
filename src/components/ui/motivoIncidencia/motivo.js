@@ -10,21 +10,17 @@ export const Motivo = () => {
   
   const dispatch = useDispatch();
 
-  const fetchData= async ()=> {
-    await fetchMotivos().then((res)=>{
-      dispatch(getMotivo(res));
-    }).catch((err)=>{
-      // console.log("WARN " + err);
-    });
+  const fetchDataMotivos = async ()=> {
+    const response = await fetchMotivos();
+    dispatch(getMotivo(response));
   }
 
   useEffect(() => {
     if(store.getState().motivo.checking){
-      fetchData();
+      fetchDataMotivos();
     }
   });
 
-  //
   return (
     <>
       <Sidebar componente={TableMotivo} />

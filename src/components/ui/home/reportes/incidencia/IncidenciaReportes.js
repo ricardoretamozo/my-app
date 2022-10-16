@@ -58,7 +58,7 @@ export default function IncidenciaReportes() {
       setNombreTecnicos(nombreTecnicos);
       setTotalReportes(totalReportes);
     })
-    timerNotification('BUSCANDO REGISTROS...', 'info', 2000);
+    timerNotification('FILTRANDO REGISTROS DE TÉCNICOS...', 'info', 2000);
   }
 
   const handleChangeSede = (value) => {
@@ -85,23 +85,33 @@ export default function IncidenciaReportes() {
     const size = "A4"; // Use A1, A2, A3 or A4
     const orientation = "portrait"; // portrait or landscape
 
-    const marginLeft = 40;
     const doc = new jsPDF(orientation, unit, size);
 
     doc.setFontSize(10);
 
     const title = "REPORTE DE TICKETS HÁCIA UN SOPORTE TECNICO";
-    const headers = [["TECNICO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"]];
-
-    const data = reportes.map(row => [row.usuario.nombre + ' ' + row.usuario.apellido, row.pendientes, row.tramitadas, row.atendidas, row.total]);
+    const headers = [["N°", "NOMBRES DEL TECNICO", "PENDIENTES", "EN TRAMITE", "ATENDIDOS", "TOTAL"]];
+    var contadorIncial = 0;
+    const data = reportes.map(row => [
+      contadorIncial = contadorIncial + 1,
+      row.usuario.nombre + ' ' + row.usuario.apellido, 
+      row.pendientes, 
+      row.tramitadas, 
+      row.atendidas, 
+      row.total
+    ]);
 
     let content = {
-      startY: 50,
+      startY: 60,
       head: headers,
+      theme: 'grid',
       body: data,
     };
 
-    doc.text(title, marginLeft, 40);
+    doc.text(title, doc.internal.pageSize.getWidth() / 2, 35, null, 'center');
+    var img = new Image();
+    img.src = 'https://res.cloudinary.com/dx6ucne8o/image/upload/v1665597382/LOGO/csjar_buzabu.jpg';
+    doc.addImage(img, 'JPEG', 40, 15, 90, 35);
     doc.autoTable(content);
     doc.save("ReporteTecnico.pdf")
   }
@@ -131,7 +141,7 @@ export default function IncidenciaReportes() {
                 </BreadcrumbLink>
               </BreadcrumbItem>
 
-              <BreadcrumbLink as={NavLink} to="/dashboard/reportes/incidencias-one" _hover={{ textDecoration: 'none' }}>
+              <BreadcrumbLink as={NavLink} to="/dashboard/reportes/incidencias-por-tecnico" _hover={{ textDecoration: 'none' }}>
                 <Button size="xs" variant="unstyled" color="black">REPORTES DE INCIDENCIAS POR SOPORTE</Button>
               </BreadcrumbLink>
             </Breadcrumb>

@@ -23,6 +23,7 @@ import {
     PopoverHeader,
     PopoverBody,
     Portal,
+    Progress,
 } from '@chakra-ui/react';
 
 import { store } from '../../../../store/store';
@@ -40,9 +41,10 @@ import { getIncidencias } from './incidencia';
 import parse from 'html-react-parser';
 import { FaFilter } from 'react-icons/fa';
 import { AiFillFileText, AiFillFilter } from 'react-icons/ai';
-import IncidenciaViewFileConocimiento from './IncidenciaViewFile';
-import AtencionViewFileConocimiento from './AtencionViewFile';
+import IncidenciaViewFile from './IncidenciaViewFile';
+import AtencionViewFile from './AtencionViewFile';
 import { IncidenciaHistorial } from './IncidenciaHistorial';
+import Moment from 'moment';
 
 export default function TableConocimiento() {
     const { identificador } = useSelector(state => state.auth);
@@ -51,6 +53,7 @@ export default function TableConocimiento() {
     const data = store.getState().incidencia.rows;
 
     const [tableRowsData, setTableRowsData] = useState(data);
+    const [progress, setProgress] = useState(false);
 
     //Contadores de incidencia
     const ContadorPendientes = data.filter(row => row.historialIncidencia.filter(pendiente => pendiente.estadoIncidencia === "P" && pendiente.estado === "A").length > 0);
@@ -84,27 +87,37 @@ export default function TableConocimiento() {
         setTableRowsData(dataFilter);
     }
 
+    const changeSetProgressTrue = () => {
+        setProgress(true);
+    }
+
+    const changeSetProgressFalse = () => {
+        setProgress(false);
+    }
+
     const columns = [
         {
             name: 'DESCRIPCIÓN INCIDENCIA',
             selector: row => parse(row.descripcion),
+            cellExport: row => row.descripcion,
             sortable: true,
         },
         {
             name: 'ATENCION DE LA INCIDENCIA',
             selector: row => parse(row.descripcionIncidencia ? row.descripcionIncidencia.descripcion : 'SIN ATENCIÓN'),
+            cellExport: row => row.descripcionIncidencia ? row.descripcionIncidencia.descripcion : 'INCIDENCIA SIN ATENCIÓN',
             sortable: true,
             maxWidth: '600px',
         },
-        // {
-        //     name: 'FECHA Y HORA',
-        //     selector: row => Moment(row.fecha).format("DD/MM/YYYY - HH:mm:ss"),
-        //     sortable: true,
-        // },
+        {
+            name: 'FECHA Y HORA',
+            selector: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
+            cellExport: row => Moment(row.fecha).format("yyyy-MM-DD - HH:mm:ss"),
+            sortable: true,
+        },
         {
             name: 'ESTADO',
             selector: row => row.historialIncidencia.map(row => row.estado === 'A' ? row.estado : ''),
-            // selector: row => row.historialIncidencia.estadoIncidencia,
             sortable: true,
             cell: row => {
                 var historial = row.historialIncidencia.filter(p => p.estado === 'A');
@@ -112,17 +125,22 @@ export default function TableConocimiento() {
                     <div>
                         <Badge
                             bg={historial[0]?.estadoIncidencia === 'P' ? 'red.500' : historial[0]?.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500'}
-                            // bg={ row.historialIncidencia.map(e => e.estado === 'A' ? e.estadoIncidencia === 'P' ? 'red.500' : e.estadoIncidencia === 'T' ? 'yellow.500' : 'green.500' : '') }
                             color={'white'}
-                            p="3px 10px"
-                            w={24}
+                            py="4px"
+                            w={"100px"}
                             textAlign={'center'}
                             borderRadius={'md'}
-                            fontSize={'10px'}
+                            fontSize={'12px'}
                         >
                             {historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'}
                         </Badge>
                     </div>
+                )
+            },
+            cellExport: row => {
+                var historial = row.historialIncidencia.filter(p => p.estado === 'A');
+                return (
+                    historial[0]?.estadoIncidencia === 'P' ? 'PENDIENTE' : historial[0]?.estadoIncidencia === 'T' ? 'EN TRÁMITE' : 'ATENDIDO'
                 )
             },
             center: true,
@@ -131,7 +149,6 @@ export default function TableConocimiento() {
             name: 'ACCIONES',
             sortable: false,
             cell: row => {
-                // var historial = row.historialIncidencia.filter(p => p.estado === 'A');
                 var archivoTecnico = row.descripcionIncidencia?.incidenciaArchivos?.usuario === "T" ? row.descripcionIncidencia.incidenciaArchivos : null;
                 var archivoUsuario = row.incidenciaArchivos?.usuario === "R" ? row.incidenciaArchivos : null;
                 return (
@@ -140,7 +157,7 @@ export default function TableConocimiento() {
                             rowId={row.idIncidencia}
                             identificador={identificador}
                         />
-                        {( row.descripcionIncidencia !== null && row.descripcionIncidencia?.incidenciaArchivos !== null ) || row.incidenciaArchivos !== null ? (
+                        {(row.descripcionIncidencia !== null && row.descripcionIncidencia?.incidenciaArchivos !== null) || row.incidenciaArchivos !== null ? (
                             <Popover placement='left'>
                                 <PopoverTrigger>
                                     <IconButton
@@ -160,16 +177,20 @@ export default function TableConocimiento() {
                                         <PopoverBody>
                                             <Stack direction={'column'} spacing={4} alignItems="start">
                                                 {archivoUsuario !== null ? (
-                                                    <IncidenciaViewFileConocimiento
+                                                    <IncidenciaViewFile
                                                         rowData={row?.incidenciaArchivos}
                                                         typeFile={archivoUsuario?.file}
+                                                        setProgressTrue={() => changeSetProgressTrue()}
+                                                        setProgressFalse={() => changeSetProgressFalse()}
                                                     />
                                                 ) : null}
 
                                                 {archivoTecnico !== null ? (
-                                                    <AtencionViewFileConocimiento
+                                                    <AtencionViewFile
                                                         rowData={row.descripcionIncidencia?.incidenciaArchivos}
                                                         typeFile={archivoTecnico?.file}
+                                                        setProgressTrue={() => changeSetProgressTrue()}
+                                                        setProgressFalse={() => changeSetProgressFalse()}
                                                     />
                                                 ) : null}
                                             </Stack>
@@ -184,6 +205,7 @@ export default function TableConocimiento() {
                     </div>
                 );
             },
+            export: false,
         },
     ];
 
@@ -270,7 +292,7 @@ export default function TableConocimiento() {
                             color="yellow.500"
                             _dark={{ color: "white" }}
                         >
-                            Incidencias en Tramite
+                            INCIDENCIA EN TRAMITE
                         </chakra.h3>
                         <Flex
                             alignItems="center"
@@ -377,6 +399,7 @@ export default function TableConocimiento() {
                     justifyContent={'space-between'}
                     verticalAlign={'center'}
                     px={4}
+                    py={4}
                 >
                     <Box>
                         <Text fontSize="lg" fontWeight="600">
@@ -384,34 +407,35 @@ export default function TableConocimiento() {
                         </Text>
                     </Box>
                     <Box>
-                        <IconButton
-                            size={'sm'} mr={2}
-                            icon={<RepeatIcon boxSize={4} />}
-                            colorScheme={'facebook'}
-                            _focus={{ boxShadow: "none" }}
-                            onClick={refreshTable} 
-                        />
-                    </Box>
-                    <Box>
-                        <Menu size={'xs'}>
-                            <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
-                                <HStack spacing={2}>
-                                    <Text fontSize="sm" fontWeight="600">
-                                        FILTRAR POR ESTADO
-                                    </Text>
-                                    <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
-                                </HStack>
-                            </MenuButton>
-                            <MenuList zIndex={2}>
-                                <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
-                                <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
-                                <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
-                                <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
-                            </MenuList>
-                        </Menu>
+                        <Stack direction={'row'} spacing={1}>
+                            <IconButton
+                                size={'sm'}
+                                icon={<RepeatIcon boxSize={4} />}
+                                colorScheme={'facebook'}
+                                _focus={{ boxShadow: "none" }}
+                                onClick={refreshTable}
+                            />
+                            <Menu size={'xs'}>
+                                <MenuButton as={'menu'} style={{ cursor: 'pointer' }}>
+                                    <HStack spacing={2}>
+                                        <Text fontSize="sm" fontWeight={'semibold'}>
+                                            FILTRAR POR ESTADO
+                                        </Text>
+                                        <IconButton colorScheme={'twitter'} icon={<FaFilter />} size="sm" />
+                                    </HStack>
+                                </MenuButton>
+                                <MenuList zIndex={2} fontSize="sm">
+                                    <MenuItem onClick={handleClickFilterPendientes} icon={<AiFillFilter color='red' size={'20px'} />}>PENDIENTES</MenuItem>
+                                    <MenuItem onClick={handleClickFilterTramite} icon={<AiFillFilter color='#d69e2e' size={'20px'} />}>EN TRAMITE</MenuItem>
+                                    <MenuItem onClick={handleClickFilterAtendidas} icon={<AiFillFilter color='green' size={'20px'} />}>ATENDIDAS</MenuItem>
+                                    <MenuItem icon={<AiFillFilter size={'20px'} />} onClick={refreshTable}>TODOS</MenuItem>
+                                </MenuList>
+                            </Menu>
+                        </Stack>
                     </Box>
                 </HStack>
-                <DataTableExtensions data={tableRowsData} columns={columns}>
+                <Progress mt={2} size="xs" value={progress} colorScheme="purple" hidden={progress === false} isIndeterminate={progress === true} mb={2} />
+                <DataTableExtensions data={tableRowsData} columns={columns} print={false}>
                     <DataTable
                         theme={useColorModeValue('default', 'solarized')}
                         pagination

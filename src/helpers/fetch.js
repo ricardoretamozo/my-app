@@ -39,30 +39,32 @@ export const fetchServicioDni = ( endpoint, method='GET' ) => {
 }
 
 export const fetchWithToken = ( endpoint, data, method = 'GET' ) => {
+    try {
+        const url = `${ baseURL }/${ endpoint }`;
+        const token = localStorage.getItem('refresh_token') || '';
     
-    const url = `${ baseURL }/${ endpoint }`;
-    const token = localStorage.getItem('refresh_token') || '';
-
-
-    if ( method === 'GET' ){
-        return fetch( url,{
-            method,
-            headers: {
-                'Authorization': `Bearer ${ token }`
-            }
-        });
-    } else {
-        return fetch( url , {
-            method,
-            headers: {
-                'Content-type': 'application/json',
-                //'token': token
-                'Authorization': `Bearer ${ token }`
-            },
-            body: JSON.stringify( data )
-        });
+    
+        if ( method === 'GET' ){
+            return fetch( url,{
+                method,
+                headers: {
+                    'Authorization': `Bearer ${ token }`
+                }
+            });
+        } else {
+            return fetch( url , {
+                method,
+                headers: {
+                    'Content-type': 'application/json',
+                    //'token': token
+                    'Authorization': `Bearer ${ token }`
+                },
+                body: JSON.stringify( data )
+            });
+        }
+    } catch (error) {
+        console.log("No se realizo la peticion correctamente");
     }
-
 }
 
 export const fetchToken = ( endpoint, data, method = 'GET' ) => {

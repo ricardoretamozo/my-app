@@ -285,7 +285,7 @@ export const createSolucionIncidencia = (data) => {
     if (response.status === 200 || response.status === 201) {
       notification('Atención Registrado', 'Atención de la Incidencia registrado correctamente.', 'success');
     } else {
-      notification('Error de Registro de la Atención', 'No se pudo registrar la Atención de la Incidencia correctamente', 'error');
+      notification('Error de Registro', 'No se pudo registrar la Atención de la Incidencia correctamente', 'error');
     }
   };
 };
